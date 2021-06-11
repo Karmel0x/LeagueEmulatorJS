@@ -3,8 +3,8 @@ Yet another lol server,
 created with the help of the [LeagueSandbox](https://github.com/LeagueSandbox/GameServer) code,
 written in JavaScript ([nodejs](https://nodejs.org/en/)).  
 This project was made as just 4fun and will be not continued or will be very rarely,
-anyway making it in JS is not best idea.  
-At the moment, all what you can do is load game client.  
+anyway making it in JS is not the best idea.  
+At the moment, all what you can do is load game client and see your champion.  
 
 # Runing
 ```

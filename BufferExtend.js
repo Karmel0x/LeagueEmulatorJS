@@ -38,6 +38,8 @@ Buffer.prototype.read1 = function(type) {
 Buffer.prototype.write1 = function(type, value) {
     if(!this.off)
         this.off = 0;
+    if(typeof value == 'undefined')
+        value = 0;
     
     var variable;
     switch(type){
