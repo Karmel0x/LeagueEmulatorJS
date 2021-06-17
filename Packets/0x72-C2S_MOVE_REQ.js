@@ -1,20 +1,5 @@
 var Vector2 = require('./SharedStruct/Vector2');
 
-/*var CompressedWaypoint = {
-	flagsBuffer: ['uint8', 2],
-	lastX: 'int16',
-	lastZ: 'int16',
-	Waypoints: 'uint8',
-	Waypoints: 'uint8',
-	Waypoints: 'uint8',
-};
-
-var MovementDataNormal = {
-	HasTeleportID: 'uint8',
-	TeleportNetID: 'uint32',
-	TeleportID: 'uint8',
-	Waypoints: CompressedWaypoint,
-};*/
 function byteArrayToBinary(array){
     let ret = [];
     for(let i in array){
@@ -31,6 +16,7 @@ function CompressedWaypoint(buffer, size){
     if(size > 1){
         obj.flagsBufferByte = buffer.readobj(['uint8', parseInt((size - 2) / 4 + 1)]);
         obj.flagsBuffer = byteArrayToBinary(obj.flagsBufferByte);
+        console.log('obj.flagsBufferByte, obj.flagsBuffer', obj.flagsBufferByte, obj.flagsBuffer);
     }
 
     obj.lastX = buffer.read1('int16');
@@ -61,15 +47,15 @@ function MovementDataNormal(buffer){
         return obj;
 
     obj.bitfield = buffer.read1('uint8');
-    obj.size = obj.bitfield >> 1;
+    obj.WaypointsSize = obj.bitfield >> 1;
     obj.HasTeleportID = (obj.bitfield & 1) != 0;
 
-    if(obj.size){
+    if(obj.WaypointsSize){
         obj.TeleportNetID = buffer.read1('uint32');
         if(obj.HasTeleportID){
             obj.TeleportID = buffer.read1('uint8');
         }
-        obj.Waypoints = CompressedWaypoint(buffer, obj.size);
+        obj.Waypoints = CompressedWaypoint(buffer, obj.WaypointsSize);
     }
     return obj;
 }

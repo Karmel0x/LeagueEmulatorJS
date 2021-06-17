@@ -16,6 +16,14 @@ Buffer.prototype.read1 = function(type) {
         case 'int64':variable = this.readBigInt64LE(this.off);break;
 
         case 'float':variable = this.readFloatLE(this.off);break;
+        /*case 'float8':{
+            let bb = Buffer.from([0, 0, 0, this.readUInt8(this.off)]);
+            variable = bb.readFloatLE(0);
+        }break;
+        case 'float16':{
+            let bb = Buffer.from([0, 0, this.readUInt8(this.off), this.readUInt8(this.off + 1)]);
+            variable = bb.readFloatLE(0);
+        }break;*/
         case 'double':variable = this.readDoubleLE(this.off);break;
 
         case 'char':variable = String.fromCharCode(this.readUInt8(this.off));break;
@@ -137,8 +145,10 @@ Buffer.typeSize = {
     'int64': 8,
 
     'float': 4,
+    //'float8': 1,
+    //'float16': 2,
     'double': 8,
     
     'char': 1,
-    'string': 13,//todo
+    'string': 'length',//todo: i don't like how it is done
 };

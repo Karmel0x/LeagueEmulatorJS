@@ -13,6 +13,8 @@ module.exports = function(q){
         console.log('Waypoints', obj1.MovementData.Waypoints);
 		q.packet.off = 0;
 
+		console.log(global.Players);
+		global.Players[0].move(obj1.Position, obj1.MovementData.Waypoints);
 	}
 
 };

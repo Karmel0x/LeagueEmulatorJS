@@ -19,6 +19,7 @@ var Handlers = {
     0x52: {handler: require('./Handlers/0x52-C2S_START_GAME.js')},
     0x2E: {handler: require('./Handlers/0x2E-C2S_VIEW_REQ.js')},
     0x72: {handler: require('./Handlers/0x72-C2S_MOVE_REQ.js')},
+    0x77: {handler: require('./Handlers/0x77-C2S_MOVE_CONFIRM.js')},
 };
 
 
