@@ -3,12 +3,11 @@ var Types = require('../Constants/Types');
 
 function getInt64Bytes_reversed(x){
     var bytes = [];
-    var i = 8;
-    do {
-        bytes[--i] = x & (255);
+    for(var i = 8; i > 0; --i){
+        bytes.push(x & 255);
         x = x >> 8;
-    } while(i);
-    return bytes.reverse();
+    }
+    return bytes;
 }
 function binaryToByteArray(binaryArray){
     return parseInt(binaryArray.split('').reverse().join(''), 2);
@@ -84,7 +83,7 @@ var S2C_MOVE_ANS = {
 }
 
 module.exports = function(source){//S2C_MOVE_ANS
-    var buffer = Buffer.allocUnsafe(1000);
+    var buffer = Buffer.allocUnsafe(512);
     buffer.writeobj(S2C_MOVE_ANS, source);
     MovementDataNormal(buffer, source);
 

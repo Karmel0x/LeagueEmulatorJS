@@ -4,7 +4,7 @@ created with the help of the [LeagueSandbox](https://github.com/LeagueSandbox/Ga
 written in JavaScript ([nodejs](https://nodejs.org/en/)).  
 This project was made as just 4fun and will be not continued or will be very rarely,
 anyway making it in JS is not the best idea.  
-At the moment, all what you can do is load game client and move your champion.  
+At the moment, all what you can do is load game client, move your champion, use emotions and pings but no game flow and multiplayer yet.  
 
 # Runing
 ```

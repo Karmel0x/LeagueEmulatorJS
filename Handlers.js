@@ -20,6 +20,12 @@ var Handlers = {
     0x2E: {handler: require('./Handlers/0x2E-C2S_VIEW_REQ.js')},
     0x72: {handler: require('./Handlers/0x72-C2S_MOVE_REQ.js')},
     0x77: {handler: require('./Handlers/0x77-C2S_MOVE_CONFIRM.js')},
+    0x8F: {handler: require('./Handlers/0x8F-C2S_EXIT.js')},
+    0x81: {handler: require('./Handlers/0x81-C2S_LOCK_CAMERA.js')},
+    0x39: {handler: require('./Handlers/0x39-C2S_SKILL_UPGRADE.js')},
+    0x56: {handler: require('./Handlers/0x56-C2S_SCOREBOARD.js')},
+    0x48: {handler: require('./Handlers/0x48-C2S_EMOTION.js')},
+    0x57: {handler: require('./Handlers/0x57-C2S_ATTENTION_PING.js')},
 };
 
 

@@ -71,7 +71,9 @@ class Character {
         S2C_MOVE_ANS.packet.TeleportNetID = 0x40000001;
         S2C_MOVE_ANS.packet.TeleportID = 0x00;
         S2C_MOVE_ANS.packet.Waypoints = Waypoints;
-        S2C_MOVE_ANS.packet.MovementDataNormal_length = 1;console.log('S2C_MOVE_ANS', S2C_MOVE_ANS);
+        S2C_MOVE_ANS.packet.MovementDataNormal_length = 1;
+        
+        console.log('S2C_MOVE_ANS', S2C_MOVE_ANS);
         var isSent = sendPacket2(S2C_MOVE_ANS, S2C_MOVE_ANS.packetTemplate(S2C_MOVE_ANS.packet));
         //console.log(S2C_MOVE_ANS.packet.MovementDataNormal[0].MovementData);
 

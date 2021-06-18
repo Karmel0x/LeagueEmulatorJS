@@ -4,12 +4,7 @@ const {createPacket, sendPacket} = require("../PacketUtilities");
 
 
 module.exports = function(q){
-    console.log('handle: C2S_MOVE_CONFIRM');
+    console.log('handle: C2S_EXIT');
 
-	{
-		var obj1 = q.packet.readobj(Packets.cmd.C2S_MOVE_CONFIRM.packet);
-		q.packet.off = 0;
-
-	}
-
+    
 };
