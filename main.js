@@ -1,9 +1,8 @@
-var init_network = require('./init_network');
-var init_players = require('./init_players');
 
-
-init_network();
-global.Players = init_players();
+require('./init_utilities')();
+require('./init_players')();
+require('./init_network')();
+require('./init_game')();
 
 
 //process.on('uncaughtException', function (err) {

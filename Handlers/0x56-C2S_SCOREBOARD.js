@@ -14,4 +14,6 @@ module.exports = function(q){
 
     //var S2C_SCOREBOARD? = createPacket('S2C_SCOREBOARD?');
     //var isSent = sendPacket(S2C_SCOREBOARD?);
+	
+    //global.Players[0].loaded = true;
 };

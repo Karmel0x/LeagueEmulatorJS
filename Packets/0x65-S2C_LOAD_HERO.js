@@ -4,5 +4,5 @@ module.exports = {//S2C_LOAD_HERO
 
 	PlayerId: 'int64',
 	SkinId: 'int32',
-	SkinName: 'string',
+	SkinName: 'string_',
 };

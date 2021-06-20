@@ -16,9 +16,9 @@ module.exports = function(q){
     var isSent = sendPacket(S2C_START_SPAWN);
     
     var S2C_HERO_SPAWN = createPacket('S2C_HERO_SPAWN');
-    S2C_HERO_SPAWN.packet.netId = 0x40000001;
+    //S2C_HERO_SPAWN.packet.netId = 0x40000001;
     S2C_HERO_SPAWN.packet.NetID = 0x40000001;
-    S2C_HERO_SPAWN.packet.ClientID = 1;
+    S2C_HERO_SPAWN.packet.ClientID = 0;
     S2C_HERO_SPAWN.packet.NetNodeID = 0x40;
     //S2C_HERO_SPAWN.packet.SenderNetID = 0x40000001;
     S2C_HERO_SPAWN.packet.SkinID = 0;
@@ -35,8 +35,18 @@ module.exports = function(q){
     var isSent = sendPacket(S2C_HERO_SPAWN);
     
     var S2C_AVATAR_INFO = createPacket('S2C_AVATAR_INFO');
+    S2C_AVATAR_INFO.packet.netId = 0x40000001;
     var isSent = sendPacket(S2C_AVATAR_INFO);
+    // -----
+
+    var S2C_SKILL_UP = createPacket('S2C_SKILL_UP');
+    S2C_SKILL_UP.packet.Slot = 13;
+	S2C_SKILL_UP.packet.SpellLevel = 1;
+	S2C_SKILL_UP.packet.SkillPoints = 1;
+    var isSent = sendPacket(S2C_SKILL_UP);
+
     
+    // -----
     var S2C_END_SPAWN = createPacket('S2C_END_SPAWN');
     var isSent = sendPacket(S2C_END_SPAWN);
     

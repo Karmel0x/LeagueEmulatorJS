@@ -10,7 +10,7 @@ function handle1(q){
 
 var Handlers = {
     0x00: {handler: require('./Handlers/0x00-KEY_CHECK.js')},
-    0x01: {handler: handle1},
+    //0x01: {handler: handle1},
     0x14: {handler: require('./Handlers/0x14-C2S_QUERY_STATUS_REQ.js')},
     0xBD: {handler: require('./Handlers/0xBD-C2S_SYNCH_VERSION.js')},
     0x64: {handler: require('./Handlers/0x64-C2S_CLIENT_READY.js')},
@@ -26,11 +26,15 @@ var Handlers = {
     0x56: {handler: require('./Handlers/0x56-C2S_SCOREBOARD.js')},
     0x48: {handler: require('./Handlers/0x48-C2S_EMOTION.js')},
     0x57: {handler: require('./Handlers/0x57-C2S_ATTENTION_PING.js')},
+    0x68: {handler: require('./Handlers/0x68-CHAT_BOX_MESSAGE.js')},
+    0x47: {handler: require('./Handlers/0x47-C2S_AUTO_ATTACK_OPTION.js')},
+    0x08: {handler: require('./Handlers/0x08-C2S_HEART_BEAT.js')},
 };
 
 
 module.exports = async function(q){
 	
+	console.log('recw:', q.packet.toString('hex').match(/../g).join('-'));
 	var obj1 = q.packet.readobj(Packets.Header);
 	q.packet.off = 0;
 	console.log('recv:', obj1.cmd, Packets.ids[obj1.cmd], q);

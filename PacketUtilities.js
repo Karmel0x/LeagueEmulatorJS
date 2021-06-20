@@ -4,7 +4,7 @@ const Packets = require("./Packets");
 require("./BufferExtend");
 
 
-function packetSize(packet, source = false){
+/*function packetSize(packet, source = false){
 
 	if(typeof packet == 'string'){
 		if(packet == 'string')
@@ -28,7 +28,7 @@ const PacketsSizes = {};
 for(var i in Packets.cmd)
 	if(typeof Packets.cmd[i].packet !== 'undefined')
 		PacketsSizes[Packets.cmd[i].id] = packetSize(Packets.cmd[i].packet);
-
+*/
 function createPacket(packetName){
 	if(typeof Packets.cmd[packetName] === 'undefined'){
 		console.log('packet is not yet implemented [packet]', packetName);
@@ -59,7 +59,7 @@ function createPacket(packetName){
 function childByAddressPlusMath(element, address){
     var addressSplitted = address.split('.');
     if(addressSplitted.length > 1)
-        return childByAddress(element[addressSplitted.shift()] || 0, addressSplitted.join('.'));
+        return childByAddressPlusMath(element[addressSplitted.shift()] || 0, addressSplitted.join('.'));
 
 	var addressMath = address.split('|');
 	address = addressMath[0] || '';
@@ -97,7 +97,7 @@ function fill_packetTemplate_length(packetTemplate, source){
 
 }
 
-function sendPacket(packet){
+/*function sendPacket(packet){
 	if(typeof packet.packet === 'undefined' || typeof PacketsSizes[packet.id] === 'undefined'){
 		//console.log('packet is not yet implemented', packet.id);
 		return {};
@@ -110,15 +110,38 @@ function sendPacket(packet){
 		fill_packetTemplate_length(packet.packetTemplate, packet.packet);
 		packet.packetSize = packetSize(packet.packetTemplate, packet.packet);
 		//console.log('------------DynamicSizedPacket---------', packet, packet.packetTemplate.Packet);
+		console.log(packet.packet.CharacterStackData, packet.packetTemplate.CharacterStackData);
 	}
 
 	var buffer = Buffer.allocUnsafe(packet.packetSize);
 	buffer.writeobj(packet.packetTemplate || Packets.cmd[Packets.ids[packet.id]].packet, packet.packet);
 
 	return sendPacket2(packet, buffer);
+}*/
+function sendPacket(packet){
+	if(typeof packet.packet === 'undefined'){
+		//console.log('packet is not yet implemented', packet.id);
+		return {};
+	}
+	
+
+	var buffer = Buffer.allocUnsafe(10240);
+	if(typeof packet.packetTemplate == 'function'){
+		packet.packetTemplate(buffer, packet.packet);
+	}else{
+		fill_packetTemplate_length(packet.packetTemplate, packet.packet);
+		buffer.writeobj(packet.packetTemplate || Packets.cmd[Packets.ids[packet.id]].packet, packet.packet);
+	}
+	
+	var bufferSize = buffer.off;
+	buffer = Buffer.concat([buffer], buffer.off);
+	buffer.off = bufferSize;
+
+	return sendPacket2(packet, buffer);
 }
 function sendPacket2(packet, buffer){
-	console.log('sent:', Packets.ids[packet.id], packet.packet, buffer);//.toString('hex').match(/../g).join(' '));
+	console.log('sent:', Packets.ids[packet.id], packet.packet, buffer);
+	console.log('send:', buffer.toString('hex').match(/../g).join('-'));
 	var enet_sendPacket = enet.sendPacket(buffer, packet.channel);
 
 	console.log('enet_sendPacket:', enet_sendPacket);

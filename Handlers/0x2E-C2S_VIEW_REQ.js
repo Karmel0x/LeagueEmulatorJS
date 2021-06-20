@@ -9,7 +9,7 @@ module.exports = function(q){
 
 	var obj1 = q.packet.readobj(Packets.cmd.C2S_VIEW_REQ.packet);
 	q.packet.off = 0;
-	console.log(obj1);
+	//console.log(obj1);
 
     var S2C_VIEW_ANS = createPacket('S2C_VIEW_ANS');
 	S2C_VIEW_ANS.packet.SyncID = obj1.SyncID;

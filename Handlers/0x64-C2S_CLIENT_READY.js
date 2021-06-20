@@ -23,18 +23,18 @@ module.exports = function(q){
         var isSent = sendPacket(S2C_LOAD_SCREEN_INFO);
     }
     {
-        var S2C_LOAD_HERO = createPacket('S2C_LOAD_HERO');
-        S2C_LOAD_HERO.packet.PlayerId = 1;
-        S2C_LOAD_HERO.packet.SkinId = 0;
-        S2C_LOAD_HERO.packet.SkinName = 'Nautilus';
-        var isSent = sendPacket(S2C_LOAD_HERO);
-    }
-    {
         var S2C_LOAD_NAME = createPacket('S2C_LOAD_NAME');
         S2C_LOAD_NAME.packet.PlayerId = 1;
         S2C_LOAD_NAME.packet.SkinId = 0;
         S2C_LOAD_NAME.packet.playerName = 'Nautilus';
         var isSent = sendPacket(S2C_LOAD_NAME);
+    }
+    {
+        var S2C_LOAD_HERO = createPacket('S2C_LOAD_HERO');
+        S2C_LOAD_HERO.packet.PlayerId = 1;
+        S2C_LOAD_HERO.packet.SkinId = 0;
+        S2C_LOAD_HERO.packet.SkinName = 'Nautilus';
+        var isSent = sendPacket(S2C_LOAD_HERO);
     }
 
 };

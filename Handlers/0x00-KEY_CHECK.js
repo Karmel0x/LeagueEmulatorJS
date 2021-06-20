@@ -13,7 +13,7 @@ module.exports = function(q){
 	{
 		var KEY_CHECK = createPacket('KEY_CHECK');
 		KEY_CHECK.packet.partialKey = [ 0x2A, 0x00, 0xFF ];
-		KEY_CHECK.packet.ClientID = 1;
+		KEY_CHECK.packet.ClientID = 0;
 		KEY_CHECK.packet.PlayerID = 1;
 		var isSent = sendPacket(KEY_CHECK);
 	}

@@ -52,6 +52,21 @@ module.exports = function(q){
 	//S2C_OBJECT_SPAWN.packet.UnknownIsHero = false;
 	//S2C_OBJECT_SPAWN.packet.MovementData = [];
 	//S2C_OBJECT_SPAWN.packet.MovementDataWithHeader_bool = !!S2C_OBJECT_SPAWN.packet.MovementData;
+    S2C_OBJECT_SPAWN.packet.CharacterStackData = [
+        {
+            SkinName: 'Nautilus'
+        }
+    ];
+    //S2C_OBJECT_SPAWN.packet.CharacterStackData_length = S2C_OBJECT_SPAWN.packet.CharacterStackData.length;
 
 	var isSent = sendPacket(S2C_OBJECT_SPAWN);
+	
+	var S2C_GAME_TIMER = createPacket('S2C_GAME_TIMER');
+	S2C_GAME_TIMER.packet.SynchTime = 0;
+	var isSent = sendPacket(S2C_GAME_TIMER);
+	
+	var S2C_GAME_TIMER_UPDATE = createPacket('S2C_GAME_TIMER_UPDATE');
+	S2C_GAME_TIMER_UPDATE.packet.StartTime = 0;
+	var isSent = sendPacket(S2C_GAME_TIMER_UPDATE);
+
 };

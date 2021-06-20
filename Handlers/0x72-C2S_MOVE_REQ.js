@@ -8,13 +8,14 @@ module.exports = function(q){
 
 	{
 		var obj1 = q.packet.readobj(Packets.cmd.C2S_MOVE_REQ.packet[0]);
-        obj1.MovementData = Packets.cmd.C2S_MOVE_REQ.packet[1](q.packet);
+        Packets.cmd.C2S_MOVE_REQ.packet[1](q.packet, obj1);
 		console.log(obj1);
-        console.log('Waypoints', obj1.MovementData.Waypoints);
+        //console.log('Waypoints', obj1.MovementData.Waypoints);
 		q.packet.off = 0;
 
-		console.log(global.Players);
+		//console.log(global.Players);
 		global.Players[0].move(obj1.Position, obj1.MovementData.Waypoints);
+		global.Units[0].move(obj1.Position, obj1.MovementData.Waypoints);
 	}
 
 };

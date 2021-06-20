@@ -16,7 +16,7 @@ function CompressedWaypoint(buffer, size){
     if(size > 1){
         obj.flagsBufferByte = buffer.readobj(['uint8', parseInt((size - 2) / 4 + 1)]);
         obj.flagsBuffer = byteArrayToBinary(obj.flagsBufferByte);
-        console.log('obj.flagsBufferByte, obj.flagsBuffer', obj.flagsBufferByte, obj.flagsBuffer);
+        //console.log('obj.flagsBufferByte, obj.flagsBuffer', obj.flagsBufferByte, obj.flagsBuffer);
     }
 
     obj.lastX = buffer.read1('int16');
@@ -41,7 +41,7 @@ function CompressedWaypoint(buffer, size){
 
     return obj.waypoints;
 }
-function MovementDataNormal(buffer){
+function MovementDataNormal(buffer, object){
     var obj = {};
     if(buffer.size - buffer.off < 9)
         return obj;
@@ -57,7 +57,7 @@ function MovementDataNormal(buffer){
         }
         obj.Waypoints = CompressedWaypoint(buffer, obj.WaypointsSize);
     }
-    return obj;
+    object.MovementData = obj;
 }
 
 module.exports = [
