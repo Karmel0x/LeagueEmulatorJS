@@ -29,19 +29,19 @@ for(var i in Packets.cmd)
 	if(typeof Packets.cmd[i].packet !== 'undefined')
 		PacketsSizes[Packets.cmd[i].id] = packetSize(Packets.cmd[i].packet);
 */
-function createPacket(packetName){
-	if(typeof Packets.cmd[packetName] === 'undefined'){
+function createPacket(packetName, channel = 'S2C'){
+	if(typeof Packets[channel][packetName] === 'undefined'){
 		console.log('packet is not yet implemented [packet]', packetName);
 		return {packet: {}};
 	}
 
-	var packet = JSON.parse(JSON.stringify(Packets.cmd[packetName]));//Object.assign({}, Packets.cmd[packetName]);
+	var packet = JSON.parse(JSON.stringify(Packets[channel][packetName]));//Object.assign({}, Packets[channel][packetName]);
 
-	if(typeof Packets.cmd[packetName].packet == 'function'){
-		packet.packetTemplate = Packets.cmd[packetName].packet;
+	if(typeof Packets[channel][packetName].packet == 'function'){
+		packet.packetTemplate = Packets[channel][packetName].packet;
 		packet.packet = {};
 	}else{
-		packet.packetTemplate = JSON.parse(JSON.stringify(Packets.cmd[packetName].packet));
+		packet.packetTemplate = JSON.parse(JSON.stringify(Packets[channel][packetName].packet));
 		for(var i in packet.packet)
 			packet.packet[i] = 0;
 	}
@@ -114,7 +114,7 @@ function fill_packetTemplate_length(packetTemplate, source){
 	}
 
 	var buffer = Buffer.allocUnsafe(packet.packetSize);
-	buffer.writeobj(packet.packetTemplate || Packets.cmd[Packets.ids[packet.id]].packet, packet.packet);
+	buffer.writeobj(packet.packetTemplate || Packets[packet.id].packet, packet.packet);
 
 	return sendPacket2(packet, buffer);
 }*/
@@ -130,7 +130,7 @@ function sendPacket(packet){
 		packet.packetTemplate(buffer, packet.packet);
 	}else{
 		fill_packetTemplate_length(packet.packetTemplate, packet.packet);
-		buffer.writeobj(packet.packetTemplate || Packets.cmd[Packets.ids[packet.id]].packet, packet.packet);
+		buffer.writeobj(packet.packetTemplate || Packets[packet.id].packet, packet.packet);
 	}
 	
 	var bufferSize = buffer.off;
@@ -140,8 +140,8 @@ function sendPacket(packet){
 	return sendPacket2(packet, buffer);
 }
 function sendPacket2(packet, buffer){
-	console.log('sent:', Packets.ids[packet.id], packet.packet, buffer);
-	console.log('send:', buffer.toString('hex').match(/../g).join('-'));
+	console.log('sent:', Packets[packet.channel][packet.id]?.name || 'unk', packet.packet, buffer);
+	//console.log('send:' + buffer.toString('hex').match(/../g).join('-'));
 	var enet_sendPacket = enet.sendPacket(buffer, packet.channel);
 
 	console.log('enet_sendPacket:', enet_sendPacket);

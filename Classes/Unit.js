@@ -56,17 +56,17 @@ class Unit {
         this.transform.position = position;
 
         
-        var S2C_MOVE_ANS = createPacket('S2C_MOVE_ANS');
+        var MOVE_ANS = createPacket('MOVE_ANS');
 
-        S2C_MOVE_ANS.packet.netId = 0;//this.netId;//0x40000001;
-        S2C_MOVE_ANS.packet.SyncID = performance.now();//0x08882617;
-        S2C_MOVE_ANS.packet.TeleportNetID = this.netId;
-        S2C_MOVE_ANS.packet.TeleportID = 0x00;
-        S2C_MOVE_ANS.packet.Waypoints = Waypoints;
+        MOVE_ANS.packet.netId = 0;//this.netId;
+        MOVE_ANS.packet.SyncID = performance.now();
+        MOVE_ANS.packet.TeleportNetID = this.netId;
+        MOVE_ANS.packet.TeleportID = 0x00;
+        MOVE_ANS.packet.Waypoints = Waypoints;
         
-        //console.log('S2C_MOVE_ANS', S2C_MOVE_ANS);
-        var isSent = sendPacket(S2C_MOVE_ANS);
-        //console.log(S2C_MOVE_ANS.packet.MovementDataNormal[0].MovementData);
+        //console.log('MOVE_ANS', MOVE_ANS);
+        var isSent = sendPacket(MOVE_ANS);
+        //console.log(MOVE_ANS.packet.MovementDataNormal[0].MovementData);
 
     }
 

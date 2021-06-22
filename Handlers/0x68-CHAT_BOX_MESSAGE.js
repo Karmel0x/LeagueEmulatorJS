@@ -6,17 +6,16 @@ const Minion = require("../Classes/Minion");
 
 
 module.exports = function(q){
-    console.log('handle: CHAT_BOX_MESSAGE');
+    console.log('handle: COMMUNICATION.CHAT_BOX_MESSAGE');
 
 
-	var obj1 = q.packet.readobj(Packets.cmd.CHAT_BOX_MESSAGE.packet[0]);
-	Packets.cmd.CHAT_BOX_MESSAGE.packet[1](q.packet, obj1);
+	var obj1 = Packets.COMMUNICATION.CHAT_BOX_MESSAGE.packet(q.packet);
 	q.packet.off = 0;
 	console.log(obj1);
 
-    var CHAT_BOX_MESSAGE = createPacket('CHAT_BOX_MESSAGE');
+    var CHAT_BOX_MESSAGE = createPacket('CHAT_BOX_MESSAGE', 'COMMUNICATION');
 	Object.assign(CHAT_BOX_MESSAGE.packet, obj1);
-	CHAT_BOX_MESSAGE.packet.netId = 0x40000001;
+	CHAT_BOX_MESSAGE.packet.netId = global.Players[0].netId;
 	CHAT_BOX_MESSAGE.packetTemplate = {//CHAT_BOX_MESSAGE // TODO
 		cmd: 'uint8',
 		//netId: 'uint32',
@@ -35,10 +34,10 @@ module.exports = function(q){
 	console.log(CHAT_BOX_MESSAGE);
     var isSent = sendPacket(CHAT_BOX_MESSAGE);
 
-    //var S2C_DEBUG_MESSAGE = createPacket('S2C_DEBUG_MESSAGE');
-	//S2C_DEBUG_MESSAGE.packet.netId = 0x40000001;
-	//S2C_DEBUG_MESSAGE.packet.msg = obj1.msg;
-    //var isSent = sendPacket(S2C_DEBUG_MESSAGE);
+    //var DEBUG_MESSAGE = createPacket('DEBUG_MESSAGE');
+	//DEBUG_MESSAGE.packet.netId = global.Players[0].netId;
+	//DEBUG_MESSAGE.packet.msg = obj1.msg;
+    //var isSent = sendPacket(DEBUG_MESSAGE);
     
 
 	if(obj1.msg[0] === '.'){

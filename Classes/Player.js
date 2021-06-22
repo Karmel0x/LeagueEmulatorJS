@@ -10,6 +10,7 @@ class Player extends Unit {
 
         this.loaded = false;
         this.unit.spawnNum = 5;
+        this.netId = 0x400005ed;
     }
 
     getRespawnTime(){
