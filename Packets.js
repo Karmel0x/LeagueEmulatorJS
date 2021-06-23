@@ -14,15 +14,15 @@ var Packets = {
 		LOAD_SCREEN_INFO:					{id: 0x67, packet: require('./Packets/LOADING_SCREEN/0x67-LOAD_SCREEN_INFO.js')},
 	
 	},
-	COMMUNICATION: {
-		id: 5,
-		CHAT_BOX_MESSAGE:					{id: 0x68, packet: require('./Packets/COMMUNICATION/0x68-CHAT_BOX_MESSAGE.js')},
-	},
 	GAMEPLAY: {
 		id: 2,
 	},
 	LOW_PRIORITY: {
 		id: 4,
+	},
+	COMMUNICATION: {
+		id: 5,
+		CHAT_BOX_MESSAGE:					{id: 0x68, packet: require('./Packets/COMMUNICATION/0x68-CHAT_BOX_MESSAGE.js')},
 	},
 	C2S: {
 		id: 1,
@@ -64,7 +64,7 @@ var Packets = {
     	DisplayLocalizedTutorialChatText:	{id: 0x02},
     	Barrack_SpawnUnit:					{id: 0x03, packet: require('./Packets/S2C/0x03-Barrack_SpawnUnit.js')},
     	SwitchNexusesToOnIdleParticles:		{id: 0x04},
-    	utorialAudioEventFinished:			{id: 0x05},
+    	TutorialAudioEventFinished:			{id: 0x05},
 		SetCircularMovementRestriction:		{id: 0x06},
     	UpdateGoldRedirectTarget:			{id: 0x07},
 		REMOVE_ITEM:						{id: 0x0B},
@@ -113,9 +113,9 @@ var Packets = {
 		CHAMPION_DIE:						{id: 0x5E},
 		MOVE_ANS:							{id: 0x61, packet: require('./Packets/S2C/0x61-MOVE_ANS.js')},
 		START_SPAWN:						{id: 0x62, packet: require('./Packets/S2C/0x62-START_SPAWN.js')},
-		//DASH:								{id: 0x64},
-		//DAMAGE_DONE:						{id: 0x65},
-		//MODIFY_SHIELD:					{id: 0x66},
+		DASH:								{id: 0x64},
+		DAMAGE_DONE:						{id: 0x65},
+		MODIFY_SHIELD:						{id: 0x66},
 		SET_TARGET:							{id: 0x6A},
 		SET_ANIMATION:						{id: 0x6B},
 		SHOW_PROJECTILE:					{id: 0x6E},
