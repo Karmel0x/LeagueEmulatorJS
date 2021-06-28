@@ -1,9 +1,10 @@
-const enet = require('../enetcppjs/build/Release/enetcppjs.node');
-const Handlers = require('./Handlers');
+
+const enet = require('../../../enetcppjs/build/Release/enetcppjs.node');
+//const Handlers = require('./Handlers');
 
 
 async function init_network(){
-	var enet_initialize = Boolean(enet.initialize());
+	var enet_initialize = Boolean(enet.initialize_client());
 	console.log('enet_initialize:', enet_initialize);
 	if(!enet_initialize)
 		return false;
@@ -17,7 +18,7 @@ async function init_network(){
 		}
 
 		if(q.type == enet.ENET_EVENT_TYPE_RECEIVE){
-			Handlers(q);
+			//Handlers(q);
 		}
 	}
 }

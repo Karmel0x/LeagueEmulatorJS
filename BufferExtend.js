@@ -4,49 +4,57 @@ Buffer.prototype.read1 = function(type) {
 		this.off = 0;
 	
 	var variable;
-	switch(type){
-		case 'uint8':variable = this.readUInt8(this.off);break;
-		case 'uint16':variable = this.readUInt16LE(this.off);break;
-		case 'uint32':variable = this.readUInt32LE(this.off);break;
-		case 'uint64':variable = this.readBigUInt64LE(this.off);break;
+	try{
+		switch(type){
+			case 'uint8':variable = this.readUInt8(this.off);break;
+			case 'uint16':variable = this.readUInt16LE(this.off);break;
+			case 'uint32':variable = this.readUInt32LE(this.off);break;
+			case 'uint64':variable = this.readBigUInt64LE(this.off);break;
 
-		case 'int8':variable = this.readInt8(this.off);break;
-		case 'int16':variable = this.readInt16LE(this.off);break;
-		case 'int32':variable = this.readInt32LE(this.off);break;
-		case 'int64':variable = this.readBigInt64LE(this.off);break;
+			case 'int8':variable = this.readInt8(this.off);break;
+			case 'int16':variable = this.readInt16LE(this.off);break;
+			case 'int32':variable = this.readInt32LE(this.off);break;
+			case 'int64':variable = this.readBigInt64LE(this.off);break;
 
-		case 'float':variable = this.readFloatLE(this.off);break;
-		/*case 'float8':{
-			let bb = Buffer.from([0, 0, 0, this.readUInt8(this.off)]);
-			variable = bb.readFloatLE(0);
-		}break;
-		case 'float16':{
-			let bb = Buffer.from([0, 0, this.readUInt8(this.off), this.readUInt8(this.off + 1)]);
-			variable = bb.readFloatLE(0);
-		}break;*/
-		case 'double':variable = this.readDoubleLE(this.off);break;
+			case 'float':variable = this.readFloatLE(this.off);break;
+			/*case 'float8':{
+				let bb = Buffer.from([0, 0, 0, this.readUInt8(this.off)]);
+				variable = bb.readFloatLE(0);
+			}break;
+			case 'float16':{
+				let bb = Buffer.from([0, 0, this.readUInt8(this.off), this.readUInt8(this.off + 1)]);
+				variable = bb.readFloatLE(0);
+			}break;*/
+			case 'double':variable = this.readDoubleLE(this.off);break;
 
-		case 'char':variable = String.fromCharCode(this.readUInt8(this.off));break;
-		case 'string':{
-			variable = '';
-			let stringLength = this.readInt32LE(this.off);
-			this.off += 4;
-			for(let i = 0; i < stringLength; i++){
-				variable += String.fromCharCode(this.readUInt8(this.off));
+			case 'char':{
+				variable = String.fromCharCode(this.readUInt8(this.off));
+				if(variable == '\0')
+					variable = '';
+			}break;
+			case 'string':{
+				variable = '';
+				let stringLength = this.readInt32LE(this.off);
+				this.off += 4;
+				for(let i = 0; i < stringLength; i++){
+					variable += String.fromCharCode(this.readUInt8(this.off));
+					this.off += 1;
+				}
+			}break;
+			case 'string_':{
+				variable = '';
+				let stringLength = this.readInt32LE(this.off) - 1;
+				this.off += 4;
+				for(let i = 0; i < stringLength; i++){
+					variable += String.fromCharCode(this.readUInt8(this.off));
+					this.off += 1;
+				}
+				this.readUInt8(this.off);
 				this.off += 1;
-			}
-		}break;
-		case 'string_':{
-			variable = '';
-			let stringLength = this.readInt32LE(this.off) - 1;
-			this.off += 4;
-			for(let i = 0; i < stringLength; i++){
-				variable += String.fromCharCode(this.readUInt8(this.off));
-				this.off += 1;
-			}
-			this.readUInt8(this.off);
-			this.off += 1;
-		}break;
+			}break;
+		}
+	}catch(e){
+		//console.log('packet structure is incorrect :', e.message);
 	}
 
 	this.off += Buffer.typeSize[type] || 0;
@@ -113,6 +121,8 @@ Buffer.prototype.readobj = function(template){
 					obj[j] = this.readobj(template[0]);
 					//console.log(template[0], this.off);
 				}
+				if(template[0] === 'char')
+					obj = obj.join('');
 				return obj;
 			}
 			

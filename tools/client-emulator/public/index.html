@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+	<script src="/index.js"></script>
+	<link rel="stylesheet" href="/style.css">
+</head>
+<body class="container-fluid text-white bg-dark">
+	<div class="fixed-top bg-dark border-bottom" style="height: 60px;">
+		<button class="btn btn-light" onclick="initialize_client()">initialize_client</button>
+		<button class="btn btn-light" onclick="sendpacket_type('KEY_CHECK', 'HANDSHAKE')" id="send_handshake" disabled>send_handshake</button>
+		<button class="btn btn-light" id="play_pause" disabled>play_pause//todo</button>
+		
+	</div>
+	<div id="packetlist" style="margin-top: 60px;">
+
+	</div>
+</body>
+</html>

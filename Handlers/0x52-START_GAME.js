@@ -15,14 +15,10 @@ async function GameTimeHeartBeat(){
 	}
 }
 
-module.exports = function(q){
+module.exports = function(q, obj1){
 	console.log('handle: C2S.START_GAME');
+	console.log(obj1);
 
-	{
-		var obj1 = q.packet.readobj(Packets.C2S.START_GAME.packet);
-		q.packet.off = 0;
-		console.log(obj1);
-	}
 
 	var START_GAME = createPacket('START_GAME');
 	START_GAME.packet.EnablePause_bitField = true;

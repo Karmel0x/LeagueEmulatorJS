@@ -1,6 +1,6 @@
 module.exports = {//HANDSHAKE.KEY_CHECK
 	cmd: 'uint8',
-	partialKey: ['char', 3],
+	partialKey: ['uint8', 3],
 
 	ClientID: 'uint32',
 	PlayerID: 'uint64',

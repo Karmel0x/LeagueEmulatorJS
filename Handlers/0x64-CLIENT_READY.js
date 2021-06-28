@@ -3,14 +3,10 @@ const Packets = require("../Packets");
 const {createPacket, sendPacket} = require("../PacketUtilities");
 
 
-module.exports = function(q){
+module.exports = function(q, obj1){
     console.log('handle: C2S.CLIENT_READY');// loading screen
+	console.log(obj1);
 
-	{
-		var obj1 = q.packet.readobj(Packets.C2S.CLIENT_READY.packet);
-		q.packet.off = 0;
-		console.log(obj1);
-	}
     
     {
         var LOAD_SCREEN_INFO = createPacket('LOAD_SCREEN_INFO', 'LOADING_SCREEN');

@@ -8,8 +8,9 @@ const CreateHeroDeath = {
     Dead: 2
 };
 
-module.exports = function(q){
+module.exports = function(q, obj1){
     console.log('handle: C2S.CHAR_LOADED');
+	//console.log(obj1);
 
     
     var START_SPAWN = createPacket('START_SPAWN');

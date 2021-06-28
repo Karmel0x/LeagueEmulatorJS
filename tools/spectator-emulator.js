@@ -1,5 +1,5 @@
 
-// spectator emulator for lol 4.20
+// spectator emulator for lol-s4
 // something is wrong and you will see lags in game but anyway it may be usefull
 
 // As first you need to unpack replay file (.lrf) with https://github.com/moonshadow565/LoLReplayUnpacker
@@ -11,12 +11,12 @@ var replayUnpacked = require('../../LOL-REPLAY.rlp.json');
 // or if you just want packets in hex, uncomment these lines and run `node spectator-emulator > LOL-REPLAY.txt`
 //for(let i = 0; i < replayUnpacked.length; i++){
 //    var bytes = Buffer.from(replayUnpacked[i].Bytes, 'base64').toString('hex').match(/../g).join(' ');
-//    console.log(('000000' + parseInt(replayUnpacked[i].Time)).substr(-7), replayUnpacked[i].Channel, ':', bytes);
+//    console.log(('      ' + parseInt(replayUnpacked[i].Time)).substr(-7), replayUnpacked[i].Channel, ':', bytes);
 //}
 //return;
 
 const enet = require('../../enetcppjs/build/Release/enetcppjs.node');
-const Handlers = require('../Handlers');
+//const Handlers = require('../Handlers');
 const Packets = require('../Packets');
 
 async function start_spectator(){

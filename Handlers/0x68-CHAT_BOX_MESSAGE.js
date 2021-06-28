@@ -5,13 +5,10 @@ const {createPacket, sendPacket} = require("../PacketUtilities");
 const Minion = require("../Classes/Minion");
 
 
-module.exports = function(q){
+module.exports = function(q, obj1){
     console.log('handle: COMMUNICATION.CHAT_BOX_MESSAGE');
-
-
-	var obj1 = Packets.COMMUNICATION.CHAT_BOX_MESSAGE.packet(q.packet);
-	q.packet.off = 0;
 	console.log(obj1);
+
 
     var CHAT_BOX_MESSAGE = createPacket('CHAT_BOX_MESSAGE', 'COMMUNICATION');
 	Object.assign(CHAT_BOX_MESSAGE.packet, obj1);

@@ -19,6 +19,7 @@ var Packets = {
 	},
 	LOW_PRIORITY: {
 		id: 4,
+		PING_LOAD_INFO:						{id: 0x95, packet: require('./Packets/S2C/0x95-PING_LOAD_INFO.js')},//?
 	},
 	COMMUNICATION: {
 		id: 5,

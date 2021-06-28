@@ -9,14 +9,10 @@ const SummonerSpells = {
 	w: 0x06496ea8,
 };
 
-module.exports = function(q){
+module.exports = function(q, obj1){
 	console.log('handle: C2S.SYNCH_VERSION');
+	console.log(obj1);
 
-	{
-		var obj1 = q.packet.readobj(Packets.C2S.SYNCH_VERSION.packet);
-		q.packet.off = 0;
-		console.log(obj1);
-	}
 
 	var SYNCH_VERSION = createPacket('SYNCH_VERSION');
 	

@@ -1,7 +1,4 @@
-
-const Packets = require("./Packets");
-const {createPacket, sendPacket} = require("./PacketUtilities");
-
+const HandlersParse = require("./HandlersParse");
 
 function handle1(q){
 
@@ -31,20 +28,17 @@ var Handlers = {
     0x08: {handler: require('./Handlers/0x08-HEART_BEAT.js')},
 };
 
-
 module.exports = async function(q){
 	
 	//console.log('recv:' + q.packet.toString('hex').match(/../g).join('-'));
-	var obj1 = q.packet.readobj(Packets.Header);
-	q.packet.off = 0;
-	console.log('rece:', q.channelID, obj1.cmd, Packets[q.channelID || 0][obj1.cmd]?.name || 'unk', q);
-	Packets.netId = obj1.netId;
+	var obj1 = HandlersParse.parsePacket(q);
+	//console.log(obj1);
 
 	try {
 		if(typeof Handlers[obj1.cmd] == 'undefined' || typeof Handlers[obj1.cmd].handler == 'undefined')
-			return console.log('packet handler not implemented yet', obj1.cmd);
+			return console.log('packet handler not implemented yet :', obj1.cmd.toString(16));
 
-		Handlers[obj1.cmd].handler(q);
+		Handlers[obj1.cmd].handler(q, obj1);
 	}catch(e){
 		console.log(e.stack);
 	}

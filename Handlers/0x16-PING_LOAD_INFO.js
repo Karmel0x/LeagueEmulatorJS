@@ -3,14 +3,11 @@ const Packets = require("../Packets");
 const {createPacket, sendPacket} = require("../PacketUtilities");
 
 
-module.exports = function(q){
+module.exports = function(q, obj1){
     console.log('handle: C2S.PING_LOAD_INFO');
+	console.log(obj1);
 
 	{
-		var obj1 = q.packet.readobj(Packets.C2S.PING_LOAD_INFO.packet);
-		q.packet.off = 0;
-		console.log(obj1);
-
         //if(obj1.ETA == 0){
         //    var START_GAME = createPacket('START_GAME');
         //    var isSent = sendPacket(START_GAME);

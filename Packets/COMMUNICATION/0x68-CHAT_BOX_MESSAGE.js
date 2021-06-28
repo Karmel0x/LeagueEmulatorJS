@@ -21,7 +21,7 @@ module.exports = function(buffer){//COMMUNICATION.CHAT_BOX_MESSAGE
 		//pad1: 'uint8',
 	});
 
-    obj.msg = buffer.readobj(['char', obj.messageSize]).join('');
+    obj.msg = buffer.readobj(['char', obj.messageSize]);
     obj.pad1 = buffer.read1('uint8');
 	
 	return obj;
