@@ -1,7 +1,8 @@
-module.exports = {//C2S.SYNCH_VERSION
-	cmd: 'uint8',
-	netId: 'uint32',
+var BasePacket = require('../BasePacket');
 
-	ClientID: 'int32',
-	version: ['char', 256],
+module.exports = class extends BasePacket {//C2S.SYNCH_VERSION
+	struct = {
+		ClientID: 'int32',
+		version: ['char', 256],
+	}
 };

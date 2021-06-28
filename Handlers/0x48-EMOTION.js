@@ -10,8 +10,8 @@ module.exports = function(q, obj1){
     
 	{
         var EMOTION = createPacket('EMOTION');
-        EMOTION.packet.netId = global.Players[0].netId;
-        EMOTION.packet.EmoteID = obj1.EmoteID;
+        EMOTION.netId = global.Players[0].netId;
+        EMOTION.EmoteID = obj1.EmoteID;
         var isSent = sendPacket(EMOTION);
 	}
 

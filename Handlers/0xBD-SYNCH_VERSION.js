@@ -26,11 +26,11 @@ module.exports = function(q, obj1){
 	//if (DradisInit)
 	//    bitfield |= 8;
 	
-	SYNCH_VERSION.packet.bitField = bitfield;
-	SYNCH_VERSION.packet.MapToLoad = 1;
-	SYNCH_VERSION.packet.VersionString = 'Version 4.20.0.315 [PUBLIC]';
+	SYNCH_VERSION.bitField = bitfield;
+	SYNCH_VERSION.MapToLoad = 1;
+	SYNCH_VERSION.VersionString = 'Version 4.20.0.315 [PUBLIC]';
 
-	SYNCH_VERSION.packet.PlayerInfo = [
+	SYNCH_VERSION.PlayerInfo = [
 		{
 			PlayerID: 1,
 			SummonorLevel: 30,
@@ -50,18 +50,18 @@ module.exports = function(q, obj1){
 		{PlayerID: -1}, {PlayerID: -1}, {PlayerID: -1}, {PlayerID: -1}, {PlayerID: -1}, {PlayerID: -1},
 		{PlayerID: -1}, {PlayerID: -1}, {PlayerID: -1}, {PlayerID: -1}, {PlayerID: -1},
 	];
-	SYNCH_VERSION.packet.MapMode = 'CLASSIC';
-	SYNCH_VERSION.packet.PlatformID = 'NA1';
-	//SYNCH_VERSION.packet.GameFeatures = 0;
-	//SYNCH_VERSION.packet.GameFeatures |= (1 << 0x1);
-	//SYNCH_VERSION.packet.GameFeatures |= (1 << 0x4);
-	//SYNCH_VERSION.packet.GameFeatures |= (1 << 0x7);
-	//SYNCH_VERSION.packet.GameFeatures |= (1 << 0x8);
-	//SYNCH_VERSION.packet.GameFeatures |= (1 << 0x6);
-	SYNCH_VERSION.packet.GameFeatures = 487826;
-	SYNCH_VERSION.packet.EnabledDradisMessages = [];
+	SYNCH_VERSION.MapMode = 'CLASSIC';
+	SYNCH_VERSION.PlatformID = 'NA1';
+	//SYNCH_VERSION.GameFeatures = 0;
+	//SYNCH_VERSION.GameFeatures |= (1 << 0x1);
+	//SYNCH_VERSION.GameFeatures |= (1 << 0x4);
+	//SYNCH_VERSION.GameFeatures |= (1 << 0x7);
+	//SYNCH_VERSION.GameFeatures |= (1 << 0x8);
+	//SYNCH_VERSION.GameFeatures |= (1 << 0x6);
+	SYNCH_VERSION.GameFeatures = 487826;
+	SYNCH_VERSION.EnabledDradisMessages = [];
 	for(let i = 0; i < 19; i++)
-		SYNCH_VERSION.packet.EnabledDradisMessages[i] = true;
+		SYNCH_VERSION.EnabledDradisMessages[i] = true;
 
 	var isSent = sendPacket(SYNCH_VERSION);
 };

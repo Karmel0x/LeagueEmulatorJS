@@ -1,13 +1,13 @@
 
+var BasePacket = require('../BasePacket');
 var EventData = {
     
 };
 
-module.exports = {//S2C.ANNOUNCE
-	cmd: 'uint8',
-	netId: 'uint32',
-
-	EventID: 'uint8',
-	Source: 'uint32',
-    EventData: EventData,
+module.exports = class extends BasePacket {//S2C.ANNOUNCE
+	struct = {
+		EventID: 'uint8',
+		Source: 'uint32',
+		EventData: EventData,
+	}
 };

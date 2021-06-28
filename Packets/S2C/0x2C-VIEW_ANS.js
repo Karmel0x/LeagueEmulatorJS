@@ -1,8 +1,7 @@
-var Vector3 = require('../SharedStruct/Vector3');
+var BasePacket = require('../BasePacket');
 
-module.exports = {//S2C.VIEW_ANS
-	cmd: 'uint8',
-	netId: 'uint32',
-
-	SyncID: 'uint8',
+module.exports = class extends BasePacket {//S2C.VIEW_ANS
+	struct = {
+		SyncID: 'uint8',
+	}
 };

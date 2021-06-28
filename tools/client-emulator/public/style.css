@@ -1,3 +1,9 @@
 .packetrow{
     border-bottom: 1px solid white;
 }
+.Bytes_Parsed_textarea{
+    width:100%;
+    background-color: black;
+    color: white;
+    border: 0;
+}

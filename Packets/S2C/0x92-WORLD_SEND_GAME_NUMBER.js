@@ -1,7 +1,8 @@
-module.exports = {//S2C.WORLD_SEND_GAME_NUMBER
-	cmd: 'uint8',
-	netId: 'uint32',
+var BasePacket = require('../BasePacket');
 
-	gameId: 'uint64',
-	data: ['char', 128],
+module.exports = class extends BasePacket {//S2C.WORLD_SEND_GAME_NUMBER
+	struct = {
+		gameId: 'uint64',
+		data: ['char', 128],
+	}
 };

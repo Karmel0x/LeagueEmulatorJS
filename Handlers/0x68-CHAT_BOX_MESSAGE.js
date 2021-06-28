@@ -11,29 +11,14 @@ module.exports = function(q, obj1){
 
 
     var CHAT_BOX_MESSAGE = createPacket('CHAT_BOX_MESSAGE', 'COMMUNICATION');
-	Object.assign(CHAT_BOX_MESSAGE.packet, obj1);
-	CHAT_BOX_MESSAGE.packet.netId = global.Players[0].netId;
-	CHAT_BOX_MESSAGE.packetTemplate = {//CHAT_BOX_MESSAGE // TODO
-		cmd: 'uint8',
-		//netId: 'uint32',
-	
-		ClientID: 'int32',
-		netId: 'uint32',
-		Localized: 'uint8',
-		ChatType: 'uint32',
-	
-		paramsSize: 'int32',
-		messageSize: 'int32',
-		pars: ['uint8', 32],
-		msg: ['char', obj1.messageSize],
-		pad1: 'uint8',
-	};
+	Object.assign(CHAT_BOX_MESSAGE, obj1);
+	CHAT_BOX_MESSAGE.netId = global.Players[0].netId;
 	console.log(CHAT_BOX_MESSAGE);
     var isSent = sendPacket(CHAT_BOX_MESSAGE);
 
     //var DEBUG_MESSAGE = createPacket('DEBUG_MESSAGE');
-	//DEBUG_MESSAGE.packet.netId = global.Players[0].netId;
-	//DEBUG_MESSAGE.packet.msg = obj1.msg;
+	//DEBUG_MESSAGE.netId = global.Players[0].netId;
+	//DEBUG_MESSAGE.msg = obj1.msg;
     //var isSent = sendPacket(DEBUG_MESSAGE);
     
 

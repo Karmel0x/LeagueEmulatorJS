@@ -17,9 +17,12 @@ socket.addEventListener('open', (event) => {
 
 // Listen for messages
 socket.addEventListener('message', (event) => {
-	console.log('Message from server', event.data);
+	//console.log('Message from server', event.data);
 	var res = JSON.parse(event.data);
 	if(res.cmd == 'newpacket'){
+
+		var parsedLines = parseInt((res.packet.Parsed || '').split('\n').length + (res.packet.Parsed || '').length / 100);
+		parsedLines = parsedLines > 10 ? 10 : parsedLines;
 
 		var newpacket = document.createElement('div');
 		newpacket.className = 'Packet';
@@ -31,8 +34,8 @@ socket.addEventListener('message', (event) => {
 		<div class="Channel col">` + res.packet.channelName + `.` + res.packet.cmdName + `</div>
 	</div>
 	<div class="row">
-		<div class="Bytes col" style="overflow: auto">Bytes:` + (res.packet.Bytes || '') + `</div>
-		<div class="Parsed col" style="overflow: auto;max-height: 200px">Parsed:<pre>` + (res.packet.Parsed || '') + `</pre></div>
+		<div class="Bytes col"><textarea class="Bytes_Parsed_textarea" rows="` + parsedLines + `">` + (res.packet.Bytes || '') + `</textarea></div>
+		<div class="Parsed col"><textarea class="Bytes_Parsed_textarea" rows="` + parsedLines + `">` + (res.packet.Parsed || '') + `</textarea></div>
 	</div>
 	<div class="row">
 		<div class="col"><button class="btn btn-light" onclick="sendpacket(` + (res.packet.Id || 0) + `)">send packet</button></div>

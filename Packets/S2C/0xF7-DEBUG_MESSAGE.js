@@ -1,6 +1,7 @@
-module.exports = {//S2C.DEBUG_MESSAGE
-	cmd: 'uint8',
-	netId: 'uint32',
+var BasePacket = require('../BasePacket');
 
-    msg: ['char', 512]
+module.exports = class extends BasePacket {//S2C.DEBUG_MESSAGE
+	struct = {
+		msg: ['char', 512]
+	}
 };

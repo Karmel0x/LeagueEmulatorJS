@@ -1,0 +1,35 @@
+{
+	"MinGridPosition": {
+		"X": -328.903,
+		"Y": -67.2875,
+		"Z": -110.1923
+	},
+	"MaxGridPosition": {
+		"X": 14311.771,
+		"Y": 184.9734,
+		"Z": 14556.88
+	},
+	"TranslationMaxGridPosition": {
+		"X": 0.020012738,
+		"Y": 0.0,
+		"Z": 0.0200449
+	},
+	"CellSize": 50.0,
+	"CellCountX": 293,
+	"CellCountY": 294,
+
+	"RegionTagTable": null,
+	"SampledHeightsCountX": 587,
+	"SampledHeightsCountY": 589,
+	"SampledHeightsDistance": {
+		"X": 24.984087,
+		"Y": 24.944
+	},
+    
+	"MapWidth": 13982.868,
+	"MapHeight": 14446.6875,
+	"MiddleOfMap": {
+		"X": 6991.434,
+		"Y": 7223.3438
+	}
+}

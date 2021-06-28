@@ -9,6 +9,6 @@ module.exports = function(q, obj1){
     
 
 	var QUERY_STATUS_ANS = createPacket('QUERY_STATUS_ANS');
-    QUERY_STATUS_ANS.packet.ok = true;
+    QUERY_STATUS_ANS.ok = true;
 	var isSent = sendPacket(QUERY_STATUS_ANS);
 };

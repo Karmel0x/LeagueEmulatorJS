@@ -3,6 +3,7 @@ var ConstantsUnit = require('../Constants/Unit');
 //const Packets = require("../Packets");
 const {createPacket, sendPacket, sendPacket2} = require("../PacketUtilities");
 var FunctionsModel = require('../Functions/Model');
+var TranslateCenteredCoordinates = require('../Functions/TranslateCenteredCoordinates');
 
 
 /*function convert_Waypoints_to_CompressedWaypoints(object, Waypoints){
@@ -52,21 +53,22 @@ class Unit {
     }
 
     move(position, wp){
+
         let Waypoints = wp;//[this.transform.position, position];
         this.transform.position = position;
 
         
         var MOVE_ANS = createPacket('MOVE_ANS');
 
-        MOVE_ANS.packet.netId = 0;//this.netId;
-        MOVE_ANS.packet.SyncID = performance.now();
-        MOVE_ANS.packet.TeleportNetID = this.netId;
-        MOVE_ANS.packet.TeleportID = 0x00;
-        MOVE_ANS.packet.Waypoints = Waypoints;
+        MOVE_ANS.netId = 0;//this.netId;
+        MOVE_ANS.SyncID = performance.now();
+        MOVE_ANS.TeleportNetID = this.netId;
+        MOVE_ANS.TeleportID = 0x00;
+        MOVE_ANS.Waypoints = Waypoints;
         
         //console.log('MOVE_ANS', MOVE_ANS);
         var isSent = sendPacket(MOVE_ANS);
-        //console.log(MOVE_ANS.packet.MovementDataNormal[0].MovementData);
+        //console.log(MOVE_ANS.MovementDataNormal[0].MovementData);
 
     }
 

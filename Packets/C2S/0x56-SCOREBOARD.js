@@ -1,7 +1,8 @@
-module.exports = {//C2S.SCOREBOARD
-	cmd: 'uint8',
-	netId: 'uint32',
+var BasePacket = require('../BasePacket');
 
-	unk1: ['uint8', 16],
-	unk2: 'uint32',//SyncID?
+module.exports = class extends BasePacket {//C2S.SCOREBOARD
+	struct = {
+		unk1: ['uint8', 16],
+		unk2: 'uint32',//SyncID?
+	}
 };

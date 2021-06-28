@@ -1,6 +1,7 @@
-module.exports = {//C2S.AUTO_ATTACK_OPTION
-	cmd: 'uint8',
-	netId: 'uint32',
+var BasePacket = require('../BasePacket');
 
-	turnedOn: 'uint8',
+module.exports = class extends BasePacket {//C2S.AUTO_ATTACK_OPTION
+	struct = {
+		turnedOn: 'uint8',
+	}
 };

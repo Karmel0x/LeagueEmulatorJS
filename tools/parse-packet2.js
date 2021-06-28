@@ -28,7 +28,7 @@ packet.buffer = Buffer.from(packet.bytes);
 
 
 
-var MovementDataNormal = require('../Packets/ReadStruct/MovementDataNormal');
+var MovementDataNormal = require('../Packets/SharedStruct/MovementDataNormal');
 
 
 function MOVE_ANS(buffer){//C2S.MOVE_ANS
@@ -39,7 +39,7 @@ function MOVE_ANS(buffer){//C2S.MOVE_ANS
         SyncID: 'int32',
         MovementDataNormal_length: 'int16',
     });
-    MovementDataNormal(buffer, obj);
+    MovementDataNormal.reader(buffer, obj);
     return obj;
 };
 var obj1 = MOVE_ANS(packet.buffer);

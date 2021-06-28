@@ -8,7 +8,7 @@ module.exports = function(q, obj1){
 	//console.log(obj1);
 
     var VIEW_ANS = createPacket('VIEW_ANS');
-	VIEW_ANS.packet.SyncID = obj1.SyncID;
+	VIEW_ANS.SyncID = obj1.SyncID;
     var isSent = sendPacket(VIEW_ANS);
     
 };

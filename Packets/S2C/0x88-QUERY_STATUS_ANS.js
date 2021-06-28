@@ -1,6 +1,7 @@
-module.exports = {//S2C.QUERY_STATUS_ANS
-	cmd: 'uint8',
-	netId: 'uint32',
+var BasePacket = require('../BasePacket');
 
-	ok: 'uint8',
+module.exports = class extends BasePacket {//S2C.QUERY_STATUS_ANS
+	struct = {
+		ok: 'uint8',
+	}
 };

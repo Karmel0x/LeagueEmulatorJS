@@ -1,3 +1,4 @@
+var BasePacket = require('../BasePacket');
 var Vector2 = require('../SharedStruct/Vector2');
 var Vector3 = require('../SharedStruct/Vector3');
 
@@ -128,82 +129,79 @@ var SpeedParams = {
 };
 
 
-module.exports = function(buffer, source){//S2C.OBJECT_SPAWN
+module.exports = class extends BasePacket {//S2C.OBJECT_SPAWN
+	writer = function(buffer){
 
-	buffer.writeobj({
-		cmd: 'uint8',
-		netId: 'uint32',
-	}, source);
+		buffer.write1('uint16', this.Packet?.length || 0);
+		if(this.Packet?.length)
+			buffer.writeobj([Packet, this.Packet.length], this.Packet);
+			
+		buffer.write1('uint8', this.ItemData?.length || 0);
+		if(this.ItemData?.length)
+			buffer.writeobj([ItemData, this.ItemData.length], this.ItemData);
 
-	buffer.write1('uint16', source.Packet?.length || 0);
-	if(source.Packet?.length)
-		buffer.writeobj([Packet, source.Packet.length], source.Packet);
-		
-	buffer.write1('uint8', source.ItemData?.length || 0);
-	if(source.ItemData?.length)
-		buffer.writeobj([ItemData, source.ItemData.length], source.ItemData);
+		if(this.isTurret)
+			return;
 
-	if(source.isTurret)
-		return;
+		buffer.write1('uint8', !!this.ShieldValues);
+		if(this.ShieldValues)
+			buffer.writeobj(ShieldValues, this.ShieldValues);
 
-	buffer.write1('uint8', !!source.ShieldValues);
-	if(source.ShieldValues)
-		buffer.writeobj(ShieldValues, source.ShieldValues);
-
-	buffer.write1('int32', source.CharacterStackData?.length || 0);
-	if(source.CharacterStackData?.length)
-		buffer.writeobj([CharacterStackData, source.CharacterStackData.length], source.CharacterStackData);
-
-	buffer.writeobj({
-		LookAtNetID: 'uint32',
-		LookAtType: 'uint8',
-		LookAtPosition: Vector3,
-	}, source);
-
-	buffer.write1('int32', source.Buff?.length || 0);
-	if(source.Buff?.length)
-		buffer.writeobj([Buff, source.Buff.length], source.Buff);
-
-	buffer.write1('uint8', source.UnknownIsHero || 0);
-
-	if(source.MovementData){
-		
-		source.MovementData.type = source.MovementData.Waypoints ? (
-				source.MovementData.SpeedParams ? MovementDataType.WithSpeed : MovementDataType.Normal
-			) : MovementDataType.Stop;
-
-		if(!source.MovementData.SyncID)
-			source.MovementData.SyncID = performance.now();
+		buffer.write1('int32', this.CharacterStackData?.length || 0);
+		if(this.CharacterStackData?.length)
+			buffer.writeobj([CharacterStackData, this.CharacterStackData.length], this.CharacterStackData);
 
 		buffer.writeobj({
-			type: 'uint8',
-			SyncID: 'int32',
-		}, source.MovementData);
-		
-		if(source.MovementData.type == MovementDataType.WithSpeed){
-			buffer.writeobj({
-				bitfield1: 'uint8',
-				TeleportNetID: 'uint32',
-				TeleportID: 'uint8',
-				SpeedParams: SpeedParams,
-			}, source.MovementData);
+			LookAtNetID: 'uint32',
+			LookAtType: 'uint8',
+			LookAtPosition: Vector3,
+		}, this);
+
+		buffer.write1('int32', this.Buff?.length || 0);
+		if(this.Buff?.length)
+			buffer.writeobj([Buff, this.Buff.length], this.Buff);
+
+		buffer.write1('uint8', this.UnknownIsHero || 0);
+
+		if(this.MovementData){
 			
-			CompressedWaypoint(buffer, source.MovementData.Waypoints);
-		}
-		else if(source.MovementData.type == MovementDataType.Normal){
+			this.MovementData.type = this.MovementData.Waypoints ? (
+					this.MovementData.SpeedParams ? MovementDataType.WithSpeed : MovementDataType.Normal
+				) : MovementDataType.Stop;
+
+			if(!this.MovementData.SyncID)
+				this.MovementData.SyncID = performance.now();
+
 			buffer.writeobj({
-				bitfield1: 'uint8',
-				TeleportNetID: 'uint32',
-				TeleportID: 'uint8',
-			}, source.MovementData);
+				type: 'uint8',
+				SyncID: 'int32',
+			}, this.MovementData);
 			
-			CompressedWaypoint(buffer, source.MovementData.Waypoints);
-		}
-		else if(source.MovementData.type == MovementDataType.Stop){
-			buffer.writeobj({
-				Position: Vector2,
-				Forward: Vector2,
-			}, source.MovementData);
+			if(this.MovementData.type == MovementDataType.WithSpeed){
+				buffer.writeobj({
+					bitfield1: 'uint8',
+					TeleportNetID: 'uint32',
+					TeleportID: 'uint8',
+					SpeedParams: SpeedParams,
+				}, this.MovementData);
+				
+				CompressedWaypoint.writer(buffer, this.MovementData.Waypoints);
+			}
+			else if(this.MovementData.type == MovementDataType.Normal){
+				buffer.writeobj({
+					bitfield1: 'uint8',
+					TeleportNetID: 'uint32',
+					TeleportID: 'uint8',
+				}, this.MovementData);
+				
+				CompressedWaypoint.writer(buffer, this.MovementData.Waypoints);
+			}
+			else if(this.MovementData.type == MovementDataType.Stop){
+				buffer.writeobj({
+					Position: Vector2,
+					Forward: Vector2,
+				}, this.MovementData);
+			}
 		}
 	}
 };

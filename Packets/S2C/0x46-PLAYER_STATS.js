@@ -84,11 +84,11 @@
     // sort of length (when above 0 sends malformed buffer error)
     public short Padding;
 };*/
+var BasePacket = require('../BasePacket');
 
-module.exports = {//S2C.PLAYER_STATS
-	cmd: 'uint8',
-	netId: 'uint32',
-
-	size: 'int32',
-	data: ['uint8', 'size|-4'],
+module.exports = class extends BasePacket {//S2C.PLAYER_STATS
+	struct = {
+        size: 'int32',
+        data: ['uint8', 'size|-4'],
+    }
 };

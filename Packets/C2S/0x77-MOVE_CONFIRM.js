@@ -1,7 +1,8 @@
-module.exports = {//C2S.MOVE_CONFIRM
-	cmd: 'uint8',
-	netId: 'uint32',
+var BasePacket = require('../BasePacket');
 
-	SyncID: 'int32',
-	TeleportCount: 'uint8',
+module.exports = class extends BasePacket {//C2S.MOVE_CONFIRM
+	struct = {
+		SyncID: 'int32',
+		TeleportCount: 'uint8',
+	}
 };

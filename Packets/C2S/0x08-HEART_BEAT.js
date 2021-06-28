@@ -1,7 +1,8 @@
-module.exports = {//C2S.HEART_BEAT
-	cmd: 'uint8',
-	netId: 'uint32',
+var BasePacket = require('../BasePacket');
 
-	unk1: 'uint32',
-	unk2: 'uint32',
+module.exports = class extends BasePacket {//C2S.HEART_BEAT
+	struct = {
+		unk1: 'uint32',
+		unk2: 'uint32',
+	}
 };

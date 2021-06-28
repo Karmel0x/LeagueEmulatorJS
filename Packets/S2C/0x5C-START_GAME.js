@@ -1,6 +1,7 @@
-module.exports = {//S2C.START_GAME
-	cmd: 'uint8',
-	netId: 'uint32',
+var BasePacket = require('../BasePacket');
 
-	EnablePause_bitField: 'uint8',// != 1
+module.exports = class extends BasePacket {//S2C.START_GAME
+	struct = {
+		EnablePause_bitField: 'uint8',// != 1
+	}
 };

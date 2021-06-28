@@ -34,9 +34,15 @@ wss.onMessage = (data) => {
 				channel: replayUnpacked[i].Channel,
 				buffer: buffer,
 			});
+
+			delete parsed.struct_header;
+			delete parsed.struct;
+			delete parsed.info;
+
 			var parsedStr = '';
 			try{
-				parsedStr = JSON.stringify(parsed, (key, value) => typeof value === "bigint" ? value.toString() + "n" : value, 2);
+				parsedStr = JSON.stringify(parsed, (key, value) =>
+					typeof value === "bigint" ? value.toString() + "n" : value, 2);
 			}catch(e){}
 
 			wss.clients.sendToAll(JSON.stringify({
@@ -62,9 +68,9 @@ wss.onMessage = (data) => {
         enet.sendPacket(buffer, replayUnpacked[i].Channel);
 	}else if(res.cmd == 'sendpacket_type'){
 		var KEY_CHECK = createPacket(res.name, res.channel);
-		KEY_CHECK.packet.partialKey = [ 0x2A, 0x00, 0xFF ];
-		KEY_CHECK.packet.ClientID = 0;
-		KEY_CHECK.packet.PlayerID = 1;
+		KEY_CHECK.partialKey = [ 0x2A, 0x00, 0xFF ];
+		KEY_CHECK.ClientID = 0;
+		KEY_CHECK.PlayerID = 1;
 		var isSent = sendPacket(KEY_CHECK);
 	}
 

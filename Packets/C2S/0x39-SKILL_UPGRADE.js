@@ -1,7 +1,8 @@
-module.exports = {//C2S.SKILL_UPGRADE
-	cmd: 'uint8',
-	netId: 'uint32',
+var BasePacket = require('../BasePacket');
 
-	Slot: 'uint8',
-	IsEvolve: 'uint8',
+module.exports = class extends BasePacket {//C2S.SKILL_UPGRADE
+	struct = {
+		Slot: 'uint8',
+		IsEvolve: 'uint8',
+	}
 };

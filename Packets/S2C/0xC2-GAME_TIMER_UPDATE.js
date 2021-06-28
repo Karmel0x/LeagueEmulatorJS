@@ -1,6 +1,7 @@
-module.exports = {//S2C.GAME_TIMER_UPDATE
-	cmd: 'uint8',
-	netId: 'uint32',
+var BasePacket = require('../BasePacket');
 
-	StartTime: 'float',
+module.exports = class extends BasePacket {//S2C.GAME_TIMER_UPDATE
+	struct = {
+		StartTime: 'float',
+	}
 };

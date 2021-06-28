@@ -1,7 +1,8 @@
-module.exports = {//C2S.LOCK_CAMERA
-	cmd: 'uint8',
-	netId: 'uint32',
+var BasePacket = require('../BasePacket');
 
-	Locked: 'uint8',
-	ClientID: 'int32',
+module.exports = class extends BasePacket {//C2S.LOCK_CAMERA
+	struct = {
+		Locked: 'uint8',
+		ClientID: 'int32',
+	}
 };

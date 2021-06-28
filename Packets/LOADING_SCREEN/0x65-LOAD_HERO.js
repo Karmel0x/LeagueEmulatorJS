@@ -1,8 +1,13 @@
-module.exports = {//LOADING_SCREEN.LOAD_HERO
-	cmd: 'uint8',
-	//netId: 'uint32',
+var BasePacket = require('../BasePacket');
 
-	PlayerId: 'int64',
-	SkinId: 'int32',
-	SkinName: 'string_',
+module.exports = class extends BasePacket {//LOADING_SCREEN.LOAD_HERO
+	struct_header = {
+		cmd: 'uint8',
+		//netId: 'uint32',
+	}
+	struct = {
+		PlayerId: 'int64',
+		SkinId: 'int32',
+		SkinName: 'string_',
+	}
 };

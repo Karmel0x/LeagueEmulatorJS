@@ -30,28 +30,24 @@ for(var i in Packets.cmd)
 		PacketsSizes[Packets.cmd[i].id] = packetSize(Packets.cmd[i].packet);
 */
 function createPacket(packetName, channel = 'S2C'){
-	if(typeof Packets[channel][packetName] === 'undefined'){
-		console.log('packet is not yet implemented [packet]', packetName);
-		return {packet: {}};
+	if(typeof Packets[channel] === 'undefined' || typeof Packets[channel][packetName] === 'undefined'){
+		console.log('packet is not yet implemented', channel, packetName);
+		return {};
 	}
 
-	var packet = JSON.parse(JSON.stringify(Packets[channel][packetName]));//Object.assign({}, Packets[channel][packetName]);
+	var packet = new Packets[channel][packetName].packet;
 
-	if(typeof Packets[channel][packetName].packet == 'function'){
-		packet.packetTemplate = Packets[channel][packetName].packet;
-		packet.packet = {};
-	}else{
-		packet.packetTemplate = JSON.parse(JSON.stringify(Packets[channel][packetName].packet));
-		for(var i in packet.packet)
-			packet.packet[i] = 0;
-	}
-	if(typeof packet.packetTemplate === 'undefined'){
-		console.log('packet is not yet [packet.packet]', packetName);
-		return {packet: {}};
-	}
-
-	packet.packetName = packetName;
-	packet.packet.cmd = packet.id;
+	packet.cmd = Packets[channel][packetName].id;
+	packet.info = {
+		channel: {
+			id: Packets[channel].id,
+			name: Packets[channel].name,
+		},
+		packet: {
+			id: Packets[channel][packetName].id,
+			name: Packets[channel][packetName].name,
+		}
+	};
 
 	return packet;
 }
@@ -97,40 +93,22 @@ function fill_packetTemplate_length(packetTemplate, source){
 
 }
 
-/*function sendPacket(packet){
-	if(typeof packet.packet === 'undefined' || typeof PacketsSizes[packet.id] === 'undefined'){
-		//console.log('packet is not yet implemented', packet.id);
-		return {};
-	}
-	
-	packet.packetSize = PacketsSizes[Packets.cmd[packet.packetName].id];
-	if(isNaN(packet.packetSize)){
-		//if(!packet.packetTemplate)
-		//	packet.packetTemplate = JSON.parse(JSON.stringify(Packets.cmd[packet.packetName].packet));
-		fill_packetTemplate_length(packet.packetTemplate, packet.packet);
-		packet.packetSize = packetSize(packet.packetTemplate, packet.packet);
-		//console.log('------------DynamicSizedPacket---------', packet, packet.packetTemplate.Packet);
-		console.log(packet.packet.CharacterStackData, packet.packetTemplate.CharacterStackData);
-	}
-
-	var buffer = Buffer.allocUnsafe(packet.packetSize);
-	buffer.writeobj(packet.packetTemplate || Packets[packet.id].packet, packet.packet);
-
-	return sendPacket2(packet, buffer);
-}*/
 function sendPacket(packet){
-	if(typeof packet.packet === 'undefined'){
+	if(typeof packet === 'undefined'){
 		//console.log('packet is not yet implemented', packet.id);
 		return {};
 	}
-	
 
 	var buffer = Buffer.allocUnsafe(10240);
-	if(typeof packet.packetTemplate == 'function'){
-		packet.packetTemplate(buffer, packet.packet);
-	}else{
-		fill_packetTemplate_length(packet.packetTemplate, packet.packet);
-		buffer.writeobj(packet.packetTemplate || Packets[packet.id].packet, packet.packet);
+	if(typeof packet.struct_header !== 'undefined'){
+		buffer.writeobj(packet.struct_header, packet);
+	}
+	if(typeof packet.struct !== 'undefined'){
+		fill_packetTemplate_length(packet.struct, packet);
+		buffer.writeobj(packet.struct, packet);
+	}
+	if(typeof packet.writer !== 'undefined'){
+		packet.writer(buffer);
 	}
 	
 	var bufferSize = buffer.off;
@@ -140,9 +118,9 @@ function sendPacket(packet){
 	return sendPacket2(packet, buffer);
 }
 function sendPacket2(packet, buffer){
-	console.log('sent:', Packets[packet.channel][packet.id]?.name || 'unk', packet.packet, buffer);
+	console.log('sent:', packet.info.channel.name + '.' + packet.info.packet.name, buffer);
 	//console.log('send:' + buffer.toString('hex').match(/../g).join('-'));
-	var enet_sendPacket = enet.sendPacket(buffer, packet.channel);
+	var enet_sendPacket = enet.sendPacket(buffer, packet.info.channel.id);
 
 	console.log('enet_sendPacket:', enet_sendPacket);
 	return enet_sendPacket;

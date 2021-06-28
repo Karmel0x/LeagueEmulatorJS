@@ -1,9 +1,10 @@
-module.exports = {//S2C.START_SPAWN
-	cmd: 'uint8',
-	netId: 'uint32',
+var BasePacket = require('../BasePacket');
 
-	BotCountOrder: 'uint8',
-	BotCountChaos: 'uint8',
+module.exports = class extends BasePacket {//S2C.START_SPAWN
+	struct = {
+		BotCountOrder: 'uint8',
+		BotCountChaos: 'uint8',
+	}
 };
 
 	/*unk1: 'uint8',//0x40

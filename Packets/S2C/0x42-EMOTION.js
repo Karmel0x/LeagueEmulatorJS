@@ -1,6 +1,7 @@
-module.exports = {//S2C.EMOTION
-	cmd: 'uint8',
-	netId: 'uint32',
+var BasePacket = require('../BasePacket');
 
-	EmoteID: 'uint8',
+module.exports = class extends BasePacket {//S2C.EMOTION
+	struct = {
+		EmoteID: 'uint8',
+	}
 };

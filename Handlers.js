@@ -30,9 +30,9 @@ var Handlers = {
 
 module.exports = async function(q){
 	
-	//console.log('recv:' + q.packet.toString('hex').match(/../g).join('-'));
+	//console.log('recv:' + q.buffer.toString('hex').match(/../g).join('-'));
 	var obj1 = HandlersParse.parsePacket(q);
-	//console.log(obj1);
+	console.log(obj1);
 
 	try {
 		if(typeof Handlers[obj1.cmd] == 'undefined' || typeof Handlers[obj1.cmd].handler == 'undefined')

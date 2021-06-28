@@ -1,17 +1,15 @@
+var BasePacket = require('../BasePacket');
 var Vector2 = require('../SharedStruct/Vector2');
-var MovementDataNormal = require('../ReadStruct/MovementDataNormal');
+var MovementDataNormal = require('../SharedStruct/MovementDataNormal');
 
-
-module.exports = function(buffer){//C2S.MOVE_REQ
-    var obj = buffer.readobj({
-        cmd: 'uint8',
-        netId: 'uint32',
-
+module.exports = class extends BasePacket {//C2S.MOVE_REQ
+    struct = {
         OrderType: 'uint8',
         Position: Vector2,
         TargetNetID: 'uint32',
         //MovementData: MovementDataNormal,
-    });
-    MovementDataNormal(buffer, obj);
-    return obj;
+    }
+    reader = function(buffer){
+        MovementDataNormal.reader(buffer, this);
+    }
 };
