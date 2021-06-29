@@ -11,5 +11,5 @@ module.exports = function(q, obj1){
     //var SCOREBOARD? = createPacket('SCOREBOARD?');
     //var isSent = sendPacket(SCOREBOARD?);
 	
-    //global.Players[0].loaded = true;
+    global.Players[0].loaded = true;
 };

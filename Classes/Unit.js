@@ -41,7 +41,7 @@ class Unit {
             spawnNum: num,
             name: name,
         };
-        console.log('Created Unit', this);
+        console.log(Date.now(), 'Created Unit', this);
 
         this.model = FunctionsModel(this.unit.type, this.unit.team, this.unit.name);
 
@@ -58,7 +58,7 @@ class Unit {
         this.transform.position = position;
 
         
-        var MOVE_ANS = createPacket('MOVE_ANS');
+        var MOVE_ANS = createPacket('MOVE_ANS', 'LOW_PRIORITY');
 
         MOVE_ANS.netId = 0;//this.netId;
         MOVE_ANS.SyncID = performance.now();

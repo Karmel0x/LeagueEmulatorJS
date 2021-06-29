@@ -66,7 +66,7 @@ function initialize_client(){
 	}));
 	document.getElementById('send_handshake').disabled = false;
 }
-function loadpackets(limit = 2500){
+function loadpackets(limit = 5000){
 	socket.send(JSON.stringify({
 		cmd: 'loadpackets',
 		limit: limit,

@@ -12,7 +12,7 @@ module.exports = function(q, obj1){
         //    var START_GAME = createPacket('START_GAME');
         //    var isSent = sendPacket(START_GAME);
         //}
-        var PING_LOAD_INFO = createPacket('PING_LOAD_INFO');
+        var PING_LOAD_INFO = createPacket('PING_LOAD_INFO', 'LOW_PRIORITY');
         PING_LOAD_INFO.ClientID = obj1.ClientID;
         PING_LOAD_INFO.PlayerID = 1;
         PING_LOAD_INFO.Percentage = obj1.Percentage;

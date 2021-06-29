@@ -1,5 +1,5 @@
 // sends recorded packets to the server, will give more control than in game client and possibility to verify response
-// ... but for now not much here but trash, as first would be better to implement missing packet structures
+// ... for now it's more 'todo' than 'ready', but it's parsing packets at least
 
 // run with 'node client-emulator' then open link in your browser: `http://127.0.0.1/`
 //Example recordings: https://github.com/Karmel0x/LeagueEmulatorJS/issues/2

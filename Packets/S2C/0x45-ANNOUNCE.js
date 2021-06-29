@@ -1,4 +1,3 @@
-
 var BasePacket = require('../BasePacket');
 var EventData = {
     

@@ -4,7 +4,7 @@ const {createPacket, sendPacket} = require("../PacketUtilities");
 
 
 module.exports = function(q, obj1){
-    console.log('handle: C2S.CLIENT_READY');// loading screen
+    console.log('handle: LOADING_SCREEN.CLIENT_READY');
 	console.log(obj1);
 
     

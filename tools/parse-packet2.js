@@ -31,7 +31,7 @@ packet.buffer = Buffer.from(packet.bytes);
 var MovementDataNormal = require('../Packets/SharedStruct/MovementDataNormal');
 
 
-function MOVE_ANS(buffer){//C2S.MOVE_ANS
+function MOVE_ANS(buffer){//LOW_PRIORITY.MOVE_ANS
     var obj = buffer.readobj({
         cmd: 'uint8',
         netId: 'uint32',

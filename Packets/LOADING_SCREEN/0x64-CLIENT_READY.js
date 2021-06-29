@@ -1,6 +1,6 @@
 var BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//C2S.CLIENT_READY
+module.exports = class extends BasePacket {//LOADING_SCREEN.CLIENT_READY
 	struct_header = {
 		cmd: 'uint8',
 		//netId: 'uint32',

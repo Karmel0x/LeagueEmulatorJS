@@ -20,6 +20,7 @@ async function spawnMinions(spawnMinions_count){
 		for(let j = 0; j < 3; j++){
 			new Minion('BLUE', 'MALEE', j);
 			new Minion('RED', 'MALEE', j);
+			break;//
 		}
 		await global.Utilities.wait(800);
 	}
@@ -31,6 +32,7 @@ async function spawnMinions(spawnMinions_count){
 				new Minion('BLUE', 'CANNON', j);
 			if(!superMinionsSpawn['RED'][j])
 				new Minion('RED', 'CANNON', j);
+			break;//
 		}
 		await global.Utilities.wait(800);
 	}
@@ -40,6 +42,7 @@ async function spawnMinions(spawnMinions_count){
 		for(let j = 0; j < 3; j++){
 			new Minion('BLUE', 'CASTER', j);
 			new Minion('RED', 'CASTER', j);
+			break;//
 		}
 		await global.Utilities.wait(800);
 	}
@@ -48,16 +51,14 @@ async function spawnMinions(spawnMinions_count){
 async function wait_spawnMinions(){
 	return;///////////
 	
-	var spawnMinions_next = global.Game.started + 9.0;//test:90
+	var spawnMinions_next = global.Game.started + 9.0;
 	var spawnMinions_count = 0;
 
 	for(;;){
-		await global.Utilities.wait(10);
-
 		while(spawnMinions_next > Date.now() / 1000)
-			continue;
+			await global.Utilities.wait(100);
 
-		spawnMinions_next = Date.now() / 1000 + 3.0;//test:30
+		spawnMinions_next = Date.now() / 1000 + 30;
 		spawnMinions(++spawnMinions_count);
 	}
 }

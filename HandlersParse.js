@@ -4,7 +4,7 @@ function parseBody(buffer, channel, cmd){
 	var obj1 = {};
 	if(typeof Packets[channel] == 'undefined' || typeof Packets[channel][cmd] == 'undefined' || typeof Packets[channel][cmd].packet == 'undefined'){
 		obj1.error = ['packet not defined', (Packets[channel]?.name || channel), (Packets[channel][cmd]?.name || cmd.toString(16))];
-        console.log(obj1.error);
+        console.log(obj1.error, buffer);
         return obj1;
     }
 
@@ -17,7 +17,7 @@ function parseBody(buffer, channel, cmd){
 		obj1.reader(buffer);
 
 	if(buffer.off != buffer.length)
-		console.log('packet structure is incorrect : buffer.off != buffer.length :', (Packets[channel]?.name || channel), ':', (Packets[channel][cmd]?.name || cmd));
+		console.log('packet structure is incorrect : buffer.off != buffer.length :', buffer.off, buffer.length, (Packets[channel]?.name || channel), ':', (Packets[channel][cmd]?.name || cmd));
 
 	//console.log(obj1);
 	return obj1;

@@ -1,7 +1,7 @@
 var BasePacket = require('../BasePacket');
 var MovementDataNormal = require('../SharedStruct/MovementDataNormal');
 
-module.exports = class extends BasePacket {//S2C.MOVE_ANS
+module.exports = class extends BasePacket {//LOW_PRIORITY.MOVE_ANS
     writer = function(buffer){
         this.MovementDataNormal_length = 1;
         buffer.writeobj({
