@@ -17,10 +17,17 @@ var PlayerInfo = {
 	AllyBadgeID: 'uint8',
 	EnemyBadgeID: 'uint8',
 };
-
+//54 00 00 00 00 01 00 00 00 01 00 00 00 00 00 00 00 1e 00 1c af 64 03 a8 6e 49 06 00 64 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+//54 00 00 00 00 01 01 00 00 00 01 00 00 00 00 00 00 00 1e 00 1c af 64 03 a8 6e 49 06 00 64 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
 module.exports = class extends BasePacket {//S2C.SYNCH_VERSION
 	struct = {
-		bitField: 'uint8',
+		//bitField: 'uint8',
+		bitField: ['bitfield', {
+			VersionMatches: 1,
+			WriteToClientFile: 2,
+			MatchedGame: 4,
+			DradisInit: 8,
+		}],
 		MapToLoad: 'int32',
 		PlayerInfo: [PlayerInfo, 12],
 		VersionString: ['char', 256],

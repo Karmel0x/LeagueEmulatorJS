@@ -24,27 +24,28 @@ function start_game(){
 async function wait_start_game(){
 
     while(!global.Game.started){
-        await global.Utilities.wait(10);
+        await global.Utilities.wait(100);
 
         if(!global.Players || Object.keys(global.Players).length === 0){
             console.log('[weird] players has been not initialized yet?');
             continue;
         }
 
-        if(global.Game.initialized + 300 < Date.now() / 1000)
-            start_game();// start game if 5 minutes passed
-        else{
-            let playersLoaded = true;
-            for(let i in global.Players){
-                if(!global.Players[i].loaded){
-                    playersLoaded = false;
-                    break;
-                }
-            }
-            if(playersLoaded)
-                start_game();// or all players has loaded
-        }
-
+        //if(global.Game.initialized + 300 < Date.now() / 1000)
+        //    start_game();// start game if 5 minutes passed
+        //else{
+        //    let playersLoaded = true;
+        //    for(let i in global.Players){
+        //        if(!global.Players[i].loaded){
+        //            playersLoaded = false;
+        //            break;
+        //        }
+        //    }
+        //    if(playersLoaded)
+        //        start_game();// or all players has loaded
+        //}
+        if(global.command_START_GAME)
+            start_game();
     }
     
 }

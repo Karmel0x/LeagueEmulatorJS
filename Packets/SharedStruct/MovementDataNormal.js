@@ -37,6 +37,7 @@ module.exports = {//MovementDataNormal
             if(obj.HasTeleportID){
                 obj.TeleportID = buffer.read1('uint8');
             }
+            //console.log(object, obj);
             obj.Waypoints = CompressedWaypoint.reader(buffer, obj.WaypointsSize);
         }
         object.MovementData = obj;

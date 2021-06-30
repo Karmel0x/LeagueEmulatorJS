@@ -17,8 +17,9 @@ module.exports = class extends BasePacket {//S2C.
 		LifePercentage: 'float',
 		TimedSpeedDelta: 'float',
 		TimedSpeedDeltaTime: 'float',
-		bitfield: 'uint8',
-        //this.Bounced = (bitfield & 1) != 0;
+		bitfield: ['bitfield', {
+			Bounced: 1,
+		}],
 		CastInfo: CastInfo,
 	}
 };

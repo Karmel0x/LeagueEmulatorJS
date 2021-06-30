@@ -2,7 +2,8 @@ var BasePacket = require('../BasePacket');
 var MovementDataNormal = require('../SharedStruct/MovementDataNormal');
 
 module.exports = class extends BasePacket {//LOW_PRIORITY.MOVE_ANS
-    writer = function(buffer){
+    writer(buffer){
+		super.writer(buffer);
         this.MovementDataNormal_length = 1;
         buffer.writeobj({
             SyncID: 'int32',
@@ -13,7 +14,8 @@ module.exports = class extends BasePacket {//LOW_PRIORITY.MOVE_ANS
             if(this.Waypoints)
                 MovementDataNormal.writer(buffer, this);
     }
-    reader = function(buffer){
+    reader(buffer){
+		super.reader(buffer);
         Object.assign(this, buffer.readobj({
             SyncID: 'int32',
             MovementDataNormal_length: 'int16',

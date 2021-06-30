@@ -25,5 +25,7 @@ module.exports = function(q, obj1){
 	if(obj1.msg[0] === '.'){
 		if(obj1.msg[1] === 'q')
 			new Minion('BLUE', 'MALEE', 0);
+		if(obj1.msg[1] === 'w')
+			global.command_START_GAME = true;
 	}
 };

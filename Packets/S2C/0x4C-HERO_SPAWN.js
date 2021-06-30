@@ -6,7 +6,10 @@ module.exports = class extends BasePacket {//S2C.HERO_SPAWN
 		ClientID: 'int32',
 		NetNodeID: 'uint8',
 		SkillLevel: 'uint8',
-		TeamIsOrder_IsBot_bitfield1: 'uint8',
+		bitfield: ['bitfield', {
+			TeamIsOrder: 1,
+			IsBot: 2,
+		}],
 		BotRank: 'uint8',
 		SpawnPositionIndex: 'uint8',
 		SkinID: 'int32',
@@ -15,6 +18,9 @@ module.exports = class extends BasePacket {//S2C.HERO_SPAWN
 		DeathDurationRemaining: 'float',
 		TimeSinceDeath: 'float',
 		CreateHeroDeath: 'uint32',
-		Unknown1_Unknown2_bitfield2: 'uint8',
+		bitfield2: ['bitfield', {
+			Unknown1: 1,
+			Unknown2: 2,
+		}],
 	}
 };

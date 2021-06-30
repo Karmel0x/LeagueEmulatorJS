@@ -116,6 +116,14 @@ Buffer.prototype.readobj = function(template){
 			return this.read1(template);
 		if(typeof template == 'object'){
 			if(Array.isArray(template)){
+				if(template[0] === 'bitfield'){
+					let bitfield = this.read1('uint8');
+					let obj = {};
+					for(let i in template[1])
+						obj[i] = (bitfield & template[1][i]) == 0;
+					return obj;
+				}
+
 				let obj = [];
 				for(var j = 0; j < template[1]; j++){
 					obj[j] = this.readobj(template[0]);
@@ -147,6 +155,13 @@ Buffer.prototype.writeobj = function(template, source){
 			return this.write1(template, source || 0);
 		if(typeof template == 'object'){
 			if(Array.isArray(template)){
+				if(template[0] === 'bitfield'){
+					let bitfield = 0;
+					for(let i in source)
+						bitfield |= !!source[i] * template[1][i];
+					this.write1('uint8', bitfield);
+					return;
+				}
 				for(var j = 0; j < template[1]; j++){
 					this.writeobj(template[0], source[j] || 0);
 					//console.log(template[0], this.off);
@@ -183,4 +198,5 @@ Buffer.typeSize = {
 	'char': 1,
 	'string': 0,
 	'string_': 0,
+	'bitfield': 1,
 };

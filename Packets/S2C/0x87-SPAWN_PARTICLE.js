@@ -1,27 +1,21 @@
 var BasePacket = require('../BasePacket');
 var Vector3 = require('../SharedStruct/Vector3');
 
+var Vector3b = {
+    X: 'int16',
+    Y: 'float',
+    Z: 'int16',
+};
+
 var FXCreateData = {
     TargetNetID: 'uint32',
     NetAssignedNetID: 'uint32',
     CasterNetID: 'uint32',
     BindNetID: 'uint32',
     KeywordNetID: 'uint32',
-    Position: {
-        X: 'int16',
-        Y: 'float',
-        Z: 'int16',
-    },
-    TargetPosition: {
-        X: 'int16',
-        Y: 'float',
-        Z: 'int16',
-    },
-    OwnerPosition: {
-        X: 'int16',
-        Y: 'float',
-        Z: 'int16',
-    },
+    Position: Vector3b,
+    TargetPosition: Vector3b,
+    OwnerPosition: Vector3b,
     OrientationVector: Vector3,
     TimeSpent: 'float',
     ScriptScale: 'float',

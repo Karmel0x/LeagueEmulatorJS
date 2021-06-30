@@ -28,12 +28,13 @@ module.exports = {
     Cooldown: 'float',
     StartCastTime: 'float',
 
-    bitfield: 'uint8',
-    //data.IsAutoAttack = (bitfield & 1) != 0;
-    //data.IsSecondAutoAttack = (bitfield & 2) != 0;
-    //data.IsForceCastingOrChannel = (bitfield & 4) != 0;
-    //data.IsOverrideCastPosition = (bitfield & 8) != 0;
-    //data.IsClickCasted = (bitfield & 16) != 0;
+    bitfield: ['bitfield', {
+        IsAutoAttack: 1,
+        IsSecondAutoAttack: 2,
+        IsForceCastingOrChannel: 4,
+        IsOverrideCastPosition: 8,
+        IsClickCasted: 16,
+    }],
 
 	SpellSlot: 'uint8',
     ManaCost: 'float',

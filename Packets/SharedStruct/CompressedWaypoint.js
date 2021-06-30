@@ -15,7 +15,12 @@ function binaryToByteArray(binaryArray){
 function byteArrayToBinary(array){
     let ret = [];
     for(let i in array){
-        let r = ('00000000' + array[i].toString(2)).substr(-8).split('').reverse();
+        if(typeof array[i] === 'undefined'){
+            console.log("[weird] typeof array[i] === 'undefined'");
+            console.trace();
+            throw true;
+        }
+        let r = ('00000000' + (array[i] || 0).toString(2)).substr(-8).split('').reverse();
         
         for(let j in r)
             ret.push(r[j] == '1');

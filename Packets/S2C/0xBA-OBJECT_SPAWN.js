@@ -130,8 +130,8 @@ var SpeedParams = {
 
 
 module.exports = class extends BasePacket {//S2C.OBJECT_SPAWN
-	writer = function(buffer){
-
+	writer(buffer){
+		super.writer(buffer);
 		buffer.write1('uint16', this.Packet?.length || 0);
 		if(this.Packet?.length)
 			buffer.writeobj([Packet, this.Packet.length], this.Packet);

@@ -21,12 +21,14 @@ module.exports = class extends BasePacket {//COMMUNICATION.CHAT_BOX_MESSAGE
 		//msg: ['char', 'messageSize'],
 		//pad1: 'uint8',
 	}
-	reader = function(buffer){
+	reader(buffer){
+		super.reader(buffer);
 		this.msg = buffer.readobj(['char', this.messageSize]);
 		this.pad1 = buffer.read1('uint8');
 	}
-	writer = function(buffer){
-		buffer.writeobj(['char', this.messageSize]);
+	writer(buffer){
+		super.writer(buffer);
+		buffer.writeobj(['char', this.messageSize], this.msg);
 		buffer.write1('uint8', this.pad1 || 0);
 	}
 };

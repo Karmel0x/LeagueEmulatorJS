@@ -1,5 +1,6 @@
 // sends recorded packets to the server, will give more control than in game client and possibility to verify response
 // ... for now it's more 'todo' than 'ready', but it's parsing packets at least
+// bad code and bad behavior here, but who cares, it's only for testing / developing purposes
 
 // run with 'node client-emulator' then open link in your browser: `http://127.0.0.1/`
 //Example recordings: https://github.com/Karmel0x/LeagueEmulatorJS/issues/2
@@ -18,6 +19,7 @@ const Packets = require("../../Packets");
 require("../../BufferExtend");
 const {createPacket, sendPacket} = require("../../PacketUtilities");
 const HandlersParse = require("../../HandlersParse");
+var BatchPacket = require('../../Packets/BatchPacket');
 
 wss.onMessage = (data) => {
 
@@ -34,6 +36,44 @@ wss.onMessage = (data) => {
 				channel: replayUnpacked[i].Channel,
 				buffer: buffer,
 			});
+			
+			if(parsed.cmd == 0xFF){
+    			buffer.off = 0;
+				let batchPackets = new BatchPacket();
+				batchPackets.reader(buffer);//console.log(batchPackets);
+				for(let i = 0; i < batchPackets.packets.length; i++){
+					packet = batchPackets.packets[i];
+					
+					packet.channel = 3;
+					if(typeof Packets[0][packet.cmd] !== 'undefined')
+						packet.channel = 0;
+					else if(typeof Packets[1][packet.cmd] !== 'undefined')
+						packet.channel = 1;
+					else if(typeof Packets[2][packet.cmd] !== 'undefined')
+						packet.channel = 2;
+					else if(typeof Packets[4][packet.cmd] !== 'undefined')
+						packet.channel = 4;
+					else if(typeof Packets[5][packet.cmd] !== 'undefined')
+						packet.channel = 5;
+					else if(typeof Packets[7][packet.cmd] !== 'undefined')
+						packet.channel = 1;
+
+					if(packet.cmd == 0xFE){
+						packet.cmd1 = packet.cmd;
+						packet.buffer.off = 9;
+						packet.cmd = packet.buffer.read1('uint16');
+					}
+
+					packet.buffer.off = 0;
+					//console.log(packet);
+					Object.assign(packet, HandlersParse.parseBody(packet.buffer, packet.channel || 0, packet.cmd));
+					delete packet.struct_header;
+					delete packet.struct;
+					delete packet.info;
+					delete packet.buffer;
+				}
+				parsed = batchPackets;
+			}
 
 			delete parsed.struct_header;
 			delete parsed.struct;
@@ -54,7 +94,7 @@ wss.onMessage = (data) => {
 					Bytes: bytes,
 					Parsed: parsedStr,
 					channelName: Packets[replayUnpacked[i].Channel || 0]?.name || replayUnpacked[i].Channel,
-					cmdName: Packets[replayUnpacked[i].Channel || 0][parsed.cmd]?.name || parsed.cmd,
+					cmdName: Packets[replayUnpacked[i].Channel || 0][parsed.cmd2 || parsed.cmd]?.name || parsed.cmd2 || parsed.cmd,
 				},
 			}));
 

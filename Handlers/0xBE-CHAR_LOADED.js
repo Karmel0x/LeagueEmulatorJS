@@ -25,12 +25,11 @@ module.exports = function(q, obj1){
     HERO_SPAWN.SkinID = 0;
     HERO_SPAWN.Name = 'Test';//playerName
     HERO_SPAWN.Skin = 'Ezreal';//modelName
-    var bitfield1 = 0;
-    //if(TeamIsOrder)
-        bitfield1 |= 0x01;
-    //if(IsBot)
-    //    bitfield1 |= 0x02;
-    HERO_SPAWN.TeamIsOrder_IsBot_bitfield1 = bitfield1;
+
+    HERO_SPAWN.bitfield = {
+        TeamIsOrder: true,
+        IsBot: false
+    };
     HERO_SPAWN.CreateHeroDeath = CreateHeroDeath.Alive;
     HERO_SPAWN.SpawnPositionIndex = 0;//2;
     var isSent = sendPacket(HERO_SPAWN);

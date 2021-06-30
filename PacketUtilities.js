@@ -38,6 +38,11 @@ function createPacket(packetName, channel = 'S2C'){
 	var packet = new Packets[channel][packetName].packet;
 
 	packet.cmd = Packets[channel][packetName].id;
+	if(packet.cmd > 0xFF){
+		packet.cmd = 0xFE;
+		packet.cmd2 = Packets[channel][packetName].id;
+	}
+
 	packet.info = {
 		channel: {
 			id: Packets[channel].id,
@@ -52,46 +57,6 @@ function createPacket(packetName, channel = 'S2C'){
 	return packet;
 }
 
-function childByAddressPlusMath(element, address){
-    var addressSplitted = address.split('.');
-    if(addressSplitted.length > 1)
-        return childByAddressPlusMath(element[addressSplitted.shift()] || 0, addressSplitted.join('.'));
-
-	var addressMath = address.split('|');
-	address = addressMath[0] || '';
-	addressMath = addressMath[1] || '';
-	if(typeof element[address] == 'undefined')
-		return 0;
-
-	if(addressMath.length){
-		if(addressMath[0] == '+')
-			element[address] += parseInt(addressMath[1]);
-		else if(addressMath[0] == '-')
-			element[address] -= parseInt(addressMath[1]);
-		else if(addressMath[0] == '*')
-			element[address] *= parseInt(addressMath[1]);
-		else if(addressMath[0] == '/')
-			element[address] /= parseInt(addressMath[1]);
-		else if(addressMath[0] == '!'){
-			element[address] = !element[address];
-			if(addressMath[1] == '!')
-				element[address] = !element[address];
-		}
-	}
-
-    return element[address];
-}
-function fill_packetTemplate_length(packetTemplate, source){
-    for(let i in packetTemplate)
-        if(typeof packetTemplate[i] == 'object' && typeof packetTemplate[i][1] == 'string'){
-            packetTemplate[i][1] = childByAddressPlusMath(source, packetTemplate[i][1]);
-			if(isNaN(packetTemplate[i][1]))
-				packetTemplate[i][1] = 0;
-			if(typeof packetTemplate[i][0] == 'object')
-				fill_packetTemplate_length(packetTemplate[i][0], source[i][0] || 0);
-		}
-
-}
 
 function sendPacket(packet){
 	if(typeof packet === 'undefined'){
@@ -99,21 +64,21 @@ function sendPacket(packet){
 		return {};
 	}
 
-	var buffer = Buffer.allocUnsafe(10240);
-	if(typeof packet.struct_header !== 'undefined'){
-		buffer.writeobj(packet.struct_header, packet);
-	}
-	if(typeof packet.struct !== 'undefined'){
-		fill_packetTemplate_length(packet.struct, packet);
-		buffer.writeobj(packet.struct, packet);
-	}
-	if(typeof packet.writer !== 'undefined'){
+	var buffer = Buffer.allocUnsafe(packet.baseSize);
+	//if(typeof packet.struct_header !== 'undefined')
+	//	buffer.writeobj(packet.struct_header, packet);
+	//if(typeof packet.struct !== 'undefined'){
+	//	fill_packetTemplate_length(packet.struct, packet);
+	//	buffer.writeobj(packet.struct, packet);
+	//}
+	//if(typeof packet.writer !== 'undefined')
 		packet.writer(buffer);
-	}
 	
-	var bufferSize = buffer.off;
-	buffer = Buffer.concat([buffer], buffer.off);
-	buffer.off = bufferSize;
+	if(buffer.off != buffer.size){
+		var bufferSize = buffer.off;
+		buffer = Buffer.concat([buffer], buffer.off);
+		buffer.off = bufferSize;
+	}
 
 	return sendPacket2(packet, buffer);
 }

@@ -4,9 +4,10 @@ var Vector2 = require('../SharedStruct/Vector2');
 
 module.exports = class extends BasePacket {//S2C.
 	struct = {
-		bitfield: 'uint8',
-        //this.IsSummonerSpellBook = (bitfield & 0x01) != 0;
-        //this.IsHudClickCast = (bitfield & 0x02) != 0;
+		bitfield: ['bitfield', {
+			IsSummonerSpellBook: 1,
+			IsHudClickCast: 2,
+		}],
 		Slot: 'uint8',
 		Position: Vector2,
 		EndPosition: Vector2,

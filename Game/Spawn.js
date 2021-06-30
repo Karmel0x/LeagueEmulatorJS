@@ -49,7 +49,7 @@ async function spawnMinions(spawnMinions_count){
 
 }
 async function wait_spawnMinions(){
-	return;///////////
+	//return;///////////
 	
 	var spawnMinions_next = global.Game.started + 9.0;
 	var spawnMinions_count = 0;

@@ -20,7 +20,8 @@ module.exports = class extends BasePacket {//S2C.CHANGE_SPELL
 	struct = {
 		ChangeSpellData: ChangeSpellData,
 	}
-    reader = function(buffer){
+    reader(buffer){
+		super.reader(buffer);
         if(this.ChangeSpellData.ChangeSlotSpellDataType == ChangeSlotSpellDataType.TargetingType){
             this.TargetingType = buffer.read1('uint8');
         }
@@ -44,7 +45,8 @@ module.exports = class extends BasePacket {//S2C.CHANGE_SPELL
             this.Targets = buffer.readobj(['uint32', this.Targets_length]);
         }
     }
-    writer = function(buffer){
+    writer(buffer){
+		super.writer(buffer);
         if(!this.ChangeSpellData.ChangeSlotSpellDataType){
             if(this.TargetingType)
                 this.ChangeSpellData.ChangeSlotSpellDataType = ChangeSlotSpellDataType.TargetingType;

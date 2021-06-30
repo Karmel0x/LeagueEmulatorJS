@@ -6,7 +6,8 @@ module.exports = class extends BasePacket {//LOW_PRIORITY.CHAR_STATS
 		SyncID: 'int32',
 		count: 'uint8',
 	}
-	reader = function(buffer){
+	reader(buffer){
+		super.reader(buffer);
 		this.ReplicationData = [];
 		for(let i = 0; i < this.count; i++){
 			this.ReplicationData[i] = buffer.readobj({

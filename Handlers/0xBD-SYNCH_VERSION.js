@@ -16,17 +16,9 @@ module.exports = function(q, obj1){
 
 	var SYNCH_VERSION = createPacket('SYNCH_VERSION');
 	
-	var bitfield = 0;
-	//if (VersionMatches)
-		bitfield |= 1;
-	//if (WriteToClientFile)
-	//    bitfield |= 2;
-	//if (MatchedGame)
-	//    bitfield |= 4;
-	//if (DradisInit)
-	//    bitfield |= 8;
-	
-	SYNCH_VERSION.bitField = bitfield;
+	SYNCH_VERSION.bitField = {
+		VersionMatches: true,
+	};
 	SYNCH_VERSION.MapToLoad = 1;
 	SYNCH_VERSION.VersionString = 'Version 4.20.0.315 [PUBLIC]';
 
@@ -63,5 +55,6 @@ module.exports = function(q, obj1){
 	for(let i = 0; i < 19; i++)
 		SYNCH_VERSION.EnabledDradisMessages[i] = true;
 
+	console.log(SYNCH_VERSION);
 	var isSent = sendPacket(SYNCH_VERSION);
 };
