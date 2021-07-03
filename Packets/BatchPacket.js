@@ -1,15 +1,7 @@
 var BasePacket = require('./BasePacket');
 const Packets = require("../Packets");
 var Types = require('../Constants/Types');
-
-function getInt32Bytes_reversed(x){
-	var bytes = [];
-	for(var i = 4; i > 0; --i){
-		bytes.push(x & 255);
-		x = x >> 8;
-	}
-	return bytes;
-}
+const { getIntBytes_r } = require("../Utilities");
 
 module.exports = class {//S2C.BATCH
 	reader(buffer){
@@ -35,7 +27,7 @@ module.exports = class {//S2C.BATCH
 			//console.log(bitfield, packet, packetData);
 			let packet2 = {
 				cmd: packet.cmd || 0,
-				buffer: Buffer.from([packet.cmd].concat(getInt32Bytes_reversed(packet.netId), packetData))
+				buffer: Buffer.from([packet.cmd].concat(getIntBytes_r(packet.netId), packetData))
 			};
 			this.packets.push(packet2);
 		}

@@ -1,32 +1,6 @@
 var Types = require('../../Constants/Types');
+const { getIntBytes_r, binaryToByteArray, byteArrayToBinary } = require("../../Utilities");
 
-function getInt64Bytes_reversed(x){
-    var bytes = [];
-    for(var i = 8; i > 0; --i){
-        bytes.push(x & 255);
-        x = x >> 8;
-    }
-    return bytes;
-}
-function binaryToByteArray(binaryArray){
-    return parseInt(binaryArray.split('').reverse().join(''), 2);
-}
-
-function byteArrayToBinary(array){
-    let ret = [];
-    for(let i in array){
-        if(typeof array[i] === 'undefined'){
-            console.log("[weird] typeof array[i] === 'undefined'");
-            console.trace();
-            throw true;
-        }
-        let r = ('00000000' + (array[i] || 0).toString(2)).substr(-8).split('').reverse();
-        
-        for(let j in r)
-            ret.push(r[j] == '1');
-    }
-    return ret;
-}
 
 module.exports = {//CompressedWaypoint
     reader: (buffer, size) => {
@@ -76,7 +50,7 @@ module.exports = {//CompressedWaypoint
                 flagsBinary += +(relativeWaypoint.Y <= Types.maxValues['int8'] && relativeWaypoint.Y >= Types.minValues['int8']);
             }
             
-            var flagsBuffer = getInt64Bytes_reversed(binaryToByteArray(flagsBinary));
+            var flagsBuffer = getIntBytes_r(binaryToByteArray(flagsBinary), 8);
             var flagsCount = parseInt((Waypoints.length - 2) / 4 + 1);
             buffer.writeobj(['uint8', flagsCount], flagsBuffer);
     

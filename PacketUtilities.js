@@ -74,7 +74,7 @@ function sendPacket(packet){
 	//if(typeof packet.writer !== 'undefined')
 		packet.writer(buffer);
 	
-	if(buffer.off != buffer.size){
+	if(buffer.off && buffer.off != buffer.size){
 		var bufferSize = buffer.off;
 		buffer = Buffer.concat([buffer], buffer.off);
 		buffer.off = bufferSize;

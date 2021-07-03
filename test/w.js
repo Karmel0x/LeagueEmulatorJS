@@ -1,4 +1,4 @@
-const NavMesh = require("navmesh");
+const { NavMesh } = require("navmesh");
 
 /*
   Imaging your game world has three walkable rooms, like this:

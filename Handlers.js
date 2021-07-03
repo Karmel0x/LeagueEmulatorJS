@@ -26,6 +26,8 @@ var Handlers = {
     0x68: {handler: require('./Handlers/0x68-CHAT_BOX_MESSAGE.js')},
     0x47: {handler: require('./Handlers/0x47-AUTO_ATTACK_OPTION.js')},
     0x08: {handler: require('./Handlers/0x08-HEART_BEAT.js')},
+    0xA8: {handler: require('./Handlers/0xA8-STATS_CONFIRM.js')},
+    0x9A: {handler: require('./Handlers/0x9A-CAST_SPELL.js')},
 };
 
 module.exports = async function(q){

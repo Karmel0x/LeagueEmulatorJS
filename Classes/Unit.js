@@ -29,6 +29,15 @@ global.Units = global.Units || {};
 global.baseNetId = 0x40000000;
 
 class Unit {
+    stats = {
+        level: 1,
+        //Gold: 1.1,
+        //SpellsEnabled: 1,
+        MoveSpeed: {
+            Total: 400,
+        }
+    }
+
     constructor(unitType, config, team, num, name = ''){
         Object.assign(this, config);
         this.netId = ++global.baseNetId;
@@ -45,7 +54,7 @@ class Unit {
 
         this.model = FunctionsModel(this.unit.type, this.unit.team, this.unit.name);
 
-        this.stats = JSON.parse(JSON.stringify(ConstantsUnit[this.unit.type].stats));
+        Object.assign(this.stats, JSON.parse(JSON.stringify(ConstantsUnit[this.unit.type].stats)));
         this.respawnTime = JSON.parse(JSON.stringify(ConstantsUnit[this.unit.type].respawnTime || false));
         this.totalRespawnTime = 0;
 
@@ -53,6 +62,7 @@ class Unit {
     }
 
     move(position, wp){
+        //console.log(TranslateCenteredCoordinates.from(wp));
 
         let Waypoints = wp;//[this.transform.position, position];
         this.transform.position = position;

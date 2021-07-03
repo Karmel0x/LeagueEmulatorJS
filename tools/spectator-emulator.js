@@ -18,6 +18,7 @@ var replayUnpacked = require('../../LOL-REPLAY.rlp.json');
 const enet = require('../../enetcppjs/build/Release/enetcppjs.node');
 //const Handlers = require('../Handlers');
 const Packets = require('../Packets');
+require("../BufferExtend");
 
 async function start_spectator(){
     var time = Date.now();
@@ -26,12 +27,12 @@ async function start_spectator(){
         if(i < 5)
             continue;// skip key exchange
         
-        while(Date.now() - time < replayUnpacked[i].Time){
+        while(Date.now() - time < (replayUnpacked[i].Time || (replayUnpacked[i].TimeS * 1000).toFixed(3))){
             await global.Utilities.wait(1);
         };
 
 
-        var buffer = Buffer.from(replayUnpacked[i].Bytes, 'base64');
+        var buffer = replayUnpacked[i].Bytes ? Buffer.from(replayUnpacked[i].Bytes, 'base64') : Buffer.from(replayUnpacked[i].BytesHex.split(' ').join(''), 'hex');
         enet.sendPacket(buffer, replayUnpacked[i].Channel);
 
     }
@@ -52,8 +53,8 @@ async function init_network(){
 		}
 
 		if(q.type == enet.ENET_EVENT_TYPE_RECEIVE){
-            var obj1 = q.packet.readobj(Packets.Header);
-            q.packet.off = 0;
+            var obj1 = q.buffer.readobj(Packets.Header);
+            q.buffer.off = 0;
             if(obj1.cmd == 0x00){
                 var keyExchangePacket = '00 2a 00 ff 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00';
                 var buffer = Buffer.from(keyExchangePacket, 'hex');

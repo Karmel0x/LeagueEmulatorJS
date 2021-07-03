@@ -12,10 +12,6 @@ async function run_game(){
 function start_game(){
     global.Game.started = Date.now() / 1000;
     global.Game.paused = false;
-    global.Game.Timer = () => {
-        //todo: ticker function for setting variables dependent on game time
-        return Date.now() / 1000 - global.Game.started;
-    };
     
     run_game();
 }
@@ -56,6 +52,13 @@ async function init_game(){
         initialized: Date.now() / 1000,
         started: false,
         paused: true,
+    };
+    global.Game.Timer = () => {
+        //todo: ticker function for setting variables dependent on game time
+        if(!global.Game.started)
+            return 0;
+            
+        return Date.now() / 1000 - global.Game.started;
     };
 
     wait_start_game();

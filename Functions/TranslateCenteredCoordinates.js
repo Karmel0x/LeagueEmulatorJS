@@ -7,8 +7,8 @@ module.exports = {
 
         for(let waypoint of waypoints){
             obj.push({
-                X: 2 * waypoint.X + NavigationGrid.MiddleOfMap.X,
-                Y: 2 * waypoint.Y + NavigationGrid.MiddleOfMap.Y,
+                X: (2 * waypoint.X + NavigationGrid.MiddleOfMap.X).toFixed(5),
+                Y: (2 * waypoint.Y + NavigationGrid.MiddleOfMap.Y).toFixed(5),
             });
         }
         return obj;

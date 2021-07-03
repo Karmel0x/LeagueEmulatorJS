@@ -21,6 +21,7 @@
 //};
 
 var CompressedWaypoint = require('./CompressedWaypoint');
+var TranslateCenteredCoordinates = require('../../Functions/TranslateCenteredCoordinates');
 
 module.exports = {//MovementDataNormal
     reader: (buffer, object) => {
@@ -40,6 +41,8 @@ module.exports = {//MovementDataNormal
             //console.log(object, obj);
             obj.Waypoints = CompressedWaypoint.reader(buffer, obj.WaypointsSize);
         }
+
+        obj.TranslateCenteredCoordinates = TranslateCenteredCoordinates.from(obj.Waypoints);
         object.MovementData = obj;
     },
     writer: (buffer, source) => {
