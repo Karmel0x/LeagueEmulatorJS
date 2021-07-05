@@ -2,9 +2,9 @@ var BasePacket = require('../BasePacket');
 var Vector3 = require('../SharedStruct/Vector3');
 
 var Vector3b = {
-    X: 'int16',
-    Y: 'float',
-    Z: 'int16',
+    x: 'int16',
+    y: 'float',
+    z: 'int16',
 };
 
 var FXCreateData = {

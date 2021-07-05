@@ -2,7 +2,7 @@
 const Packets = require("../Packets");
 const {createPacket, sendPacket} = require("../PacketUtilities");
 
-const Minion = require("../Classes/Minion");
+const Minion = require("../Classes/Units/Minion");
 
 
 module.exports = function(q, obj1){
@@ -27,16 +27,30 @@ module.exports = function(q, obj1){
 		let commandArgs = command.split(' ');
 
 		if(commandArgs[0] === 'q'){
-			new Minion('BLUE', 'MALEE', 0);
+			for(let i = parseInt(commandArgs[1] || 1); i > 0; i--){
+				new Minion('BLUE', 'MALEE', 0);
+				new Minion('RED', 'MALEE', 0);
+				//await global.Utilities.wait(2);
+			}
 		}
 		else if(commandArgs[0] === 'w'){
 			global.command_START_GAME = true;
+		}
+		else if(commandArgs[0] === 'ee'){
+			global.Players[0].battle.attack(global.Units[1]);
+			global.Units[1].battle.attack(global.Players[0]);
 		}
 		else if(commandArgs[0] === 'e'){
 			var CHAR_STATS = createPacket('CHAR_STATS', 'LOW_PRIORITY');
 			CHAR_STATS.SyncID = performance.now();
 			CHAR_STATS.units = [global.Players[0]];
 			var isSent = sendPacket(CHAR_STATS);
+			//console.log(CHAR_STATS);
+			
+			//var CHAR_STATS = createPacket('CHAR_STATS', 'LOW_PRIORITY');
+			//CHAR_STATS.SyncID = performance.now();
+			//CHAR_STATS.units = [global.Units[0]];
+			//var isSent = sendPacket(CHAR_STATS);
 			//console.log(CHAR_STATS);
 		}
 		else if(commandArgs[0] === 'r'){
@@ -45,15 +59,15 @@ module.exports = function(q, obj1){
 				global.Players[0].stats[s[1]] = JSON.parse(s[2]);
 			}else{
 				delete require.cache[require.resolve('../Constants/TestStats.json')];
-				global.Players[0].stats = require('../Constants/TestStats.json');
+				Object.assign(global.Players[0].stats, require('../Constants/TestStats.json'));
 			}
 		}
 		else if(commandArgs[0] == 'levelup'){
 			for(let i = parseInt(commandArgs[1] || 1); i > 0; i--)
-				global.Players[0].levelUp();
+				global.Players[0].stats.levelUp();
 		}
 		else if(commandArgs[0] == 'expup'){
-			global.Players[0].expUp(parseInt(commandArgs[1] || 1));
+			global.Players[0].stats.expUp(parseInt(commandArgs[1] || 1));
 		}
 
 	}

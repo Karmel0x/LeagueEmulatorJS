@@ -1,11 +1,7 @@
-var Unit = require('./Unit');
-const {createPacket, sendPacket} = require("../PacketUtilities");
+var StatsUnit = require('./Unit');
+var ConstantsUnit = require('../../../Constants/Unit');
+const {createPacket, sendPacket} = require("../../../PacketUtilities");
 
-const respawnTimes = [
-    7.5, 10.0, 12.5, 15.0, 17.5, 20.0,
-    22.5, 25.0, 27.5, 30.0, 32.5, 35.0,
-    37.5, 40.0, 42.5, 45.0, 47.5, 50.0,
-];
 const spellLevelMax = [5, 5, 5, 3];
 const ExpCurve = [
     0,
@@ -30,46 +26,22 @@ const ExpCurve = [
     26760.0
 ];
 
-global.Players = global.Players || {};
+class StatsPlayer extends StatsUnit {
 
-class Player extends Unit {
-    KillDeathCounter = 0;
-
-    constructor(config, team, num){
-        super('PLAYER', config, team, num);
-        global.Players[num] = this;
-
-        this.loaded = false;
-        this.unit.spawnNum = 5;
-        //this.netId = 0x400005ed;
-    }
-
-    death_getRespawnTime(){
-        return respawnTimes[this.Level];
-    }
-	death_getExp(){
-		return 0;
-	}
-	death_getGold(){
-        if(this.KillDeathCounter >= 5)
-            return 500;
-
-        let gold = 300;
-        if(this.KillDeathCounter >= 0){
-            for (var i = this.KillDeathCounter; i > 1; --i)
-                gold += gold * 0.165;
-            return gold;
-        }
-        for (var i = this.KillDeathCounter; i < -1; ++i)
-            gold -= gold * (0.085 + !!i * 0.115);
-
-        return gold < 50 ? 50 : gold;
-	}
     charStats_send(){
         var CHAR_STATS = createPacket('CHAR_STATS', 'LOW_PRIORITY');
         CHAR_STATS.SyncID = performance.now();
-        CHAR_STATS.units = [this];
+        CHAR_STATS.units = [this.parent];
         var isSent = sendPacket(CHAR_STATS);
+    }
+    skillUpgrade_send(Slot){
+	    var SKILL_UP = createPacket('SKILL_UP', 'S2C');
+	    SKILL_UP.netId = this.parent.netId;
+	    SKILL_UP.Slot = Slot;
+	    SKILL_UP.SpellLevel = this.SpellLevel[Slot];
+	    SKILL_UP.SkillPoints = this.SkillPoints;
+	    var isSent = sendPacket(SKILL_UP);
+	    console.log(SKILL_UP);
     }
     Exp = 0;
     ExpTotal = 0;
@@ -91,6 +63,8 @@ class Player extends Unit {
 
         ++this.Level;
         ++this.SkillPoints;
+        if(this.Level == 6 || this.Level == 11 || this.Level == 16)
+            ++this.EvolvePoints;
 
         this.skillUpgrade_send(0);//for now
         if(sendStats)
@@ -104,7 +78,7 @@ class Player extends Unit {
     skillUpgrade(Slot, IsEvolve = false){
         
         if(IsEvolve){
-            if(this.EvolvePoints < 0)
+            if(this.EvolvePoints < 1)
                 return;
 
             if(this.EvolveBools[Slot] == true)
@@ -115,7 +89,7 @@ class Player extends Unit {
             return;
         }
 
-        if(this.SkillPoints < 0)
+        if(this.SkillPoints < 1)
             return;
 
         if(this.SpellLevel[Slot] >= spellLevelMax[Slot])
@@ -124,17 +98,11 @@ class Player extends Unit {
         ++this.SpellLevel[Slot];
         --this.SkillPoints;
         this.skillUpgrade_send(Slot);
+        this.charStats_send();
     }
-    skillUpgrade_send(Slot){
-	    var SKILL_UP = createPacket('SKILL_UP', 'S2C');
-	    SKILL_UP.netId = this.netId;
-	    SKILL_UP.Slot = Slot;
-	    SKILL_UP.SpellLevel = this.SpellLevel[Slot];
-	    SKILL_UP.SkillPoints = this.SkillPoints;
-	    var isSent = sendPacket(SKILL_UP);
-	    console.log(SKILL_UP);
-    }
+    Gold = 0;
+
 }
 
 
-module.exports = Player;
+module.exports = StatsPlayer;

@@ -1,4 +1,4 @@
-const Minion = require("../Classes/Minion");
+const Minion = require("../Classes/Units/Minion");
 const CAMP = require("../Constants/CAMP");
 
 async function spawnMinions(spawnMinions_count){

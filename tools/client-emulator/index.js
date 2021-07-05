@@ -2,7 +2,7 @@
 // ... for now it's more 'todo' than 'ready', but it's parsing packets at least
 // bad code and bad behavior here, but who cares, it's only for testing / developing purposes
 
-// run with 'node client-emulator' then open link in your browser: `http://127.0.0.1/`
+// run with 'node tools/client-emulator' then open link in your browser: `http://127.0.0.1/`
 //Example recordings: https://github.com/Karmel0x/LeagueEmulatorJS/issues/2
 
 

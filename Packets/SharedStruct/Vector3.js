@@ -1,5 +1,5 @@
 module.exports = {//Vector3
-    X: 'float',
-    Y: 'float',
-    Z: 'float',
+    x: 'float',
+    y: 'float',
+    z: 'float',
 };

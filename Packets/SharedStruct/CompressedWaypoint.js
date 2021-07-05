@@ -15,7 +15,7 @@ module.exports = {//CompressedWaypoint
         obj.lastX = buffer.read1('int16');
         obj.lastY = buffer.read1('int16');
         obj.waypoints = [];
-        obj.waypoints.push({X: obj.lastX, Y: obj.lastY});
+        obj.waypoints.push({x: obj.lastX, y: obj.lastY});
 
         for (let i = 1, flag = 0; i < size; i++){
 
@@ -29,7 +29,7 @@ module.exports = {//CompressedWaypoint
             else
                 obj.lastY = buffer.read1('int16');
 
-            obj.waypoints.push({X: obj.lastX, Y: obj.lastY});
+            obj.waypoints.push({x: obj.lastX, y: obj.lastY});
         }
 
         return obj.waypoints;
@@ -41,13 +41,13 @@ module.exports = {//CompressedWaypoint
         if(Waypoints.length > 1){
             for (let i = 1; i < Waypoints.length; i++){
                 let relativeWaypoint = {
-                    X: Waypoints[i].X - Waypoints[i - 1].X,
-                    Y: Waypoints[i].Y - Waypoints[i - 1].Y,
+                    X: Waypoints[i].x - Waypoints[i - 1].x,
+                    Y: Waypoints[i].y - Waypoints[i - 1].y,
                 };
                 relativeWaypoints.push(relativeWaypoint);
                 
-                flagsBinary += +(relativeWaypoint.X <= Types.maxValues['int8'] && relativeWaypoint.X >= Types.minValues['int8']);
-                flagsBinary += +(relativeWaypoint.Y <= Types.maxValues['int8'] && relativeWaypoint.Y >= Types.minValues['int8']);
+                flagsBinary += +(relativeWaypoint.x <= Types.maxValues['int8'] && relativeWaypoint.x >= Types.minValues['int8']);
+                flagsBinary += +(relativeWaypoint.y <= Types.maxValues['int8'] && relativeWaypoint.y >= Types.minValues['int8']);
             }
             
             var flagsBuffer = getIntBytes_r(binaryToByteArray(flagsBinary), 8);
@@ -57,19 +57,19 @@ module.exports = {//CompressedWaypoint
             //console.log('flagsBinary, Types.maxValues, flagsBuffer', flagsBinary, Types.maxValues, flagsBuffer);
         }
     
-        buffer.write1('int16',  Waypoints[0].X);
-        buffer.write1('int16',  Waypoints[0].Y);
+        buffer.write1('int16',  Waypoints[0].x);
+        buffer.write1('int16',  Waypoints[0].y);
     
         for(let i = 1, flag = 0; i < Waypoints.length; i++){
             if(flagsBinary[flag++] == '1')
-                buffer.write1('int8',  relativeWaypoints[i-1].X);
+                buffer.write1('int8',  relativeWaypoints[i-1].x);
             else
-                buffer.write1('int16',  Waypoints[i].X);
+                buffer.write1('int16',  Waypoints[i].x);
     
             if(flagsBinary[flag++] == '1')
-                buffer.write1('int8',  relativeWaypoints[i-1].Y);
+                buffer.write1('int8',  relativeWaypoints[i-1].y);
             else
-                buffer.write1('int16',  Waypoints[i].Y);
+                buffer.write1('int16',  Waypoints[i].y);
         }
     
     }

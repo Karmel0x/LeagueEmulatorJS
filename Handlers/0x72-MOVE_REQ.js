@@ -11,8 +11,8 @@ module.exports = function(q, obj1){
 
 	{
 		//console.log(global.Players);
-		global.Players[0].move(obj1.Position, obj1.MovementData.Waypoints);
-		global.Units[0].move(obj1.Position, obj1.MovementData.Waypoints);
+		global.Players[0].move(obj1.Position, obj1.MovementData.Waypoints, obj1.MovementData.TranslateCenteredCoordinates);
+		//global.Units[1].move(obj1.Position, obj1.MovementData.Waypoints, obj1.MovementData.TranslateCenteredCoordinates);
 	}
 
 };

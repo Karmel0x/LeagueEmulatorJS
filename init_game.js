@@ -1,6 +1,7 @@
 var GameComponents = {
     Spawn: require('./Game/Spawn'),
     //Fountain: require('./Game/Fountain'),
+    MovementSimulation: require('./Classes/Movement/Simulation'),
 };
 
 async function run_game(){
@@ -18,6 +19,9 @@ function start_game(){
 
 // depends on './init_players'
 async function wait_start_game(){
+    
+    global.Movement = new GameComponents.MovementSimulation();
+    global.Movement.start();
 
     while(!global.Game.started){
         await global.Utilities.wait(100);

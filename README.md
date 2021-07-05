@@ -8,10 +8,12 @@ At the moment, all what you can do is load game client, move your champion, use 
 
 # Runing
 ```
+# download and install git (optional) - https://git-scm.com/download
 # download and install nodejs - https://nodejs.org/en/download/
 git clone https://github.com/Karmel0x/enetcppjs
 git clone https://github.com/Karmel0x/LeagueEmulatorJS
 cd LeagueEmulatorJS
+npm i three ws
 node main
 ```
 ```

@@ -217,8 +217,14 @@ module.exports = class extends BasePacket {//LOW_PRIORITY.CHAR_STATS
 
 		this.UpdateReplicant(unit, unit.stats?.Gold, 0, 0);//ok
 		this.UpdateReplicant(unit, unit.stats?.TotalGold, 0, 1);
-		this.UpdateReplicant(unit, unit.stats?.SpellsEnabled, 0, 2);
-		this.UpdateReplicant(unit, unit.stats?.SpellsEnabled ? unit.stats?.SpellsEnabled >> 32 : undefined, 0, 3);
+
+		var SpellsEnabled = 0;
+		for(var i in unit.stats.SpellLevel)
+			if(unit.stats.SpellLevel[i])
+				SpellsEnabled |= 1 << i;
+
+		this.UpdateReplicant(unit, SpellsEnabled, 0, 2);//ok?
+		this.UpdateReplicant(unit, SpellsEnabled ? SpellsEnabled >> 32 : undefined, 0, 3);//ok?
 		this.UpdateReplicant(unit, unit.stats?.SummonerSpellsEnabled, 0, 4);
 		this.UpdateReplicant(unit, unit.stats?.SummonerSpellsEnabled ? unit.stats?.SummonerSpellsEnabled >> 32 : undefined, 0, 5);
 		this.UpdateReplicant(unit, unit.stats?.EvolvePoints, 0, 6);//ok?
@@ -269,7 +275,7 @@ module.exports = class extends BasePacket {//LOW_PRIORITY.CHAR_STATS
 		this.UpdateReplicant(unit, unit.stats?.CurrentMana, 3, 1);//ok
 		this.UpdateReplicant(unit, unit.stats?.HealthPoints?.Total, 3, 2);//ok
 		this.UpdateReplicant(unit, unit.stats?.ManaPoints?.Total, 3, 3);//ok
-		this.UpdateReplicant(unit, unit.ExpTotal, 3, 4);//ok
+		this.UpdateReplicant(unit, unit.stats?.ExpTotal, 3, 4);//ok
 		this.UpdateReplicant(unit, unit.stats?.LifeTime, 3, 5);
 		this.UpdateReplicant(unit, unit.stats?.MaxLifeTime, 3, 6);
 		this.UpdateReplicant(unit, unit.stats?.LifeTimeTicks, 3, 7);
@@ -278,7 +284,7 @@ module.exports = class extends BasePacket {//LOW_PRIORITY.CHAR_STATS
 		this.UpdateReplicant(unit, unit.stats?.MoveSpeed?.Total, 3, 10);//ok
 		this.UpdateReplicant(unit, unit.stats?.Size?.Total, 3, 11);//ok
 		this.UpdateReplicant(unit, unit.stats?.FlatPathfindingRadiusMod, 3, 12);//not working?
-		this.UpdateReplicant(unit, unit.Level, 3, 13);//ok
+		this.UpdateReplicant(unit, unit.stats?.Level, 3, 13);//ok
 		this.UpdateReplicant(unit, unit.stats?.Owner?.MinionCounter, 3, 14);//ok ? in Scoreboard
 		this.UpdateReplicant(unit, unit.stats?.IsTargetable, 3, 15);//ok
 		this.UpdateReplicant(unit, unit.stats?.IsTargetableToTeam, 3, 16);

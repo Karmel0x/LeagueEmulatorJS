@@ -1,5 +1,5 @@
 // downloading item stats from riot api: https://developer.riotgames.com/docs/lol#data-dragon
-// run with `node ddragon/item > ../../LeagueEmulatorJS_ExternalData/item.json`
+// run with `node tools/ddragon/item > ../LeagueEmulatorJS_ExternalData/item.json`
 
 const http = require('http');
 

@@ -35,7 +35,7 @@ module.exports = function(q, obj1){
 
 	//var CHAMPION_RESPAWN = createPacket('CHAMPION_RESPAWN');
     //CHAMPION_RESPAWN.netId = global.Players[0].netId;
-	//CHAMPION_RESPAWN.Vector3 = {X: 3000, Y: 2000, H: 500};
+	//CHAMPION_RESPAWN.Vector3 = {x: 3000, y: 2000, H: 500};
 	//var isSent = sendPacket(CHAMPION_RESPAWN);
 	
 	var OBJECT_SPAWN = createPacket('OBJECT_SPAWN');
@@ -57,7 +57,7 @@ module.exports = function(q, obj1){
 	//OBJECT_SPAWN.CharacterStackData_length = OBJECT_SPAWN.CharacterStackData.length;
 	//OBJECT_SPAWN.LookAtNetID = 0;
 	//OBJECT_SPAWN.LookAtType = 0;
-	OBJECT_SPAWN.LookAtPosition = {X: 1, Y: 0, Z: 0};
+	OBJECT_SPAWN.LookAtPosition = {x: 1, y: 0, z: 0};
 	//OBJECT_SPAWN.Buff = [];
 	//OBJECT_SPAWN.Buff_length = OBJECT_SPAWN.Buff.length;
 	OBJECT_SPAWN.UnknownIsHero = true;
@@ -71,8 +71,8 @@ module.exports = function(q, obj1){
     
 	OBJECT_SPAWN.MovementData = {
 		//SyncID: 0x0F0FD189,
-		Position: {X: 26.0, Y: 280.0},//this.transform.position,
-		Forward: {X: 0, Y: 0},
+		Position: {x: 26.0, y: 280.0},//this.transform.position,
+		Forward: {x: 0, y: 0},
 	};
 
 	var isSent = sendPacket(OBJECT_SPAWN);

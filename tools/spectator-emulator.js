@@ -4,7 +4,7 @@
 
 // As first you need to unpack replay file (.lrf) with https://github.com/moonshadow565/LoLReplayUnpacker
 // Example replay: https://github.com/Karmel0x/LeagueEmulatorJS/files/6702341/Ezreal.zip
-// then run this with `node spectator-emulator` and lol client with `runLol.bat`
+// then run this with `node tools/spectator-emulator` and lol client with `runLol.bat`
 
 var replayUnpacked = require('../../LOL-REPLAY.rlp.json');
 

@@ -1,32 +1,32 @@
 {
-    "Gold": 102.0,
-	"MoveSpeed": {"Total": 500.0},
+	"Gold": 102.0,
+	"MoveSpeed": {"Total": 1500.0},
 	"AttackDamage": {
-        "BaseValue": 30.0,
-        "FlatBonus": 10.0,
-        "PercentBonus": 2.0
-    },
+		"BaseValue": 30.0,
+		"FlatBonus": 10.0,
+		"PercentBonus": 2.0
+	},
 	"CurrentHealth": 30.0,
 	"CurrentMana": 30.0,
 	"HealthRegeneration": {
-        "Total": 30.0,
-        "BaseValue": 20.0
-    },
+		"Total": 30.0,
+		"BaseValue": 20.0
+	},
 	"ManaRegeneration": {
-        "Total": 30.0,
-        "BaseValue": 20.0
-    },
+		"Total": 30.0,
+		"BaseValue": 20.0
+	},
 	"LifeSteal": {"Total": 3.0},
 	"SpellVamp": {"Total": 4.0},
 	"Armor": {
-        "Total": 15.0,
-        "PercentBonus": 2.0
-    },
+		"Total": 15.0,
+		"PercentBonus": 2.0
+	},
 	"MagicPenetration": {
-        "FlatBonus": 1.0,
-        "PercentBonus": 0,
-        "PercentBonus2": 2
-    },
+		"FlatBonus": 1.0,
+		"PercentBonus": 0,
+		"PercentBonus2": 2
+	},
 	"Range": {"Total": 125.0, "FlatBonus": 12.0},
 	
 	"CooldownReduction": {"Total": -2.0},
@@ -35,5 +35,5 @@
 	"SummonerSpellsEnabled": 3,
 	"Level": 13,
 	"IsTargetable": true,
-    "Size": {"Total": 1}
+	"Size": {"Total": 1}
 }
