@@ -38,51 +38,37 @@ const BarracksByTeam = {
 
 class Minion extends Unit {
 	constructor(team, type, num){
-		super('MINION', {}, team, num, type);
+		super('MINION', {
+			base: Minions[type],
+		}, team, num, type);
 
-		this.base = Minions[type];
-		this.spawn(team, num);
-		this.moveLane();
 
 	}
-	spawn(team, num){
+	initialize(){
+
+	}
+	spawn(){
+		let pos = BarracksByTeam[this.info.team][this.info.num].position;
+		this.transform = {
+			position: new Vector2(pos.x, pos.y),
+			rotation: 0,
+		};
+
 		var Barrack_SpawnUnit = createPacket('Barrack_SpawnUnit');
 		Barrack_SpawnUnit.netId = this.netId;
 		Barrack_SpawnUnit.ObjectID = this.netId;
 		Barrack_SpawnUnit.ObjectNodeID = 0x40;
-		Barrack_SpawnUnit.BarracksNetID = BarracksByTeam[team][num].hash;
+		Barrack_SpawnUnit.BarracksNetID = BarracksByTeam[this.info.team][this.info.num].hash;
 		Barrack_SpawnUnit.WaveCount = 1;
 		Barrack_SpawnUnit.MinionType = this.base.id;
 		Barrack_SpawnUnit.DamageBonus = 10;
 		Barrack_SpawnUnit.HealthBonus = 7;
 		Barrack_SpawnUnit.MinionLevel = 1;
-		var isSent = sendPacket(Barrack_SpawnUnit);
+		var isSent = global.Teams.ALL.sendPacket(Barrack_SpawnUnit);
 		console.log(Barrack_SpawnUnit);
 
-		let pos = BarracksByTeam[team][num].position;
-		this.transform.position = new Vector2(pos.x, pos.y);
-		
-		//var OBJECT_SPAWN = createPacket('OBJECT_SPAWN');// this shouldn't be here
-		//OBJECT_SPAWN.netId = this.netId;
-		//OBJECT_SPAWN.ShieldValues = {
-		//	Magical: 0,
-		//	Physical: 0,
-		//	MagicalAndPhysical: 0,
-		//};
-		//OBJECT_SPAWN.LookAtPosition = {x: 1, y: 0, z: 0};
-		//OBJECT_SPAWN.CharacterStackData = [
-		//	{
-		//		SkinName: this.model
-		//	}
-		//];
-		//OBJECT_SPAWN.MovementData = {
-		//	//SyncID: 0x0F0FD189,
-		//	Position: this.transform.position,
-		//	Forward: {x: 0, y: 0},
-		//};
-		//var isSent = sendPacket(OBJECT_SPAWN);
-		//console.log(OBJECT_SPAWN);
-		//console.log(OBJECT_SPAWN.MovementData.Position);
+		super.spawn();
+		this.moveLane();
 	}
 	moveLane(){
 		

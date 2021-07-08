@@ -6,7 +6,7 @@ class DeathUnit {
     constructor(parent){
         this.parent = parent;
 
-        this.respawnTime = ConstantsUnit[this.parent.unit.type].respawnTime || false;
+        this.respawnTime = ConstantsUnit[this.parent.info.type]?.respawnTime || false;
     }
 
     respawnTime = 0;

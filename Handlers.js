@@ -28,25 +28,27 @@ var Handlers = {
     0x08: {handler: require('./Handlers/0x08-HEART_BEAT.js')},
     0xA8: {handler: require('./Handlers/0xA8-STATS_CONFIRM.js')},
     0x9A: {handler: require('./Handlers/0x9A-CAST_SPELL.js')},
+    0xAF: {handler: require('./Handlers/0xAF-CLICK.js')},
 };
 
 module.exports = async function(q){
 	
 	//console.log('recv:' + q.buffer.toString('hex').match(/../g).join('-'));
-	var obj1 = HandlersParse.parsePacket(q);
-	console.log(obj1, q.channel);
+    var player = q.peer_num;
+    if(q.channel){// not HANDSHAKE
+        var clientId = global.PlayerPeers[q.peer_num];
+        player = global.Units['ALL'].PLAYER[clientId];
+    }
+	var packet = HandlersParse.parsePacket(q);
+	console.log('channel:', q.channel || 0, 'peer_num:', q.peer_num, 'packet:', packet);
 
 	try {
-		if(typeof Handlers[obj1.cmd] == 'undefined' || typeof Handlers[obj1.cmd].handler == 'undefined')
-			return console.log('packet handler not implemented yet :', obj1.cmd.toString(16));
+		if(typeof Handlers[packet.cmd] == 'undefined' || typeof Handlers[packet.cmd].handler == 'undefined')
+			return console.log('packet handler not implemented yet :', packet.cmd.toString(16));
 
-		Handlers[obj1.cmd].handler(q, obj1);
+		Handlers[packet.cmd].handler(player, packet);
 	}catch(e){
 		console.log(e.stack);
 	}
-	
-	
-	//const buff = Buffer.from('test');
-	//var enet_sendPacket = enet.sendPacket(buff).toString();
-	//console.log('enet_sendPacket: ' + enet_sendPacket);
+
 };

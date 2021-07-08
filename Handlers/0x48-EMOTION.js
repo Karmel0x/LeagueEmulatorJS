@@ -3,16 +3,16 @@ const Packets = require("../Packets");
 const {createPacket, sendPacket} = require("../PacketUtilities");
 
 
-module.exports = function(q, obj1){
+module.exports = (player, packet) => {
     console.log('handle: C2S.EMOTION');
-	console.log(obj1);
+	//console.log(packet);
 
     
 	{
         var EMOTION = createPacket('EMOTION');
-        EMOTION.netId = global.Players[0].netId;
-        EMOTION.EmoteID = obj1.EmoteID;
-        var isSent = sendPacket(EMOTION);
+        EMOTION.netId = player.netId;
+        EMOTION.EmoteID = packet.EmoteID;
+        var isSent = player.sendPacket(EMOTION);
 	}
 
 };

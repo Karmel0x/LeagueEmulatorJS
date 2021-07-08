@@ -1,6 +1,8 @@
 
 const Packets = require("../Packets");
 const {createPacket, sendPacket} = require("../PacketUtilities");
+const loadingStages = require('../Constants/loadingStages');
+
 
 async function GameTimeHeartBeat(){
 	
@@ -8,21 +10,21 @@ async function GameTimeHeartBeat(){
 	for(;;){
 		var GAME_TIMER = createPacket('GAME_TIMER');
 		GAME_TIMER.SynchTime = time;
-		var isSent = sendPacket(GAME_TIMER);
+		var isSent = global.Teams.ALL.sendPacket(GAME_TIMER);
 
 		await global.Utilities.wait(10 * 1000);
 		time += 10;
 	}
 }
 
-module.exports = function(q, obj1){
+module.exports = (player, packet) => {
 	console.log('handle: C2S.START_GAME');
-	console.log(obj1);
+	//console.log(packet);
 
 
 	var START_GAME = createPacket('START_GAME');
 	START_GAME.EnablePause_bitField = true;
-	var isSent = sendPacket(START_GAME);
+	var isSent = player.sendPacket(START_GAME);
 
 	//var LOAD_SCREEN_INFO = createPacket('LOAD_SCREEN_INFO', 'LOADING_SCREEN');
 	//LOAD_SCREEN_INFO.blueMax = 1;
@@ -31,59 +33,23 @@ module.exports = function(q, obj1){
 	//LOAD_SCREEN_INFO.teamRed_playerIds = [];
 	//LOAD_SCREEN_INFO.currentBlue = 1;
 	//LOAD_SCREEN_INFO.currentRed = 0;
-	//var isSent = sendPacket(LOAD_SCREEN_INFO);
+	//var isSent = player.sendPacket(LOAD_SCREEN_INFO);
 
 	//var CHAMPION_RESPAWN = createPacket('CHAMPION_RESPAWN');
-    //CHAMPION_RESPAWN.netId = global.Players[0].netId;
+    //CHAMPION_RESPAWN.netId = player.netId;
 	//CHAMPION_RESPAWN.Vector3 = {x: 3000, y: 2000, H: 500};
-	//var isSent = sendPacket(CHAMPION_RESPAWN);
-	
-	var OBJECT_SPAWN = createPacket('OBJECT_SPAWN');
-    OBJECT_SPAWN.netId = global.Players[0].netId;
-	//OBJECT_SPAWN.Packet = [];
-	//OBJECT_SPAWN.Packet_length = OBJECT_SPAWN.Packet.length;
-	OBJECT_SPAWN.ItemData = [/*{
-		Slot: 1,
-		ItemsInSlot: 1,
-		SpellCharges: 1,
-		ItemID: 1,
-	}*/];
-	OBJECT_SPAWN.ShieldValues = {
-		Magical: 0,
-		Physical: 0,
-		MagicalAndPhysical: 0,
-	};
-	//OBJECT_SPAWN.CharacterStackData = [];
-	//OBJECT_SPAWN.CharacterStackData_length = OBJECT_SPAWN.CharacterStackData.length;
-	//OBJECT_SPAWN.LookAtNetID = 0;
-	//OBJECT_SPAWN.LookAtType = 0;
-	OBJECT_SPAWN.LookAtPosition = {x: 1, y: 0, z: 0};
-	//OBJECT_SPAWN.Buff = [];
-	//OBJECT_SPAWN.Buff_length = OBJECT_SPAWN.Buff.length;
-	OBJECT_SPAWN.UnknownIsHero = true;
-	//OBJECT_SPAWN.MovementData = [];
-	//OBJECT_SPAWN.MovementDataWithHeader_bool = !!OBJECT_SPAWN.MovementData;
-    OBJECT_SPAWN.CharacterStackData = [
-        {
-            SkinName: 'Ezreal'
-        }
-    ];
-    
-	OBJECT_SPAWN.MovementData = {
-		//SyncID: 0x0F0FD189,
-		Position: {x: 26.0, y: 280.0},//this.transform.position,
-		Forward: {x: 0, y: 0},
-	};
+	//var isSent = player.sendPacket(CHAMPION_RESPAWN);
 
-	var isSent = sendPacket(OBJECT_SPAWN);
+	player.loadingStage = loadingStages.IN_GAME;
+	global.Teams['BLUE'].vision(player, true);
 	
 	var GAME_TIMER = createPacket('GAME_TIMER');
 	GAME_TIMER.SynchTime = 0;
-	var isSent = sendPacket(GAME_TIMER);
+	var isSent = player.sendPacket(GAME_TIMER);
 	
 	var GAME_TIMER_UPDATE = createPacket('GAME_TIMER_UPDATE');
 	GAME_TIMER_UPDATE.StartTime = 0;
-	var isSent = sendPacket(GAME_TIMER_UPDATE);
+	var isSent = player.sendPacket(GAME_TIMER_UPDATE);
 
 	GameTimeHeartBeat();
 };

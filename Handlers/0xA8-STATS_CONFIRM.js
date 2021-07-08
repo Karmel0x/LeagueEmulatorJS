@@ -3,9 +3,9 @@ const Packets = require("../Packets");
 const {createPacket, sendPacket} = require("../PacketUtilities");
 
 
-module.exports = function(q, obj1){
+module.exports = (player, packet) => {
     console.log('handle: C2S.STATS_CONFIRM');
-	console.log(obj1);
+	//console.log(packet);
 
 
 };

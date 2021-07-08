@@ -2,6 +2,9 @@ const enet = require('../enetcppjs/build/Release/enetcppjs.node');
 const Handlers = require('./Handlers');
 
 
+global.PlayerPeers = global.PlayerPeers || {};
+
+
 async function init_network(){
 	var enet_initialize = Boolean(enet.initialize());
 	console.log('enet_initialize:', enet_initialize);

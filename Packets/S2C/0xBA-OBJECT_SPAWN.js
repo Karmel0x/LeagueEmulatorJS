@@ -132,6 +132,7 @@ var SpeedParams = {
 module.exports = class extends BasePacket {//S2C.OBJECT_SPAWN
 	writer(buffer){
 		super.writer(buffer);
+
 		buffer.write1('uint16', this.Packet?.length || 0);
 		if(this.Packet?.length)
 			buffer.writeobj([Packet, this.Packet.length], this.Packet);
@@ -140,7 +141,7 @@ module.exports = class extends BasePacket {//S2C.OBJECT_SPAWN
 		if(this.ItemData?.length)
 			buffer.writeobj([ItemData, this.ItemData.length], this.ItemData);
 
-		if(this.isTurret)
+		if(this.isTurret)//is inhib or nexus
 			return;
 
 		buffer.write1('uint8', !!this.ShieldValues);
@@ -178,29 +179,119 @@ module.exports = class extends BasePacket {//S2C.OBJECT_SPAWN
 			}, this.MovementData);
 			
 			if(this.MovementData.type == MovementDataType.WithSpeed){
-				buffer.writeobj({
-					bitfield1: 'uint8',
-					TeleportNetID: 'uint32',
-					TeleportID: 'uint8',
-					SpeedParams: SpeedParams,
-				}, this.MovementData);
+
+				this.MovementData.bitfield1 = 0;
+				if(this.MovementData.Waypoints && this.MovementData.Waypoints.length)
+					this.MovementData.bitfield1 = this.MovementData.Waypoints.length << 1;
+				if(this.TeleportID)
+					this.MovementData.bitfield1 |= 1;
+
+				buffer.write1('uint8', this.MovementData.bitfield);
+				if(this.MovementData.Waypoints && this.MovementData.Waypoints.length){
+					buffer.write1('uint32', this.MovementData.TeleportNetID);
+					if(this.TeleportID)
+						buffer.write1('uint8', this.MovementData.TeleportID);
+					buffer.writeobj(SpeedParams, this.MovementData.SpeedParams);
+
+					CompressedWaypoint.writer(buffer, this.MovementData.Waypoints);
+				}
 				
-				CompressedWaypoint.writer(buffer, this.MovementData.Waypoints);
 			}
 			else if(this.MovementData.type == MovementDataType.Normal){
-				buffer.writeobj({
-					bitfield1: 'uint8',
-					TeleportNetID: 'uint32',
-					TeleportID: 'uint8',
-				}, this.MovementData);
-				
-				CompressedWaypoint.writer(buffer, this.MovementData.Waypoints);
+				this.MovementData.bitfield1 = 0;
+				if(this.MovementData.Waypoints && this.MovementData.Waypoints.length)
+					this.MovementData.bitfield1 = this.MovementData.Waypoints.length << 1;
+				if(this.TeleportID)
+					this.MovementData.bitfield1 |= 1;
+
+				buffer.write1('uint8', this.MovementData.bitfield);
+				if(this.MovementData.Waypoints && this.MovementData.Waypoints.length){
+					buffer.write1('uint32', this.MovementData.TeleportNetID);
+					if(this.TeleportID)
+						buffer.write1('uint8', this.MovementData.TeleportID);
+
+					CompressedWaypoint.writer(buffer, this.MovementData.Waypoints);
+				}
 			}
 			else if(this.MovementData.type == MovementDataType.Stop){
 				buffer.writeobj({
 					Position: Vector2,
 					Forward: Vector2,
 				}, this.MovementData);
+			}
+		}
+	}
+	reader(buffer){
+		super.reader(buffer);
+		
+		var Packet_length = buffer.read1('uint16');
+		if(Packet_length)
+			this.Packet = buffer.readobj([Packet, Packet_length]);
+			
+		var ItemData_length = buffer.read1('uint8', this.ItemData?.length || 0);
+		if(ItemData_length)
+			this.ItemData = buffer.readobj([ItemData, ItemData_length]);
+
+		this.isTurret = buffer.off == buffer.length;
+		if(this.isTurret)
+			return;
+
+		this.ShieldValues = buffer.read1('uint8');//!!
+		if(this.ShieldValues)
+			this.ShieldValues = buffer.readobj(ShieldValues);
+
+		var CharacterStackData_length = buffer.read1('int32');
+		if(CharacterStackData_length)
+			this.CharacterStackData = buffer.readobj([CharacterStackData, CharacterStackData_length]);
+
+		Object.assign(this, buffer.readobj({
+			LookAtNetID: 'uint32',
+			LookAtType: 'uint8',
+			LookAtPosition: Vector3,
+		}));
+
+		var Buff_length = buffer.read1('int32');
+		if(Buff_length)
+			this.Buff = buffer.readobj([Buff, Buff_length]);
+
+		this.UnknownIsHero = buffer.read1('uint8');
+
+		this.MovementData = buffer.off == buffer.length ? false : {};
+		if(this.MovementData){
+
+			Object.assign(this.MovementData, buffer.readobj({
+				type: 'uint8',
+				SyncID: 'int32',
+			}));
+			
+			if(this.MovementData.type == MovementDataType.WithSpeed){
+				this.MovementData.bitfield = buffer.read1('uint8');
+				var Waypoints_length = this.MovementData.bitfield >> 1;
+				if(Waypoints_length){
+					this.MovementData.TeleportNetID = buffer.read1('uint32');
+					if((this.MovementData.bitfield & 1) != 0)
+						this.MovementData.TeleportID = buffer.read1('uint8');
+					this.MovementData.SpeedParams = buffer.readobj(SpeedParams);
+
+					CompressedWaypoint.reader(buffer, Waypoints_length);
+				}
+			}
+			else if(this.MovementData.type == MovementDataType.Normal){
+				this.MovementData.bitfield = buffer.read1('uint8');
+				var Waypoints_length = this.MovementData.bitfield >> 1;
+				if(Waypoints_length){
+					this.MovementData.TeleportNetID = buffer.read1('uint32');
+					if((this.MovementData.bitfield & 1) != 0)
+						this.MovementData.TeleportID = buffer.read1('uint8');
+
+					CompressedWaypoint.reader(buffer, Waypoints_length);
+				}
+			}
+			else if(this.MovementData.type == MovementDataType.Stop){
+				Object.assign(this.MovementData, buffer.readobj({
+					Position: Vector2,
+					Forward: Vector2,
+				}));
 			}
 		}
 	}

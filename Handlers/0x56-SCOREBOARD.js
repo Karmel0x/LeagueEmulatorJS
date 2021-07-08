@@ -3,13 +3,13 @@ const Packets = require("../Packets");
 const {createPacket, sendPacket} = require("../PacketUtilities");
 
 
-module.exports = function(q, obj1){
+module.exports = (player, packet) => {
     console.log('handle: C2S.SCOREBOARD');
-	//console.log(obj1);
+	//console.log(packet);
 
 
     //var SCOREBOARD? = createPacket('SCOREBOARD?');
-    //var isSent = sendPacket(SCOREBOARD?);
+    //var isSent = player.sendPacket(SCOREBOARD?);
 	
-    global.Players[0].loaded = true;
+    //player.loadingStage = true;
 };

@@ -3,12 +3,12 @@ const Packets = require("../Packets");
 const {createPacket, sendPacket} = require("../PacketUtilities");
 
 
-module.exports = function(q, obj1){
+module.exports = (player, packet) => {
     console.log('handle: C2S.VIEW_REQ');
-	//console.log(obj1);
+	//console.log(packet);
 
     var VIEW_ANS = createPacket('VIEW_ANS');
-	VIEW_ANS.SyncID = obj1.SyncID;
-    var isSent = sendPacket(VIEW_ANS);
+	VIEW_ANS.SyncID = packet.SyncID;
+    var isSent = player.sendPacket(VIEW_ANS);
     
 };

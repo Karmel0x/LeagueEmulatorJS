@@ -3,23 +3,21 @@ const Packets = require("../Packets");
 const {createPacket, sendPacket} = require("../PacketUtilities");
 
 
-module.exports = function(q, obj1){
+module.exports = (player, packet) => {
     console.log('handle: C2S.PING_LOAD_INFO');
-	console.log(obj1);
+	//console.log(packet);
 
 	{
-        //if(obj1.ETA == 0){
-        //    var START_GAME = createPacket('START_GAME');
-        //    var isSent = sendPacket(START_GAME);
-        //}
         var PING_LOAD_INFO = createPacket('PING_LOAD_INFO', 'LOW_PRIORITY');
-        PING_LOAD_INFO.ClientID = obj1.ClientID;
+        PING_LOAD_INFO.ClientID = packet.ClientID;
         PING_LOAD_INFO.PlayerID = 1;
-        PING_LOAD_INFO.Percentage = obj1.Percentage;
-        PING_LOAD_INFO.ETA = obj1.ETA;
-        PING_LOAD_INFO.Count = obj1.Count;
-        PING_LOAD_INFO.Ping = obj1.Ping;
-        PING_LOAD_INFO.Ready_bitField = obj1.Ready_bitField;
-        var isSent = sendPacket(PING_LOAD_INFO);
+        PING_LOAD_INFO.Percentage = packet.Percentage;
+        PING_LOAD_INFO.ETA = packet.ETA;
+        PING_LOAD_INFO.Count = packet.Count;
+        PING_LOAD_INFO.Ping = packet.Ping;
+        PING_LOAD_INFO.bitField = {
+            Ready: packet.bitfield.Ready,
+        };
+        var isSent = player.sendPacket(PING_LOAD_INFO);
 	}
 };

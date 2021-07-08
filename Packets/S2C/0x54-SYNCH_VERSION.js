@@ -51,6 +51,10 @@ module.exports = class extends BasePacket {//S2C.SYNCH_VERSION
 		TipConfig: TipConfig,
 		idk: 'uint8',
 		GameFeatures: 'uint64',
+		//GameFeatures: ['bitfield64', {
+		//	unk1: (1 << 1),
+		//	unk2: (1 << 18),
+		//}],
 		DisabledItems: ['uint32', 64],
 		EnabledDradisMessages: ['uint8', 19],
 	}

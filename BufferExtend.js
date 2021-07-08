@@ -52,6 +52,16 @@ Buffer.prototype.read1 = function(type) {
 				this.readUInt8(this.off);
 				this.off += 1;
 			}break;
+			case 'string0':{
+				variable = '';
+				while(this.off < this.length){
+					let s = this.readUInt8(this.off);
+					this.off += 1;
+					if(s == 0x00)
+						break;
+					variable += String.fromCharCode(s);
+				}
+			}break;
 		}
 	}catch(e){
 		//console.log('packet structure is incorrect :', e.message);
@@ -98,6 +108,15 @@ Buffer.prototype.write1 = function(type, value) {
 			let stringLength = value.length;
 			variable = this.writeInt32LE(stringLength + 1, this.off);
 			this.off += 4;
+			for(let i = 0; i < stringLength; i++){
+				variable = this.writeUInt8(value.charCodeAt(i), this.off);
+				this.off += 1;
+			}
+			variable = this.writeUInt8(0x00, this.off);
+			this.off += 1;
+		}break;
+		case 'string0':{
+			let stringLength = value.length;
 			for(let i = 0; i < stringLength; i++){
 				variable = this.writeUInt8(value.charCodeAt(i), this.off);
 				this.off += 1;
@@ -198,5 +217,6 @@ Buffer.typeSize = {
 	'char': 1,
 	'string': 0,
 	'string_': 0,
+	'string0': 0,
 	'bitfield': 1,
 };

@@ -5,11 +5,11 @@ var IStat = require('./IStat');
 
 class StatsUnit {
 
-    constructor(parent, defaultValues){
+    constructor(parent, defaultValues = {}){
         this.parent = parent;
 
         this.MoveSpeed = new IStat(defaultValues.MoveSpeed || 325);
-        this.Range = new IStat(defaultValues.Range || 125);
+        this.Range = new IStat(defaultValues.Range || 250);
         this.AttackDamage = new IStat(defaultValues.AttackDamage || 50);
         this.AbilityPower = new IStat(defaultValues.AbilityPower || 0);
         this.CriticalChance = new IStat(defaultValues.CriticalChance || 0);
@@ -30,6 +30,7 @@ class StatsUnit {
 
         this.PerceptionRange = new IStat(defaultValues.PerceptionRange || 1);
         this.Size = new IStat(defaultValues.Size || 1);
+        this.sightRange = new IStat(defaultValues.sightRange || 1350);
     }
 }
 

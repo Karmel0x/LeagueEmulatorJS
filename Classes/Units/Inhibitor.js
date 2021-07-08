@@ -1,4 +1,5 @@
 var Unit = require('./Unit');
+const {createPacket, sendPacket} = require("../../PacketUtilities");
 
 const InhibitorNetIds = {
     BLUE: [
@@ -12,6 +13,22 @@ const InhibitorNetIds = {
         0xFF26AC0F,//4280724495
     ]
 };
+//var InhibitorNexus = {
+//    _1: 0xffa6170e,
+//    _2: 0xff5ec9af,
+//    _3: 0xfff02c0f,
+//    _4: 0xffe647d5,
+//    _5: 0xffff8f1f,
+//    _6: 0xff26ac0f,
+//    _7: 0xff6793d0,
+//    _8: 0xffba00e8,
+//
+//    //_: 0xfff97db5,
+//    //_: 0xffd23c3e,
+//    //_: 0xff4a20f1,
+//    //_: 0xff9303e1,
+//    //_: 0xff10c6db,
+//};
 
 global.Inhibitors = global.Inhibitors || {BLUE: {}, RED: {}};
 
@@ -21,8 +38,22 @@ class Inhibitor extends Unit {
         global.Inhibitors[team][num] = this;
 
         this.netId = InhibitorNetIds[team][num] || 0xFF000000;
+        this.spawn(team, num);
     }
+    spawn(team, num){
+	    var OBJECT_SPAWN = createPacket('OBJECT_SPAWN');
+        OBJECT_SPAWN.netId = this.netId;
+        OBJECT_SPAWN.isTurret = true;
+	    var isSent = global.Teams.ALL.sendPacket(OBJECT_SPAWN);
 
+        super.spawn();
+    }
+    static spawnAll(){
+        for(let team in InhibitorNetIds){
+            for(let i = 0; i < 3; i++)
+                new Inhibitor({}, team, i);
+        }
+    }
 }
 
 

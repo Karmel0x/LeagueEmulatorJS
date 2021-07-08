@@ -45,5 +45,5 @@ var Models = {
 };
 
 module.exports = (unitType, team, type) => {
-    return (Models[unitType].team[team] || '') + (Models[unitType].basename || '') + (Models[unitType].type[type] || '');
+    return (Models[unitType]?.team?.[team] || '') + (Models[unitType]?.basename || '') + (Models[unitType]?.type?.[type] || '');
 };

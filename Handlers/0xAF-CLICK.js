@@ -4,7 +4,7 @@ const {createPacket, sendPacket} = require("../PacketUtilities");
 
 
 module.exports = (player, packet) => {
-    console.log('handle: C2S.LOCK_CAMERA');
+    console.log('handle: C2S.CLICK');
 	//console.log(packet);
 
 

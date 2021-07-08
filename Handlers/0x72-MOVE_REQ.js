@@ -3,16 +3,19 @@ const Packets = require("../Packets");
 const {createPacket, sendPacket} = require("../PacketUtilities");
 
 
-module.exports = function(q, obj1){
+module.exports = (player, packet) => {
     console.log('handle: C2S.MOVE_REQ');
-	console.log(obj1);
-    //console.log('Waypoints', obj1.MovementData.Waypoints);
+	//console.log(packet);
+    //console.log('Waypoints', packet.MovementData.Waypoints);
 
-
-	{
-		//console.log(global.Players);
-		global.Players[0].move(obj1.Position, obj1.MovementData.Waypoints, obj1.MovementData.TranslateCenteredCoordinates);
-		//global.Units[1].move(obj1.Position, obj1.MovementData.Waypoints, obj1.MovementData.TranslateCenteredCoordinates);
+	if(packet.TargetNetID){
+		player.attack(packet.TargetNetID, packet.MovementData.Waypoints, packet.MovementData.TranslateCenteredCoordinates);
+		return;
 	}
+
+	//console.log(global.Units['BLUE'].PLAYER);
+	player.move0(packet.Position, packet.MovementData.Waypoints, packet.MovementData.TranslateCenteredCoordinates);
+	//global.Units['BLUE'].MINION[0].move0(packet.Position, packet.MovementData.Waypoints, packet.MovementData.TranslateCenteredCoordinates);
+
 
 };

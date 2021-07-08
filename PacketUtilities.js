@@ -58,7 +58,7 @@ function createPacket(packetName, channel = 'S2C'){
 }
 
 
-function sendPacket(packet){
+function sendPacket(peer_num, packet){
 	if(typeof packet === 'undefined'){
 		//console.log('packet is not yet implemented', packet.id);
 		return {};
@@ -80,15 +80,15 @@ function sendPacket(packet){
 		buffer.off = bufferSize;
 	}
 
-	return sendPacket2(packet, buffer);
+	return sendPacket2(peer_num, packet, buffer);
 }
-function sendPacket2(packet, buffer){
-	console.log('sent:', packet.info.channel.name + '.' + packet.info.packet.name, buffer);
+function sendPacket2(peer_num, packet, buffer){//todo:peer
+	console.log('sent:', packet.info.channel.name + '.' + packet.info.packet.name, 'peer_num:', peer_num, buffer);
 	//console.log('send:' + buffer.toString('hex').match(/../g).join('-'));
-	var enet_sendPacket = enet.sendPacket(buffer, packet.info.channel.id);
+	var enet_sendPacket = enet.sendPacket(peer_num, buffer, packet.info.channel.id);
 
 	console.log('enet_sendPacket:', enet_sendPacket);
 	return enet_sendPacket;
 }
 
-module.exports = {createPacket, sendPacket, sendPacket2};
+module.exports = {createPacket, sendPacket};

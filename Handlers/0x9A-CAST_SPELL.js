@@ -3,9 +3,9 @@ const Packets = require("../Packets");
 const {createPacket, sendPacket} = require("../PacketUtilities");
 
 
-module.exports = function(q, obj1){
+module.exports = (player, packet) => {
     console.log('handle: C2S.CAST_SPELL');
-	//console.log(obj1);
+	//console.log(packet);
 
     
 	var CAST_SPELL_ANS = createPacket('CAST_SPELL_ANS', 'S2C');
@@ -13,6 +13,6 @@ module.exports = function(q, obj1){
 	CAST_SPELL_ANS.CastInfo = {
         
     };
-	var isSent = sendPacket(CAST_SPELL_ANS);
+	var isSent = player.sendPacket(CAST_SPELL_ANS);
 	console.log(CAST_SPELL_ANS);
 };

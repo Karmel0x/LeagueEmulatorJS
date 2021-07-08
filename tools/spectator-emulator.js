@@ -33,7 +33,7 @@ async function start_spectator(){
 
 
         var buffer = replayUnpacked[i].Bytes ? Buffer.from(replayUnpacked[i].Bytes, 'base64') : Buffer.from(replayUnpacked[i].BytesHex.split(' ').join(''), 'hex');
-        enet.sendPacket(buffer, replayUnpacked[i].Channel);
+        enet.sendPacket(0, buffer, replayUnpacked[i].Channel);
 
     }
 
@@ -58,7 +58,7 @@ async function init_network(){
             if(obj1.cmd == 0x00){
                 var keyExchangePacket = '00 2a 00 ff 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00';
                 var buffer = Buffer.from(keyExchangePacket, 'hex');
-                enet.sendPacket(buffer, 0);
+                enet.sendPacket(0, buffer, 0);
             }
 
             if(!_start_spectator){

@@ -36,7 +36,10 @@ wss.onMessage = (data) => {
 				channel: replayUnpacked[i].Channel,
 				buffer: buffer,
 			});
-			
+
+			//if(parsed.cmd == 0x95)//PING_LOAD_INFO
+			//	continue;
+
 			if(parsed.cmd == 0xFF){
     			buffer.off = 0;
 				let batchPackets = new BatchPacket();
@@ -94,7 +97,7 @@ wss.onMessage = (data) => {
 					Bytes: bytes,
 					Parsed: parsedStr,
 					channelName: Packets[replayUnpacked[i].Channel || 0]?.name || replayUnpacked[i].Channel,
-					cmdName: Packets[replayUnpacked[i].Channel || 0][parsed.cmd2 || parsed.cmd]?.name || parsed.cmd2 || parsed.cmd,
+					cmdName: Packets[replayUnpacked[i].Channel || 0]?.[parsed.cmd2 || parsed.cmd]?.name || parsed.cmd2 || parsed.cmd,
 				},
 			}));
 
@@ -105,13 +108,13 @@ wss.onMessage = (data) => {
 		let i = res.Id;
 		var buffer = replayUnpacked[i].Bytes ? Buffer.from(replayUnpacked[i].Bytes, 'base64') : Buffer.from(replayUnpacked[i].BytesHex.split(' ').join(''), 'hex');
 		
-        enet.sendPacket(buffer, replayUnpacked[i].Channel);
+        enet.sendPacket(0, buffer, replayUnpacked[i].Channel);
 	}else if(res.cmd == 'sendpacket_type'){
 		var KEY_CHECK = createPacket(res.name, res.channel);
 		KEY_CHECK.partialKey = [ 0x2A, 0x00, 0xFF ];
 		KEY_CHECK.ClientID = 0;
 		KEY_CHECK.PlayerID = 1;
-		var isSent = sendPacket(KEY_CHECK);
+		sendPacket(0, KEY_CHECK);
 	}
 
 }
