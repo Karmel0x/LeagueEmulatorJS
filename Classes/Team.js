@@ -21,6 +21,7 @@ class Team {
     }
     
     sendPacket_withVision(packet){
+        //todo
         this.sendPacket(packet);
     }
     sendPacket(packet, minStage = loadingStages.NOT_CONNECTED){
@@ -33,7 +34,7 @@ class Team {
 
         //console.log('vision', target, see);
         if(enters){
-            console.log('enters vision', this.team, target.netId);
+            console.debug('enters vision', this.team, target.netId);
 
             var OBJECT_SPAWN = createPacket('OBJECT_SPAWN');
             OBJECT_SPAWN.netId = target.netId;
@@ -61,7 +62,7 @@ class Team {
             //SET_HEALTH.count = 0;
             //var isSent = this.sendPacket(SET_HEALTH);
         }else{
-            console.log('leaves vision', this.team, target.netId);
+            console.debug('leaves vision', this.team, target.netId);
 
             var LEAVE_VISION = createPacket('LEAVE_VISION');
             LEAVE_VISION.netId = target.netId;

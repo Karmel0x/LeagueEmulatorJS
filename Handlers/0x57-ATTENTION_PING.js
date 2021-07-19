@@ -1,4 +1,5 @@
 
+const { Vector2 } = require("three");
 const Packets = require("../Packets");
 const {createPacket, sendPacket} = require("../PacketUtilities");
 
@@ -16,5 +17,9 @@ module.exports = (player, packet) => {
         ATTENTION_PING.unk1 = 0xFB;
         var isSent = player.sendPacket(ATTENTION_PING);
 	}
+
+    //test
+    var pos = new Vector2(packet.Position.x, packet.Position.y);
+    global.Units['RED'].MINION[Object.keys(global.Units['RED'].MINION)[0]].move1(pos);
 
 };

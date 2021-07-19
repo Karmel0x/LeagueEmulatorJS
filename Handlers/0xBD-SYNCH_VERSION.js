@@ -75,6 +75,6 @@ module.exports = (player, packet) => {
 	for(let i = 0; i < 19; i++)
 		SYNCH_VERSION.EnabledDradisMessages[i] = true;
 
-	console.log(SYNCH_VERSION);
 	var isSent = player.sendPacket(SYNCH_VERSION);
+	console.debug(SYNCH_VERSION);
 };

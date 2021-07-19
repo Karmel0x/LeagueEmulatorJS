@@ -33,11 +33,12 @@ const InhibitorNetIds = {
 global.Inhibitors = global.Inhibitors || {BLUE: {}, RED: {}};
 
 class Inhibitor extends Unit {
-    constructor(config, team, num){
-        super('INHIBITOR', config, team, num);
+    constructor(team, num){
+        super('INHIBITOR', {
+            netId: InhibitorNetIds[team][num] || 0xFF000000
+        }, team, num);
         global.Inhibitors[team][num] = this;
 
-        this.netId = InhibitorNetIds[team][num] || 0xFF000000;
         this.spawn(team, num);
     }
     spawn(team, num){
@@ -51,7 +52,7 @@ class Inhibitor extends Unit {
     static spawnAll(){
         for(let team in InhibitorNetIds){
             for(let i = 0; i < 3; i++)
-                new Inhibitor({}, team, i);
+                new Inhibitor(team, i);
         }
     }
 }

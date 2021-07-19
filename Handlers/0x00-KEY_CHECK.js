@@ -15,7 +15,7 @@ module.exports = (peer_num, packet) => {
 	{
 		var KEY_CHECK = createPacket('KEY_CHECK', 'HANDSHAKE');
 		KEY_CHECK.partialKey = [ 0x2A, 0x00, 0xFF ];
-		KEY_CHECK.ClientID = 0;
+		KEY_CHECK.ClientID = clientId;
 		KEY_CHECK.PlayerID = 1;
 		var isSent = player.sendPacket(KEY_CHECK);
 	}

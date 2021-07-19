@@ -42,10 +42,6 @@ class Minion extends Unit {
 			base: Minions[type],
 		}, team, num, type);
 
-
-	}
-	initialize(){
-
 	}
 	spawn(){
 		let pos = BarracksByTeam[this.info.team][this.info.num].position;
@@ -65,7 +61,7 @@ class Minion extends Unit {
 		Barrack_SpawnUnit.HealthBonus = 7;
 		Barrack_SpawnUnit.MinionLevel = 1;
 		var isSent = global.Teams.ALL.sendPacket(Barrack_SpawnUnit);
-		console.log(Barrack_SpawnUnit);
+		console.debug(Barrack_SpawnUnit);
 
 		super.spawn();
 		this.moveLane();

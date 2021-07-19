@@ -39,25 +39,28 @@ module.exports = {//MovementDataNormal
                 obj.TeleportID = buffer.read1('uint8');
             }
             //console.log(object, obj);
-            obj.Waypoints = CompressedWaypoint.reader(buffer, obj.WaypointsSize);
+            obj.WaypointsCC = CompressedWaypoint.reader(buffer, obj.WaypointsSize);
+            obj.Waypoints = TranslateCenteredCoordinates.from(obj.WaypointsCC);
         }
 
-        obj.TranslateCenteredCoordinates = TranslateCenteredCoordinates.from(obj.Waypoints);
         object.MovementData = obj;
     },
     writer: (buffer, source) => {
+        if(!source.WaypointsCC)
+            source.WaypointsCC = TranslateCenteredCoordinates.to(source.Waypoints);
+
         source.bitfield = 0;
-        source.bitfield |= source.Waypoints.length << 1;
+        source.bitfield |= source.WaypointsCC.length << 1;
         if(source.TeleportID)
             source.bitfield |= 1;
     
         buffer.write1('uint8', source.bitfield);
-        if(source.Waypoints.length){
+        if(source.WaypointsCC.length){
             buffer.write1('uint32', source.TeleportNetID);
             if(source.TeleportID)
                 buffer.write1('uint8', source.TeleportID);
     
-            CompressedWaypoint.writer(buffer, source.Waypoints);
+            CompressedWaypoint.writer(buffer, source.WaypointsCC);
         }
         //console.log('source, source.Waypoints, buffer', source, source.Waypoints, buffer);
     }

@@ -3,10 +3,10 @@ const NavigationGrid = require('../Constants/NavigationGrid.json');
 // need to verify NavigationGrid.MiddleOfMap
 
 module.exports = {//TranslateCenteredCoordinates
-    from: (waypoints) => {
+    from: (waypointsCC) => {
         var obj = [];
 
-        for(let waypoint of waypoints){
+        for(let waypoint of waypointsCC){
             //obj.push({
             //    x: (2 * waypoint.x + NavigationGrid.MiddleOfMap.x).toFixed(5),
             //    y: (2 * waypoint.y + NavigationGrid.MiddleOfMap.y).toFixed(5),

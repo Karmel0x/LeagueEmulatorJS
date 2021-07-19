@@ -9,7 +9,8 @@ class StatsUnit {
         this.parent = parent;
 
         this.MoveSpeed = new IStat(defaultValues.MoveSpeed || 325);
-        this.Range = new IStat(defaultValues.Range || 250);
+        this.AttackSpeed = new IStat(defaultValues.AttackSpeed || 0.625);
+        this.Range = new IStat(defaultValues.Range || 750);
         this.AttackDamage = new IStat(defaultValues.AttackDamage || 50);
         this.AbilityPower = new IStat(defaultValues.AbilityPower || 0);
         this.CriticalChance = new IStat(defaultValues.CriticalChance || 0);

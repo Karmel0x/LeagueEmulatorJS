@@ -83,7 +83,7 @@ function sendPacket(peer_num, packet){
 	return sendPacket2(peer_num, packet, buffer);
 }
 function sendPacket2(peer_num, packet, buffer){//todo:peer
-	console.log('sent:', packet.info.channel.name + '.' + packet.info.packet.name, 'peer_num:', peer_num, buffer);
+	console.debug('sent:', packet.info.channel.name + '.' + packet.info.packet.name, 'peer_num:', peer_num, buffer);
 	//console.log('send:' + buffer.toString('hex').match(/../g).join('-'));
 	var enet_sendPacket = enet.sendPacket(peer_num, buffer, packet.info.channel.id);
 

@@ -5,6 +5,18 @@ const {createPacket, sendPacket} = require("../PacketUtilities");
 const Minion = require("../Classes/Units/Minion");
 const { Vector2 } = require('three');
 
+function chatBoxMessage(target, message){
+	
+    var CHAT_BOX_MESSAGE = createPacket('CHAT_BOX_MESSAGE', 'COMMUNICATION');
+	
+	CHAT_BOX_MESSAGE.msg = message;
+	CHAT_BOX_MESSAGE.messageSize = message.length;
+
+	CHAT_BOX_MESSAGE.netId = target.netId;
+    var isSent = target.sendPacket(CHAT_BOX_MESSAGE);
+	console.debug(CHAT_BOX_MESSAGE);
+}
+
 module.exports = (player, packet) => {
     console.log('handle: COMMUNICATION.CHAT_BOX_MESSAGE');
 	//console.log(packet);
@@ -14,7 +26,7 @@ module.exports = (player, packet) => {
 	Object.assign(CHAT_BOX_MESSAGE, packet);
 	CHAT_BOX_MESSAGE.netId = player.netId;
     var isSent = player.sendPacket(CHAT_BOX_MESSAGE);
-	console.log(CHAT_BOX_MESSAGE);
+	console.debug(CHAT_BOX_MESSAGE);
 
     //var DEBUG_MESSAGE = createPacket('DEBUG_MESSAGE');
 	//DEBUG_MESSAGE.netId = player.netId;
@@ -26,7 +38,21 @@ module.exports = (player, packet) => {
 		let command = packet.msg.slice(1);
 		let commandArgs = command.split(' ');
 
-		if(commandArgs[0] === 'q'){
+		if(commandArgs[0] === 'help'){
+			var message = `
+				Available commands:
+				.q :: spawning 1 BLUE and 1 RED minions
+				.qq :: spawning 1 RED minion and teleports to BLUE fountain
+				.w :: starting game (start spawning minions)
+				.r :: reading player stats from '/Constants/TestStats.json'
+				.e :: sending player stats to client
+				.levelup [<levelAmount>] :: adding levels for player
+				.expup [<expAmount>] :: adding experience for player
+				.debugMode [<debugLevel(0/1)>] :: turning off/on debug mode (debug logs)
+			`;
+			chatBoxMessage(player, message.split('\t\t').join(' '));
+		}
+		else if(commandArgs[0] === 'q'){
 			for(let i = parseInt(commandArgs[1] || 1); i > 0; i--){
 				new Minion('BLUE', 'MALEE', 0);
 				new Minion('RED', 'MALEE', 0);
@@ -41,10 +67,10 @@ module.exports = (player, packet) => {
 		else if(commandArgs[0] === 'w'){
 			global.command_START_GAME = true;
 		}
-		else if(commandArgs[0] === 'ee'){
-			player.battle.attack(global.Units[1]);
-			global.Units[1].battle.attack(player);
-		}
+		//else if(commandArgs[0] === 'ee'){
+		//	player.battle.attack(global.Units[1]);
+		//	global.Units[1].battle.attack(player);
+		//}
 		else if(commandArgs[0] === 'e'){
 			var CHAR_STATS = createPacket('CHAR_STATS', 'LOW_PRIORITY');
 			CHAR_STATS.SyncID = performance.now();
@@ -73,6 +99,22 @@ module.exports = (player, packet) => {
 		}
 		else if(commandArgs[0] == 'expup'){
 			player.stats.expUp(parseInt(commandArgs[1] || 1));
+		}
+		else if(commandArgs[0] == 'debugMode'){
+			let debugLevel = parseInt(commandArgs[1] || '');
+			if(isNaN(debugLevel))
+				debugLevel = 1;
+
+			//global.debugLevel = debugLevel;
+
+			if(debugLevel == 0){
+				console.debug_mp = console.debug_mp || console.debug;
+				console.debug = () => {};
+			}
+			else if(debugLevel == 1){
+				console.debug_mp = console.debug_mp || console.debug;
+				console.debug = console.debug_mp || console.debug;
+			}
 		}
 
 	}

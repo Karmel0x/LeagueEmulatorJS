@@ -6,4 +6,15 @@ module.exports = class extends BasePacket {//S2C.
 		count: 'uint16',
         //todo
 	}
+	writer(buffer){
+		super.writer(buffer);
+		
+		if(!this.MaxHealth)
+			return;
+			
+		buffer.writeobj({
+			MaxHealth: 'float',
+			Health: 'float',
+		}, this);
+	}
 };

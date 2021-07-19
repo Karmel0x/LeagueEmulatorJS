@@ -41,7 +41,7 @@ class StatsPlayer extends StatsUnit {
 	    SKILL_UP.SpellLevel = this.SpellLevel[Slot];
 	    SKILL_UP.SkillPoints = this.SkillPoints;
 	    var isSent = this.parent.sendPacket(SKILL_UP);
-	    console.log(SKILL_UP);
+	    console.debug(SKILL_UP);
     }
     Exp = 0;
     ExpTotal = 0;

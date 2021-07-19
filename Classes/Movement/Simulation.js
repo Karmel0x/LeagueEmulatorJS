@@ -1,5 +1,7 @@
 const { Vector2 } = require('three');
 
+// https://leagueoflegends.fandom.com/wiki/Sight#Sight_Ranges
+var defaultVisionRange = 1350;
 
 class MovementSimulation {
 
@@ -24,8 +26,10 @@ class MovementSimulation {
 		//}
 	}
 	visionProcess(){
-		const teams = {BLUE: 0, RED: 1};
-		for(var allyUnit_team in teams){
+		//const teams = {BLUE: 0, RED: 1};
+		var allyUnit_team = 'BLUE';
+		//for(var allyUnit_team in teams)
+		{
 			for(var allyUnit_id in global.Units[allyUnit_team]['ALL']){
 
 				let allyUnit = global.Units[allyUnit_team]['ALL'][allyUnit_id];
@@ -37,11 +41,13 @@ class MovementSimulation {
 				let allyUnit_position = allyUnit.transform.position;
 				if(allyUnit_position.x == 0 && allyUnit_position.y == 0)
 					continue;//for now
-				let allyUnit_visionRange = allyUnit.stats.visionRange || 600;
-		
-				for(var enemyUnit_team in teams){
-					if(enemyUnit_team == allyUnit_team)
-						continue;
+				let allyUnit_visionRange = allyUnit.stats.visionRange || defaultVisionRange;
+
+				var enemyUnit_team = 'RED';
+				//for(var enemyUnit_team in teams)
+				{
+					//if(enemyUnit_team == allyUnit_team)
+					//	continue;
 		
 					for(var enemyUnit_id in global.Units[enemyUnit_team]['ALL']){
 						let enemyUnit = global.Units[enemyUnit_team]['ALL'][enemyUnit_id];
@@ -49,7 +55,7 @@ class MovementSimulation {
 						let enemyUnit_position = enemyUnit.transform.position;
 						if(enemyUnit_position.x == 0 && enemyUnit_position.y == 0)
 							continue;//for now
-						let enemyUnit_visionRange = enemyUnit.stats.visionRange || 600;
+						let enemyUnit_visionRange = enemyUnit.stats.visionRange || defaultVisionRange;
 		
 						let dist = allyUnit_position.distanceTo(enemyUnit_position);
 						// ? let wplen = dist_allyorenemy && pathfinding.vision(allyUnit_position, enemyUnit_position).waypoints.length < 3;
@@ -73,6 +79,7 @@ class MovementSimulation {
 		for(;;){
 			if(!unit.Waypoints || unit.Waypoints.length < 2)
 				return false;
+			//console.log('move', unit.netId, unit.transform.position);
 
 			let dist = unit.transform.position.distanceTo(unit.Waypoints[1]);
 			if(unit.moveCallback && dist <= unit.moveCallback_range){
@@ -112,6 +119,12 @@ class MovementSimulation {
 				let diff = performance.now() - time;
 				let moved = this.move(unit, diff);
 				this.moved[unit.netId] = moved;
+			}
+			for(var i in global.Missiles){
+				let unit = global.Missiles[i];
+				let diff = performance.now() - time;
+				let moved = this.move(unit, diff);
+				//this.moved[unit.netId] = moved;
 			}
 			this.visionProcess();
 

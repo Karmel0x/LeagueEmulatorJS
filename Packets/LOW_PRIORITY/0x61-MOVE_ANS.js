@@ -11,7 +11,7 @@ module.exports = class extends BasePacket {//LOW_PRIORITY.MOVE_ANS
         }, this);
         
         for(let i = 0; i < this.MovementDataNormal_length; i++)
-            if(this.Waypoints)
+            if(this.Waypoints || this.WaypointsCC)
                 MovementDataNormal.writer(buffer, this);
     }
     reader(buffer){

@@ -9,11 +9,12 @@ const NexusNetIds = {
 global.Nexuses = global.Nexuses || {};
 
 class Nexus extends Unit {
-    constructor(config, team){
-        super('NEXUS', config, team, 0);
+    constructor(team){
+        super('NEXUS', {
+            netId: NexusNetIds[team] || 0xFFF00000
+        }, team, 0);
         global.Nexuses[team] = this;
 
-        this.netId = NexusNetIds[team] || 0xFFF00000;
         this.spawn(team);
     }
     //onDie(){
@@ -29,7 +30,7 @@ class Nexus extends Unit {
     }
     static spawnAll(){
         for(let team in NexusNetIds)
-            new Nexus({}, team);
+            new Nexus(team);
     }
 }
 

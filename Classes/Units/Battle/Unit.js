@@ -7,6 +7,7 @@ class BattleUnit {
     }
 
     attack(target){
+        console.log('BattleUnit.attack', this.parent.netId, target.netId);
         var dmg = {
             ad: 0,
             ap: 0,
@@ -20,6 +21,8 @@ class BattleUnit {
 
         if(this.parent.stats.CurrentHealth <= 0)
             this.die();
+
+        this.parent.SET_HEALTH();
     }
     die(){
         this.parent.stats.CurrentHealth = 0;

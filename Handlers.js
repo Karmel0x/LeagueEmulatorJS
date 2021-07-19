@@ -40,7 +40,7 @@ module.exports = async function(q){
         player = global.Units['ALL'].PLAYER[clientId];
     }
 	var packet = HandlersParse.parsePacket(q);
-	console.log('channel:', q.channel || 0, 'peer_num:', q.peer_num, 'packet:', packet);
+	console.debug('channel:', q.channel || 0, 'peer_num:', q.peer_num, 'packet:', packet);
 
 	try {
 		if(typeof Handlers[packet.cmd] == 'undefined' || typeof Handlers[packet.cmd].handler == 'undefined')

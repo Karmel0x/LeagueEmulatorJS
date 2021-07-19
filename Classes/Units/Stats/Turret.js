@@ -10,6 +10,7 @@ class StatsTurret extends StatsUnit {
             AttackDamage: 750,
             //basicAttackTravelSpeed: 1200,
             //basicAttackFlags: UNBLOCKABLE,
+            HealthPoints: 4000,
         });
         
     }

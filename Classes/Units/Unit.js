@@ -5,6 +5,7 @@ const {createPacket, sendPacket} = require("../../PacketUtilities");
 var FunctionsModel = require('../../Functions/Model');
 var TranslateCenteredCoordinates = require('../../Functions/TranslateCenteredCoordinates');
 const { Vector2 } = require('three');
+var Missile = require('../Attacks/Missile');
 
 var Stats = {
     UNIT: require('./Stats/Unit'),
@@ -75,6 +76,9 @@ class Unit {
         global.Units['netId'][this.netId] = this;
 
     }
+    initialize(){
+        //nothing here..
+    }
     constructor(unitType, config, team, num, name = ''){
         this.initialize();
         Object.assign(this, config);
@@ -94,51 +98,59 @@ class Unit {
         this.battle = new (Battle[this.info.type] || Battle['UNIT'])(this);
 
         this.spawn();
-        
         this.appendGlobal();
-        console.log(Date.now(), 'Created Unit', this);
+        console.debug(Date.now(), 'Created Unit', this);
         console.log('UnitsCount', global.UnitsCount.count);
-    }
-    initialize(){
-        //nothing here..
     }
     spawn(){
         this.respawn();
     }
 
 
-    attack(TargetNetID, wp, tcc){
-        console.log(this.transform.position.distanceTo(global.Units['netId'][TargetNetID].transform.position), this.stats.Range.Total);
-        if(this.transform.position.distanceTo(global.Units['netId'][TargetNetID].transform.position) > this.stats.Range.Total){
+    attack_TargetNetID(TargetNetID, MovementData){
+        if(!global.Units['netId'][TargetNetID])
+            return console.log('global.Units[netId] does not contain', TargetNetID);
+
+        this.attack(global.Units['netId'][TargetNetID], MovementData);
+    }
+    attack(target, MovementData){
+        console.debug(this.transform.position.distanceTo(target.transform.position), this.stats.Range.Total);
+        if(this.transform.position.distanceTo(target.transform.position) > this.stats.Range.Total){
             this.moveCallback_range = this.stats.Range.Total;
             this.moveCallback = () => {
                 this.moveCallback = null;
-                this.attack(TargetNetID, wp, tcc);
+                this.attack(target, MovementData);
             };
-            this.move1(global.Units['netId'][TargetNetID].transform.position);
+            this.move1(target.transform.position);
+            //this.move0(MovementData);
             return;
         }
-        this.attackProcess(TargetNetID, wp, tcc);
+        this.attackProcess(target);
     }
-    attackProcess(TargetNetID, wp, tcc){
+    attackProcess(target){
+        var missile = new Missile(this, {speed: 2000});
+
         var NEXT_AUTO_ATTACK = createPacket('NEXT_AUTO_ATTACK', 'S2C');
         NEXT_AUTO_ATTACK.netId = this.netId;
 
-        let TargetPosition = tcc[tcc.length - 1];
-        TargetPosition.z = 10;
+        let TargetPosition = {
+            x: target.transform.position.x,
+            y: target.transform.position.y,
+            z: 10,
+        };
         let AttackSlot = 1;
-        let MissileNextID = TargetNetID + 1;
 
         NEXT_AUTO_ATTACK.Attack = {
-            TargetNetID: TargetNetID,
+            TargetNetID: target.netId,
             TargetPosition: TargetPosition,
             AttackSlot: AttackSlot,
-            MissileNextID: MissileNextID,
+            MissileNextID: missile.netId,
             ExtraTime: 127,
         };
         
         var isSent = global.Teams.ALL.sendPacket_withVision(NEXT_AUTO_ATTACK);
 
+        missile.fire(target);
         this.Waypoints = [];
     }
     teleport(position){
@@ -146,29 +158,28 @@ class Unit {
         this.move1(position);
     }
     move1(position){
-        let tcc = [this.transform.position, position];
-        let wp = TranslateCenteredCoordinates.to(tcc);
-        this.move(null, wp, tcc);
+        var MovementData = {};
+        MovementData.Waypoints = [this.transform.position, position];
+        //MovementData.WaypointsCC = TranslateCenteredCoordinates.to(MovementData.Waypoints);
+        this.moveProcess(MovementData);
     }
-    move0(position, wp, tcc){
+    move0(MovementData){
         this.moveCallback = null;
-        this.move(position, wp, tcc);
+        this.moveProcess(MovementData);
     }
-    move(position, wp, tcc){
-        //console.log(TranslateCenteredCoordinates.from(wp));
-
-        let Waypoints = wp;//[this.transform.position, position];
-        //this.transform.position = position;
-        this.Waypoints = tcc;//testing
-
+    moveProcess(MovementData){
+        this.Waypoints = MovementData.Waypoints;
+        this.Waypoints[0] = this.transform.position;
         
+        // this should be in Movement_Simulation so we can resend if destination will change (following moveable unit)
         var MOVE_ANS = createPacket('MOVE_ANS', 'LOW_PRIORITY');
 
         MOVE_ANS.netId = 0;//this.netId;
         MOVE_ANS.SyncID = performance.now();
         MOVE_ANS.TeleportNetID = this.netId;
         MOVE_ANS.TeleportID = 0x00;
-        MOVE_ANS.Waypoints = Waypoints;
+        //MOVE_ANS.WaypointsCC = MovementData.WaypointsCC;
+        MOVE_ANS.Waypoints = this.Waypoints;
         
         //console.log('MOVE_ANS', MOVE_ANS);
         var isSent = global.Teams.ALL.sendPacket_withVision(MOVE_ANS);
@@ -193,10 +204,18 @@ class Unit {
         
 		global.Teams[this.info.team].vision(this, true);
     }
+    //SET_HEALTH(){
+    //    var SET_HEALTH = createPacket('SET_HEALTH');
+    //    SET_HEALTH.netId = this.netId;
+    //    SET_HEALTH.count = 0;
+    //    var isSent = global.Teams.ALL.sendPacket_withVision(SET_HEALTH);
+    //}
     SET_HEALTH(){
         var SET_HEALTH = createPacket('SET_HEALTH');
         SET_HEALTH.netId = this.netId;
         SET_HEALTH.count = 0;
+		SET_HEALTH.MaxHealth = this.stats.HealthPoints.Total;
+		SET_HEALTH.Health = this.stats.CurrentHealth;
         var isSent = global.Teams.ALL.sendPacket_withVision(SET_HEALTH);
     }
 }

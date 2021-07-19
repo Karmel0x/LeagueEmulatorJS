@@ -27,7 +27,7 @@
 		"PercentBonus": 0,
 		"PercentBonus2": 2
 	},
-	"Range": {"Total": 125.0, "FlatBonus": 12.0},
+	"Range": {"Total": 750.0, "FlatBonus": 12.0},
 	
 	"CooldownReduction": {"Total": -2.0},
 
