@@ -225,8 +225,14 @@ module.exports = class extends BasePacket {//LOW_PRIORITY.CHAR_STATS
 
 		this.UpdateReplicant(unit, SpellsEnabled, 0, 2);//ok?
 		this.UpdateReplicant(unit, SpellsEnabled ? SpellsEnabled >> 32 : undefined, 0, 3);//ok?
-		this.UpdateReplicant(unit, unit.stats?.SummonerSpellsEnabled, 0, 4);
-		this.UpdateReplicant(unit, unit.stats?.SummonerSpellsEnabled ? unit.stats?.SummonerSpellsEnabled >> 32 : undefined, 0, 5);
+		
+		var SummonerSpellsEnabled = 0;
+		for(var i in unit.stats.SummonerSpellsEnabled)
+			if(unit.stats.SummonerSpellsEnabled[i])
+				SummonerSpellsEnabled |= 16 << i;
+		
+		this.UpdateReplicant(unit, SummonerSpellsEnabled, 0, 4);
+		this.UpdateReplicant(unit, SummonerSpellsEnabled ? SummonerSpellsEnabled >> 32 : undefined, 0, 5);
 		this.UpdateReplicant(unit, unit.stats?.EvolvePoints, 0, 6);//ok?
 		this.UpdateReplicant(unit, unit.stats?.EvolveFlags, 0, 7);//ok?
 		for (var i = 0; i < 4; i++)
@@ -346,7 +352,7 @@ module.exports = class extends BasePacket {//LOW_PRIORITY.CHAR_STATS
 
 				buffer.writeUInt8(buffer.off - (sizeOffset + 1), sizeOffset);
 			}
-			console.log('CHAR_STATS writer unit', this.units[i]);
+			console.debug('CHAR_STATS writer unit', this.units[i]);
 		}
 	}
 	//00 80 e8 43 00 80 e8 43 ff ff ff ff ff 87 80 80 02 00 00 00 00 00 00 c8 41 ff ff 00 00 80 3f ff ff ff ff ff ff ff

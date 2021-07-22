@@ -1,8 +1,8 @@
 
 // too many console logs makes server a bit laggy..
 // turn off/on with `.debugMode [<debugLevel(0/1)>]`
-console.debug_mp = console.debug;
-console.debug = () => {};
+//console.debug_mp = console.debug;
+//console.debug = () => {};
 
 
 require('./init_utilities')();

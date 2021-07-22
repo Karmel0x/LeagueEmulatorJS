@@ -7,7 +7,8 @@
 
 
 //var replayUnpacked = require('../../../LOL-REPLAY.rlp.json');
-var replayUnpacked = require('../../../dumps-4.12-Riven vs Miss Fortune 1v1.json');
+//var replayUnpacked = require('../../../dumps-4.12-Riven vs Miss Fortune 1v1.json');
+var replayUnpacked = require('../../../testpackets.json');
 
 
 require('../../init_utilities')();
@@ -30,7 +31,7 @@ wss.onMessage = (data) => {
 		
 		for(let i = 0; i < replayUnpacked.length && i < res.limit; i++){
 
-      		var buffer = replayUnpacked[i].Bytes ? Buffer.from(replayUnpacked[i].Bytes, 'base64') : Buffer.from(replayUnpacked[i].BytesHex.split(' ').join(''), 'hex');
+      		var buffer = replayUnpacked[i].Bytes ? Buffer.from(replayUnpacked[i].Bytes, 'base64') : Buffer.from(replayUnpacked[i].BytesHex.split(' ').join('').split('-').join(''), 'hex');
       		var bytes = buffer.toString('hex').match(/../g).join(' ');
       		var parsed = HandlersParse.parsePacket({
 				channel: replayUnpacked[i].Channel,

@@ -139,7 +139,7 @@ Buffer.prototype.readobj = function(template){
 					let bitfield = this.read1('uint8');
 					let obj = {};
 					for(let i in template[1])
-						obj[i] = (bitfield & template[1][i]) == 0;
+						obj[i] = (bitfield & template[1][i]) != 0;
 					return obj;
 				}
 

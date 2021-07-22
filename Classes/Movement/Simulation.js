@@ -26,9 +26,9 @@ class MovementSimulation {
 		//}
 	}
 	visionProcess(){
-		//const teams = {BLUE: 0, RED: 1};
-		var allyUnit_team = 'BLUE';
-		//for(var allyUnit_team in teams)
+		const teams = {BLUE: 0, RED: 1};
+		//var allyUnit_team = 'BLUE';
+		for(var allyUnit_team in teams)
 		{
 			for(var allyUnit_id in global.Units[allyUnit_team]['ALL']){
 
@@ -43,11 +43,11 @@ class MovementSimulation {
 					continue;//for now
 				let allyUnit_visionRange = allyUnit.stats.visionRange || defaultVisionRange;
 
-				var enemyUnit_team = 'RED';
-				//for(var enemyUnit_team in teams)
+				//var enemyUnit_team = 'RED';
+				for(var enemyUnit_team in teams)
 				{
-					//if(enemyUnit_team == allyUnit_team)
-					//	continue;
+					if(enemyUnit_team == allyUnit_team)
+						continue;
 		
 					for(var enemyUnit_id in global.Units[enemyUnit_team]['ALL']){
 						let enemyUnit = global.Units[enemyUnit_team]['ALL'][enemyUnit_id];
@@ -77,7 +77,7 @@ class MovementSimulation {
 	}
 	move(unit, diff){
 		for(;;){
-			if(!unit.Waypoints || unit.Waypoints.length < 2)
+			if(!unit.Waypoints || unit.Waypoints.length < 2 || unit.WaypointsHalt)
 				return false;
 			//console.log('move', unit.netId, unit.transform.position);
 
@@ -85,6 +85,18 @@ class MovementSimulation {
 			if(unit.moveCallback && dist <= unit.moveCallback_range){
 				unit.moveCallback();
 				continue;
+			}
+			if(unit.collisionCallback){
+				//todo: flags like self targetable, ally targetable, enemy targetable
+				for(var i in global.Units['ALL']['ALL']){
+					let unit2 = global.Units['ALL']['ALL'][i];
+					let dist2 = unit.transform.position.distanceTo(unit2.transform.position);
+					if(dist2 <= (unit.collisionCallback_range + unit2.collisionRadius)){
+						unit.collisionCallback(unit2);
+						break;// todo: not break if can hit more targets
+					}
+				}
+				//continue;
 			}
 			if(unit.Waypoints.length > 1 && dist < 0.1){
 				console.log(unit.transform.position);

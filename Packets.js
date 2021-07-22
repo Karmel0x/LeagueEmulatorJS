@@ -186,6 +186,7 @@ var Packets = {
 		SET_SCREEN_TINT:					{id: 0xDB},
 		ColorRemapFX:						{id: 0xDB, packet: require('./Packets/S2C/0xDB-ColorRemapFX.js')},
 		InteractiveMusicCommand:			{id: 0xDC, packet: require('./Packets/S2C/0xDC-InteractiveMusicCommand.js')},
+		FX_OnEnterTeamVisibility:			{id: 0xE2, packet: require('./Packets/S2C/0xE2-FX_OnEnterTeamVisibility.js')},
 		CLOSE_GAME:							{id: 0xE5},
 		ActivateMinionCamp:					{id: 0xE9, packet: require('./Packets/S2C/0xE9-ActivateMinionCamp.js')},
 		SetShopEnabled:						{id: 0xF0, packet: require('./Packets/S2C/0xF0-SetShopEnabled.js')},

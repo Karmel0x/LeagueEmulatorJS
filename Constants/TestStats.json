@@ -32,7 +32,7 @@
 	"CooldownReduction": {"Total": -2.0},
 
 	"SpellsEnabled": 3,
-	"SummonerSpellsEnabled": 3,
+	"SummonerSpellsEnabled": [true, true],
 	"Level": 13,
 	"IsTargetable": true,
 	"Size": {"Total": 1}

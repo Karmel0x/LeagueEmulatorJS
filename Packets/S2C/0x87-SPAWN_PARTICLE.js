@@ -1,11 +1,7 @@
 var BasePacket = require('../BasePacket');
 var Vector3 = require('../SharedStruct/Vector3');
+var Vector3b = require('../SharedStruct/Vector3b');
 
-var Vector3b = {
-    x: 'int16',
-    y: 'float',
-    z: 'int16',
-};
 
 var FXCreateData = {
     TargetNetID: 'uint32',
@@ -27,12 +23,12 @@ var FXCreateGroupData = {
     TargetBoneNameHash: 'uint32',
     BoneNameHash: 'uint32',
     count: 'uint8',
-    FXCreateData: [FXCreateData, 'count'],
+    FXCreateData: [FXCreateData, 1],//'count'
 };
 
 module.exports = class extends BasePacket {//S2C.
 	struct = {
 		count: 'uint8',
-		FXCreateGroupData: [FXCreateGroupData, 'count'],
+		FXCreateGroupData: [FXCreateGroupData, 1],//'count'
 	}
 };

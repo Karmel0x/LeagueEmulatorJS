@@ -4,7 +4,7 @@ var Vector3 = require('../SharedStruct/Vector3');
 
 var target = {
     unit: 'uint32',
-    hitResult: 'uint16',
+    hitResult: 'uint8',
 };
 module.exports = {
     size: 'uint16',
@@ -20,7 +20,7 @@ module.exports = {
     TargetPositionEnd: Vector3,
 
     targetCount: 'uint8',
-    target: [target, 'targetCount'],
+    target: [target, 1],//'targetCount'
     
     DesignerCastTime: 'float',
     ExtraCastTime: 'float',

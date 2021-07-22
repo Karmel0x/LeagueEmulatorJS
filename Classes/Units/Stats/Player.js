@@ -63,7 +63,9 @@ class StatsPlayer extends StatsUnit {
 
         ++this.Level;
         ++this.SkillPoints;
-        if(this.Level == 6 || this.Level == 11 || this.Level == 16)
+
+        var championWithEvolvePoints = false;
+        if(championWithEvolvePoints && (this.Level == 6 || this.Level == 11 || this.Level == 16))
             ++this.EvolvePoints;
 
         this.skillUpgrade_send(0);//for now
@@ -75,6 +77,7 @@ class StatsPlayer extends StatsUnit {
     EvolveBools = [false, false, false, false];
     SkillPoints = 1;
     SpellLevel = [0, 0, 0, 0];
+    SummonerSpellsEnabled = [true, true];
     skillUpgrade(Slot, IsEvolve = false){
         
         if(IsEvolve){

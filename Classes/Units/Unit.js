@@ -62,6 +62,9 @@ for(let team in TEAMs){
 
 class Unit {
     visibleForEnemy = false;
+    collisionRadius = 48;
+    
+
     appendGlobal(){
 
         this.id = global.UnitsCount.count;
@@ -105,7 +108,6 @@ class Unit {
     spawn(){
         this.respawn();
     }
-
 
     attack_TargetNetID(TargetNetID, MovementData){
         if(!global.Units['netId'][TargetNetID])
@@ -167,8 +169,29 @@ class Unit {
         this.moveCallback = null;
         this.moveProcess(MovementData);
     }
-    moveProcess(MovementData){
-        this.Waypoints = MovementData.Waypoints;
+    halt1(){
+        var MovementData = {};
+        MovementData.Waypoints = [];
+        this.moveProcess(MovementData);
+    }
+    halt0(){
+        this.Waypoints = [];
+    }
+    WaypointsHalt = false;
+    halt_start(send = false){
+        this.WaypointsHalt = true;
+
+        if(send)
+            this.moveProcess();
+    }
+    halt_stop(send = false){
+        this.WaypointsHalt = false;
+
+        if(send)
+            this.moveProcess();
+    }
+    moveProcess(MovementData = {}){
+        this.Waypoints = MovementData.Waypoints || this.Waypoints;
         this.Waypoints[0] = this.transform.position;
         
         // this should be in Movement_Simulation so we can resend if destination will change (following moveable unit)
