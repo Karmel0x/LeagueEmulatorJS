@@ -12,14 +12,14 @@ async function spawnMinions(spawnMinions_count){
 	//todo
 	//for(let j = 0; j < 3; j++){
 	//	if()
-	//		new Minion('RED', 'SUPER_MINION?', j);
+	//		new Minion('RED', j, 'SUPER_MINION?');
 	//}
 
 	// 2. Malee minions
 	for(let i = 0; i < 3; i++){
 		for(let j = 0; j < 3; j++){
-			new Minion('BLUE', 'MALEE', j);
-			new Minion('RED', 'MALEE', j);
+			new Minion('BLUE', j, 'MALEE');
+			new Minion('RED', j, 'MALEE');
 			//break;//
 		}
 		await global.Utilities.wait(800);
@@ -29,9 +29,9 @@ async function spawnMinions(spawnMinions_count){
 	if(spawnMinions_count % 3 == 2){//One Siege minion spawns in every third wave, in each lane.
 		for(let j = 0; j < 3; j++){
 			if(!superMinionsSpawn['BLUE'][j])//Do not spawns on lanes on which super minions are spawning.
-				new Minion('BLUE', 'CANNON', j);
+				new Minion('BLUE', j, 'CANNON');
 			if(!superMinionsSpawn['RED'][j])
-				new Minion('RED', 'CANNON', j);
+				new Minion('RED', j, 'CANNON');
 			//break;//
 		}
 		await global.Utilities.wait(800);
@@ -40,8 +40,8 @@ async function spawnMinions(spawnMinions_count){
 	// 4. Caster minions
 	for(let i = 0; i < 3; i++){
 		for(let j = 0; j < 3; j++){
-			new Minion('BLUE', 'CASTER', j);
-			new Minion('RED', 'CASTER', j);
+			new Minion('BLUE', j, 'CASTER');
+			new Minion('RED', j, 'CASTER');
 			//break;//
 		}
 		await global.Utilities.wait(800);

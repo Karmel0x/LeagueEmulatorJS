@@ -20,8 +20,8 @@ class MovementSimulation {
 			return;
 		enemyUnit.visibleForEnemy = visibleForEnemy;
 		global.Teams[allyUnit_team].vision(enemyUnit, visibleForEnemy);
-		//for(var allyUnit_id in global.Teams[allyUnit_team].PLAYER){
-		//	let allyUnit = global.Teams[allyUnit_team].PLAYER[allyUnit_id];
+		//for(var allyUnit_id in global.Teams[allyUnit_team].Player){
+		//	let allyUnit = global.Teams[allyUnit_team].Player[allyUnit_id];
 		//	allyUnit.vision(enemyUnit, visibleForEnemy);
 		//}
 	}

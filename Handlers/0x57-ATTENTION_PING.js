@@ -20,6 +20,6 @@ module.exports = (player, packet) => {
 
     //test
     var pos = new Vector2(packet.Position.x, packet.Position.y);
-    global.Units['RED'].MINION[Object.keys(global.Units['RED'].MINION)[0]].move1(pos);
+    global.Units['RED'].Minion[Object.keys(global.Units['RED'].Minion)[0]].move1(pos);
 
 };

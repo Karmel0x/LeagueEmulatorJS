@@ -27,7 +27,7 @@ async function wait_start_game(){
 	while(!global.Game.started){
 		await global.Utilities.wait(100);
 
-		if(!global.Units.BLUE.PLAYER || Object.keys(global.Units.BLUE.PLAYER).length === 0){
+		if(!global.Units.BLUE.Player || Object.keys(global.Units.BLUE.Player).length === 0){
 			console.log('[weird] players has been not initialized yet?');
 			continue;
 		}
@@ -36,8 +36,8 @@ async function wait_start_game(){
 		//	start_game();// start game if 5 minutes passed
 		//else{
 		//	let playersLoaded = true;
-		//	for(let i in global.Units['ALL'].PLAYER){
-		//		if(global.Units['ALL'].PLAYER[i].loadingStage < loadingStages.LOADED){
+		//	for(let i in global.Units['ALL'].Player){
+		//		if(global.Units['ALL'].Player[i].loadingStage < loadingStages.LOADED){
 		//			playersLoaded = false;
 		//			break;
 		//		}

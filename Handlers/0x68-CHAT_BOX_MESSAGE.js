@@ -54,14 +54,14 @@ module.exports = (player, packet) => {
 		}
 		else if(commandArgs[0] === 'q'){
 			for(let i = parseInt(commandArgs[1] || 1); i > 0; i--){
-				new Minion('BLUE', 'MALEE', 0);
-				new Minion('RED', 'MALEE', 0);
+				new Minion('BLUE', 0, 'MALEE');
+				new Minion('RED', 0, 'MALEE');
 				//await global.Utilities.wait(2);
 			}
 		}
 		else if(commandArgs[0] === 'qq'){
 			for(let i = parseInt(commandArgs[1] || 1); i > 0; i--){
-				new Minion('RED', 'MALEE', 0).teleport(new Vector2(200, 200));
+				new Minion('RED', 0, 'MALEE').teleport(new Vector2(200, 200));
 			}
 		}
 		else if(commandArgs[0] === 'w'){

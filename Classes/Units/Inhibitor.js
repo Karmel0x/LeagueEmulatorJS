@@ -30,18 +30,9 @@ const InhibitorNetIds = {
 //    //_: 0xff10c6db,
 //};
 
-global.Inhibitors = global.Inhibitors || {BLUE: {}, RED: {}};
 
 class Inhibitor extends Unit {
-    constructor(team, num){
-        super('INHIBITOR', {
-            netId: InhibitorNetIds[team][num] || 0xFF000000
-        }, team, num);
-        global.Inhibitors[team][num] = this;
-
-        this.spawn(team, num);
-    }
-    spawn(team, num){
+    spawn(){
 	    var OBJECT_SPAWN = createPacket('OBJECT_SPAWN');
         OBJECT_SPAWN.netId = this.netId;
         OBJECT_SPAWN.isTurret = true;
@@ -50,10 +41,9 @@ class Inhibitor extends Unit {
         super.spawn();
     }
     static spawnAll(){
-        for(let team in InhibitorNetIds){
-            for(let i = 0; i < 3; i++)
-                new Inhibitor(team, i);
-        }
+        for(let team in InhibitorNetIds)
+            for(let num = 0; num < InhibitorNetIds[team].length; num++)
+                new Inhibitor(team, num, '', {netId: InhibitorNetIds[team][num] || 0xFF000000});
     }
 }
 

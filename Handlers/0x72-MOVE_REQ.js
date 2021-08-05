@@ -13,9 +13,9 @@ module.exports = (player, packet) => {
 		return;
 	}
 
-	//console.log(global.Units['BLUE'].PLAYER);
+	//console.log(global.Units['BLUE'].Player);
 	player.move0(packet.MovementData);//packet.Position, 
-	//global.Units['RED'].MINION[Object.keys(global.Units['RED'].MINION)[0]].move0(packet.MovementData);
+	//global.Units['RED'].Minion[Object.keys(global.Units['RED'].Minion)[0]].move0(packet.MovementData);
 
 
 };

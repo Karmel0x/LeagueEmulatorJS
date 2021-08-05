@@ -19,6 +19,9 @@ const SummonerSpells = {
 	FLASH: 0x06496EA8,
 	TEST: 0x0103D94C
 };
+const MapId = {
+	SR: 1,
+};
 
 const VersionString = 'Version 4.20.0.315 [PUBLIC]';
 
@@ -34,7 +37,7 @@ module.exports = (player, packet) => {
 	SYNCH_VERSION.bitField = {
 		VersionMatches: true,
 	};
-	SYNCH_VERSION.MapToLoad = 1;
+	SYNCH_VERSION.MapToLoad = MapId.SR;
 	SYNCH_VERSION.VersionString = VersionString;
 
 	SYNCH_VERSION.PlayerInfo = [
@@ -68,9 +71,10 @@ module.exports = (player, packet) => {
 	//GameFeatures |= (1 << 12);
 	//GameFeatures |= (1 << 8);
 	//GameFeatures |= (1 << 7);
+	//GameFeatures |= (1 << 6);
 	//GameFeatures |= (1 << 4);
 	//GameFeatures |= (1 << 1);
-	SYNCH_VERSION.GameFeatures = 487826;
+	SYNCH_VERSION.GameFeatures = 487890;
 	SYNCH_VERSION.EnabledDradisMessages = [];
 	for(let i = 0; i < 19; i++)
 		SYNCH_VERSION.EnabledDradisMessages[i] = true;

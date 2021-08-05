@@ -18,7 +18,7 @@ class Missile {
 		this.parent = parent;
         this.initialize();
         //Object.assign(this, config);
-        this.netId = this.netId || ++global.baseNetId;
+        this.netId = this.netId || ++global.lastNetId;
 		this.stats = {};
 		this.stats.MoveSpeed = new IStat(config.speed || 2000);
 
@@ -31,10 +31,10 @@ class Missile {
     }
     fire_TargetNetID(TargetNetID){
 
-        if(!global.Units['netId'][TargetNetID])
+        if(!global.UnitsNetId[TargetNetID])
             return console.log('global.Units[netId] does not contain', TargetNetID);
 
-		var target = global.Units['netId'][TargetNetID];
+		var target = global.UnitsNetId[TargetNetID];
 		this.fire(target);
     }
     async fire(target){

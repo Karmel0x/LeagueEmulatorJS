@@ -1,11 +1,11 @@
 const { Vector2 } = require("three");
 
-global.baseNetId_Spell = 0x50000000;
+global.lastNetId_Spell = 0x50000000;
 
 module.exports = class Spell {
 	constructor(parent){
 		this.parent = parent;
-		this.netId = ++global.baseNetId_Spell;
+		this.netId = ++global.lastNetId_Spell;
 	}
 	CastInfo_Position(packet){//todo
 		var CastInfo = {};

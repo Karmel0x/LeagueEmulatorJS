@@ -3,120 +3,69 @@ var ConstantsUnit = require('../../Constants/Unit');
 //const Packets = require("../Packets");
 const {createPacket, sendPacket} = require("../../PacketUtilities");
 var FunctionsModel = require('../../Functions/Model');
-var TranslateCenteredCoordinates = require('../../Functions/TranslateCenteredCoordinates');
 const { Vector2 } = require('three');
 var Missile = require('../Attacks/Missile');
+const { appendGlobal } = require('./global.Units');
+
 
 var Stats = {
-    UNIT: require('./Stats/Unit'),
-    PLAYER: require('./Stats/Player'),
-    TURRET: require('./Stats/Turret'),
+    Unit: require('./Stats/Unit'),
+    Player: require('./Stats/Player'),
+    Turret: require('./Stats/Turret'),
 };
 var Death = {
-    UNIT: require('./Death/Unit'),
-    PLAYER: require('./Death/Player'),
-    MINION: require('./Death/Minion'),
+    Unit: require('./Death/Unit'),
+    Player: require('./Death/Player'),
+    Minion: require('./Death/Minion'),
 };
 var Battle = {
-    UNIT: require('./Battle/Unit'),
-    PLAYER: require('./Battle/Player'),
+    Unit: require('./Battle/Unit'),
+    Player: require('./Battle/Player'),
 };
-
-global.baseNetId = 0x40000000;
-
-
-const TEAMs = {
-    netId: -2,
-    ALL: -1,
-    UNKNOWN: 0,
-    BLUE: 100,//ORDER
-    RED: 200,//CHAOS
-    NEUTRAL: 300,
-    MAX: 400,
-};
-const UNITs = {
-    ALL: -1,
-    UNIT: 0,
-    PLAYER: 1,
-    MINION: 2,
-    TURRET: 3,
-    INHIBITOR: 4,
-    NEXUS: 5,
-};
-
-global.UnitsCount = global.UnitsCount || {count: 0};
-for(let team in TEAMs){
-    global.UnitsCount[team] = global.UnitsCount[team] || {count: 0};
-    for(let unit in UNITs){
-        global.UnitsCount[team][unit] = global.UnitsCount[team][unit] || {count: 0};
-    }
-}
-global.Units = global.Units || {};
-for(let team in TEAMs){
-    global.Units[team] = global.Units[team] || {};
-    for(let unit in UNITs){
-        global.Units[team][unit] = global.Units[team][unit] || {};
-    }
-}
 
 
 class Unit {
     visibleForEnemy = false;
     collisionRadius = 48;
     
-
-    appendGlobal(){
-
-        this.id = global.UnitsCount.count;
-        ++global.UnitsCount.count;
-        ++global.UnitsCount[this.info.team].count;
-        ++global.UnitsCount[this.info.team][this.info.type].count;
-
-        global.Units[this.info.team][this.info.type][this.id] = this;
-        global.Units[this.info.team]['ALL'][this.id] = this;
-        global.Units['ALL'][this.info.type][this.id] = this;
-        global.Units['ALL']['ALL'][this.id] = this;
-        global.Units['netId'][this.netId] = this;
-
-    }
-    initialize(){
-        //nothing here..
-    }
-    constructor(unitType, config, team, num, name = ''){
-        this.initialize();
+    constructor(team, num = 0, character = '', config = {}){
         Object.assign(this, config);
-        this.netId = this.netId || ++global.baseNetId;
+        this.netId = this.netId || ++global.lastNetId;
 
         this.info = this.info || {};
-        this.info.type = this.info.type || unitType;
+        this.info.type = this.info.type || this.constructor.name;
         this.info.team = this.info.team || team;
         this.info.num = this.info.num || num;
         this.info.spawnNum = this.info.spawnNum || this.info.num || num;
-        this.info.name = this.info.name || name;
+        this.info.name = this.info.name || character;
         
-        this.model = this.model || FunctionsModel(this.info.type, this.info.team, this.info.name);
+        this.model = this.model || FunctionsModel(this.info.type, this.info.team, this.info.name) || character;
 
-        this.stats = new (Stats[this.info.type] || Stats['UNIT'])(this, ConstantsUnit[this.info.type]?.stats || {});
-        this.death = new (Death[this.info.type] || Death['UNIT'])(this);
-        this.battle = new (Battle[this.info.type] || Battle['UNIT'])(this);
+        this.stats = new (Stats[this.info.type] || Stats.Unit)(this, ConstantsUnit[this.info.type]?.stats || {});
+        this.death = new (Death[this.info.type] || Death.Unit)(this);
+        this.battle = new (Battle[this.info.type] || Battle.Unit)(this);
 
-        this.spawn();
-        this.appendGlobal();
+        appendGlobal(this);
         console.debug(Date.now(), 'Created Unit', this);
         console.log('UnitsCount', global.UnitsCount.count);
+        this.initialized();
+        //console.log(global.Units);
+    }
+    initialized(){
+        this.spawn();
     }
     spawn(){
         this.respawn();
     }
 
     attack_TargetNetID(TargetNetID, MovementData){
-        if(!global.Units['netId'][TargetNetID])
+        if(!global.UnitsNetId[TargetNetID])
             return console.log('global.Units[netId] does not contain', TargetNetID);
 
-        this.attack(global.Units['netId'][TargetNetID], MovementData);
+        this.attack(global.UnitsNetId[TargetNetID], MovementData);
     }
     attack(target, MovementData){
-        console.debug(this.transform.position.distanceTo(target.transform.position), this.stats.Range.Total);
+        //console.debug(this.transform.position.distanceTo(target.transform.position), this.stats.Range.Total);
         if(this.transform.position.distanceTo(target.transform.position) > this.stats.Range.Total){
             this.moveCallback_range = this.stats.Range.Total;
             this.moveCallback = () => {

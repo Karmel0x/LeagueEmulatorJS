@@ -37,12 +37,10 @@ const BarracksByTeam = {
 };
 
 class Minion extends Unit {
-	constructor(team, type, num){
-		super('MINION', {
-			base: Minions[type],
-		}, team, num, type);
-
-	}
+    constructor(team, num = 0, character = '', config = {}){
+        config.base = Minions[character];
+		super(team, num, character, config);
+    }
 	spawn(){
 		let pos = BarracksByTeam[this.info.team][this.info.num].position;
 		this.transform = {

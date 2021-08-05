@@ -1,7 +1,6 @@
 var Unit = require('./Unit');
 const {createPacket, sendPacket} = require("../../PacketUtilities");
 const loadingStages = require('../../Constants/loadingStages');
-const Ezreal = require('../../Champions/Ezreal');
 const playersConfig = require('../../Constants/playersConfig');
 
 
@@ -9,17 +8,18 @@ class Player extends Unit {
     KillDeathCounter = 0;
     loaded = false;
 
-    constructor(config, team, num){
-        super('PLAYER', config, team, num);
+    constructor(team, num = 0, config = {}){
+        var character = config.champion;
+        
+        //config.netId = 0x400005ed;
+        config.info = config.info || {};
+        config.info.spawnNum = 5;
+        config.loadingStage = 0;
 
-        this.champion = new Ezreal(this);
-    }
-    initialize(){
-        //this.netId = 0x400005ed;
-        this.info = this.info || {};
-        this.info.spawnNum = 5;
-        this.model = 'Ezreal';
-        this.loadingStage = 0;
+        super(team, num, character, config);
+        
+        const Champion_ = require('../../Champions/' + character);
+        this.champion = new Champion_(this);
     }
     sendPacket(packet, minStage = loadingStages.NOT_CONNECTED){
         if(this.loadingStage < minStage)

@@ -9,7 +9,7 @@ module.exports = (peer_num, packet) => {
 	
 	//todo:checks
 	var clientId = global.PlayerPeers[peer_num] = packet.ClientID;
-	player = global.Units['ALL'].PLAYER[clientId];
+	player = global.Units['ALL'].Player[clientId];
 	player.peer_num = peer_num;
 	
 	{

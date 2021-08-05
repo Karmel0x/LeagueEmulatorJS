@@ -4,6 +4,9 @@
 //console.debug_mp = console.debug;
 //console.debug = () => {};
 
+// for even better debugging you can run this by `node --inspect main`
+// then open chrome browser and go to `chrome://inspect`
+
 
 require('./init_utilities')();
 

@@ -3,7 +3,7 @@ const { getIntBytes_r, childByAddress } = require("../../Utilities");
 
 //todo: replicantList and replicantTypes is definitely wrong
 const replicantList = {
-	PLAYER: [
+	Player: [
 		[
 			'Gold', 'TotalGold',
 			'SpellsEnabled', 'SpellsEnabled_',
@@ -118,7 +118,7 @@ const replicantList = {
 };
 
 const replicantTypes = {// 0 - int, 1 - float, 2 - bool
-	PLAYER: [
+	Player: [
 		[
 			1, 1, 
 			0, 0, 0, 0, 0, 0, 
@@ -332,12 +332,12 @@ module.exports = class extends BasePacket {//LOW_PRIORITY.CHAR_STATS
 					if((this.units[i].seconadaryIdArray[primaryId] & (1 << secondaryId)) == 0)
 						continue;
 
-					if(replicantTypes[this.units[i].type || 'PLAYER']?.[primaryId]?.[secondaryId] == 1){
+					if(replicantTypes[this.units[i].type || 'Player']?.[primaryId]?.[secondaryId] == 1){
 						if(this.units[i].replicant[primaryId][secondaryId] >= 0xFE000000)
 							buffer.write1('uint8', 0xFE);
 
 						buffer.write1('float', this.units[i].replicant[primaryId][secondaryId]);
-					}else if(replicantTypes[this.units[i].type || 'PLAYER']?.[primaryId]?.[secondaryId] == 0){
+					}else if(replicantTypes[this.units[i].type || 'Player']?.[primaryId]?.[secondaryId] == 0){
 						let num = this.units[i].replicant[primaryId][secondaryId];
 						while(num >= 0x80){
 							buffer.write1('uint8', (num | 0x80));
@@ -366,10 +366,10 @@ module.exports = class extends BasePacket {//LOW_PRIORITY.CHAR_STATS
 
 			this.units[i].primaryIdArray = buffer.read1('uint8');
 			this.units[i].netId = buffer.read1('uint32');
-			this.units[i].type = 'PLAYER';
+			this.units[i].type = 'Player';
 				//this.units[i].netId >= 0xFF000000 ? 'Turret' :
 				//this.units[i].netId >= 0x40000000 ? 'Minion' :
-				//'PLAYER';
+				//'Player';
 			this.units[i].seconadaryIdArray = [];
 			this.units[i].dataCount = [];
 			this.units[i].replicant = [{}, {}, {}, {}, {}, {}];

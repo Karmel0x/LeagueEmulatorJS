@@ -6,17 +6,8 @@ const NexusNetIds = {
     RED: 0xFFF02C0F,//4293929999
 };
 
-global.Nexuses = global.Nexuses || {};
 
 class Nexus extends Unit {
-    constructor(team){
-        super('NEXUS', {
-            netId: NexusNetIds[team] || 0xFFF00000
-        }, team, 0);
-        global.Nexuses[team] = this;
-
-        this.spawn(team);
-    }
     //onDie(){
     //    //end game?
     //}
@@ -30,7 +21,7 @@ class Nexus extends Unit {
     }
     static spawnAll(){
         for(let team in NexusNetIds)
-            new Nexus(team);
+            new Nexus(team, 0, '', {netId: NexusNetIds[team] || 0xFFF00000});
     }
 }
 

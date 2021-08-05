@@ -9,10 +9,10 @@ global.Teams = global.Teams || {};
 class Team {
     constructor(team){
         this.team = team;
-        //this.PLAYER = {};
-        //this.UNIT = {};
-        //this.TURRET = {};
-        //this.MINION = {};
+        //this.Player = {};
+        //this.Unit = {};
+        //this.Turret = {};
+        //this.Minion = {};
     }
     static createAll(){
         global.Teams['BLUE'] = new Team('BLUE');
@@ -25,11 +25,11 @@ class Team {
         this.sendPacket(packet);
     }
     sendPacket(packet, minStage = loadingStages.NOT_CONNECTED){
-        for(let player_num in global.Units[this.team].PLAYER)
-            global.Units[this.team].PLAYER[player_num].sendPacket(packet, minStage);
+        for(let player_num in global.Units[this.team].Player)
+            global.Units[this.team].Player[player_num].sendPacket(packet, minStage);
     }
     vision(target, enters = true){
-        //if(target.info.type == 'NEXUS' || target.info.type == 'INHIBITOR' || target.info.type == 'TURRET')
+        //if(target.info.type == 'Nexus' || target.info.type == 'Inhibitor' || target.info.type == 'Turret')
         //    return;
 
         //console.log('vision', target, see);
@@ -55,7 +55,6 @@ class Team {
                 Forward: {x: 0, y: 0},
             };
             var isSent = this.sendPacket(OBJECT_SPAWN, loadingStages.IN_GAME);
-            
 
             //var SET_HEALTH = createPacket('SET_HEALTH');
             //SET_HEALTH.netId = target.netId;

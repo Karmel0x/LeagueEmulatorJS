@@ -1,6 +1,6 @@
 
 module.exports = {
-	PLAYER: {
+	Player: {
 		team: {
 			UNKNOWN: {
 				id: 0
@@ -40,7 +40,7 @@ module.exports = {
 
 		},
 	},
-	MINION: {
+	Minion: {
 		team: {
 			BLUE: {
 				id: 0x64,
@@ -198,10 +198,10 @@ module.exports = {
 			GoldRadius: 1400,
 		},
 	},
-	MONSTER: {
+	Monster: {
 		respawnTime: 20,
 	},
-	TURRET: {
+	Turret: {
 		respawnTime: false,
 	},
 };

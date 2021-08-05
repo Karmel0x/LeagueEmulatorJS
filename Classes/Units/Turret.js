@@ -39,25 +39,14 @@ const TurretNetIds = {
 };
 
 
-global.Turrets = global.Turrets || {BLUE: {}, RED: {}};
-
 class Turret extends Unit {
-    constructor(config, team, num){
-        super('TURRET', config, team, num);
-        global.Turrets[team][num] = this;
-
-        //this.netId = TurretNetIds[team][num] || 0x00;
-        this.Name = config.Name;
-
-        this.spawn();
-    }
     spawn(){
         
         var TURRET_SPAWN = createPacket('TURRET_SPAWN', 'S2C');
         TURRET_SPAWN.netId = this.netId;
         TURRET_SPAWN.NetID = this.netId;
         TURRET_SPAWN.NetNodeID = 0x40;
-        TURRET_SPAWN.Name = this.Name;
+        TURRET_SPAWN.Name = this.info.name;
         TURRET_SPAWN.bitfield = {
             IsTargetable: true,
         };
@@ -69,10 +58,11 @@ class Turret extends Unit {
     }
     static spawnAll(){
         //return;
-        for(let team in TurretNetIds)
+        for(let team in TurretNetIds){
+            let i = 0;
             for(let name in TurretNetIds[team])
-                new Turret({Name: name}, team, TurretNetIds[team][name]);
-
+                new Turret(team, i++, name);//, {netId: TurretNetIds[team][name]});
+        }
     }
 }
 

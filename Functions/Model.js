@@ -1,6 +1,6 @@
 
 var Models = {
-    PLAYER: {
+    Player: {
         basename: '',
         team: {
             BLUE: '',
@@ -10,7 +10,7 @@ var Models = {
             NAUTILUS: 'nautilus',
         },
     },
-    MINION: {
+    Minion: {
         basename: '_Minion_',
         team: {
             BLUE: 'Blue',
@@ -23,7 +23,7 @@ var Models = {
             SUPER: 'MechMalee',
         },
     },
-    MONSTER: {
+    Monster: {
         basename: '',
         team: {
             NEUTRAL: '',
