@@ -34,7 +34,7 @@ class BattleUnit {
 
     }
     distanceTo(target){
-        return this.parent.transform.position.distanceTo(target.transform.position);
+        return this.parent.Waypoints[0].distanceTo(target.Waypoints[0]);
     }
     inRange(target, range){
         return this.distanceTo(target) <= range;

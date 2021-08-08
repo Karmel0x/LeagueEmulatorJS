@@ -50,7 +50,7 @@ class Player extends Unit {
     //        ];
     //        OBJECT_SPAWN.MovementData = {
     //            //SyncID: 0x0F0FD189,
-    //            Position: target.transform.position,
+    //            Position: target.Waypoints[0],
     //            Forward: {x: 0, y: 0},
     //        };
     //        var isSent = this.sendPacket(OBJECT_SPAWN);
@@ -139,18 +139,18 @@ class Player extends Unit {
             ScriptScale: 1,
         };
         SPAWN_PARTICLE.FXCreateGroupData[0].FXCreateData[0].Position = {
-            x: player.transform.position.x,
-            y: player.transform.position.y,
+            x: player.Waypoints[0].x,
+            y: player.Waypoints[0].y,
             z: 180,
         };
         SPAWN_PARTICLE.FXCreateGroupData[0].FXCreateData[0].TargetPosition = {
-            x: player.transform.position.x,
-            y: player.transform.position.y,
+            x: player.Waypoints[0].x,
+            y: player.Waypoints[0].y,
             z: 180,
         };
         SPAWN_PARTICLE.FXCreateGroupData[0].FXCreateData[0].OwnerPosition = {
-            x: player.transform.position.x,
-            y: player.transform.position.y,
+            x: player.Waypoints[0].x,
+            y: player.Waypoints[0].y,
             z: 180,
         };
         SPAWN_PARTICLE.FXCreateGroupData[0].FXCreateData[0].OrientationVector = {

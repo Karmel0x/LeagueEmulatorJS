@@ -43,10 +43,7 @@ class Minion extends Unit {
     }
 	spawn(){
 		let pos = BarracksByTeam[this.info.team][this.info.num].position;
-		this.transform = {
-			position: new Vector2(pos.x, pos.y),
-			rotation: 0,
-		};
+		this.Waypoints[0] = new Vector2(pos.x, pos.y);
 
 		var Barrack_SpawnUnit = createPacket('Barrack_SpawnUnit');
 		Barrack_SpawnUnit.netId = this.netId;

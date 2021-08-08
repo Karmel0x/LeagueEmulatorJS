@@ -51,7 +51,7 @@ class Team {
             ];
             OBJECT_SPAWN.MovementData = {
                 //SyncID: 0x0F0FD189,
-                Position: target.transform.position,
+                Position: target.Waypoints[0],
                 Forward: {x: 0, y: 0},
             };
             var isSent = this.sendPacket(OBJECT_SPAWN, loadingStages.IN_GAME);

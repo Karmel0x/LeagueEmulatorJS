@@ -1,6 +1,6 @@
 const { Vector2 } = require("three");
 const Spell = require("./Spell");
-//const Skillshot = require("../Classes/Attacks/Skillshot");
+//const Skillshot = require("../Classes/Attacks/Missiles/Skillshot");
 
 
 const spellHash = {

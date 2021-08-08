@@ -1,6 +1,6 @@
 const { Vector2 } = require("three");
 const Spell = require("./Spell");
-const Skillshot = require("../Classes/Attacks/Skillshot");
+const Skillshot = require("../Classes/Attacks/Missiles/Skillshot");
 const SummonerSpell = require("./SummonerSpell");
 
 const spellHash = {
@@ -43,7 +43,7 @@ class Q extends Spell {
 		CastInfo.SpellHash = spellHash.EzrealMysticShot;
 		this.parent.parent.castSpellAns(CastInfo);
 
-        var missile = new Skillshot(this.parent.parent, {speed: 2000});
+		var skillshot = Skillshot.create(this.parent.parent, CastInfo.TargetPosition, {speed: 2000, range: 1150, radius: 60});
 
 		var windup = 0.125;//?
 		await global.Utilities.wait(windup * 1000);
@@ -52,20 +52,15 @@ class Q extends Spell {
 		CastInfo.ManaCost = 0;
 		CastInfo.SpellSlot = 45;
 		CastInfo.SpellNetID = this.netId;
-		CastInfo.MissileNetID = missile.netId;
+		CastInfo.MissileNetID = skillshot.missile.netId;
 		this.parent.parent.castSpellAns(CastInfo);
 
-		var target = {
-			transform: {
-				position: new Vector2(CastInfo.TargetPosition.x, CastInfo.TargetPosition.y)
-			}
-		};
-        missile.firefire(target);
+        skillshot.missile.firefire(skillshot.target);
 
 		this.parent.parent.SET_COOLDOWN(packet.Slot);
 		
 		await global.Utilities.wait(2 * windup * 1000);
-        this.parent.parent.halt_stop(true);
+        this.parent.parent.halt_stop();
 	}
 };
 class W extends Spell {
@@ -97,7 +92,7 @@ class E extends Spell {
 		/*
 		//todo:
 		var spellRange = 500;
-		if(player.transform.position.distanceTo(CastInfo.TargetPosition) > spellRange)
+		if(player.Waypoints[0].distanceTo(CastInfo.TargetPosition) > spellRange)
 			CastInfo.TargetPosition.normalize().multiplyScalar(spellRange);
 		
 		if(Map.isUnwalkable(CastInfo.TargetPosition))

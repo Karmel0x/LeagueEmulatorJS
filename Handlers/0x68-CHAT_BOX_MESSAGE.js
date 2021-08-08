@@ -41,8 +41,8 @@ module.exports = (player, packet) => {
 		if(commandArgs[0] === 'help'){
 			var message = `
 				Available commands:
-				.q :: spawning 1 BLUE and 1 RED minions
-				.qq :: spawning 1 RED minion and teleports to BLUE fountain
+				.q [<minionsAmount>] :: spawning BLUE and RED minions
+				.qq [<minionsAmount>] :: spawning RED minion and teleports to BLUE base
 				.w :: starting game (start spawning minions)
 				.r :: reading player stats from '/Constants/TestStats.json'
 				.e :: sending player stats to client
@@ -61,7 +61,7 @@ module.exports = (player, packet) => {
 		}
 		else if(commandArgs[0] === 'qq'){
 			for(let i = parseInt(commandArgs[1] || 1); i > 0; i--){
-				new Minion('RED', 0, 'MALEE').teleport(new Vector2(200, 200));
+				new Minion('RED', 0, 'MALEE').teleport(new Vector2(1000 + (i * 150), 600));
 			}
 		}
 		else if(commandArgs[0] === 'w'){

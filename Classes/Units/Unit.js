@@ -4,7 +4,7 @@ var ConstantsUnit = require('../../Constants/Unit');
 const {createPacket, sendPacket} = require("../../PacketUtilities");
 var FunctionsModel = require('../../Functions/Model');
 const { Vector2 } = require('three');
-var Missile = require('../Attacks/Missile');
+var Targetedshot = require('../Attacks/Missiles/Targetedshot');
 const { appendGlobal } = require('./global.Units');
 
 
@@ -58,6 +58,63 @@ class Unit {
         this.respawn();
     }
 
+    Waypoints = [new Vector2(0, 0)];
+    teleport(position){
+        this.Waypoints = [position];
+        this.moveAns();
+    }
+    move1(position){
+        this.Waypoints = [this.Waypoints[0], position];
+        this.moveAns();
+    }
+    move0(MovementData){
+        this.moveCallback = null;
+        
+        if(MovementData.Waypoints && MovementData.Waypoints.length){
+            var Waypoints0 = this.Waypoints[0];
+            this.Waypoints = MovementData.Waypoints;
+            this.Waypoints[0] = Waypoints0;
+        }
+        this.moveAns();
+    }
+    halt0(send = false){
+        this.moveClear();
+
+        if(send)
+            this.moveAns();
+    }
+    WaypointsHalt = false;
+    halt_start(send = false){
+        this.WaypointsHalt = true;
+
+        if(send)
+            this.moveAns();
+    }
+    halt_stop(send = true){
+        this.WaypointsHalt = false;
+
+        if(send)
+            this.moveAns();
+    }
+    moveClear(){
+        this.Waypoints = [this.Waypoints[0]];
+    }
+    moveAns(){
+        // this should be in Movement_Simulation so we can resend if destination will change (following moveable unit)
+        var MOVE_ANS = createPacket('MOVE_ANS', 'LOW_PRIORITY');
+
+        MOVE_ANS.netId = 0;//this.netId;
+        MOVE_ANS.SyncID = performance.now();
+        MOVE_ANS.TeleportNetID = this.netId;
+        MOVE_ANS.TeleportID = 0x00;
+        //MovementData.WaypointsCC = TranslateCenteredCoordinates.to(MovementData.Waypoints);
+        //MOVE_ANS.WaypointsCC = MovementData.WaypointsCC;
+        MOVE_ANS.Waypoints = this.WaypointsHalt ? [] : this.Waypoints;
+        
+        var isSent = global.Teams.ALL.sendPacket_withVision(MOVE_ANS);
+        //console.log('MOVE_ANS', MOVE_ANS);
+        //console.log(MOVE_ANS.MovementDataNormal[0].MovementData);
+    }
     attack_TargetNetID(TargetNetID, MovementData){
         if(!global.UnitsNetId[TargetNetID])
             return console.log('global.Units[netId] does not contain', TargetNetID);
@@ -65,28 +122,28 @@ class Unit {
         this.attack(global.UnitsNetId[TargetNetID], MovementData);
     }
     attack(target, MovementData){
-        //console.debug(this.transform.position.distanceTo(target.transform.position), this.stats.Range.Total);
-        if(this.transform.position.distanceTo(target.transform.position) > this.stats.Range.Total){
+        //console.debug(this.Waypoints[0].distanceTo(target.Waypoints[0]), this.stats.Range.Total);
+        if(this.Waypoints[0].distanceTo(target.Waypoints[0]) > this.stats.Range.Total){
             this.moveCallback_range = this.stats.Range.Total;
             this.moveCallback = () => {
                 this.moveCallback = null;
                 this.attack(target, MovementData);
             };
-            this.move1(target.transform.position);
+            this.move1(target.Waypoints[0]);
             //this.move0(MovementData);
             return;
         }
         this.attackProcess(target);
     }
     attackProcess(target){
-        var missile = new Missile(this, {speed: 2000});
+        var missile = new Targetedshot(this, {speed: 2000});
 
         var NEXT_AUTO_ATTACK = createPacket('NEXT_AUTO_ATTACK', 'S2C');
         NEXT_AUTO_ATTACK.netId = this.netId;
 
         let TargetPosition = {
-            x: target.transform.position.x,
-            y: target.transform.position.y,
+            x: target.Waypoints[0].x,
+            y: target.Waypoints[0].y,
             z: 10,
         };
         let AttackSlot = 1;
@@ -101,62 +158,8 @@ class Unit {
         
         var isSent = global.Teams.ALL.sendPacket_withVision(NEXT_AUTO_ATTACK);
 
-        missile.fire(target);
-        this.Waypoints = [];
-    }
-    teleport(position){
-        this.transform.position = position;
-        this.move1(position);
-    }
-    move1(position){
-        var MovementData = {};
-        MovementData.Waypoints = [this.transform.position, position];
-        //MovementData.WaypointsCC = TranslateCenteredCoordinates.to(MovementData.Waypoints);
-        this.moveProcess(MovementData);
-    }
-    move0(MovementData){
-        this.moveCallback = null;
-        this.moveProcess(MovementData);
-    }
-    halt1(){
-        var MovementData = {};
-        MovementData.Waypoints = [];
-        this.moveProcess(MovementData);
-    }
-    halt0(){
-        this.Waypoints = [];
-    }
-    WaypointsHalt = false;
-    halt_start(send = false){
-        this.WaypointsHalt = true;
-
-        if(send)
-            this.moveProcess();
-    }
-    halt_stop(send = false){
-        this.WaypointsHalt = false;
-
-        if(send)
-            this.moveProcess();
-    }
-    moveProcess(MovementData = {}){
-        this.Waypoints = MovementData.Waypoints || this.Waypoints;
-        this.Waypoints[0] = this.transform.position;
-        
-        // this should be in Movement_Simulation so we can resend if destination will change (following moveable unit)
-        var MOVE_ANS = createPacket('MOVE_ANS', 'LOW_PRIORITY');
-
-        MOVE_ANS.netId = 0;//this.netId;
-        MOVE_ANS.SyncID = performance.now();
-        MOVE_ANS.TeleportNetID = this.netId;
-        MOVE_ANS.TeleportID = 0x00;
-        //MOVE_ANS.WaypointsCC = MovementData.WaypointsCC;
-        MOVE_ANS.Waypoints = this.Waypoints;
-        
-        //console.log('MOVE_ANS', MOVE_ANS);
-        var isSent = global.Teams.ALL.sendPacket_withVision(MOVE_ANS);
-        //console.log(MOVE_ANS.MovementDataNormal[0].MovementData);
-
+        missile.fire(target, 18.839);//18.839 = this.champion.attackWindupPercent
+        this.moveClear();
     }
 
     respawn(){
@@ -166,11 +169,7 @@ class Unit {
         this.stats.CurrentMana = this.stats.ManaPoints.Total;
         
         let pos = ConstantsUnit[this.info.type]?.team?.[this.info.team]?.spawn?.[this.info.spawnNum] || {x: 0, y: 0};
-        this.transform = this.transform || {
-            position: new Vector2(pos.x, pos.y),
-            rotation: 0,
-        };
-        this.Waypoints = [];
+        this.Waypoints = [this.Waypoints[0] || new Vector2(pos.x, pos.y)];
         
 	    this.SET_HEALTH();
         

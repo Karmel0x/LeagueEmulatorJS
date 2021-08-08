@@ -38,7 +38,7 @@ class MovementSimulation {
 				if(!this.moved[allyUnit_netId])
 					continue;
 
-				let allyUnit_position = allyUnit.transform.position;
+				let allyUnit_position = allyUnit.Waypoints[0];
 				if(allyUnit_position.x == 0 && allyUnit_position.y == 0)
 					continue;//for now
 				let allyUnit_visionRange = allyUnit.stats.visionRange || defaultVisionRange;
@@ -52,7 +52,7 @@ class MovementSimulation {
 					for(var enemyUnit_id in global.Units[enemyUnit_team]['ALL']){
 						let enemyUnit = global.Units[enemyUnit_team]['ALL'][enemyUnit_id];
 						//let enemyUnit_netId = enemyUnit.netId;
-						let enemyUnit_position = enemyUnit.transform.position;
+						let enemyUnit_position = enemyUnit.Waypoints[0];
 						if(enemyUnit_position.x == 0 && enemyUnit_position.y == 0)
 							continue;//for now
 						let enemyUnit_visionRange = enemyUnit.stats.visionRange || defaultVisionRange;
@@ -77,20 +77,33 @@ class MovementSimulation {
 	}
 	move(unit, diff){
 		for(;;){
-			if(!unit.Waypoints || unit.Waypoints.length < 2 || unit.WaypointsHalt)
+			if(unit.Waypoints.length < 2 || unit.WaypointsHalt)
 				return false;
-			//console.log('move', unit.netId, unit.transform.position);
+			//console.log('move', unit.netId, unit.Waypoints[0]);
 
-			let dist = unit.transform.position.distanceTo(unit.Waypoints[1]);
-			if(unit.moveCallback && dist <= unit.moveCallback_range){
-				unit.moveCallback();
-				continue;
+			let dest = unit.Waypoints[1].clone();
+			dest.sub(unit.Waypoints[0]);
+			
+			let ms = unit.stats.MoveSpeed.Total / 1000;
+			dest.normalize().multiplyScalar(ms * diff);
+			
+			let dist = unit.Waypoints[0].distanceTo(unit.Waypoints[1]);
+			if(dest.length() > dist)
+				unit.Waypoints.shift();//not 100% correct but leave it for now
+			else
+				unit.Waypoints[0].add(dest);
+
+			//console.log(unit.Waypoints[0], unit.Waypoints[1], dest, diff);
+			
+			if(unit.moveCallback){
+				if(unit.Waypoints.length < 2 || unit.Waypoints[0].distanceTo(unit.Waypoints[1]) <= unit.moveCallback_range)
+					unit.moveCallback();
 			}
 			if(unit.collisionCallback){
 				//todo: flags like self targetable, ally targetable, enemy targetable
 				for(var i in global.Units['ALL']['ALL']){
 					let unit2 = global.Units['ALL']['ALL'][i];
-					let dist2 = unit.transform.position.distanceTo(unit2.transform.position);
+					let dist2 = unit.Waypoints[0].distanceTo(unit2.Waypoints[0]);
 					if(dist2 <= (unit.collisionCallback_range + unit2.collisionRadius)){
 						unit.collisionCallback(unit2);
 						break;// todo: not break if can hit more targets
@@ -98,24 +111,6 @@ class MovementSimulation {
 				}
 				//continue;
 			}
-			if(unit.Waypoints.length > 1 && dist < 0.1){
-				console.log(unit.transform.position);
-				unit.Waypoints.shift();
-				continue;
-			}
-
-			let ms = unit.stats.MoveSpeed.Total / 1000;
-
-			let dest = unit.Waypoints[1].clone();
-			dest.sub(unit.transform.position);
-			dest.normalize().multiplyScalar(ms * diff);
-
-			if(dest.length() > dist)
-				unit.transform.position = unit.Waypoints[1];//not 100% correct but leave it for now
-			else
-				unit.transform.position.add(dest);
-
-			//console.log(unit.transform.position, unit.Waypoints[1], dest, diff);
 
 			return true;
 		}

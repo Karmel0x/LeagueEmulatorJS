@@ -20,8 +20,8 @@ module.exports = class Spell {
             z: 180,
         };
         CastInfo.SpellCastLaunchPosition = {
-            x: this.parent.parent.transform.position.x,
-            y: this.parent.parent.transform.position.y,
+            x: this.parent.parent.Waypoints[0].x,
+            y: this.parent.parent.Waypoints[0].y,
             z: 180,
         };
 		return CastInfo;
