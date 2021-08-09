@@ -103,6 +103,7 @@ class MovementSimulation {
 				//todo: flags like self targetable, ally targetable, enemy targetable
 				for(var i in global.Units['ALL']['ALL']){
 					let unit2 = global.Units['ALL']['ALL'][i];
+					//todo: for better performance we could divide units array to territories
 					let dist2 = unit.Waypoints[0].distanceTo(unit2.Waypoints[0]);
 					if(dist2 <= (unit.collisionCallback_range + unit2.collisionRadius)){
 						unit.collisionCallback(unit2);
@@ -117,7 +118,7 @@ class MovementSimulation {
 	}
 	async update(){
 		for(;;){
-			let time = performance.now();
+			let time = performance.now();//maybe better to set this for every unit?
 			await global.Utilities.wait(20);//lower this?
 			this.moved = {};
 			
@@ -130,6 +131,7 @@ class MovementSimulation {
 			for(var i in global.Missiles){
 				let unit = global.Missiles[i];
 				let diff = performance.now() - time;
+				//todo: flags like collidable with terrain, with ally units, with enemy units
 				let moved = this.move(unit, diff);
 				//this.moved[unit.netId] = moved;
 			}

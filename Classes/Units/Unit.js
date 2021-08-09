@@ -7,7 +7,6 @@ const { Vector2 } = require('three');
 var Targetedshot = require('../Attacks/Missiles/Targetedshot');
 const { appendGlobal } = require('./global.Units');
 
-
 var Stats = {
     Unit: require('./Stats/Unit'),
     Player: require('./Stats/Player'),
@@ -22,6 +21,8 @@ var Battle = {
     Unit: require('./Battle/Unit'),
     Player: require('./Battle/Player'),
 };
+
+const Inventory = require('../Inventory');
 
 
 class Unit {
@@ -44,6 +45,7 @@ class Unit {
         this.stats = new (Stats[this.info.type] || Stats.Unit)(this, ConstantsUnit[this.info.type]?.stats || {});
         this.death = new (Death[this.info.type] || Death.Unit)(this);
         this.battle = new (Battle[this.info.type] || Battle.Unit)(this);
+        this.inventory = new Inventory(this);
 
         appendGlobal(this);
         console.debug(Date.now(), 'Created Unit', this);

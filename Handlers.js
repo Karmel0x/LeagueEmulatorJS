@@ -29,6 +29,10 @@ var Handlers = {
     0xA8: {handler: require('./Handlers/0xA8-STATS_CONFIRM.js')},
     0x9A: {handler: require('./Handlers/0x9A-CAST_SPELL.js')},
     0xAF: {handler: require('./Handlers/0xAF-CLICK.js')},
+    0x82: {handler: require('./Handlers/0x82-BUY_ITEM_REQ.js')},
+    0x20: {handler: require('./Handlers/0x20-SWAP_ITEMS.js')},
+    0x20: {handler: require('./Handlers/0x20-SWAP_ITEMS.js')},
+    0x09: {handler: require('./Handlers/0x09-SELL_ITEM.js')},
 };
 
 module.exports = async function(q){

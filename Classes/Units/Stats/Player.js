@@ -103,7 +103,7 @@ class StatsPlayer extends StatsUnit {
         this.skillUpgrade_send(Slot);
         this.charStats_send();
     }
-    Gold = 0;
+    Gold = 10000;
 
 }
 
