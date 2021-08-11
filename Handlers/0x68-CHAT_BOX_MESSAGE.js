@@ -46,9 +46,10 @@ module.exports = (player, packet) => {
 				.w :: starting game (start spawning minions)
 				.r :: reading player stats from '/Constants/TestStats.json'
 				.e :: sending player stats to client
+				.debugMode [<debugLevel(0/1)>] :: turning off/on debug mode (debug logs)
 				.levelup [<levelAmount>] :: adding levels for player
 				.expup [<expAmount>] :: adding experience for player
-				.debugMode [<debugLevel(0/1)>] :: turning off/on debug mode (debug logs)
+				.hp [<percent>] :: setting player health
 			`;
 			chatBoxMessage(player, message.split('\t\t').join(' '));
 		}
@@ -93,13 +94,6 @@ module.exports = (player, packet) => {
 				Object.assign(player.stats, require('../Constants/TestStats.json'));
 			}
 		}
-		else if(commandArgs[0] == 'levelup'){
-			for(let i = parseInt(commandArgs[1] || 1); i > 0; i--)
-				player.stats.levelUp();
-		}
-		else if(commandArgs[0] == 'expup'){
-			player.stats.expUp(parseInt(commandArgs[1] || 1));
-		}
 		else if(commandArgs[0] == 'debugMode'){
 			let debugLevel = parseInt(commandArgs[1] || '');
 			if(isNaN(debugLevel))
@@ -115,6 +109,18 @@ module.exports = (player, packet) => {
 				console.debug_mp = console.debug_mp || console.debug;
 				console.debug = console.debug_mp || console.debug;
 			}
+		}
+		else if(commandArgs[0] == 'levelup'){
+			for(let i = parseInt(commandArgs[1] || 1); i > 0; i--)
+				player.stats.levelUp();
+		}
+		else if(commandArgs[0] == 'expup'){
+			player.stats.expUp(parseInt(commandArgs[1] || 1));
+		}
+		else if(commandArgs[0] == 'hp'){
+			var hpPercent = parseInt(commandArgs[1] || 100);
+			player.stats.CurrentHealth = player.stats.HealthPoints.Total * hpPercent / 100;
+			player.SET_HEALTH();
 		}
 
 	}

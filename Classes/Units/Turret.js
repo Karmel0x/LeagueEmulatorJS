@@ -1,5 +1,6 @@
 var Unit = require('./Unit');
 const {createPacket, sendPacket} = require("../../PacketUtilities");
+const loadingStages = require("../../Constants/loadingStages");
 
 const TurretNetIds = {
     BLUE: {
@@ -51,7 +52,7 @@ class Turret extends Unit {
             IsTargetable: true,
         };
         TURRET_SPAWN.IsTargetableToTeamSpellFlags = 0x01800000;
-        var isSent = global.Teams.ALL.sendPacket(TURRET_SPAWN);
+        var isSent = global.Teams.ALL.sendPacket(TURRET_SPAWN, loadingStages.NOT_CONNECTED);
 
 
         super.spawn();

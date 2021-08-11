@@ -29,6 +29,9 @@ const ExpCurve = [
 class StatsPlayer extends StatsUnit {
 
     charStats_send(){
+        //todo: delay for few ms so it will not send multiple packets on same action
+        //  for example SummonerHeal will not send two packets (for heal and for buff)
+        
         var CHAR_STATS = createPacket('CHAR_STATS', 'LOW_PRIORITY');
         CHAR_STATS.SyncID = performance.now();
         CHAR_STATS.units = [this.parent];

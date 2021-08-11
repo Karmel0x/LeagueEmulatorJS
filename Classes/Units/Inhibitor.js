@@ -1,5 +1,6 @@
 var Unit = require('./Unit');
 const {createPacket, sendPacket} = require("../../PacketUtilities");
+const loadingStages = require("../../Constants/loadingStages");
 
 const InhibitorNetIds = {
     BLUE: [
@@ -36,7 +37,7 @@ class Inhibitor extends Unit {
 	    var OBJECT_SPAWN = createPacket('OBJECT_SPAWN');
         OBJECT_SPAWN.netId = this.netId;
         OBJECT_SPAWN.isTurret = true;
-	    var isSent = global.Teams.ALL.sendPacket(OBJECT_SPAWN);
+	    var isSent = global.Teams.ALL.sendPacket(OBJECT_SPAWN, loadingStages.NOT_CONNECTED);
 
         super.spawn();
     }

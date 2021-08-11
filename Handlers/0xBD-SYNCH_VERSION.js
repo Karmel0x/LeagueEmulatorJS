@@ -1,6 +1,8 @@
 
 const Packets = require("../Packets");
 const {createPacket, sendPacket} = require("../PacketUtilities");
+const loadingStages = require("../Constants/loadingStages");
+
 const TEAM = require("../Constants/TEAM");
 
 const SummonerSpells = {
@@ -20,7 +22,21 @@ const SummonerSpells = {
 	TEST: 0x0103D94C
 };
 const MapId = {
-	SR: 1,
+	SummonersRift_Original: 1, // Summoner's Rift / Original Summer variant
+	SummonersRift_OriginalAutumn: 2, // Summoner's Rift / Original Autumn variant
+	//TheProvingGrounds: 3, // The Proving Grounds / Tutorial Map
+	//TwistedTreeline_Original: 4, // Twisted Treeline / Original Version
+	//TheCrystalScar: 8, // The Crystal Scar / Dominion map
+	//TwistedTreeline: 10, // Twisted Treeline / Last TT map
+	SummonersRift: 11, // Summoner's Rift / Current Version
+	//HowlingAbyss: 12, // Howling Abyss / ARAM map
+	//ButchersBridge: 14, // Butcher's Bridge / Alternate ARAM map
+	//CosmicRuins: 16, // Cosmic Ruins / Dark Star: Singularity map
+	//ValoranCityPark: 18, // Valoran City Park / Star Guardian Invasion map
+	//Substructure43: 19, // Substructure 43 / PROJECT: Hunters map
+	//CrashSite: 20, // Crash Site / Odyssey: Extraction map
+	//Convergence: 20, // Convergence / Teamfight Tactics map
+	//NexusBlitz: 21, // Nexus Blitz / Nexus Blitz map
 };
 
 const VersionString = 'Version 4.20.0.315 [PUBLIC]';
@@ -37,7 +53,7 @@ module.exports = (player, packet) => {
 	SYNCH_VERSION.bitField = {
 		VersionMatches: true,
 	};
-	SYNCH_VERSION.MapToLoad = MapId.SR;
+	SYNCH_VERSION.MapToLoad = MapId.SummonersRift_Original;
 	SYNCH_VERSION.VersionString = VersionString;
 
 	SYNCH_VERSION.PlayerInfo = [
@@ -79,6 +95,6 @@ module.exports = (player, packet) => {
 	for(let i = 0; i < 19; i++)
 		SYNCH_VERSION.EnabledDradisMessages[i] = true;
 
-	var isSent = player.sendPacket(SYNCH_VERSION);
+	var isSent = player.sendPacket(SYNCH_VERSION, loadingStages.NOT_CONNECTED);
 	console.debug(SYNCH_VERSION);
 };

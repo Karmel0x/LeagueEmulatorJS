@@ -1,6 +1,7 @@
 
 const Packets = require("../Packets");
 const {createPacket, sendPacket} = require("../PacketUtilities");
+const loadingStages = require("../Constants/loadingStages");
 
 
 module.exports = (player, packet) => {
@@ -18,6 +19,6 @@ module.exports = (player, packet) => {
         PING_LOAD_INFO.bitField = {
             Ready: packet.bitfield.Ready,
         };
-        var isSent = player.sendPacket(PING_LOAD_INFO);
+        var isSent = player.sendPacket(PING_LOAD_INFO, loadingStages.NOT_CONNECTED);
 	}
 };

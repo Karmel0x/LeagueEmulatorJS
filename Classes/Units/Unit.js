@@ -23,6 +23,7 @@ var Battle = {
 };
 
 const Inventory = require('../Inventory');
+const BuffController = require('./Controllers/BuffController');
 
 
 class Unit {
@@ -46,6 +47,7 @@ class Unit {
         this.death = new (Death[this.info.type] || Death.Unit)(this);
         this.battle = new (Battle[this.info.type] || Battle.Unit)(this);
         this.inventory = new Inventory(this);
+        this.buffController = new BuffController(this);
 
         appendGlobal(this);
         console.debug(Date.now(), 'Created Unit', this);
@@ -63,7 +65,7 @@ class Unit {
     Waypoints = [new Vector2(0, 0)];
     teleport(position){
         this.Waypoints = [position];
-        this.moveAns();
+        this.moveAns();// that's wrong
     }
     move1(position){
         this.Waypoints = [this.Waypoints[0], position];

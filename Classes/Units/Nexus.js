@@ -1,5 +1,6 @@
 var Unit = require('./Unit');
 const {createPacket, sendPacket} = require("../../PacketUtilities");
+const loadingStages = require("../../Constants/loadingStages");
 
 const NexusNetIds = {
     BLUE: 0xFFF97DB5,//4294540725
@@ -15,7 +16,7 @@ class Nexus extends Unit {
 	    var OBJECT_SPAWN = createPacket('OBJECT_SPAWN');
         OBJECT_SPAWN.netId = this.netId;
         OBJECT_SPAWN.isTurret = true;
-	    var isSent = global.Teams.ALL.sendPacket(OBJECT_SPAWN);
+	    var isSent = global.Teams.ALL.sendPacket(OBJECT_SPAWN, loadingStages.NOT_CONNECTED);
 
         super.spawn();
     }

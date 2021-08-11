@@ -80,7 +80,7 @@ class Missile {
 			this.moveCallback_range = this.fulfillRange;
 			this.moveCallback = () => {
 				this.moveCallback = null;
-				console.log('this.moveCallback');
+				console.log('Missile.fly.moveCallback');
 				this.fly(target);
 			};
 			this.move1(target.Waypoints[0]);

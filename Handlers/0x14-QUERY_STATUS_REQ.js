@@ -1,6 +1,7 @@
 
 const Packets = require("../Packets");
 const {createPacket, sendPacket} = require("../PacketUtilities");
+const loadingStages = require("../Constants/loadingStages");
 
 
 module.exports = (player, packet) => {
@@ -10,5 +11,5 @@ module.exports = (player, packet) => {
 
 	var QUERY_STATUS_ANS = createPacket('QUERY_STATUS_ANS');
     QUERY_STATUS_ANS.ok = true;
-	var isSent = player.sendPacket(QUERY_STATUS_ANS);
+	var isSent = player.sendPacket(QUERY_STATUS_ANS, loadingStages.NOT_CONNECTED);
 };

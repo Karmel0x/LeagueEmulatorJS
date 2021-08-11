@@ -1,6 +1,7 @@
 
 const Packets = require("../Packets");
 const {createPacket, sendPacket} = require("../PacketUtilities");
+const loadingStages = require("../Constants/loadingStages");
 
 
 module.exports = (peer_num, packet) => {
@@ -17,7 +18,7 @@ module.exports = (peer_num, packet) => {
 		KEY_CHECK.partialKey = [ 0x2A, 0x00, 0xFF ];
 		KEY_CHECK.ClientID = clientId;
 		KEY_CHECK.PlayerID = 1;
-		var isSent = player.sendPacket(KEY_CHECK);
+		var isSent = player.sendPacket(KEY_CHECK, loadingStages.NOT_CONNECTED);
 	}
 	//{
 	//	var WORLD_SEND_GAME_NUMBER = createPacket('WORLD_SEND_GAME_NUMBER');

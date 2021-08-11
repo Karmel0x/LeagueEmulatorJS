@@ -24,7 +24,7 @@ module.exports = (player, packet) => {
 
 	var START_GAME = createPacket('START_GAME');
 	START_GAME.EnablePause_bitField = true;
-	var isSent = player.sendPacket(START_GAME);
+	var isSent = player.sendPacket(START_GAME, loadingStages.NOT_CONNECTED);
 
 	//var LOAD_SCREEN_INFO = createPacket('LOAD_SCREEN_INFO', 'LOADING_SCREEN');
 	//LOAD_SCREEN_INFO.blueMax = 1;

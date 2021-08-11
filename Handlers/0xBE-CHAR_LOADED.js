@@ -1,6 +1,8 @@
 
 const Packets = require("../Packets");
 const {createPacket, sendPacket} = require("../PacketUtilities");
+const loadingStages = require("../Constants/loadingStages");
+
 const Inhibitor = require("../Classes/Units/Inhibitor");
 const Nexus = require("../Classes/Units/Nexus");
 const Turret = require("../Classes/Units/Turret");
@@ -17,7 +19,7 @@ module.exports = (player, packet) => {
 
     
     var START_SPAWN = createPacket('START_SPAWN');
-    var isSent = player.sendPacket(START_SPAWN);
+    var isSent = player.sendPacket(START_SPAWN, loadingStages.NOT_CONNECTED);
     
     var HERO_SPAWN = createPacket('HERO_SPAWN');
     //HERO_SPAWN.netId = player.netId;
@@ -35,7 +37,7 @@ module.exports = (player, packet) => {
     };
     HERO_SPAWN.CreateHeroDeath = CreateHeroDeath.Alive;
     HERO_SPAWN.SpawnPositionIndex = 0;//2;
-    var isSent = player.sendPacket(HERO_SPAWN);
+    var isSent = player.sendPacket(HERO_SPAWN, loadingStages.NOT_CONNECTED);
     
     var AVATAR_INFO = createPacket('AVATAR_INFO');
     AVATAR_INFO.netId = player.netId;
@@ -49,7 +51,7 @@ module.exports = (player, packet) => {
     AVATAR_INFO.SummonerIDs = [0x0364af1c, 0x06496ea8];
     AVATAR_INFO.SummonerIDs2 = AVATAR_INFO.SummonerIDs;
     
-    var isSent = player.sendPacket(AVATAR_INFO);
+    var isSent = player.sendPacket(AVATAR_INFO, loadingStages.NOT_CONNECTED);
     // -----
     
     Nexus.spawnAll();
@@ -66,7 +68,7 @@ module.exports = (player, packet) => {
     
     // -----
     var END_SPAWN = createPacket('END_SPAWN');
-    var isSent = player.sendPacket(END_SPAWN);
+    var isSent = player.sendPacket(END_SPAWN, loadingStages.NOT_CONNECTED);
     
     //var BUY_ITEM_ANS = createPacket('BUY_ITEM_ANS');
     //var isSent = player.sendPacket(BUY_ITEM_ANS);

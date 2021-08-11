@@ -1,7 +1,7 @@
 const { Vector2 } = require("three");
 const Spell = require("./Spell");
 const Skillshot = require("../Classes/Attacks/Missiles/Skillshot");
-const SummonerSpell = require("./SummonerSpell");
+const Champion = require("./Champion");
 
 const spellHash = {
 	EzrealMysticShot: 25116740,
@@ -130,17 +130,16 @@ class R extends Spell {
 };
 
 
-module.exports = class Ezreal {
+module.exports = class Ezreal extends Champion {
 	PackageHash = 2618078626;
 	constructor(parent){
-		this.parent = parent;
+		super(parent);
+
 		this.spells = {
 			0: new Q(this),
 			1: new W(this),
 			2: new E(this),
 			3: new R(this),
-			4: new SummonerSpell(this, 'SummonerHeal'),
-			5: new SummonerSpell(this, 'SummonerFlash'),
 			//62: new Passive(this),
 			//64-81: Attack?
 		};

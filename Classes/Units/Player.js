@@ -2,6 +2,7 @@ var Unit = require('./Unit');
 const {createPacket, sendPacket} = require("../../PacketUtilities");
 const loadingStages = require('../../Constants/loadingStages');
 const playersConfig = require('../../Constants/playersConfig');
+const SummonerSpells = require("../../Champions/SummonerSpells");
 
 
 class Player extends Unit {
@@ -20,8 +21,9 @@ class Player extends Unit {
         
         const Champion_ = require('../../Champions/' + character);
         this.champion = new Champion_(this);
+        this.summonerSpells = new SummonerSpells(this, 'SummonerHeal', 'SummonerFlash');
     }
-    sendPacket(packet, minStage = loadingStages.NOT_CONNECTED){
+    sendPacket(packet, minStage = loadingStages.IN_GAME){
         if(this.loadingStage < minStage)
             return;
         
@@ -64,6 +66,7 @@ class Player extends Unit {
 //
     //}
     SET_HEALTH(){
+        this.stats.charStats_send();
     }
     SET_COOLDOWN(Slot){return;
         var SET_COOLDOWN = createPacket('SET_COOLDOWN', 'S2C');
@@ -111,12 +114,12 @@ class Player extends Unit {
         var isSent = this.sendPacket(CAST_SPELL_ANS);
         console.log(CAST_SPELL_ANS);
     }
-    castSpell(packet){
-        if(typeof this.champion.spells[packet.Slot] == 'undefined')
-            return console.log('wrong spell slot', packet.Slot);
-
-        this.champion.spells[packet.Slot].cast(packet);
-    }
+    //castSpell(packet){
+    //    if(typeof this.champion.spells[packet.Slot] == 'undefined')
+    //        return console.log('wrong spell slot', packet.Slot);
+    //
+    //    this.champion.spells[packet.Slot].cast(packet);
+    //}
     AddParticleTarget(EffectNameHash, BoneNameHash){return;
         var SPAWN_PARTICLE = createPacket('SPAWN_PARTICLE', 'S2C');
         SPAWN_PARTICLE.netId = 0;//this.netId;

@@ -24,7 +24,7 @@ class Team {
         //todo
         this.sendPacket(packet);
     }
-    sendPacket(packet, minStage = loadingStages.NOT_CONNECTED){
+    sendPacket(packet, minStage = loadingStages.IN_GAME){
         for(let player_num in global.Units[this.team].Player)
             global.Units[this.team].Player[player_num].sendPacket(packet, minStage);
     }

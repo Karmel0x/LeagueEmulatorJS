@@ -39,6 +39,17 @@ class BattleUnit {
     inRange(target, range){
         return this.distanceTo(target) <= range;
     }
+
+    heal(hp){
+        this.parent.stats.CurrentHealth += hp;
+        if(this.parent.stats.CurrentHealth > this.parent.stats.HealthPoints.Total)
+            this.parent.stats.CurrentHealth = this.parent.stats.HealthPoints.Total;
+
+        this.parent.SET_HEALTH();
+    }
+    healPercent(hpPercent){
+        this.heal(this.parent.stats.HealthPoints.Total * hpPercent / 100);
+    }
 }
 
 

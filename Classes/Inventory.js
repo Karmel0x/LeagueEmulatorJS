@@ -1,34 +1,6 @@
 const { createPacket } = require("../PacketUtilities");
+const ItemList = require("./ItemList");
 
-var ItemList = {
-	1: class Item {
-		static GoldCost = 100;
-		use(target = undefined){
-			
-		}
-	},
-	3340: class Item { // yellow trinket
-		id = 3340;
-		static GoldCost = 0;
-		static isTrinket = true;
-		use(target = undefined){
-			
-		}
-	},
-	1055: class Item { // doran's blade
-		id = 1055;
-		static GoldCost = 440;
-	},
-	2003: class Item { // health potion
-		id = 2003;
-		static GoldCost = 35;
-		isConsumable = true;
-		static isStackable = true;
-		use(target = undefined){
-
-		}
-	}
-};
 var ItemSlots = 6;// 0-5
 var TrinketSlot = 6;
 //var ExtraItemSlots = 6;// 7-12
@@ -86,7 +58,7 @@ class Inventory {
 
 		var slot = false;
 		if(!Item.isTrinket)
-			slot = this.getReuseSlot(itemId) || this.getEmptySlot(itemId);
+			slot = this.getReuseSlot(itemId) || this.getEmptySlot();
 		else
 			slot = TrinketSlot;
 
@@ -96,6 +68,7 @@ class Inventory {
 		this.Items[slot] = this.Items[slot] || new Item();
 		this.Items[slot].count = this.Items[slot].count || 0;
 		this.Items[slot].count++;
+
 		this.buyItemAns(slot);
 		this.parent.stats.charStats_send();
 	}
@@ -137,6 +110,7 @@ class Inventory {
 
 		var Item = ItemList[this.Items[slot].id];
 		this.parent.stats.Gold += Item.GoldCost * 0.4;
+		
 		this.removeItem(slot);
 		this.parent.stats.charStats_send();
 	}
