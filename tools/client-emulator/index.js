@@ -6,9 +6,9 @@
 //Example recordings: https://github.com/Karmel0x/LeagueEmulatorJS/issues/2
 
 
-//var replayUnpacked = require('../../../LOL-REPLAY.rlp.json');
+var replayUnpacked = require('../../../LOL-REPLAY.rlp.json');//25000
 //var replayUnpacked = require('../../../dumps-4.12-Riven vs Miss Fortune 1v1.json');
-var replayUnpacked = require('../../../testpackets.json');
+//var replayUnpacked = require('../../../testpackets.json');
 
 
 require('../../init_utilities')();
@@ -29,7 +29,9 @@ wss.onMessage = (data) => {
 
 	if(res.cmd == 'loadpackets'){
 		
-		for(let i = 0; i < replayUnpacked.length && i < res.limit; i++){
+		let offset = res.offset || 0;
+		let limit = (res.limit || 0) + offset;
+		for(let i = offset; i < replayUnpacked.length && i < limit; i++){
 
       		var buffer = replayUnpacked[i].Bytes ? Buffer.from(replayUnpacked[i].Bytes, 'base64') : Buffer.from(replayUnpacked[i].BytesHex.split(' ').join('').split('-').join(''), 'hex');
       		var bytes = buffer.toString('hex').match(/../g).join(' ');
@@ -38,8 +40,8 @@ wss.onMessage = (data) => {
 				buffer: buffer,
 			});
 
-			//if(parsed.cmd == 0x95)//PING_LOAD_INFO
-			//	continue;
+			if(parsed.cmd == 0x95)//PING_LOAD_INFO
+				continue;
 
 			if(parsed.cmd == 0xFF){
     			buffer.off = 0;
@@ -47,6 +49,10 @@ wss.onMessage = (data) => {
 				batchPackets.reader(buffer);//console.log(batchPackets);
 				for(let i = 0; i < batchPackets.packets.length; i++){
 					packet = batchPackets.packets[i];
+
+					// some batched packets are different..
+					if(packet.cmd == 0x72) // MOVE_REQ
+						continue;
 					
 					packet.channel = 3;
 					if(typeof Packets[0][packet.cmd] !== 'undefined')
@@ -61,6 +67,8 @@ wss.onMessage = (data) => {
 						packet.channel = 5;
 					else if(typeof Packets[7][packet.cmd] !== 'undefined')
 						packet.channel = 1;
+
+					packet.cmdName = Packets[packet.channel]?.[packet.cmd]?.name || '';
 
 					if(packet.cmd == 0xFE){
 						packet.cmd1 = packet.cmd;

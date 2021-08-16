@@ -26,6 +26,8 @@ class MovementSimulation {
 		//}
 	}
 	visionProcess(){
+		//todo: `Object.values(obj).map` for better performance
+
 		const teams = {BLUE: 0, RED: 1};
 		//var allyUnit_team = 'BLUE';
 		for(var allyUnit_team in teams)
@@ -84,7 +86,7 @@ class MovementSimulation {
 			let dest = unit.Waypoints[1].clone();
 			dest.sub(unit.Waypoints[0]);
 			
-			let ms = unit.stats.MoveSpeed.Total / 1000;
+			let ms = (unit.WaypointsDash_MS || unit.stats.MoveSpeed.Total) / 1000;
 			dest.normalize().multiplyScalar(ms * diff);
 			
 			let dist = unit.Waypoints[0].distanceTo(unit.Waypoints[1]);

@@ -35,6 +35,8 @@ async function start_spectator(){
         var buffer = replayUnpacked[i].Bytes ? Buffer.from(replayUnpacked[i].Bytes, 'base64') : Buffer.from(replayUnpacked[i].BytesHex.split(' ').join(''), 'hex');
         enet.sendPacket(0, buffer, replayUnpacked[i].Channel);
 
+        if(i % 100 == 0)
+            console.log('packet number:', i);
     }
 
 }

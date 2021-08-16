@@ -67,6 +67,40 @@ class Unit {
         this.Waypoints = [position];
         this.moveAns();// that's wrong
     }
+    dashAns(position, options){
+        var DASH = createPacket('DASH');
+
+        DASH.netId = 0;
+        DASH.TeleportNetID = this.netId;
+        DASH.SyncID = performance.now();
+
+        DASH.Waypoints = [this.Waypoints[0], position];
+        DASH.SpeedParams = {//todo: names? then just Object.assign
+            PathSpeedOverride: options.speed || 1000,
+            ParabolicGravity: options.ParabolicGravity || 0,
+            ParabolicStartPoint: options.ParabolicStartPoint || {x: 0, y: 0},
+            Facing: options.Facing || 0,
+            FollowNetID: options.FollowNetID || 0,
+            FollowDistance: options.FollowDistance || 0,
+            FollowBackDistance: options.FollowBackDistance || 0,
+            FollowTravelTime: options.FollowTravelTime || 0,
+        };
+        
+        var isSent = global.Teams.ALL.sendPacket_withVision(DASH);
+        console.log(DASH);
+    }
+    WaypointsDash_MS = 0;
+    dash(position, options){
+        let Waypoints = this.Waypoints;
+        this.Waypoints = [Waypoints[0], position];
+        this.WaypointsDash_MS = options.speed;
+        this.moveCallback = () => {
+            this.Waypoints = Waypoints;//todo: repath
+            this.WaypointsDash_MS = 0;
+            this.moveAns();
+        };
+        this.dashAns(position, options);
+    }
     move1(position){
         this.Waypoints = [this.Waypoints[0], position];
         this.moveAns();
@@ -139,29 +173,33 @@ class Unit {
         }
         this.attackProcess(target);
     }
-    attackProcess(target){
-        var missile = new Targetedshot(this, {speed: 2000});
-
+    attackAns(options){
         var NEXT_AUTO_ATTACK = createPacket('NEXT_AUTO_ATTACK', 'S2C');
         NEXT_AUTO_ATTACK.netId = this.netId;
 
         let TargetPosition = {
-            x: target.Waypoints[0].x,
-            y: target.Waypoints[0].y,
+            x: options.target.Waypoints[0].x,
+            y: options.target.Waypoints[0].y,
             z: 10,
         };
-        let AttackSlot = 1;
 
         NEXT_AUTO_ATTACK.Attack = {
-            TargetNetID: target.netId,
+            TargetNetID: options.target.netId,
             TargetPosition: TargetPosition,
-            AttackSlot: AttackSlot,
-            MissileNextID: missile.netId,
+            AttackSlot: options.AttackSlot,
+            MissileNextID: options.missile.netId,
             ExtraTime: 127,
         };
         
         var isSent = global.Teams.ALL.sendPacket_withVision(NEXT_AUTO_ATTACK);
-
+    }
+    attackProcess(target){
+        var missile = new Targetedshot(this, {speed: 2000});
+        this.attackAns({
+            target,
+            missile,
+            AttackSlot: 1,
+        });
         missile.fire(target, 18.839);//18.839 = this.champion.attackWindupPercent
         this.moveClear();
     }

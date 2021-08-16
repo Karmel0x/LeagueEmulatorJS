@@ -44,6 +44,7 @@ socket.addEventListener('message', (event) => {
 
 		var packetlist = document.getElementById('packetlist');
 		packetlist.appendChild(newpacket);
+		console.log(res.packet.Id, res.packet.channelName, res.packet.cmdName, JSON.parse(res.packet.Parsed));
 	}
 });
 

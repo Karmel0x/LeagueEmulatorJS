@@ -1,14 +1,21 @@
 var BasePacket = require('../BasePacket');
-var Vector3 = require('../SharedStruct/Vector3');
+const MovementDataWithSpeed = require('../SharedStruct/MovementDataWithSpeed');
 
-var MovementDataWithSpeed = {
 
-};
-
-module.exports = class extends BasePacket {//S2C.
+module.exports = class extends BasePacket {//S2C.DASH
 	struct = {
 		SyncID: 'int32',
 		count: 'int16',
-		MovementDataWithSpeed: [MovementDataWithSpeed, 'count'],
+	}
+	writer(buffer){
+        this.count = this.count || 1;
+		super.writer(buffer);
+
+		MovementDataWithSpeed.writer(buffer, this);
+	}
+	reader(buffer){
+		super.reader(buffer);
+
+		MovementDataWithSpeed.reader(buffer, this);
 	}
 };

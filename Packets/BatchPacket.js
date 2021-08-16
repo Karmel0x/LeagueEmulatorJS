@@ -9,7 +9,7 @@ module.exports = class {//S2C.BATCH
 		this.packets_length = buffer.read1('uint8');
 		this.packets = [];
 
-		//if(this.packets_length < 1 || buffer.size < 3)
+		if(this.packets_length < 1 || buffer.size < 3)
 			return;
 
 	   // console.log('buffer', buffer);

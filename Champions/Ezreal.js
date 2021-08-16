@@ -85,7 +85,7 @@ class W extends Spell {
 };
 class E extends Spell {
 	cast(packet){
-        this.parent.parent.halt0();
+        //this.parent.parent.halt0();
 
 		var CastInfo = this.CastInfo_Position(packet);
 		
@@ -111,6 +111,9 @@ class E extends Spell {
 		this.parent.parent.castSpellAns(CastInfo);
 
 		this.parent.parent.SET_COOLDOWN(packet.Slot);
+
+        var pos = new Vector2(CastInfo.TargetPosition.x, CastInfo.TargetPosition.y);
+		this.parent.parent.dash(pos, {speed: 1800});//testing
 	}
 };
 class R extends Spell {

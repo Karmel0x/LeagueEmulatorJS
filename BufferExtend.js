@@ -65,6 +65,7 @@ Buffer.prototype.read1 = function(type) {
 		}
 	}catch(e){
 		//console.log('packet structure is incorrect :', e.message);
+		//console.trace();
 	}
 
 	this.off += Buffer.typeSize[type] || 0;
@@ -144,6 +145,11 @@ Buffer.prototype.readobj = function(template){
 				}
 
 				let obj = [];
+				if(template[1] > 1000){
+					console.log('packet is probably incorrect, got length > 1000');
+					console.trace();
+					return obj;
+				}
 				for(var j = 0; j < template[1]; j++){
 					obj[j] = this.readobj(template[0]);
 					//console.log(template[0], this.off);

@@ -36,7 +36,7 @@ class Missile {
 	destructor(){
 		this.removeGlobal();
 	}
-	fire_TargetNetID(TargetNetID, WindupPercent = 10){
+	fire_TargetNetID(TargetNetID, WindupPercent = 20){
 
 		if(!global.UnitsNetId[TargetNetID])
 			return console.log('global.Units[netId] does not contain', TargetNetID);
