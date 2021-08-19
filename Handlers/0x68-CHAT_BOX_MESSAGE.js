@@ -50,6 +50,7 @@ module.exports = (player, packet) => {
 				.levelup [<levelAmount>] :: adding levels for player
 				.expup [<expAmount>] :: adding experience for player
 				.hp [<percent>] :: setting player health
+				.test :: levelingUp player 5 levels and spawning 22 RED minions in BLUE base
 			`;
 			chatBoxMessage(player, message.split('\t\t').join(' '));
 		}
@@ -74,7 +75,6 @@ module.exports = (player, packet) => {
 		//}
 		else if(commandArgs[0] === 'e'){
 			var CHAR_STATS = createPacket('CHAR_STATS', 'LOW_PRIORITY');
-			CHAR_STATS.SyncID = performance.now();
 			CHAR_STATS.units = [player];
 			var isSent = player.sendPacket(CHAR_STATS);
 			//console.log(CHAR_STATS);
@@ -121,6 +121,13 @@ module.exports = (player, packet) => {
 			var hpPercent = parseInt(commandArgs[1] || 100);
 			player.stats.CurrentHealth = player.stats.HealthPoints.Total * hpPercent / 100;
 			player.SET_HEALTH();
+		}
+		else if(commandArgs[0] == 'test'){
+			for(let i = 22; i > 0; i--)
+				new Minion('RED', 0, 'MALEE').teleport(new Vector2(1000 + (i * 150), 600));
+
+			for(let i = 5; i > 0; i--)
+				player.stats.levelUp();
 		}
 
 	}

@@ -6,7 +6,7 @@
 // Example replay: https://github.com/Karmel0x/LeagueEmulatorJS/files/6702341/Ezreal.zip
 // then run this with `node tools/spectator-emulator` and lol client with `runLol.bat`
 
-var replayUnpacked = require('../../LOL-REPLAY.rlp.json');
+var replayUnpacked = require('../../LeagueEmulatorJS_replays/LOL-REPLAY.rlp.json');
 
 // or if you just want packets in hex, uncomment these lines and run `node spectator-emulator > LOL-REPLAY.txt`
 //for(let i = 0; i < replayUnpacked.length; i++){

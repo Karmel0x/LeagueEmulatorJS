@@ -161,6 +161,9 @@ Buffer.prototype.readobj = function(template){
 			
 			let obj = {};
 			for(var i in template){
+				if(typeof template[i]?.[1] == 'string')
+					template[i][1] = obj[template[i][1]];
+
 				obj[i] = this.readobj(template[i]);
 				//console.log(template[i], this.off);
 			}
@@ -195,6 +198,9 @@ Buffer.prototype.writeobj = function(template, source){
 			}
 			
 			for(var i in template){
+				if(typeof template[i]?.[1] == 'string')
+					template[i][1] = source[template[i][1]];
+
 				this.writeobj(template[i], source[i] || 0);
 				//console.log(template[i], this.off);
 			}

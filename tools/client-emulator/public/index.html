@@ -8,10 +8,17 @@
 </head>
 <body class="container-fluid text-white bg-dark">
 	<div class="fixed-top bg-dark border-bottom" style="height: 60px;">
-		<button class="btn btn-light" onclick="initialize_client()">initialize_client</button>
-		<button class="btn btn-light" onclick="sendpacket_type('KEY_CHECK', 'HANDSHAKE')" id="send_handshake" disabled>send_handshake</button>
-		<button class="btn btn-light" id="play_pause" disabled>play_pause//todo</button>
-		
+
+			<select class="form-select form-select-sm w-auto d-inline-block" id="loadreplaylist"></select>
+			<input class="form-control form-control-sm w-auto d-inline-block" type="text" id="loadreplay_limit" placeholder="offset, limit">
+			<button class="btn btn-light" onclick="loadreplayfileDOM()">loadreplayfile</button>
+			
+			<span class="mx-2"></span>
+
+			<button class="btn btn-light" onclick="initialize_client()">initialize_client</button>
+			<button class="btn btn-light" onclick="sendpacket_type('KEY_CHECK', 'HANDSHAKE')" id="send_handshake" disabled>send_handshake</button>
+			<button class="btn btn-light" id="play_pause" disabled>play_pause//todo</button>
+
 	</div>
 	<div id="packetlist" style="margin-top: 60px;">
 

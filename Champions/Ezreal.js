@@ -35,15 +35,24 @@ const boneHash = {
 
 class Q extends Spell {
 	async cast(packet){
-        this.parent.parent.halt_start();
-		this.parent.parent.AddParticleTarget(particleHash['ezreal_bow.troy'], boneHash['L_HAND']);
+		var owner = this.parent.parent;
 
+		if(owner.castingSpell)
+			return;
+
+		owner.castingSpell = true;
+		owner.SET_COOLDOWN(packet.Slot, 1);//todo: check if spell is on cooldown
+        owner.halt_start();
+
+		owner.AddParticleTarget(particleHash['ezreal_bow.troy'], boneHash['L_HAND']);
 		var CastInfo = this.CastInfo_Position(packet);
 
 		CastInfo.SpellHash = spellHash.EzrealMysticShot;
-		this.parent.parent.castSpellAns(CastInfo);
+		owner.castSpellAns(CastInfo);
 
-		var skillshot = Skillshot.create(this.parent.parent, CastInfo.TargetPosition, {speed: 2000, range: 1150, radius: 60});
+		var skillshot = Skillshot.create(owner, CastInfo.TargetPosition, {
+			speed: 2000, range: 1150, radius: 60
+		});
 
 		var windup = 0.125;//?
 		await global.Utilities.wait(windup * 1000);
@@ -53,39 +62,74 @@ class Q extends Spell {
 		CastInfo.SpellSlot = 45;
 		CastInfo.SpellNetID = this.netId;
 		CastInfo.MissileNetID = skillshot.missile.netId;
-		this.parent.parent.castSpellAns(CastInfo);
+		owner.castSpellAns(CastInfo);
 
         skillshot.missile.firefire(skillshot.target);
 
-		this.parent.parent.SET_COOLDOWN(packet.Slot);
-		
-		await global.Utilities.wait(2 * windup * 1000);
-        this.parent.parent.halt_stop();
+		await global.Utilities.wait(windup * 1000 * 2);
+
+		owner.castingSpell = false;
+        owner.halt_stop();
 	}
 };
 class W extends Spell {
-	cast(packet){
-        this.parent.parent.halt0();//todo: halt only during spell cast?
-		this.parent.parent.AddParticleTarget(particleHash['ezreal_bow_yellow.troy'], boneHash['L_HAND']);
+	async cast(packet){
+		var owner = this.parent.parent;
+		
+		if(owner.castingSpell)
+			return;
 
+		owner.castingSpell = true;
+		owner.SET_COOLDOWN(packet.Slot, 2);
+        owner.halt_start();
+
+		owner.AddParticleTarget(particleHash['ezreal_bow_yellow.troy'], boneHash['L_HAND']);
 		var CastInfo = this.CastInfo_Position(packet);
 
 		CastInfo.SpellHash = spellHash.EzrealEssenceFlux;
-		this.parent.parent.castSpellAns(CastInfo);
+		owner.castSpellAns(CastInfo);
+
+		var skillshot = Skillshot.create(owner, CastInfo.TargetPosition, {
+			speed: 1550, range: 1000, radius: 80
+		});
+		var collidedWith = [];
+		skillshot.missile.collisionCallback = (target) => {//testing
+			if(skillshot.missile.parent == target || collidedWith.includes(target.netId))
+				return;
+	
+			collidedWith.push(target.netId);
+			
+			skillshot.missile.parent.battle.attack(target);
+			target.knockUp();
+		}
+
+		var windup = 0.125;//?
+		await global.Utilities.wait(windup * 1000);
 
 		CastInfo.SpellHash = spellHash.EzrealEssenceFluxMissile;
 		CastInfo.ManaCost = 0;
 		CastInfo.SpellSlot = 46;//?
 		CastInfo.SpellNetID = this.netId;
-		CastInfo.MissileNetID = 1073743444;
-		this.parent.parent.castSpellAns(CastInfo);
+		CastInfo.MissileNetID = skillshot.missile.netId;
+		owner.castSpellAns(CastInfo);
 
-		this.parent.parent.SET_COOLDOWN(packet.Slot);
+        skillshot.missile.firefire(skillshot.target);
+
+		await global.Utilities.wait(windup * 1000 * 2);
+
+		owner.castingSpell = false;
+        owner.halt_stop();
 	}
 };
 class E extends Spell {
 	cast(packet){
-        //this.parent.parent.halt0();
+		var owner = this.parent.parent;
+		
+		if(owner.castingSpell)
+			return;
+
+		owner.castingSpell = true;
+		owner.SET_COOLDOWN(packet.Slot, 3);
 
 		var CastInfo = this.CastInfo_Position(packet);
 		
@@ -101,40 +145,63 @@ class E extends Spell {
 
 
 		CastInfo.SpellHash = spellHash.EzrealArcaneShift;
-		this.parent.parent.castSpellAns(CastInfo);
+		owner.castSpellAns(CastInfo);
 
 		CastInfo.SpellHash = spellHash.EzrealArcaneShiftMissile;
 		CastInfo.ManaCost = 0;
 		CastInfo.SpellSlot = 47;//?
 		CastInfo.SpellNetID = this.netId;
 		CastInfo.MissileNetID = 1073743444;
-		this.parent.parent.castSpellAns(CastInfo);
-
-		this.parent.parent.SET_COOLDOWN(packet.Slot);
+		owner.castSpellAns(CastInfo);
 
         var pos = new Vector2(CastInfo.TargetPosition.x, CastInfo.TargetPosition.y);
-		this.parent.parent.dash(pos, {speed: 1800});//testing
+		owner.dash(pos, {speed: 1800});//testing
+		
+		owner.castingSpell = false;
 	}
 };
 class R extends Spell {
-	cast(packet){
-        this.parent.parent.halt0();
-		this.parent.parent.AddParticleTarget(particleHash['Ezreal_bow_huge.troy'], boneHash['L_HAND']);
+	async cast(packet){
+		var owner = this.parent.parent;
 
+		if(owner.castingSpell)
+			return;
+
+		owner.castingSpell = true;
+		owner.SET_COOLDOWN(packet.Slot, 4);
+        owner.halt_start();
+
+		owner.AddParticleTarget(particleHash['Ezreal_bow_huge.troy'], boneHash['L_HAND']);
 		var CastInfo = this.CastInfo_Position(packet);
 
-		CastInfo.SpellNetID = this.netId;
-		CastInfo.MissileNetID = 1073743444;
-		CastInfo.SpellHash = spellHash.EzrealTrueshotBarrage;
-		this.parent.parent.castSpellAns(CastInfo);
 
-		this.parent.parent.SET_COOLDOWN(packet.Slot);
+		var skillshot = Skillshot.create(owner, CastInfo.TargetPosition, {
+			speed: 2000, range: 25000, radius: 160
+		});
+
+		CastInfo.SpellHash = spellHash.EzrealTrueshotBarrage;
+		CastInfo.ManaCost = 0;
+		CastInfo.SpellSlot = 45;
+		CastInfo.SpellNetID = this.netId;
+		CastInfo.MissileNetID = skillshot.missile.netId;
+		CastInfo.DesignerCastTime = 1;
+		CastInfo.DesignerTotalTime = 1;
+		owner.castSpellAns(CastInfo);
+
+		var windup = 1;//?
+		await global.Utilities.wait(windup * 1000);
+        skillshot.missile.firefire(skillshot.target);
+
+		await global.Utilities.wait(windup * 1000 / 2);
+
+		owner.castingSpell = false;
+        owner.halt_stop();
 	}
 };
 
 
 module.exports = class Ezreal extends Champion {
-	PackageHash = 2618078626;
+	PackageHash = 2618078626;//[Character]Ezreal00
 	constructor(parent){
 		super(parent);
 
@@ -146,5 +213,8 @@ module.exports = class Ezreal extends Champion {
 			//62: new Passive(this),
 			//64-81: Attack?
 		};
+	}
+	get name(){
+		return this.constructor.name;
 	}
 };

@@ -49,12 +49,9 @@ class Team {
                     SkinName: target.model
                 }
             ];
-            OBJECT_SPAWN.MovementData = {
-                //SyncID: 0x0F0FD189,
-                Position: target.Waypoints[0],
-                Forward: {x: 0, y: 0},
-            };
+            OBJECT_SPAWN.MovementData = target.MovementData;
             var isSent = this.sendPacket(OBJECT_SPAWN, loadingStages.IN_GAME);
+            console.log(OBJECT_SPAWN.MovementData);
 
             //var SET_HEALTH = createPacket('SET_HEALTH');
             //SET_HEALTH.netId = target.netId;

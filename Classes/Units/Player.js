@@ -3,6 +3,7 @@ const {createPacket, sendPacket} = require("../../PacketUtilities");
 const loadingStages = require('../../Constants/loadingStages');
 const playersConfig = require('../../Constants/playersConfig');
 const SummonerSpells = require("../../Champions/SummonerSpells");
+const TranslateCenteredCoordinates = require('../../Functions/TranslateCenteredCoordinates');
 
 
 class Player extends Unit {
@@ -23,61 +24,42 @@ class Player extends Unit {
         this.champion = new Champion_(this);
         this.summonerSpells = new SummonerSpells(this, 'SummonerHeal', 'SummonerFlash');
     }
+    //todo: packet batching
+    //packetBatching = false;
+    //batchedPackets = [];
+    //batch_begin(){
+    //    this.packetBatching = true;
+    //}
+    //batch_end(){
+    //    this.packetBatching = false;
+    //    var packet = {};
+    //    packet.packets = this.batchedPackets;
+    //    this.batchedPackets = [];
+    //    //todo: create batchet packet
+    //    sendPacket(this.peer_num, packet);
+    //}
     sendPacket(packet, minStage = loadingStages.IN_GAME){
         if(this.loadingStage < minStage)
             return;
         
-        sendPacket(this.peer_num, packet);
+        //if(this.packetBatching)
+        //    this.batchPackets.push(packet);
+        //else
+            sendPacket(this.peer_num, packet);
     }
-    //vision(target, enters = true){
-    //    if(!this.loaded)
-    //        return;
-//
-    //    //console.log('vision', target, see);
-    //    if(enters){
-    //        console.log('enters vision', this.netId, target.netId);
-//
-    //        var OBJECT_SPAWN = createPacket('OBJECT_SPAWN');
-    //        OBJECT_SPAWN.netId = target.netId;
-    //        OBJECT_SPAWN.ShieldValues = {
-    //            Magical: 0,
-    //            Physical: 0,
-    //            MagicalAndPhysical: 0,
-    //        };
-    //        OBJECT_SPAWN.LookAtPosition = {x: 1, y: 0, z: 0};
-    //        OBJECT_SPAWN.CharacterStackData = [
-    //            {
-    //                SkinName: target.model
-    //            }
-    //        ];
-    //        OBJECT_SPAWN.MovementData = {
-    //            //SyncID: 0x0F0FD189,
-    //            Position: target.Waypoints[0],
-    //            Forward: {x: 0, y: 0},
-    //        };
-    //        var isSent = this.sendPacket(OBJECT_SPAWN);
-    //    }else{
-    //        console.log('leaves vision', this.netId, target.netId);
-//
-    //        var LEAVE_VISION = createPacket('LEAVE_VISION');
-    //        LEAVE_VISION.netId = target.netId;
-    //        var isSent = this.sendPacket(LEAVE_VISION);
-    //    }
-//
-    //}
     SET_HEALTH(){
         this.stats.charStats_send();
     }
-    SET_COOLDOWN(Slot){return;
+    SET_COOLDOWN(slot, cooldown = 0){//return;
         var SET_COOLDOWN = createPacket('SET_COOLDOWN', 'S2C');
         SET_COOLDOWN.netId = this.netId;
-        SET_COOLDOWN.Slot = Slot;
+        SET_COOLDOWN.Slot = slot;
         SET_COOLDOWN.bitfield = {
             PlayVOWhenCooldownReady: false,
             IsSummonerSpell: false,
         };
-        SET_COOLDOWN.Cooldown = 0;
-        SET_COOLDOWN.MaxCooldownForDisplay = 0;
+        SET_COOLDOWN.Cooldown = cooldown;
+        SET_COOLDOWN.MaxCooldownForDisplay = cooldown;
         var isSent = this.sendPacket(SET_COOLDOWN);
         console.log(SET_COOLDOWN);
     }
@@ -114,13 +96,63 @@ class Player extends Unit {
         var isSent = this.sendPacket(CAST_SPELL_ANS);
         console.log(CAST_SPELL_ANS);
     }
+    spawnProjectileAns(CastInfo, speed = 1200){//todo
+        //return this.castSpellAns(CastInfo);
+        var SPAWN_PROJECTILE = createPacket('SPAWN_PROJECTILE', 'S2C');
+        SPAWN_PROJECTILE.CastInfo = {
+            SpellHash: 0,
+            SpellNetID: 1073743439,
+            SpellLevel: 1,
+            AttackSpeedModifier: 1,
+            CasterNetID: this.netId,
+            SpellChainOwnerNetID: this.netId,
+            PackageHash: this.champion.PackageHash,
+            MissileNetID: 1073743440,
+            TargetPosition: {},
+            TargetPositionEnd: {},
+            DesignerCastTime: 0.25,
+            DesignerTotalTime: 0.25,
+            ManaCost: 28,
+            SpellCastLaunchPosition: {},
+            AmmoUsed: 1,
+            target: [{
+                unit: 0,
+                hitResult: 0,
+            }],
+        };
+        Object.assign(SPAWN_PROJECTILE.CastInfo, CastInfo);
+        SPAWN_PROJECTILE.netId = SPAWN_PROJECTILE.CastInfo.MissileNetID;// ??
+        SPAWN_PROJECTILE.Position = SPAWN_PROJECTILE.CastInfo.SpellCastLaunchPosition;
+        SPAWN_PROJECTILE.CasterPosition = SPAWN_PROJECTILE.CastInfo.SpellCastLaunchPosition;
+        //SPAWN_PROJECTILE.Direction = {
+        //    "x": 0.36772018671035767,
+        //    "z": 0,
+        //    "y": 0.9299365282058716
+        //}
+        //SPAWN_PROJECTILE.Velocity = {
+        //    "x": 441.2642517089844,
+        //    "z": -109.0909194946289,
+        //    "y": 1115.9239501953125
+        //};
+        SPAWN_PROJECTILE.StartPoint = SPAWN_PROJECTILE.CastInfo.SpellCastLaunchPosition;
+        SPAWN_PROJECTILE.EndPoint = SPAWN_PROJECTILE.CastInfo.TargetPosition;
+        SPAWN_PROJECTILE.UnitPosition = SPAWN_PROJECTILE.CastInfo.SpellCastLaunchPosition;
+        SPAWN_PROJECTILE.Speed = speed;
+
+        SPAWN_PROJECTILE.CastInfo.targetCount = SPAWN_PROJECTILE.CastInfo.target.length;
+        SPAWN_PROJECTILE.CastInfo.size = 102 + SPAWN_PROJECTILE.CastInfo.targetCount * 5;
+        var isSent = this.sendPacket(SPAWN_PROJECTILE);
+        console.log(SPAWN_PROJECTILE);
+    }
     //castSpell(packet){
     //    if(typeof this.champion.spells[packet.Slot] == 'undefined')
     //        return console.log('wrong spell slot', packet.Slot);
     //
     //    this.champion.spells[packet.Slot].cast(packet);
     //}
-    AddParticleTarget(EffectNameHash, BoneNameHash){return;
+
+    // 497252 = root
+    AddParticleTarget(EffectNameHash, BoneNameHash = 497252, target = undefined){
         var SPAWN_PARTICLE = createPacket('SPAWN_PARTICLE', 'S2C');
         SPAWN_PARTICLE.netId = 0;//this.netId;
         SPAWN_PARTICLE.FXCreateGroupData = [];
@@ -133,29 +165,24 @@ class Player extends Unit {
         };
         SPAWN_PARTICLE.FXCreateGroupData[0].FXCreateData = [];
         SPAWN_PARTICLE.FXCreateGroupData[0].FXCreateData[0] = {
-            TargetNetID: this.netId,
-            NetAssignedNetID: this.netId,
-            CasterNetID: this.netId,
+            TargetNetID: target?.netId || 0,//this.netId,
+            NetAssignedNetID: ++global.lastNetId,//?
+            CasterNetID: 0,//this.netId,
             BindNetID: this.netId,
-            KeywordNetID: this.netId,
+            KeywordNetID: 0,//this.netId,
             TimeSpent: 0,
             ScriptScale: 1,
         };
-        SPAWN_PARTICLE.FXCreateGroupData[0].FXCreateData[0].Position = {
-            x: player.Waypoints[0].x,
-            y: player.Waypoints[0].y,
-            z: 180,
-        };
-        SPAWN_PARTICLE.FXCreateGroupData[0].FXCreateData[0].TargetPosition = {
-            x: player.Waypoints[0].x,
-            y: player.Waypoints[0].y,
-            z: 180,
-        };
-        SPAWN_PARTICLE.FXCreateGroupData[0].FXCreateData[0].OwnerPosition = {
-            x: player.Waypoints[0].x,
-            y: player.Waypoints[0].y,
-            z: 180,
-        };
+
+        var ownerPositionCC = TranslateCenteredCoordinates.to([player.position])[0];
+        var targetPositionCC = target ? TranslateCenteredCoordinates.to([target.position])[0] : ownerPositionCC;
+        targetPositionCC.z = 0;// don't know if it's necessary to set z
+        ownerPositionCC.z = 50;
+
+        SPAWN_PARTICLE.FXCreateGroupData[0].FXCreateData[0].Position = ownerPositionCC;
+        SPAWN_PARTICLE.FXCreateGroupData[0].FXCreateData[0].OwnerPosition = ownerPositionCC;
+        SPAWN_PARTICLE.FXCreateGroupData[0].FXCreateData[0].TargetPosition = targetPositionCC;
+
         SPAWN_PARTICLE.FXCreateGroupData[0].FXCreateData[0].OrientationVector = {
             x: 0,
             y: 0,
@@ -166,6 +193,7 @@ class Player extends Unit {
         SPAWN_PARTICLE.count = SPAWN_PARTICLE.FXCreateGroupData.length;
         var isSent = this.sendPacket(SPAWN_PARTICLE);
         console.log(SPAWN_PARTICLE);
+        console.log(SPAWN_PARTICLE.FXCreateGroupData[0].FXCreateData);
     }
 }
 

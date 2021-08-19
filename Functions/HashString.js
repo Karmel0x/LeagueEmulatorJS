@@ -25,13 +25,13 @@ function HashStringNorm(str){
 	var hash = 0;
 
 	for (var i = 0; i < str.length; i++)
-		hash = str.charCodeAt(i) + 65599 * hash;
+		hash = (str.charCodeAt(i) + 65599 * hash) >>> 0;
 
 	return hash;
 }
 
 var HashStringObject_cache = {};
-function HashStringObject(obj){
+function HashStringObject(obj, norm = false){
 	for(let i in obj){
 		if(obj[i])
 			continue;
@@ -41,7 +41,7 @@ function HashStringObject(obj){
 			continue;
 		}
 
-		obj[i] = HashString(i);
+		obj[i] = (norm ? HashStringNorm : HashString)(i);
 		HashStringObject_cache[i] = obj[i];
 
 		var fd = i + ': ' + obj[i] + ',\n';

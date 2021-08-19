@@ -33,7 +33,6 @@ class StatsPlayer extends StatsUnit {
         //  for example SummonerHeal will not send two packets (for heal and for buff)
         
         var CHAR_STATS = createPacket('CHAR_STATS', 'LOW_PRIORITY');
-        CHAR_STATS.SyncID = performance.now();
         CHAR_STATS.units = [this.parent];
         var isSent = this.parent.sendPacket(CHAR_STATS);
     }

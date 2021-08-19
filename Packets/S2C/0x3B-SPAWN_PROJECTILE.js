@@ -20,6 +20,6 @@ module.exports = class extends BasePacket {//S2C.
 		bitfield: ['bitfield', {
 			Bounced: 1,
 		}],
-		CastInfo: CastInfo,
+		CastInfo: JSON.parse(JSON.stringify(CastInfo)),
 	}
 };

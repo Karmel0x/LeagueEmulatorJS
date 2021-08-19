@@ -20,7 +20,7 @@ module.exports = {
     TargetPositionEnd: Vector3,
 
     targetCount: 'uint8',
-    target: [target, 1],//'targetCount'
+    target: [target, 'targetCount'],
     
     DesignerCastTime: 'float',
     ExtraCastTime: 'float',

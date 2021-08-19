@@ -8,6 +8,7 @@ module.exports = class extends BasePacket {//S2C.DASH
 		count: 'int16',
 	}
 	writer(buffer){
+        this.SyncID = this.SyncID || performance.now();
         this.count = this.count || 1;
 		super.writer(buffer);
 

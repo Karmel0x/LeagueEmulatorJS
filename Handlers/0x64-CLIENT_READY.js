@@ -30,7 +30,7 @@ module.exports = (player, packet) => {
         var LOAD_HERO = createPacket('LOAD_HERO', 'LOADING_SCREEN');
         LOAD_HERO.PlayerId = 1;
         LOAD_HERO.SkinId = 0;
-        LOAD_HERO.SkinName = 'Ezreal';
+        LOAD_HERO.SkinName = global.Units['ALL'].Player[0].champion.name;
         var isSent = player.sendPacket(LOAD_HERO, loadingStages.NOT_CONNECTED);
     }
 

@@ -29,6 +29,17 @@ var FXCreateGroupData = {
 module.exports = class extends BasePacket {//S2C.
 	struct = {
 		count: 'uint8',
-		FXCreateGroupData: [FXCreateGroupData, 1],//'count'
+		//FXCreateGroupData: [FXCreateGroupData, 1],//'count'
 	}
+    reader(buffer){
+        super.reader(buffer);
+
+        this.FXCreateGroupData = buffer.readobj([FXCreateGroupData, this.count]);
+    }
+    writer(buffer){
+        this.count = this.count || this.FXCreateGroupData.length;
+        super.writer(buffer);
+
+        buffer.writeobj([FXCreateGroupData, this.count], this.FXCreateGroupData);
+    }
 };

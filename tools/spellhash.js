@@ -15,7 +15,23 @@ const spellHash = {
 	SummonerRevive: 0, // Revive
 	SummonerSmite: 0, // Smite
 	SummonerTeleport: 0, // Teleport
+
+	YasuoQ: 0,
+	YasuoQ2: 0,
+	YasuoQ3: 0,
+	YasuoQW: 0,
+	YasuoQ2W: 0,
+	YasuoQ3W: 0,
 };
 
 HashStringObject(spellHash);
 console.log(spellHash);
+
+
+const packageHash = {
+	'[Character]Ezreal00': 0,
+	'[Character]Yasuo00': 0,
+};
+
+HashStringObject(packageHash, true);
+console.log(packageHash);

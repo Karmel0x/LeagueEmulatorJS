@@ -305,7 +305,8 @@ module.exports = class extends BasePacket {//LOW_PRIORITY.CHAR_STATS
 		unit.replicant[primaryId][secondaryId] = value;
 	}
 	writer(buffer){
-		this.count = this.units.length;
+        this.SyncID = this.SyncID || performance.now();
+		this.count = this.count || this.units.length;
 		super.writer(buffer);
 
 		for(let i = 0; i < this.count; i++){
@@ -355,8 +356,6 @@ module.exports = class extends BasePacket {//LOW_PRIORITY.CHAR_STATS
 			console.debug('CHAR_STATS writer unit', this.units[i]);
 		}
 	}
-	//00 80 e8 43 00 80 e8 43 ff ff ff ff ff 87 80 80 02 00 00 00 00 00 00 c8 41 ff ff 00 00 80 3f ff ff ff ff ff ff ff
-	//ff ff ff 00 00 80 3f 01 80 80 80 10
 	reader(buffer){
 		super.reader(buffer);
 
@@ -413,25 +412,4 @@ module.exports = class extends BasePacket {//LOW_PRIORITY.CHAR_STATS
 		}
 		
 	}
-	//reader(buffer){
-	//	super.reader(buffer);
-	//	this.ReplicationData = [];
-	//	for(let i = 0; i < this.count; i++){
-	//		this.ReplicationData[i] = buffer.readobj({
-	//			primaryIdArray: 'uint8',
-	//			UnitNetID: 'uint32',
-	//		});
-	//		this.ReplicationData[i].Data = {};
-	//		for(let primaryId = 0; primaryId < 6; primaryId++){
-	//			if((this.ReplicationData[i].primaryIdArray & (1 << primaryId)) == 0)
-	//				continue;
-	//				
-	//			var Data = {};
-	//			Data.seconadaryIdArray = buffer.read1('uint32');
-	//			Data.dataCount = buffer.read1('uint8');
-	//			Data.data = buffer.readobj(['uint8', Data.dataCount]);
-	//			this.ReplicationData[i].Data[primaryId] = Data;
-	//		}
-	//	}
-	//}
 };

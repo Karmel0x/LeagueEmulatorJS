@@ -5,15 +5,12 @@
 // run with 'node tools/client-emulator' then open link in your browser: `http://127.0.0.1/`
 //Example recordings: https://github.com/Karmel0x/LeagueEmulatorJS/issues/2
 
-
-var replayUnpacked = require('../../../LOL-REPLAY.rlp.json');//25000
-//var replayUnpacked = require('../../../dumps-4.12-Riven vs Miss Fortune 1v1.json');
-//var replayUnpacked = require('../../../testpackets.json');
+var replayDir = '../LeagueEmulatorJS_replays/';
 
 
 require('../../init_utilities')();
 var {server, wss} = require('./init_client-server');
-
+const fs = require('fs');
 
 const enet = require('../../../enetcppjs/build/Release/enetcppjs.node');
 const Packets = require("../../Packets");
@@ -21,6 +18,9 @@ require("../../BufferExtend");
 const {createPacket, sendPacket} = require("../../PacketUtilities");
 const HandlersParse = require("../../HandlersParse");
 var BatchPacket = require('../../Packets/BatchPacket');
+
+
+var replayUnpacked;
 
 wss.onMessage = (data) => {
 
@@ -30,7 +30,7 @@ wss.onMessage = (data) => {
 	if(res.cmd == 'loadpackets'){
 		
 		let offset = res.offset || 0;
-		let limit = (res.limit || 0) + offset;
+		let limit = (res.limit || 5000) + offset;
 		for(let i = offset; i < replayUnpacked.length && i < limit; i++){
 
       		var buffer = replayUnpacked[i].Bytes ? Buffer.from(replayUnpacked[i].Bytes, 'base64') : Buffer.from(replayUnpacked[i].BytesHex.split(' ').join('').split('-').join(''), 'hex');
@@ -124,6 +124,20 @@ wss.onMessage = (data) => {
 		KEY_CHECK.ClientID = 0;
 		KEY_CHECK.PlayerID = 1;
 		sendPacket(0, KEY_CHECK);
+	}else if(res.cmd == 'loadreplaylist'){
+		var replayList = fs.readdirSync(replayDir).filter((value) => {
+			return value.endsWith('.json');
+		});
+		wss.clients.sendToAll(JSON.stringify({
+			cmd: 'loadreplaylist',
+			list: replayList,
+		}));
+	}else if(res.cmd == 'loadreplayfile'){
+		//try{
+			replayUnpacked = require('../../' + replayDir + res.name);
+		//}catch(e){
+		//	console.log(e);
+		//}
 	}
 
 }

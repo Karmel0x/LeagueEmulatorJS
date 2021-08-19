@@ -63,19 +63,37 @@ class Unit {
     }
 
     Waypoints = [new Vector2(0, 0)];
+    get position(){
+        return this.Waypoints[0];
+    }
+    setWaypoints(Waypoints){
+        var Waypoints0 = this.Waypoints[0];
+        this.Waypoints = Waypoints;
+        this.Waypoints[0] = Waypoints0;
+    }
     teleport(position){
         this.Waypoints = [position];
         this.moveAns();// that's wrong
     }
-    dashAns(position, options){
+    SpeedParams = null;
+    dashAns(){
         var DASH = createPacket('DASH');
 
         DASH.netId = 0;
         DASH.TeleportNetID = this.netId;
-        DASH.SyncID = performance.now();
 
-        DASH.Waypoints = [this.Waypoints[0], position];
-        DASH.SpeedParams = {//todo: names? then just Object.assign
+        DASH.Waypoints = this.Waypoints;
+        DASH.SpeedParams = this.SpeedParams;
+        
+        var isSent = global.Teams.ALL.sendPacket_withVision(DASH);
+        console.log(DASH);
+    }
+    WaypointsDash_MS = 0;
+    dash(position, options){
+        let WaypointsM = this.Waypoints;//todo: this.WaypointsPending
+        this.Waypoints = [WaypointsM[0], position];
+        this.WaypointsDash_MS = options.speed;
+        this.SpeedParams = {//todo: names? then just Object.assign
             PathSpeedOverride: options.speed || 1000,
             ParabolicGravity: options.ParabolicGravity || 0,
             ParabolicStartPoint: options.ParabolicStartPoint || {x: 0, y: 0},
@@ -85,21 +103,22 @@ class Unit {
             FollowBackDistance: options.FollowBackDistance || 0,
             FollowTravelTime: options.FollowTravelTime || 0,
         };
-        
-        var isSent = global.Teams.ALL.sendPacket_withVision(DASH);
-        console.log(DASH);
-    }
-    WaypointsDash_MS = 0;
-    dash(position, options){
-        let Waypoints = this.Waypoints;
-        this.Waypoints = [Waypoints[0], position];
-        this.WaypointsDash_MS = options.speed;
         this.moveCallback = () => {
-            this.Waypoints = Waypoints;//todo: repath
+            this.setWaypoints(WaypointsM);//todo: repath
             this.WaypointsDash_MS = 0;
-            this.moveAns();
+            this.SpeedParams = null;
+            if(this.Waypoints.length > 1)
+                this.moveAns();
         };
-        this.dashAns(position, options);
+        this.dashAns();
+    }
+    knockUp(position = null, options = {
+        speed: 13,
+        ParabolicGravity: 16.5,
+        Facing: 1,
+    }){
+        position = position || new Vector2(this.Waypoints[0].x + 10, this.Waypoints[0].y + 10);//todo: random pos?
+        this.dash(position, options);
     }
     move1(position){
         this.Waypoints = [this.Waypoints[0], position];
@@ -109,9 +128,7 @@ class Unit {
         this.moveCallback = null;
         
         if(MovementData.Waypoints && MovementData.Waypoints.length){
-            var Waypoints0 = this.Waypoints[0];
-            this.Waypoints = MovementData.Waypoints;
-            this.Waypoints[0] = Waypoints0;
+            this.setWaypoints(MovementData.Waypoints);
         }
         this.moveAns();
     }
@@ -137,12 +154,28 @@ class Unit {
     moveClear(){
         this.Waypoints = [this.Waypoints[0]];
     }
+    get MovementData(){
+        let movementData = {
+            TeleportNetID: this.netId,
+            //SyncID: performance.now(),
+        };
+
+        if(this.Waypoints.length > 1){
+            movementData.Waypoints = this.Waypoints;
+            if(this.SpeedParams)
+                movementData.SpeedParams = this.SpeedParams;
+        }else{
+            movementData.Position = this.Waypoints[0];
+            movementData.Forward = {x: 0, y: 0};
+        };
+
+        return movementData;
+    }
     moveAns(){
         // this should be in Movement_Simulation so we can resend if destination will change (following moveable unit)
         var MOVE_ANS = createPacket('MOVE_ANS', 'LOW_PRIORITY');
 
         MOVE_ANS.netId = 0;//this.netId;
-        MOVE_ANS.SyncID = performance.now();
         MOVE_ANS.TeleportNetID = this.netId;
         MOVE_ANS.TeleportID = 0x00;
         //MovementData.WaypointsCC = TranslateCenteredCoordinates.to(MovementData.Waypoints);

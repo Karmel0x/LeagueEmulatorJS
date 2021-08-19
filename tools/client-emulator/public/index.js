@@ -2,7 +2,7 @@ const socket = new WebSocket('ws://127.0.0.1:80/ws');
 
 // Connection opened
 socket.addEventListener('open', (event) => {
-	loadpackets();
+	loadreplaylist();
 });
 
 /*var Channels = {
@@ -46,6 +46,15 @@ socket.addEventListener('message', (event) => {
 		packetlist.appendChild(newpacket);
 		console.log(res.packet.Id, res.packet.channelName, res.packet.cmdName, JSON.parse(res.packet.Parsed));
 	}
+	else if(res.cmd == 'loadreplaylist'){
+		let loadreplaylist = document.getElementById('loadreplaylist');
+
+		for(let option in res.list){
+			let optionEl = document.createElement('option');
+			optionEl.value = optionEl.text = res.list[option];
+			loadreplaylist.add(optionEl);
+		}
+	}
 });
 
 function sendpacket_type(name, channel){
@@ -67,9 +76,30 @@ function initialize_client(){
 	}));
 	document.getElementById('send_handshake').disabled = false;
 }
-function loadpackets(limit = 5000){
+function loadpackets(offset = 0, limit = 5000){
 	socket.send(JSON.stringify({
 		cmd: 'loadpackets',
+		offset: offset,
 		limit: limit,
 	}));
+}
+function loadreplaylist(){
+	socket.send(JSON.stringify({
+		cmd: 'loadreplaylist',
+	}));
+}
+function loadreplayfile(name = '', offset = undefined, limit = undefined){
+	socket.send(JSON.stringify({
+		cmd: 'loadreplayfile',
+		name: name,
+	}));
+	loadpackets(offset, limit);
+}
+function loadreplayfileDOM(){
+	var replayFile = document.getElementById('loadreplaylist').value;
+	var offset_limit = document.getElementById('loadreplay_limit').value;
+	offset_limit = offset_limit.split(' ').join('').split(',');
+	var offset = parseInt(offset_limit[0]) || undefined;
+	var limit = parseInt(offset_limit[1]) || undefined;
+	loadreplayfile(replayFile, offset, limit);
 }

@@ -80,8 +80,7 @@ module.exports = class extends BasePacket {//S2C.OBJECT_SPAWN
 					this.MovementData.SpeedParams ? MovementDataType.WithSpeed : MovementDataType.Normal
 				) : MovementDataType.Stop;
 
-			if(!this.MovementData.SyncID)
-				this.MovementData.SyncID = performance.now();
+        	this.SyncID = this.SyncID || performance.now();
 
 			buffer.writeobj({
 				type: 'uint8',

@@ -7,6 +7,7 @@ module.exports = class extends BasePacket {//LOW_PRIORITY.MOVE_ANS
 		count: 'int16',
 	}
     writer(buffer){
+        this.SyncID = this.SyncID || performance.now();
         this.count = this.count || 1;
 		super.writer(buffer);
 

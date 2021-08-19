@@ -29,7 +29,7 @@ module.exports = (player, packet) => {
     //HERO_SPAWN.SenderNetID = player.netId;
     HERO_SPAWN.SkinID = 0;
     HERO_SPAWN.Name = 'Test';//playerName
-    HERO_SPAWN.Skin = 'Ezreal';//modelName
+    HERO_SPAWN.Skin = global.Units['ALL'].Player[0].champion.name;//modelName
 
     HERO_SPAWN.bitfield = {
         TeamIsOrder: true,
