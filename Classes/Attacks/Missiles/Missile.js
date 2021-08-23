@@ -8,6 +8,10 @@ global.Missiles = global.Missiles || {};
 global.MissilesCount = global.MissilesCount || {count: 0};
 
 class Missile {
+	callbacks = {
+		move: {},
+		collision: {},
+	};
 	appendGlobal(){
 
 		this.id = global.MissilesCount.count;
@@ -77,11 +81,15 @@ class Missile {
 
 		console.debug(this.Waypoints[0].distanceTo(target.Waypoints[0]), this.fulfillRange);
 		if(this.Waypoints[0].distanceTo(target.Waypoints[0]) > this.fulfillRange){
-			this.moveCallback_range = this.fulfillRange;
-			this.moveCallback = () => {
-				this.moveCallback = null;
-				console.log('Missile.fly.moveCallback');
-				this.fly(target);
+			this.callbacks.move._ = {
+				options: {
+					range: this.fulfillRange,
+				},
+				function: () => {
+					delete this.callbacks.move._;
+					console.log('Missile.fly callbacks.move._');
+					this.fly(target);
+				}
 			};
 			this.move1(target.Waypoints[0]);
 			return;

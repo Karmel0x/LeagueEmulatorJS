@@ -6,6 +6,6 @@ module.exports = class Champion {
 
 	}
 	castSpell(packet){
-		this.spells[packet.Slot].cast(packet);
+		this.spells[packet.Slot].preCast(packet);
 	}
 };

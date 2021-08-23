@@ -51,6 +51,8 @@ module.exports = (player, packet) => {
 				.expup [<expAmount>] :: adding experience for player
 				.hp [<percent>] :: setting player health
 				.test :: levelingUp player 5 levels and spawning 22 RED minions in BLUE base
+				.champion <championName> :: switching player champion
+				.info <type(position)> :: printing in console some informations you may need
 			`;
 			chatBoxMessage(player, message.split('\t\t').join(' '));
 		}
@@ -128,6 +130,17 @@ module.exports = (player, packet) => {
 
 			for(let i = 5; i > 0; i--)
 				player.stats.levelUp();
+		}
+		else if(commandArgs[0] == 'champion'){
+			var character = commandArgs[1] || 'Ezreal';
+			const Champion_ = require('../Champions/' + character);
+			player.champion = new Champion_(player);
+			player.UPDATE_MODEL(character);
+		}
+		else if(commandArgs[0] == 'info'){
+			if(commandArgs[1] == 'position'){
+				console.log(commandArgs, player.position);
+			}
 		}
 
 	}

@@ -86,7 +86,7 @@ class MovementSimulation {
 			let dest = unit.Waypoints[1].clone();
 			dest.sub(unit.Waypoints[0]);
 			
-			let ms = (unit.WaypointsDash_MS || unit.stats.MoveSpeed.Total) / 1000;
+			let ms = (unit.SpeedParams?.PathSpeedOverride || unit.stats.MoveSpeed.Total) / 1000;
 			dest.normalize().multiplyScalar(ms * diff);
 			
 			let dist = unit.Waypoints[0].distanceTo(unit.Waypoints[1]);
@@ -97,22 +97,25 @@ class MovementSimulation {
 
 			//console.log(unit.Waypoints[0], unit.Waypoints[1], dest, diff);
 			
-			if(unit.moveCallback){
-				if(unit.Waypoints.length < 2 || unit.Waypoints[0].distanceTo(unit.Waypoints[1]) <= unit.moveCallback_range)
-					unit.moveCallback();
-			}
-			if(unit.collisionCallback){
-				//todo: flags like self targetable, ally targetable, enemy targetable
-				for(var i in global.Units['ALL']['ALL']){
-					let unit2 = global.Units['ALL']['ALL'][i];
-					//todo: for better performance we could divide units array to territories
-					let dist2 = unit.Waypoints[0].distanceTo(unit2.Waypoints[0]);
-					if(dist2 <= (unit.collisionCallback_range + unit2.collisionRadius)){
-						unit.collisionCallback(unit2);
-						break;// todo: not break if can hit more targets
+			if(unit.callbacks){
+				for(let i in unit.callbacks.move){
+					if(unit.Waypoints.length < 2 || unit.Waypoints[0].distanceTo(unit.Waypoints[1]) <= unit.callbacks.move[i].options.range)
+						unit.callbacks.move[i].function();
+				}
+
+				for(let i in unit.callbacks.collision){
+					//unit.callbacks.collision[i].options.flags;//todo: flags like self targetable, ally targetable, enemy targetable
+					for(var unitId in global.Units['ALL']['ALL']){
+						let unit2 = global.Units['ALL']['ALL'][unitId];
+						//todo: for better performance we could divide units array to territories
+						let dist2 = unit.Waypoints[0].distanceTo(unit2.Waypoints[0]);
+						if(dist2 <= ((unit.callbacks.collision[i].options?.range || unit.collisionRadius) + unit2.collisionRadius)){
+							unit.callbacks.collision[i].function(unit2);
+							if(!unit.callbacks.collision[i])
+								break;
+						}
 					}
 				}
-				//continue;
 			}
 
 			return true;

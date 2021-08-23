@@ -25,10 +25,22 @@ var Battle = {
 const Inventory = require('../Inventory');
 const BuffController = require('./Controllers/BuffController');
 
+var ACTIONS = {
+    FREE: 0,
+    STUNNED: 1,
+    DASHING: 2,
+    PREATTACKING: 3,
+    ATTACKING: 4,
+};
+
 
 class Unit {
     visibleForEnemy = false;
     collisionRadius = 48;
+    callbacks = {
+		move: {},
+		collision: {},
+    };
     
     constructor(team, num = 0, character = '', config = {}){
         Object.assign(this, config);
@@ -66,10 +78,18 @@ class Unit {
     get position(){
         return this.Waypoints[0];
     }
-    setWaypoints(Waypoints){
+    setWaypoints(Waypoints, send = true){//todo: repath if needed
+        if(this.SpeedParams){
+            var Waypoints0 = this.WaypointsPending[0];
+            this.WaypointsPending = Waypoints;
+            this.WaypointsPending[0] = Waypoints0;
+            return;
+        }
         var Waypoints0 = this.Waypoints[0];
         this.Waypoints = Waypoints;
         this.Waypoints[0] = Waypoints0;
+        if(send)
+            this.moveAns();
     }
     teleport(position){
         this.Waypoints = [position];
@@ -86,13 +106,12 @@ class Unit {
         DASH.SpeedParams = this.SpeedParams;
         
         var isSent = global.Teams.ALL.sendPacket_withVision(DASH);
-        console.log(DASH);
+        //console.log(DASH);
     }
-    WaypointsDash_MS = 0;
+    ACTION = 0;
     dash(position, options){
-        let WaypointsM = this.Waypoints;//todo: this.WaypointsPending
-        this.Waypoints = [WaypointsM[0], position];
-        this.WaypointsDash_MS = options.speed;
+        this.ACTION = ACTIONS.DASHING;
+
         this.SpeedParams = {//todo: names? then just Object.assign
             PathSpeedOverride: options.speed || 1000,
             ParabolicGravity: options.ParabolicGravity || 0,
@@ -103,34 +122,80 @@ class Unit {
             FollowBackDistance: options.FollowBackDistance || 0,
             FollowTravelTime: options.FollowTravelTime || 0,
         };
-        this.moveCallback = () => {
-            this.setWaypoints(WaypointsM);//todo: repath
-            this.WaypointsDash_MS = 0;
-            this.SpeedParams = null;
-            if(this.Waypoints.length > 1)
-                this.moveAns();
+
+        this.WaypointsPending = this.Waypoints;
+        this.Waypoints = [this.WaypointsPending[0], position];
+        
+        this.callbacks.move.dash = {
+            options: {
+                range: 1,
+            },
+            function: () => {
+                this.ACTION = ACTIONS.FREE;
+                this.SpeedParams = null;
+                this.setWaypoints(this.WaypointsPending, this.WaypointsPending.length > 1);
+                if(options.callback)
+                    options.callback();
+            }
         };
         this.dashAns();
     }
-    knockUp(position = null, options = {
-        speed: 13,
-        ParabolicGravity: 16.5,
-        Facing: 1,
-    }){
-        position = position || new Vector2(this.Waypoints[0].x + 10, this.Waypoints[0].y + 10);//todo: random pos?
+	static getPositionBetweenRange(SourcePosition, TargetPosition, range = 0, minRange = 0){
+
+		var PositionBetweenRange = new Vector2(TargetPosition.x, TargetPosition.y);
+		PositionBetweenRange.sub(SourcePosition);
+	    if(PositionBetweenRange.length() == 0)
+		    PositionBetweenRange.x = 0.001;
+		PositionBetweenRange.clampLength(minRange ?? range, range);
+		PositionBetweenRange.add(SourcePosition);
+
+		return PositionBetweenRange;
+	}
+    dashTo(position, options){
+        var pos = Unit.getPositionBetweenRange(this.Waypoints[0], position, options.range, options.minRange);
+        this.dash(pos, options);
+    }
+	static getRandomPositionClamped(length = 10){
+        var RandomPositionClamped = new Vector2().random();
+        RandomPositionClamped.subScalar(0.5).normalize();
+        RandomPositionClamped.multiplyScalar(length);
+
+		return RandomPositionClamped;
+	}
+    // idk, i belive it can be made better
+    knockAside(SourcePosition, distance = 100, minDistance = null, options = {}){
+        minDistance = minDistance ?? distance;
+        options.speed = options.speed || (Math.abs(distance) / (options.duration || 1));
+        options.ParabolicGravity = options.ParabolicGravity || 0;
+        options.Facing = options.Facing ?? 1;
+
+        var position = Unit.getPositionBetweenRange(this.Waypoints[0], SourcePosition, distance, minDistance);
+        this.dash(position, options);
+    }
+    knockBack(SourcePosition, distance = 100, minDistance = null, options = {}){
+        this.knockAside(SourcePosition, -distance, -minDistance, options);
+    }
+    knockUp(options = {}){
+        options.speed = options.speed || (10 / (options.duration || 1));
+        options.ParabolicGravity = options.ParabolicGravity || 16.5;
+        options.Facing = options.Facing ?? 1;
+
+        var position = Unit.getRandomPositionClamped(10);
+        position.add(this.Waypoints[0]);
         this.dash(position, options);
     }
     move1(position){
-        this.Waypoints = [this.Waypoints[0], position];
-        this.moveAns();
+        this.setWaypoints([this.Waypoints[0], position]);
     }
     move0(MovementData){
-        this.moveCallback = null;
+        //if(this.ACTION != ACTIONS.DASHING)
+        //    this.moveCallback = null;
+        if(this.callbacks.move.pending)
+            delete this.callbacks.move.pending;
         
         if(MovementData.Waypoints && MovementData.Waypoints.length){
             this.setWaypoints(MovementData.Waypoints);
         }
-        this.moveAns();
     }
     halt0(send = false){
         this.moveClear();
@@ -195,10 +260,14 @@ class Unit {
     attack(target, MovementData){
         //console.debug(this.Waypoints[0].distanceTo(target.Waypoints[0]), this.stats.Range.Total);
         if(this.Waypoints[0].distanceTo(target.Waypoints[0]) > this.stats.Range.Total){
-            this.moveCallback_range = this.stats.Range.Total;
-            this.moveCallback = () => {
-                this.moveCallback = null;
-                this.attack(target, MovementData);
+            this.callbacks.move.pending = {
+                options: {
+                    range: this.stats.Range.Total,
+                },
+                function: () => {
+                    delete this.callbacks.move.pending;
+                    this.attack(target, MovementData);
+                }
             };
             this.move1(target.Waypoints[0]);
             //this.move0(MovementData);
@@ -263,6 +332,30 @@ class Unit {
 		SET_HEALTH.MaxHealth = this.stats.HealthPoints.Total;
 		SET_HEALTH.Health = this.stats.CurrentHealth;
         var isSent = global.Teams.ALL.sendPacket_withVision(SET_HEALTH);
+    }
+    UPDATE_MODEL(character){
+        var UPDATE_MODEL = createPacket('UPDATE_MODEL');
+        UPDATE_MODEL.netId = this.netId;
+        UPDATE_MODEL.bitfield = {
+			OverrideSpells: true,
+			ModelOnly: false,
+			ReplaceCharacterPackage: true,
+        };
+        UPDATE_MODEL.ID = 0;
+        UPDATE_MODEL.SkinID = 0;
+        UPDATE_MODEL.SkinName = character;
+        var isSent = this.sendPacket(UPDATE_MODEL);
+    }
+    SET_ANIMATION(animPairs){
+        var SET_ANIMATION = createPacket('SET_ANIMATION');
+        SET_ANIMATION.netId = this.netId;
+        SET_ANIMATION.AnimationOverrides = [];
+        for(let i in animPairs)
+            SET_ANIMATION.AnimationOverrides.push({
+		    	fromAnim: animPairs[i][0],
+		    	toAnim: animPairs[i][1],
+            });
+        var isSent = this.sendPacket(SET_ANIMATION);
     }
 }
 

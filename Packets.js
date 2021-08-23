@@ -144,7 +144,7 @@ var Packets = {
 		WORLD_SEND_GAME_NUMBER:				{id: 0x92, packet: require('./Packets/S2C/0x92-WORLD_SEND_GAME_NUMBER.js')},
 		NPC_BuffRemoveGroup:				{id: 0x94, packet: require('./Packets/S2C/0x94-NPC_BuffRemoveGroup.js')},
 		CHANGE_CHARACTER_VOICE:				{id: 0x96, packet: require('./Packets/S2C/0x96-CHANGE_CHARACTER_VOICE.js')},
-		UPDATE_MODEL:						{id: 0x97},
+		UPDATE_MODEL:						{id: 0x97, packet: require('./Packets/S2C/0x97-UPDATE_MODEL.js')},
 		DISCONNECTED_ANNOUNCEMENT:			{id: 0x98, packet: require('./Packets/S2C/0x98-DISCONNECTED_ANNOUNCEMENT.js')},
 		TURRET_SPAWN:						{id: 0x9D, packet: require('./Packets/S2C/0x9D-TURRET_SPAWN.js')},
 		NPC_HIDE:							{id: 0x9E, packet: require('./Packets/S2C/0x9E-NPC_HIDE.js')},

@@ -56,15 +56,24 @@ class Q extends Spell {
 		CastInfo.TargetPositionEnd = skillshot.target.Waypoints[0];
 
 		var collidedWith = [];
-		skillshot.missile.collisionCallback = (target) => {
-			if(skillshot.missile.parent == target || collidedWith.includes(target.netId))
-				return;
-	
-			collidedWith.push(target.netId);
-			
-			skillshot.missile.parent.battle.attack(target);
-			target.knockUp();
-		}
+		skillshot.missile.callbacks.collision._ = {
+			options: {
+				range: 90,
+			},
+			function: (target) => {
+				if(skillshot.missile.parent == target || collidedWith.includes(target.netId))
+					return;
+				
+				collidedWith.push(target.netId);
+				
+				skillshot.missile.parent.battle.attack(target);
+				target.knockUp({
+					duration: 0.75,
+					ParabolicGravity: 16.5,
+					Facing: 1,
+				});
+			},
+		};
 
 
 		CastInfo.SpellHash = spellHash.YasuoQ3W;
@@ -122,7 +131,7 @@ class W extends Spell {
 			return;
 
 		owner.castingSpell = true;
-		owner.SET_COOLDOWN(packet.Slot, 2);
+		//owner.SET_COOLDOWN(packet.Slot, 2);
         owner.halt_start();
 
 
@@ -132,6 +141,7 @@ class W extends Spell {
 	}
 };
 class E extends Spell {
+	castRange = 475;
 	cast(packet){
 		var owner = this.parent.parent;
 		
@@ -139,35 +149,67 @@ class E extends Spell {
 			return;
 
 		owner.castingSpell = true;
-		owner.SET_COOLDOWN(packet.Slot, 3);
+		//owner.SET_COOLDOWN(packet.Slot, 3);
 
+		var realPosition = this.getRealPosition(packet);
 		var CastInfo = this.CastInfo_Position(packet);
-		
-		/*
-		//todo:
-		var spellRange = 500;
-		if(player.Waypoints[0].distanceTo(CastInfo.TargetPosition) > spellRange)
-			CastInfo.TargetPosition.normalize().multiplyScalar(spellRange);
-		
-		if(Map.isUnwalkable(CastInfo.TargetPosition))
-			CastInfo.TargetPosition = Map.getNearestWalkable(CastInfo.TargetPosition);
-		*/
-
 
 		//CastInfo.SpellHash = spellHash.EzrealArcaneShift;
 		//owner.castSpellAns(CastInfo);
 
 		CastInfo.SpellHash = spellHash.YasuoDashWrapper;
 		CastInfo.ManaCost = 0;
-		CastInfo.SpellSlot = 47;//?
+		CastInfo.SpellSlot = 2;//?
 		CastInfo.SpellNetID = this.netId;
 		CastInfo.MissileNetID = 1073743444;
 		owner.spawnProjectileAns(CastInfo);
 
-        var pos = new Vector2(CastInfo.TargetPosition.x, CastInfo.TargetPosition.y);
-		owner.dash(pos, {speed: 1800});//testing
+		owner.SET_ANIMATION([
+			['RUN', 'Spell3']
+		]);
+		owner.callbacks.collision[this.netId] = {
+			options: {
+				range: owner.collisionRadius,
+			},
+			function: (target) => {
+				if(target.netId != packet.TargetNetID)
+					return;
+
+				delete owner.callbacks.collision[this.netId];
+				this.hit(target);
+			}
+		};
+
+		owner.dashTo(realPosition, {
+			speed: 750 + owner.stats.MoveSpeed.Total * 0.6,
+			range: 475, minRange: 475,
+			callback: () => {
+				if(owner.callbacks.collision[this.netId])
+					delete owner.callbacks.collision[this.netId];
+				//else
+				//	this.hit_TargetNetID(packet.TargetNetID);
+
+				owner.SET_ANIMATION([
+					['Spell3', 'RUN']
+				]);
+			}
+		});
 		
 		owner.castingSpell = false;
+	}
+	//hit_TargetNetID(TargetNetID){
+	//	if(!TargetNetID || !global.UnitsNetId[TargetNetID])
+	//		return;
+//
+	//	var target = global.UnitsNetId[TargetNetID];
+	//	this.hit(target);
+	//}
+	hit(target){
+		//if(target.dead)
+		//	return;
+		var owner = this.parent.parent;
+
+		owner.battle.attack(target);
 	}
 };
 class R extends Spell {
@@ -178,7 +220,7 @@ class R extends Spell {
 			return;
 
 		owner.castingSpell = true;
-		owner.SET_COOLDOWN(packet.Slot, 4);
+		//owner.SET_COOLDOWN(packet.Slot, 4);
         owner.halt_start();
 
 

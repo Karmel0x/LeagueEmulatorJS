@@ -93,15 +93,19 @@ class W extends Spell {
 			speed: 1550, range: 1000, radius: 80
 		});
 		var collidedWith = [];
-		skillshot.missile.collisionCallback = (target) => {//testing
-			if(skillshot.missile.parent == target || collidedWith.includes(target.netId))
-				return;
-	
-			collidedWith.push(target.netId);
+		skillshot.missile.callbacks.collision._ = {
+			options: {
+				range: 80,
+			},
+			function: (target) => {
+				if(skillshot.missile.parent == target || collidedWith.includes(target.netId))
+					return;
 			
-			skillshot.missile.parent.battle.attack(target);
-			target.knockUp();
-		}
+				collidedWith.push(target.netId);
+
+				skillshot.missile.parent.battle.attack(target);
+			},
+		};
 
 		var windup = 0.125;//?
 		await global.Utilities.wait(windup * 1000);
@@ -153,9 +157,8 @@ class E extends Spell {
 		CastInfo.SpellNetID = this.netId;
 		CastInfo.MissileNetID = 1073743444;
 		owner.castSpellAns(CastInfo);
-
-        var pos = new Vector2(CastInfo.TargetPosition.x, CastInfo.TargetPosition.y);
-		owner.dash(pos, {speed: 1800});//testing
+		
+		owner.dashTo(CastInfo.TargetPosition, {speed: 1800, range: 400});
 		
 		owner.castingSpell = false;
 	}

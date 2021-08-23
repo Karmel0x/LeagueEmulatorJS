@@ -51,7 +51,7 @@ class Team {
             ];
             OBJECT_SPAWN.MovementData = target.MovementData;
             var isSent = this.sendPacket(OBJECT_SPAWN, loadingStages.IN_GAME);
-            console.log(OBJECT_SPAWN.MovementData);
+            //console.log(OBJECT_SPAWN.MovementData);
 
             //var SET_HEALTH = createPacket('SET_HEALTH');
             //SET_HEALTH.netId = target.netId;

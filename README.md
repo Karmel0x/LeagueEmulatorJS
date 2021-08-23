@@ -2,9 +2,9 @@
 Yet another lol server,
 created with the help of the [LeagueSandbox](https://github.com/LeagueSandbox/GameServer) code,
 written in JavaScript ([nodejs](https://nodejs.org/en/)).  
-This project was made as just 4fun and will be not continued or will be very rarely,
+This project is being created as just for fun and learn and will be discontinued soon or will be developed very rarely,
 anyway making it in JS is not the best idea.  
-At the moment, all what you can do is load game client, move your champion, use emotions and pings but no game flow and multiplayer yet.  
+At the moment, it does not support multiplayer and there is no game flow yet.  
 
 # Runing
 ```
@@ -19,4 +19,5 @@ node main
 ```
 # download game client (4.20) here - https://github.com/LeagueSandbox/GameServer#manual-setup-windowsmac
 # copy runLol.bat to client directory and run
+# say `.help` ingame to get list of available commands
 ```

@@ -36,7 +36,8 @@ module.exports = {//MovementDataWithSpeed
             obj.Waypoints = TranslateCenteredCoordinates.from(obj.WaypointsCC);
         }
 
-        object.MovementData = obj;
+        object.MovementData = object.MovementData ?? {};
+        Object.assign(object.MovementData, obj);
     },
     writer: (buffer, source) => {
         if(!source.WaypointsCC)
