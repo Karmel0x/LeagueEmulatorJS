@@ -3,10 +3,11 @@ var BasePacket = require('../BasePacket');
 
 module.exports = class extends BasePacket {//S2C.
 	struct = {
-		flags: 'uint8',
-        //this.Fade = (flags & 1) != 0;
-        //this.IgnoreLock = (flags & 2) != 0;
-        //this.StopAll = (flags & 4) != 0;
-		AnimationName: ['char', 64],
+		bitfield: ['bitfield', {
+			Fade: 1,
+			IgnoreLock: 2,
+			StopAll: 4,
+		}],
+		AnimationName: 'string0',//['char', 64],
 	}
 };

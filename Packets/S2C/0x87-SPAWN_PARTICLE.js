@@ -23,7 +23,7 @@ var FXCreateGroupData = {
     TargetBoneNameHash: 'uint32',
     BoneNameHash: 'uint32',
     count: 'uint8',
-    FXCreateData: [FXCreateData, 1],//'count'
+    //FXCreateData: [FXCreateData, 1],//'count'
 };
 
 module.exports = class extends BasePacket {//S2C.
@@ -34,12 +34,20 @@ module.exports = class extends BasePacket {//S2C.
     reader(buffer){
         super.reader(buffer);
 
-        this.FXCreateGroupData = buffer.readobj([FXCreateGroupData, this.count]);
+        this.FXCreateGroupData = [];
+        for(let i = 0; i < this.count; i++){
+            this.FXCreateGroupData[i] = buffer.readobj(FXCreateGroupData);
+            this.FXCreateGroupData[i].FXCreateData = buffer.readobj([FXCreateData, this.FXCreateGroupData[i].count]);
+        }
     }
     writer(buffer){
-        this.count = this.count || this.FXCreateGroupData.length;
+        this.count = this.count ?? this.FXCreateGroupData.length;
         super.writer(buffer);
 
-        buffer.writeobj([FXCreateGroupData, this.count], this.FXCreateGroupData);
+        for(let i = 0; i < this.count; i++){
+            buffer.writeobj(FXCreateGroupData, this.FXCreateGroupData[i]);
+            this.FXCreateGroupData[i].count = this.FXCreateGroupData[i].count ?? this.FXCreateGroupData[i].FXCreateData.length;
+            buffer.writeobj([FXCreateData, this.FXCreateGroupData[i].count], this.FXCreateGroupData[i].FXCreateData);
+        }
     }
 };

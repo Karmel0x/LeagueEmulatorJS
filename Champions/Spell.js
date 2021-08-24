@@ -13,6 +13,13 @@ module.exports = class Spell {
 	buffDeactivate(){
         // override
 	}
+	static anglePosition(pos1, pos2){//todo
+		var targetPosition = new Vector2(pos1.x, pos1.y);
+		targetPosition.sub(pos2);
+		targetPosition.normalize();
+		//targetPosition.add(owner.position);
+		return targetPosition;
+	}
 	CastInfo_Position(packet){//todo
 		var CastInfo = {};
         CastInfo.TargetPosition = {
@@ -25,11 +32,7 @@ module.exports = class Spell {
             y: packet.EndPosition.y,
             z: 0,
         };
-        CastInfo.SpellCastLaunchPosition = {
-            x: this.parent.parent.Waypoints[0].x,
-            y: this.parent.parent.Waypoints[0].y,
-            z: 0,
-        };
+		
 		return CastInfo;
 	}
     getRealPosition(packet){
@@ -38,7 +41,7 @@ module.exports = class Spell {
 
 		return new Vector2(packet.Position.x, packet.Position.y);
     }
-    castRange = 1000;
+	range = 1000;
 	preCast(packet){
         if(packet.TargetNetID && !global.UnitsNetId[packet.TargetNetID])
             return;
@@ -46,7 +49,7 @@ module.exports = class Spell {
 		var owner = this.parent.parent;
 		var realPosition = this.getRealPosition(packet);
 
-		if(owner.position.distanceTo(realPosition) >= this.castRange){
+		if(owner.position.distanceTo(realPosition) >= (this.castRange || (this.range * 2))){
 			owner.move1(realPosition);
 			owner.callbacks.move.pending = {
 				options: {

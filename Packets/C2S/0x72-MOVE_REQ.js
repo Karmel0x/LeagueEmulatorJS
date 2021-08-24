@@ -19,6 +19,7 @@ module.exports = class extends BasePacket {//C2S.MOVE_REQ
     }
     reader(buffer){
 		super.reader(buffer);
-        MovementDataNormal.reader(buffer, this);
+
+        this.MovementData = MovementDataNormal.reader(buffer);
     }
 };

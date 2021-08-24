@@ -9,14 +9,18 @@ module.exports = class extends BasePacket {//S2C.DASH
 	}
 	writer(buffer){
         this.SyncID = this.SyncID || performance.now();
-        this.count = this.count || 1;
+        this.MovementData = this.MovementData || [this];
+        this.count = this.count || this.MovementData.length;
 		super.writer(buffer);
 
-		MovementDataWithSpeed.writer(buffer, this);
+        for(let i = 0; i < this.count; i++)
+			MovementDataWithSpeed.writer(buffer, this.MovementData[i]);
 	}
 	reader(buffer){
 		super.reader(buffer);
 
-		MovementDataWithSpeed.reader(buffer, this);
+        this.MovementData = [];
+        for(let i = 0; i < this.count; i++)
+            this.MovementData[i] = MovementDataWithSpeed.reader(buffer);
 	}
 };

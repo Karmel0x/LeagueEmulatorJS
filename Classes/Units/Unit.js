@@ -79,10 +79,9 @@ class Unit {
         return this.Waypoints[0];
     }
     setWaypoints(Waypoints, send = true){//todo: repath if needed
+        //console.log('setWaypoints', Waypoints, this.Waypoints, this.WaypointsPending);
         if(this.SpeedParams){
-            var Waypoints0 = this.WaypointsPending[0];
             this.WaypointsPending = Waypoints;
-            this.WaypointsPending[0] = Waypoints0;
             return;
         }
         var Waypoints0 = this.Waypoints[0];
@@ -93,7 +92,7 @@ class Unit {
     }
     teleport(position){
         this.Waypoints = [position];
-        this.moveAns();// that's wrong
+        this.moveAns(true);
     }
     SpeedParams = null;
     dashAns(){
@@ -123,8 +122,9 @@ class Unit {
             FollowTravelTime: options.FollowTravelTime || 0,
         };
 
-        this.WaypointsPending = this.Waypoints;
-        this.Waypoints = [this.WaypointsPending[0], position];
+        let Waypoints0 = this.Waypoints[0];
+        this.WaypointsPending = this.WaypointsPending || this.Waypoints;
+        this.Waypoints = [Waypoints0, position];
         
         this.callbacks.move.dash = {
             options: {
@@ -132,8 +132,11 @@ class Unit {
             },
             function: () => {
                 this.ACTION = ACTIONS.FREE;
+                delete this.callbacks.move.dash;
                 this.SpeedParams = null;
-                this.setWaypoints(this.WaypointsPending, this.WaypointsPending.length > 1);
+                if(this.WaypointsPending && this.WaypointsPending.length > 1)
+                    this.setWaypoints(this.WaypointsPending);
+                this.WaypointsPending = null;
                 if(options.callback)
                     options.callback();
             }
@@ -236,20 +239,21 @@ class Unit {
 
         return movementData;
     }
-    moveAns(){
+    TeleportID = 0;
+    moveAns(teleport = false){
         // this should be in Movement_Simulation so we can resend if destination will change (following moveable unit)
+        // or following should be made with dash.SpeedParams.FollowNetID ?
         var MOVE_ANS = createPacket('MOVE_ANS', 'LOW_PRIORITY');
 
-        MOVE_ANS.netId = 0;//this.netId;
+        MOVE_ANS.netId = 0;
         MOVE_ANS.TeleportNetID = this.netId;
-        MOVE_ANS.TeleportID = 0x00;
-        //MovementData.WaypointsCC = TranslateCenteredCoordinates.to(MovementData.Waypoints);
-        //MOVE_ANS.WaypointsCC = MovementData.WaypointsCC;
+
+        MOVE_ANS.TeleportID = teleport ? ++this.TeleportID : 0;
         MOVE_ANS.Waypoints = this.WaypointsHalt ? [] : this.Waypoints;
         
         var isSent = global.Teams.ALL.sendPacket_withVision(MOVE_ANS);
         //console.log('MOVE_ANS', MOVE_ANS);
-        //console.log(MOVE_ANS.MovementDataNormal[0].MovementData);
+        //console.log('MOVE_ANS.Waypoints', MOVE_ANS.Waypoints);
     }
     attack_TargetNetID(TargetNetID, MovementData){
         if(!global.UnitsNetId[TargetNetID])
@@ -302,7 +306,7 @@ class Unit {
             missile,
             AttackSlot: 1,
         });
-        missile.fire(target, 18.839);//18.839 = this.champion.attackWindupPercent
+        missile.fire(target, this.champion.attackWindupPercent);
         this.moveClear();
     }
 

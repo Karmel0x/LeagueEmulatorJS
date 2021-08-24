@@ -13,6 +13,6 @@ module.exports = class extends BasePacket {//S2C.
 		Duration: 'float',
 		RunningTime: 'float',
 		count: 'uint8',
-		RunningTime: [BuffUpdateCountGroupEntry, 'count'],
+		Entries: [BuffUpdateCountGroupEntry, 'count'],
 	}
 };

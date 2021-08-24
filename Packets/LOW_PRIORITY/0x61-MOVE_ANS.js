@@ -8,17 +8,18 @@ module.exports = class extends BasePacket {//LOW_PRIORITY.MOVE_ANS
 	}
     writer(buffer){
         this.SyncID = this.SyncID || performance.now();
-        this.count = this.count || 1;
+        this.MovementData = this.MovementData || [this];
+        this.count = this.count || this.MovementData.length;
 		super.writer(buffer);
 
         for(let i = 0; i < this.count; i++)
-            if(this.Waypoints || this.WaypointsCC)
-                MovementDataNormal.writer(buffer, this);
+            MovementDataNormal.writer(buffer, this.MovementData[i]);
     }
     reader(buffer){
 		super.reader(buffer);
         
+        this.MovementData = [];
         for(let i = 0; i < this.count; i++)
-            MovementDataNormal.reader(buffer, this);
+            this.MovementData[i] = MovementDataNormal.reader(buffer);
     }
 };

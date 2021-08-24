@@ -1,7 +1,8 @@
 
 module.exports = {
-    bitfield: 'uint8',
-    //data.BecomeZombie = (bitfield & 1) != 0;
+    bitfield: ['bitfield', {
+        BecomeZombie: 1,
+    }],
     DieType: 'uint32',
     KillerNetID: 'uint32',
     DamageType: 'uint8',

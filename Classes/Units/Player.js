@@ -82,7 +82,11 @@ class Player extends Unit {
             DesignerCastTime: 0.25,
             DesignerTotalTime: 0.25,
             ManaCost: 28,
-            SpellCastLaunchPosition: {},
+            SpellCastLaunchPosition: {
+                x: this.position.x,
+                y: this.position.y,
+                z: 0,
+            },
             AmmoUsed: 1,
             target: [{
                 unit: 0,
@@ -113,7 +117,11 @@ class Player extends Unit {
             DesignerCastTime: 0.25,
             DesignerTotalTime: 0.25,
             ManaCost: 28,
-            SpellCastLaunchPosition: {},
+            SpellCastLaunchPosition: {
+                x: this.position.x,
+                y: this.position.y,
+                z: 0,
+            },
             AmmoUsed: 1,
             target: [{
                 unit: 0,

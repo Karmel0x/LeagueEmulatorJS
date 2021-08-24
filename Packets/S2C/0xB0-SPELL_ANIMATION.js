@@ -7,6 +7,6 @@ module.exports = class extends BasePacket {//S2C.
 		ScaleTime: 'float',
 		StartProgress: 'float',
 		SpeedRatio: 'float',
-		AnimationName: ['char', 64],
+		AnimationName: 'string0',//['char', 64],
 	}
 };

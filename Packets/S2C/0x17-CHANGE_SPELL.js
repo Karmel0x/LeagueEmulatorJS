@@ -26,7 +26,7 @@ module.exports = class extends BasePacket {//S2C.CHANGE_SPELL
             this.TargetingType = buffer.read1('uint8');
         }
         else if(this.ChangeSpellData.ChangeSlotSpellDataType == ChangeSlotSpellDataType.SpellName){
-            this.SpellName = buffer.readobj(['char', 128]);
+            this.SpellName = buffer.read1('string0');//buffer.readobj(['char', 128]);
         }
         else if(this.ChangeSpellData.ChangeSlotSpellDataType == ChangeSlotSpellDataType.Range){
             this.CastRange = buffer.read1('float');
@@ -68,7 +68,7 @@ module.exports = class extends BasePacket {//S2C.CHANGE_SPELL
             buffer.write1('uint8', this.TargetingType);
         }
         else if(this.ChangeSpellData.ChangeSlotSpellDataType == ChangeSlotSpellDataType.SpellName){
-            buffer.writeobj(['char', 128], this.SpellName);
+            buffer.write1('string0', this.SpellName);//buffer.writeobj(['char', 128], this.SpellName);
         }
         else if(this.ChangeSpellData.ChangeSlotSpellDataType == ChangeSlotSpellDataType.Range){
             buffer.write1('float', this.CastRange);

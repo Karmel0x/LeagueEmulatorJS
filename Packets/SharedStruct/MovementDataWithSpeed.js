@@ -16,7 +16,7 @@ var SpeedParams = {
 
 
 module.exports = {//MovementDataWithSpeed
-    reader: (buffer, object) => {
+    reader: (buffer) => {
         if(buffer.size - buffer.off < 9)
             return;
 
@@ -36,12 +36,10 @@ module.exports = {//MovementDataWithSpeed
             obj.Waypoints = TranslateCenteredCoordinates.from(obj.WaypointsCC);
         }
 
-        object.MovementData = object.MovementData ?? {};
-        Object.assign(object.MovementData, obj);
+        return obj;
     },
     writer: (buffer, source) => {
-        if(!source.WaypointsCC)
-            source.WaypointsCC = TranslateCenteredCoordinates.to(source.Waypoints);
+        source.WaypointsCC = source.WaypointsCC || TranslateCenteredCoordinates.to(source.Waypoints);
 
         source.bitfield = 0;
         source.bitfield |= source.WaypointsCC.length << 1;

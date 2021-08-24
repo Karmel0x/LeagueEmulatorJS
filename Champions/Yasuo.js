@@ -47,8 +47,41 @@ class Q extends Spell {
 		//owner.SET_COOLDOWN(packet.Slot, 1);//todo: check if spell is on cooldown
         owner.halt_start();
 
+		// Yasuo uses angle.. Q+Flash combo..
+		var anglePosition = Spell.anglePosition(packet.Position, owner.position);
+
 		var CastInfo = this.CastInfo_Position(packet);
 
+		CastInfo.SpellHash = spellHash.YasuoQ3W;
+		CastInfo.SpellSlot = 0;
+		CastInfo.SpellNetID = this.netId;
+		CastInfo.MissileNetID = 0;//skillshot.missile.netId;
+		CastInfo.target = [];
+		CastInfo.DesignerCastTime = 0.3;
+		CastInfo.DesignerTotalTime = 1.45;
+		//CastInfo.Cooldown = 5.7;//todo: `owner.SET_COOLDOWN` is not needed
+		owner.castSpellAns(CastInfo);
+
+		var windup = 0.133;//?
+		await global.Utilities.wait(windup * 1000);
+
+		CastInfo.SpellHash = spellHash.YasuoQ3;
+		CastInfo.SpellSlot = 0;
+		CastInfo.SpellNetID = this.netId;
+		CastInfo.MissileNetID = 0;//skillshot.missile.netId;
+		CastInfo.target = [];
+		CastInfo.DesignerCastTime = 0.3;
+		CastInfo.DesignerTotalTime = 1.45;
+		//CastInfo.Cooldown = 5.7;//todo: `owner.SET_COOLDOWN` is not needed
+		owner.castSpellAns(CastInfo);
+		
+		//owner.AddParticleTarget(particleHash['Yasuo_Base_Q3_Hand.troy']);
+		//owner.AddParticleTarget(particleHash['Yasuo_Base_Q3_cast_sound.troy']);
+
+		var windup = 0.133;//?
+		await global.Utilities.wait(windup * 1000);
+
+		CastInfo.TargetPosition = anglePosition.add(owner.position);
 		var skillshot = Skillshot.create(owner, CastInfo.TargetPosition, {
 			speed: 1200, range: 1150, radius: 90
 		});
@@ -75,37 +108,7 @@ class Q extends Spell {
 			},
 		};
 
-
-		CastInfo.SpellHash = spellHash.YasuoQ3W;
-		CastInfo.ManaCost = 0;
-		CastInfo.SpellSlot = 0;
-		CastInfo.SpellNetID = this.netId;
-		CastInfo.MissileNetID = skillshot.missile.netId;
-		CastInfo.target = [];
-		CastInfo.DesignerCastTime = 0.3;
-		CastInfo.DesignerTotalTime = 1.45;
-		//CastInfo.Cooldown = 5.7;//todo: `owner.SET_COOLDOWN` is not needed
-		owner.castSpellAns(CastInfo);
-
-		CastInfo.SpellHash = spellHash.YasuoQ3;
-		CastInfo.ManaCost = 0;
-		CastInfo.SpellSlot = 0;
-		CastInfo.SpellNetID = this.netId;
-		CastInfo.MissileNetID = skillshot.missile.netId;
-		CastInfo.target = [];
-		CastInfo.DesignerCastTime = 0.3;
-		CastInfo.DesignerTotalTime = 1.45;
-		//CastInfo.Cooldown = 5.7;//todo: `owner.SET_COOLDOWN` is not needed
-		owner.castSpellAns(CastInfo);
-		
-		//owner.AddParticleTarget(particleHash['Yasuo_Base_Q3_Hand.troy']);
-		//owner.AddParticleTarget(particleHash['Yasuo_Base_Q3_cast_sound.troy']);
-
-		var windup = 0.133;//?
-		await global.Utilities.wait(windup * 1000);
-
 		CastInfo.SpellHash = spellHash.YasuoQ3Mis;
-		CastInfo.ManaCost = 0;
 		CastInfo.SpellSlot = 0;
 		CastInfo.SpellNetID = this.netId;
 		CastInfo.MissileNetID = skillshot.missile.netId;
@@ -233,6 +236,7 @@ class R extends Spell {
 
 module.exports = class Yasuo extends Champion {
 	PackageHash = 3275499062;
+	attackWindupPercent = 22;
 	constructor(parent){
 		super(parent);
 

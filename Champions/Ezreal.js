@@ -205,6 +205,7 @@ class R extends Spell {
 
 module.exports = class Ezreal extends Champion {
 	PackageHash = 2618078626;//[Character]Ezreal00
+	attackWindupPercent = 18.839;
 	constructor(parent){
 		super(parent);
 
