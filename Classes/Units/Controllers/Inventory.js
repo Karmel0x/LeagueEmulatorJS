@@ -1,4 +1,4 @@
-const { createPacket } = require("../PacketUtilities");
+const { createPacket } = require("../../../PacketUtilities");
 const ItemList = require("./ItemList");
 
 var ItemSlots = 6;// 0-5

@@ -1,4 +1,4 @@
-const Unit = require('../../Units/Unit');
+const MoveableUnit = require('../../Units/MoveableUnit');
 const Missile = require('./Missile');
 
 
@@ -25,7 +25,7 @@ class Skillshot extends Missile {
 	}
 
 	static getMaxRangePosition(SourcePosition, TargetPosition, range = 0){
-		return Unit.getPositionBetweenRange(SourcePosition, TargetPosition, range, range);
+		return MoveableUnit.getPositionBetweenRange(SourcePosition, TargetPosition, range, range);
 	//	var MaxRangePosition = new Vector2(TargetPosition.x, TargetPosition.y);
 	//	MaxRangePosition.sub(SourcePosition);
 	//	MaxRangePosition.normalize().multiplyScalar(range);

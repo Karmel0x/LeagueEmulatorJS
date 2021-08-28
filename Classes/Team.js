@@ -29,10 +29,10 @@ class Team {
             global.Units[this.team].Player[player_num].sendPacket(packet, minStage);
     }
     vision(target, enters = true){
-        //if(target.info.type == 'Nexus' || target.info.type == 'Inhibitor' || target.info.type == 'Turret')
-        //    return;
+        if(target.info.type == 'Nexus' || target.info.type == 'Inhibitor' || target.info.type == 'Turret')
+            return;
 
-        //console.log('vision', target, see);
+        //console.log('vision', target);
         if(enters){
             console.debug('enters vision', this.team, target.netId);
 
@@ -46,7 +46,7 @@ class Team {
             OBJECT_SPAWN.LookAtPosition = {x: 1, y: 0, z: 0};
             OBJECT_SPAWN.CharacterStackData = [
                 {
-                    SkinName: target.model
+                    SkinName: target.character.model
                 }
             ];
             OBJECT_SPAWN.MovementData = target.MovementData;

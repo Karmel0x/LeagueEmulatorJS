@@ -62,6 +62,7 @@ class Missile {
 		this.firefire(target, windup);
 	}
 	Waypoints = [new Vector2(0, 0)];
+	moveTime = 0;
 	firefire(target){
 
 		this.Waypoints = [this.parent.Waypoints[0].clone()];

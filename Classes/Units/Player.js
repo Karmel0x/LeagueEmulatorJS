@@ -1,12 +1,12 @@
-var Unit = require('./Unit');
+var MoveableUnit = require('./MoveableUnit');
 const {createPacket, sendPacket} = require("../../PacketUtilities");
 const loadingStages = require('../../Constants/loadingStages');
 const playersConfig = require('../../Constants/playersConfig');
-const SummonerSpells = require("../../Champions/SummonerSpells");
+const SummonerSpells = require("../../Characters/SummonerSpells");
 const TranslateCenteredCoordinates = require('../../Functions/TranslateCenteredCoordinates');
 
 
-class Player extends Unit {
+class Player extends MoveableUnit {
     KillDeathCounter = 0;
     loaded = false;
 
@@ -19,10 +19,12 @@ class Player extends Unit {
         config.loadingStage = 0;
 
         super(team, num, character, config);
-        
-        const Champion_ = require('../../Champions/' + character);
-        this.champion = new Champion_(this);
+
+        const Champion_ = require('../../Characters/Champions/' + character);
+        this.character = new Champion_(this);
         this.summonerSpells = new SummonerSpells(this, 'SummonerHeal', 'SummonerFlash');
+        
+        this.initialized();
     }
     //todo: packet batching
     //packetBatching = false;
@@ -75,7 +77,7 @@ class Player extends Unit {
             AttackSpeedModifier: 1,
             CasterNetID: this.netId,
             SpellChainOwnerNetID: this.netId,
-            PackageHash: this.champion.PackageHash,
+            PackageHash: this.character.PackageHash,
             MissileNetID: 1073743440,
             TargetPosition: {},
             TargetPositionEnd: {},
@@ -110,7 +112,7 @@ class Player extends Unit {
             AttackSpeedModifier: 1,
             CasterNetID: this.netId,
             SpellChainOwnerNetID: this.netId,
-            PackageHash: this.champion.PackageHash,
+            PackageHash: this.character.PackageHash,
             MissileNetID: 1073743440,
             TargetPosition: {},
             TargetPositionEnd: {},
@@ -153,10 +155,10 @@ class Player extends Unit {
         console.log(SPAWN_PROJECTILE);
     }
     //castSpell(packet){
-    //    if(typeof this.champion.spells[packet.Slot] == 'undefined')
+    //    if(typeof this.character.spells[packet.Slot] == 'undefined')
     //        return console.log('wrong spell slot', packet.Slot);
     //
-    //    this.champion.spells[packet.Slot].cast(packet);
+    //    this.character.spells[packet.Slot].cast(packet);
     //}
 
     // 497252 = root
@@ -165,7 +167,7 @@ class Player extends Unit {
         SPAWN_PARTICLE.netId = 0;//this.netId;
         SPAWN_PARTICLE.FXCreateGroupData = [];
         SPAWN_PARTICLE.FXCreateGroupData[0] = {
-            PackageHash: this.champion.PackageHash,
+            PackageHash: this.character.PackageHash,
             EffectNameHash: EffectNameHash,
             Flags: 32,
             TargetBoneNameHash: 0,

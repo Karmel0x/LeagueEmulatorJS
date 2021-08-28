@@ -6,6 +6,7 @@
 
 // for even better debugging you can run this by `node --inspect main`
 // then open chrome browser and go to `chrome://inspect`
+// or use Visual Studio Code debugger
 
 
 require('./init_utilities')();

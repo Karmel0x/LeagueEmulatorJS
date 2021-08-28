@@ -71,7 +71,7 @@ module.exports = {
 			}
 		},
 		stats: {
-			MALEE: {
+			Basic: {
 				Base: {
 					FactorHPRegen: 0,
 					StaticHPRegen: 0,
@@ -101,7 +101,7 @@ module.exports = {
 					GameplayCollisionRadius: 48.0,
 				},
 			},
-			CASTER: {
+			Wizard: {
 				Base: {
 					FactorHPRegen: 0,
 					StaticHPRegen: 0,
@@ -131,7 +131,7 @@ module.exports = {
 					GameplayCollisionRadius: 48.0,
 				},
 			},
-			CANNON: {
+			MechCannon: {
 				Base: {
 					FactorHPRegen: 0,
 					StaticHPRegen: 0,
@@ -161,7 +161,7 @@ module.exports = {
 					GameplayCollisionRadius: 65.0,
 				},
 			},
-			SUPER: {
+			MechMalee: {
 				Base: {
 					FactorHPRegen: 0.00150,
 					StaticHPRegen: 10,

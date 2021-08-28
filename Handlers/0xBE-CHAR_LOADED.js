@@ -6,6 +6,7 @@ const loadingStages = require("../Constants/loadingStages");
 const Inhibitor = require("../Classes/Units/Inhibitor");
 const Nexus = require("../Classes/Units/Nexus");
 const Turret = require("../Classes/Units/Turret");
+const Barrack = require("../Classes/Units/Barrack");
 
 const CreateHeroDeath = {
     Alive: 0,
@@ -29,7 +30,7 @@ module.exports = (player, packet) => {
     //HERO_SPAWN.SenderNetID = player.netId;
     HERO_SPAWN.SkinID = 0;
     HERO_SPAWN.Name = 'Test';//playerName
-    HERO_SPAWN.Skin = global.Units['ALL'].Player[0].champion.name;//modelName
+    HERO_SPAWN.Skin = global.Units['ALL'].Player[0].character.name;//modelName
 
     HERO_SPAWN.bitfield = {
         TeamIsOrder: true,
@@ -57,6 +58,7 @@ module.exports = (player, packet) => {
     Nexus.spawnAll();
     Inhibitor.spawnAll();
     Turret.spawnAll();
+    Barrack.spawnAll();
 
 
     //var SKILL_UP = createPacket('SKILL_UP');

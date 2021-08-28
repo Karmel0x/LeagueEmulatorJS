@@ -1,7 +1,7 @@
 const { Vector2 } = require("three");
-const Spell = require("./Spell");
-const Skillshot = require("../Classes/Attacks/Missiles/Skillshot");
-const Champion = require("./Champion");
+const Spell = require("../Spell");
+const Skillshot = require("../../Classes/Attacks/Missiles/Skillshot");
+const _Champion_ = require("../_Champion_");
 
 const spellHash = {
 	EzrealMysticShot: 25116740,
@@ -26,7 +26,7 @@ const boneHash = {
 
 {
 	// just for development
-	const { HashStringObject } = require("../Functions/HashString");
+	const { HashStringObject } = require("../../Functions/HashString");
 	HashStringObject(spellHash);
 	HashStringObject(particleHash);
 	HashStringObject(boneHash);
@@ -203,7 +203,7 @@ class R extends Spell {
 };
 
 
-module.exports = class Ezreal extends Champion {
+module.exports = class Ezreal extends _Champion_ {
 	PackageHash = 2618078626;//[Character]Ezreal00
 	attackWindupPercent = 18.839;
 	constructor(parent){
@@ -217,8 +217,5 @@ module.exports = class Ezreal extends Champion {
 			//62: new Passive(this),
 			//64-81: Attack?
 		};
-	}
-	get name(){
-		return this.constructor.name;
 	}
 };

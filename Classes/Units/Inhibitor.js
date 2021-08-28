@@ -33,6 +33,11 @@ const InhibitorNetIds = {
 
 
 class Inhibitor extends Unit {
+    constructor(team, num = 0, character = '', config = {}){
+        super(team, num, character, config);
+
+        this.initialized();
+    }
     spawn(){
 	    var OBJECT_SPAWN = createPacket('OBJECT_SPAWN');
         OBJECT_SPAWN.netId = this.netId;
@@ -45,6 +50,14 @@ class Inhibitor extends Unit {
         for(let team in InhibitorNetIds)
             for(let num = 0; num < InhibitorNetIds[team].length; num++)
                 new Inhibitor(team, num, '', {netId: InhibitorNetIds[team][num] || 0xFF000000});
+    }
+    SET_HEALTH(){
+        var SET_HEALTH = createPacket('SET_HEALTH');
+        SET_HEALTH.netId = this.netId;
+        SET_HEALTH.count = 0;
+		SET_HEALTH.MaxHealth = this.stats.HealthPoints.Total;
+		SET_HEALTH.Health = this.stats.CurrentHealth;
+        var isSent = global.Teams.ALL.sendPacket(SET_HEALTH, loadingStages.NOT_CONNECTED);
     }
 }
 

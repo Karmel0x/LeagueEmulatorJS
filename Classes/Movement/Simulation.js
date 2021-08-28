@@ -121,21 +121,34 @@ class MovementSimulation {
 			return true;
 		}
 	}
+	unitDiff(unit){
+		let now = performance.now();
+		if(!unit.moveTime){
+			unit.moveTime = now;
+			return 0;
+		}
+		let diff = now - unit.moveTime;
+		unit.moveTime = now;
+		return diff;
+	}
 	async update(){
 		for(;;){
-			let time = performance.now();//maybe better to set this for every unit?
 			await global.Utilities.wait(20);//lower this?
 			this.moved = {};
 			
 			for(var i in global.Units['ALL']['ALL']){
 				let unit = global.Units['ALL']['ALL'][i];
-				let diff = performance.now() - time;
+				let diff = this.unitDiff(unit);
+				if(!diff)
+					continue;
 				let moved = this.move(unit, diff);
 				this.moved[unit.netId] = moved;
 			}
 			for(var i in global.Missiles){
 				let unit = global.Missiles[i];
-				let diff = performance.now() - time;
+				let diff = this.unitDiff(unit);
+				if(!diff)
+					continue;
 				//todo: flags like collidable with terrain, with ally units, with enemy units
 				let moved = this.move(unit, diff);
 				//this.moved[unit.netId] = moved;

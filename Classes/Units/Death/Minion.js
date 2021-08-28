@@ -4,10 +4,10 @@ var DeathUnit = require('./Unit')
 class DeathMinion extends DeathUnit {
 
 	get Exp(){
-		return this.parent.base.exp;
+		return this.parent.character.exp;
 	}
 	get Gold(){
-		return this.parent.base.gold + this.parent.base.goldPer90 * parseInt(global.Game.Timer / 90);
+		return this.parent.character.gold + this.parent.character.goldPer90 * parseInt(global.Game.Timer / 90);
 	}
 
 }

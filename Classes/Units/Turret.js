@@ -41,13 +41,23 @@ const TurretNetIds = {
 
 
 class Turret extends Unit {
+    
+    constructor(team, num = 0, character = '', config = {}){
+		super(team, num, character, config);
+		
+        this.character = {
+            name: character,
+        };
+        
+        this.initialized();
+    }
     spawn(){
         
         var TURRET_SPAWN = createPacket('TURRET_SPAWN', 'S2C');
         TURRET_SPAWN.netId = this.netId;
         TURRET_SPAWN.NetID = this.netId;
         TURRET_SPAWN.NetNodeID = 0x40;
-        TURRET_SPAWN.Name = this.info.name;
+        TURRET_SPAWN.Name = this.character.name;
         TURRET_SPAWN.bitfield = {
             IsTargetable: true,
         };
@@ -64,6 +74,14 @@ class Turret extends Unit {
             for(let name in TurretNetIds[team])
                 new Turret(team, i++, name);//, {netId: TurretNetIds[team][name]});
         }
+    }
+    SET_HEALTH(){
+        var SET_HEALTH = createPacket('SET_HEALTH');
+        SET_HEALTH.netId = this.netId;
+        SET_HEALTH.count = 0;
+		SET_HEALTH.MaxHealth = this.stats.HealthPoints.Total;
+		SET_HEALTH.Health = this.stats.CurrentHealth;
+        var isSent = global.Teams.ALL.sendPacket(SET_HEALTH, loadingStages.NOT_CONNECTED);
     }
 }
 
