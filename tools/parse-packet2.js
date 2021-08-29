@@ -32,15 +32,15 @@ var MovementDataNormal = require('../Packets/SharedStruct/MovementDataNormal');
 
 
 function MOVE_ANS(buffer){//LOW_PRIORITY.MOVE_ANS
-    var obj = buffer.readobj({
-        cmd: 'uint8',
-        netId: 'uint32',
-    
-        SyncID: 'int32',
-        MovementDataNormal_length: 'int16',
-    });
-    MovementDataNormal.reader(buffer, obj);
-    return obj;
+	var obj = buffer.readobj({
+		cmd: 'uint8',
+		netId: 'uint32',
+	
+		SyncID: 'int32',
+		MovementDataNormal_length: 'int16',
+	});
+	MovementDataNormal.reader(buffer, obj);
+	return obj;
 };
 var obj1 = MOVE_ANS(packet.buffer);
 

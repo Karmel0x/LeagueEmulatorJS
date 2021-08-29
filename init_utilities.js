@@ -4,8 +4,8 @@ String.prototype.toCapitalCase = function(){
 };
 
 function init_utilities(){
-    global.Utilities = {};
-    global.Utilities.wait = (ms) => new Promise(resolve => setTimeout(() => resolve(null), ms));
+	global.Utilities = {};
+	global.Utilities.wait = (ms) => new Promise(resolve => setTimeout(() => resolve(null), ms));
 
 }
 

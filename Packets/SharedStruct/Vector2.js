@@ -1,4 +1,4 @@
 module.exports = {//Vector2
-    x: 'float',
-    y: 'float',
+	x: 'float',
+	y: 'float',
 };

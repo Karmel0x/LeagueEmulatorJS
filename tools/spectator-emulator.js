@@ -21,23 +21,23 @@ const Packets = require('../Packets');
 require("../BufferExtend");
 
 async function start_spectator(){
-    var time = Date.now();
+	var time = Date.now();
 
-    for(let i = 0; i < replayUnpacked.length; i++){
-        if(i < 5)
-            continue;// skip key exchange
-        
-        while(Date.now() - time < (replayUnpacked[i].Time || (replayUnpacked[i].TimeS * 1000).toFixed(3))){
-            await global.Utilities.wait(1);
-        };
+	for(let i = 0; i < replayUnpacked.length; i++){
+		if(i < 5)
+			continue;// skip key exchange
+		
+		while(Date.now() - time < (replayUnpacked[i].Time || (replayUnpacked[i].TimeS * 1000).toFixed(3))){
+			await global.Utilities.wait(1);
+		};
 
 
-        var buffer = replayUnpacked[i].Bytes ? Buffer.from(replayUnpacked[i].Bytes, 'base64') : Buffer.from(replayUnpacked[i].BytesHex.split(' ').join(''), 'hex');
-        enet.sendPacket(0, buffer, replayUnpacked[i].Channel);
+		var buffer = replayUnpacked[i].Bytes ? Buffer.from(replayUnpacked[i].Bytes, 'base64') : Buffer.from(replayUnpacked[i].BytesHex.split(' ').join(''), 'hex');
+		enet.sendPacket(0, buffer, replayUnpacked[i].Channel);
 
-        if(i % 100 == 0)
-            console.log('packet number:', i);
-    }
+		if(i % 100 == 0)
+			console.log('packet number:', i);
+	}
 
 }
 
@@ -55,18 +55,18 @@ async function init_network(){
 		}
 
 		if(q.type == enet.ENET_EVENT_TYPE_RECEIVE){
-            var obj1 = q.buffer.readobj(Packets.Header);
-            q.buffer.off = 0;
-            if(obj1.cmd == 0x00){
-                var keyExchangePacket = '00 2a 00 ff 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00';
-                var buffer = Buffer.from(keyExchangePacket, 'hex');
-                enet.sendPacket(0, buffer, 0);
-            }
+			var obj1 = q.buffer.readobj(Packets.Header);
+			q.buffer.off = 0;
+			if(obj1.cmd == 0x00){
+				var keyExchangePacket = '00 2a 00 ff 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00';
+				var buffer = Buffer.from(keyExchangePacket, 'hex');
+				enet.sendPacket(0, buffer, 0);
+			}
 
-            if(!_start_spectator){
-                _start_spectator = true;
-                start_spectator();
-            }
+			if(!_start_spectator){
+				_start_spectator = true;
+				start_spectator();
+			}
 		}
 	}
 }

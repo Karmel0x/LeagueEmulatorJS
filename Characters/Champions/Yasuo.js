@@ -100,11 +100,12 @@ class Q extends Spell {
 				collidedWith.push(target.netId);
 				
 				skillshot.missile.parent.battle.attack(target);
-				target.knockUp({
-					duration: 0.75,
-					ParabolicGravity: 16.5,
-					Facing: 1,
-				});
+				if(target.knockUp)
+					target.knockUp({
+						duration: 0.75,
+						ParabolicGravity: 16.5,
+						Facing: 1,
+					});
 			},
 		};
 

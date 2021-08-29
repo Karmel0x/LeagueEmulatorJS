@@ -19,9 +19,9 @@ packet.buffer = Buffer.from(packet.bytes);
 
 var obj1 = {};
 if(typeof Packets[packet.channel][packet.cmd].packet == 'function'){
-    obj1 = Packets[packet.channel][packet.cmd].packet(packet.buffer);
+	obj1 = Packets[packet.channel][packet.cmd].packet(packet.buffer);
 }else{
-    obj1 = packet.buffer.readobj(Packets.C2S.MOVE_CONFIRM.packet);
+	obj1 = packet.buffer.readobj(Packets.C2S.MOVE_CONFIRM.packet);
 }
 
 console.log(util.inspect(obj1, false, null, true));
