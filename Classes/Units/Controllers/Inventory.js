@@ -52,11 +52,19 @@ class Inventory {
 			return false;
 
 		var Item = ItemList[itemId];
-		if(this.parent.stats.Gold < Item.GoldCost)
-			return false;
-		//this.parent.stats.Gold -= Item.GoldCost;
-
 		var slot = false;
+		var effectiveGoldCost = Item.GoldCost;
+
+		// If an Item can be build from another items
+		// set the effective gold Cost to substract
+		// Meanwhile remove the "from" items
+		// At the end, reassign the item slot
+		if(Item.from)
+			effectiveGoldCost = this.buildFromItems( Item );
+
+		if(this.parent.stats.Gold < effectiveGoldCost)
+			return false;
+
 		if(!Item.isTrinket)
 			slot = this.getReuseSlot(itemId) || this.getEmptySlot();
 		else
@@ -64,18 +72,6 @@ class Inventory {
 
 		if(slot === false)
 			return false;
-
-		var effectiveGoldCost = Item.GoldCost
-
-		if(Item.from)
-		{
-			// If an Item can be build from another items
-			// set the effective gold Cost to substract
-			// Meanwhile remove the "from" items
-			// At the end, reassign the item slot
-			effectiveGoldCost = this.buildFromItems( Item )
-			slot = this.getEmptySlot();
-		}
 
 		this.parent.stats.Gold -= effectiveGoldCost;
 
@@ -89,13 +85,14 @@ class Inventory {
 	buildFromItems( item ){
 
 		var goldCost = item.GoldCost;
+		
 		item.from.forEach( childItemId =>{
 			for( var slot = 0; slot < ItemSlots; slot++ )
 			{
 				if( this.Items[slot] && this.Items[slot].id == childItemId )
 				{
-					goldCost -= ItemList[childItemId].GoldCost
-					this.removeItem(slot)
+					goldCost -= ItemList[childItemId].GoldCost;
+					this.removeItem(slot);
 				}
 			}
 		})
@@ -138,7 +135,7 @@ class Inventory {
 			return false;
 
 		var Item = ItemList[this.Items[slot].id];
-		this.parent.stats.Gold += Item.GoldSell;
+		this.parent.stats.Gold += Item.GoldSell ?? (Item.GoldCost * 0.7);
 		
 		this.removeItem(slot);
 		this.parent.stats.charStats_send();
