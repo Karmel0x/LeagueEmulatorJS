@@ -23,7 +23,8 @@ class Player extends MoveableUnit {
 		const Champion_ = require('../../Characters/Champions/' + character);
 		this.character = new Champion_(this);
 		this.summonerSpells = new SummonerSpells(this, 'SummonerHeal', 'SummonerFlash');
-		
+		this.undoHistory = []
+
 		this.initialized();
 	}
 	//todo: packet batching

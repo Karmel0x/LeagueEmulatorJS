@@ -62,6 +62,8 @@ var Packets = {
 		CHAR_LOADED:						{id: 0xBE, packet: require('./Packets/C2S/0xBE-CHAR_LOADED.js')},
 		QUEST_CLICKED:						{id: 0xCD, packet: require('./Packets/C2S/0xCD-QUEST_CLICKED.js')},
 		SPELL_CHARGE_UPDATE:				{id: 0xE6, packet: require('./Packets/C2S/0xE6-SPELL_CHARGE_UPDATE.js')},
+		_0xFE_unk:							{id: 0xFE, packet: require('./Packets/C2S/0xFE-Unk.js')},
+		UndoItemReq:						{id: 0x010A, packet: require('./Packets/C2S/0x10A-UNDOITEMREQ.js')},
 	},
 	S2C: {
 		id: 3,

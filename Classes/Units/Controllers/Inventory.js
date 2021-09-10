@@ -1,5 +1,6 @@
 const { createPacket } = require("../../../PacketUtilities");
 const ItemList = require("./ItemList");
+const UndoHistory = require('./UndoHistory')
 
 var ItemSlots = 6;// 0-5
 var TrinketSlot = 6;
@@ -11,7 +12,7 @@ class Inventory {
 
     constructor(parent){
         this.parent = parent;
-
+		this.UndoHistory = new UndoHistory(parent)
     }
 	Items = {};
 	getReuseSlot(itemId){
@@ -71,6 +72,7 @@ class Inventory {
 
 		this.buyItemAns(slot);
 		this.parent.stats.charStats_send();
+		this.UndoHistory.addUndoHistory( itemId, 1 );
 	}
 	swapItemsAns(slot1, slot2){
 		var SWAP_ITEMS = createPacket('SWAP_ITEMS');
@@ -108,11 +110,13 @@ class Inventory {
 		if(!this.Items[slot])
 			return false;
 
-		var Item = ItemList[this.Items[slot].id];
+		var itemId = this.Items[slot].id
+		var Item = ItemList[ itemId ];
 		this.parent.stats.Gold += Item.GoldCost * 0.4;
 		
 		this.removeItem(slot);
 		this.parent.stats.charStats_send();
+		this.UndoHistory.addUndoHistory( itemId, 0 );
 	}
 	useItem(slot, target = undefined){
 		console.log('inventory.useItem', this.Items[slot]);
