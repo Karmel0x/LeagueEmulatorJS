@@ -60,5 +60,18 @@ function appendGlobal(unit){
 	global.UnitsNetId[unit.netId] = unit;
 	global.UnitsTyped[unit.info.type][unit.info.team][unit.info.num] = unit;
 }
+function removeGlobal(unit){
+	--global.UnitsCount.count;
+	--global.UnitsCount[unit.info.team].count;
+	--global.UnitsCount[unit.info.team][unit.info.type].count;
 
-module.exports = { appendGlobal };
+	delete global.Units[unit.info.team][unit.info.type][unit.id];
+	delete global.Units[unit.info.team]['ALL'][unit.id];
+	delete global.Units['ALL'][unit.info.type][unit.id];
+	delete global.Units['ALL']['ALL'][unit.id];
+
+	delete global.UnitsNetId[unit.netId];
+	delete global.UnitsTyped[unit.info.type][unit.info.team][unit.info.num];
+}
+
+module.exports = { appendGlobal, removeGlobal };

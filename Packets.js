@@ -211,7 +211,7 @@ var Packets = {
 		IncrementMinionKills:				{id: 0x011F, packet: require('./Packets/S2C/0x011F-IncrementMinionKills.js')},
 		UpdateAttackSpeedCapOverrides:		{id: 0x0120, packet: require('./Packets/S2C/0x0120-UpdateAttackSpeedCapOverrides.js')},
 		NotifyContextualSituation:			{id: 0x0121, packet: require('./Packets/S2C/0x0121-NotifyContextualSituation.js')},
-		CREATE_MONSTER_CAMP:				{id: 0x0122},
+		CREATE_MONSTER_CAMP:				{id: 0x0122, packet: require('./Packets/S2C/0x0122-CREATE_MONSTER_CAMP.js')},
 		SPELL_EMPOWER:						{id: 0x0125},
 		NPC_DIE:							{id: 0x0126, packet: require('./Packets/S2C/0x0126-NPC_DIE.js')},
 		SetInventory_MapView:				{id: 0x0127, packet: require('./Packets/S2C/0x0127-SetInventory_MapView.js')},

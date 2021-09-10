@@ -143,6 +143,13 @@ Buffer.prototype.readobj = function(template){
 						obj[i] = (bitfield & template[1][i]) != 0;
 					return obj;
 				}
+				else if(template[0] === 'bitfield64'){
+					let bitfield = this.read1('uint64');
+					let obj = {};
+					for(let i in template[1])
+						obj[i] = (bitfield & BigInt(template[1][i])) != 0;
+					return obj;
+				}
 
 				let obj = [];
 				if(template[1] > 1000){
@@ -188,6 +195,13 @@ Buffer.prototype.writeobj = function(template, source){
 					for(let i in source)
 						bitfield |= !!source[i] * template[1][i];
 					this.write1('uint8', bitfield);
+					return;
+				}
+				else if(template[0] === 'bitfield64'){
+					let bitfield = 0n;
+					for(let i in source)
+						bitfield |= BigInt(!!source[i]) * BigInt(template[1][i]);
+					this.write1('uint64', bitfield);
 					return;
 				}
 				for(var j = 0; j < template[1]; j++){

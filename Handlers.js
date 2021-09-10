@@ -1,4 +1,5 @@
 const HandlersParse = require("./HandlersParse");
+const { logPackets } = require("./PacketUtilities");
 
 function handle1(q){
 
@@ -36,8 +37,8 @@ var Handlers = {
 };
 
 module.exports = async function(q){
-	
-	//console.log('recv:' + q.buffer.toString('hex').match(/../g).join('-'));
+	logPackets(q);
+
 	var player = q.peer_num;
 	if(q.channel){// not HANDSHAKE
 		var clientId = global.PlayerPeers[q.peer_num];

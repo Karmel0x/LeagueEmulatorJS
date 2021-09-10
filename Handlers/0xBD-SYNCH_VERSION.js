@@ -78,19 +78,19 @@ module.exports = (player, packet) => {
 	];
 	SYNCH_VERSION.MapMode = 'CLASSIC';
 	SYNCH_VERSION.PlatformID = 'NA1';
-	//let GameFeatures = 0;
-	//GameFeatures |= (1 << 18);
-	//GameFeatures |= (1 << 17);
-	//GameFeatures |= (1 << 16);
-	//GameFeatures |= (1 << 14);
-	//GameFeatures |= (1 << 13);
-	//GameFeatures |= (1 << 12);
-	//GameFeatures |= (1 << 8);
-	//GameFeatures |= (1 << 7);
-	//GameFeatures |= (1 << 6);
-	//GameFeatures |= (1 << 4);
-	//GameFeatures |= (1 << 1);
-	SYNCH_VERSION.GameFeatures = 487890;
+	SYNCH_VERSION.GameFeatures = {//487890
+		FoundryOptions: true,
+		EarlyWarningForFOWMissiles: true,
+		ItemUndo: true,
+		NewPlayerRecommendedPages: true,
+		HighlightLineMissileTargets: true,
+		TurretRangeIndicators: true,
+		GoldSourceInfoLogDump: true,
+		ParticleSinNameTech: true,
+		HardwareMetrics_1: true,
+		TruLagMetrics: true,
+		DradisSD: true,
+	};
 	SYNCH_VERSION.EnabledDradisMessages = [];
 	for(let i = 0; i < 19; i++)
 		SYNCH_VERSION.EnabledDradisMessages[i] = true;

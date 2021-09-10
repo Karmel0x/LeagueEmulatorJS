@@ -18,6 +18,7 @@ const Inhibitors = {
 
 
 class Inhibitor extends Unit {
+	attackableUnit = false;
 	constructor(team, num = 0, character = '', config = {}){
 		super(team, num, character, config);
 

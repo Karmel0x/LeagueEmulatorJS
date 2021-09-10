@@ -353,7 +353,7 @@ module.exports = class extends BasePacket {//LOW_PRIORITY.CHAR_STATS
 
 				buffer.writeUInt8(buffer.off - (sizeOffset + 1), sizeOffset);
 			}
-			console.debug('CHAR_STATS writer unit', this.units[i]);
+			//console.debug('CHAR_STATS writer unit', this.units[i]);
 		}
 	}
 	reader(buffer){

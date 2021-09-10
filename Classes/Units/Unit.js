@@ -4,7 +4,7 @@ var ConstantsUnit = require('../../Constants/Unit');
 const {createPacket, sendPacket} = require("../../PacketUtilities");
 const { Vector2 } = require('three');
 var Targetedshot = require('../Attacks/Missiles/Targetedshot');
-const { appendGlobal } = require('./global.Units');
+const { appendGlobal, removeGlobal } = require('./global.Units');
 
 var Stats = {
 	Unit: require('./Stats/Unit'),
@@ -26,6 +26,8 @@ var Battle = {
 
 const Inventory = require('./Controllers/Inventory');
 const BuffController = require('./Controllers/BuffController');
+
+const oppositeTeam = {'BLUE': 'RED', 'RED': 'BLUE'};
 
 
 class Unit {
@@ -57,6 +59,11 @@ class Unit {
 		console.debug(Date.now(), 'Created Unit', this);
 		console.log('UnitsCount', global.UnitsCount.count);
 		//console.log(global.Units);
+
+		this.update();
+	}
+	destructor(){
+	//	removeGlobal(this);
 	}
 	initialized(){
 		this.spawn();
@@ -72,13 +79,21 @@ class Unit {
 	SpeedParams = null;
 	moveTime = 0;
 	ACTION = 0;
-	attack_TargetNetID(TargetNetID, MovementData){
+	attack_TargetNetID(TargetNetID, MovementData = []){
 		if(!global.UnitsNetId[TargetNetID])
 			return console.log('global.Units[netId] does not contain', TargetNetID);
 
 		this.attack(global.UnitsNetId[TargetNetID], MovementData);
 	}
-	attack(target, MovementData){
+	isAbleForAttacking(){
+		if(this.battle.died)
+			return false;
+
+		return true;
+	}
+	attack(target, MovementData = []){
+		if(!this.isAbleForAttacking())
+			return;
 		//console.debug(this.Waypoints[0].distanceTo(target.Waypoints[0]), this.stats.Range.Total);
 		if(this.Waypoints[0].distanceTo(target.Waypoints[0]) > this.stats.Range.Total){
 			this.callbacks.move.pending = {
@@ -124,7 +139,55 @@ class Unit {
 			AttackSlot: 1,
 		});
 		missile.fire(target, this.character.attackWindupPercent);
-		this.moveClear();
+		if(this.moveClear)
+			this.moveClear();
+	}
+	static getUnitsInRange(position, range, team = 'ALL'){
+		var enemiesInRange = [];
+		for(var allyUnit_id in global.Units[team]['ALL']){
+			if(position.distanceTo(global.Units[team]['ALL'][allyUnit_id].position) <= range)
+				enemiesInRange.push(global.Units[team]['ALL'][allyUnit_id]);
+		}
+		return enemiesInRange;
+	}
+	static getNearest(position, unitsArray, maxRange = 25000){
+		var nearest = -1;
+		unitsArray.reduce((previousValue, currentValue, index) => {
+			let dist = position.distanceTo(currentValue.position);
+			if(dist < previousValue){
+				nearest = index;
+				return dist;
+			}
+			return previousValue;
+		}, maxRange);
+		return unitsArray[nearest] || false;
+	}
+	attackableUnit = true;
+	autoAttackToggle = true;
+	acquisitionRange = 400;
+	autoAttack(){
+		var oppositeTeamArray = Object.values(global.Units[oppositeTeam[this.info.team]]['ALL']);
+		var target = Unit.getNearest(this.position, oppositeTeamArray, this.acquisitionRange);
+		if(this.constructor.name == 'Player')
+			console.log('autoAttack target', target);
+		if(!target)
+			return;
+
+		console.log('autoAttack s', this.netId, target.netId);
+		this.attack(target);
+	}
+	async update(){
+		for(;;){
+			await global.Utilities.wait(1000);
+
+			if(!global.Game.started)
+				continue;
+
+			//if(!this.battle.died){
+			//	if(this.attackableUnit && this.autoAttackToggle)
+			//		this.autoAttack();
+			//}
+		}
 	}
 
 	respawn(){

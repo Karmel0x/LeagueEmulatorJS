@@ -12,9 +12,11 @@ class MovementSimulation {
 		RED: {},
 		//NEUTRAL: {},
 	}
-	broadcastVision(allyUnit_team, enemyUnit_id){
+	broadcastVision(allyUnit_team, enemyUnit_id){//todo..
 		let enemyUnit = global.Units['ALL']['ALL'][enemyUnit_id];
-		let visibleForEnemy = this.visibleForTeam[allyUnit_team][enemyUnit_id];
+		if(!enemyUnit)
+			return;
+		let visibleForEnemy = !enemyUnit.battle.died && this.visibleForTeam[allyUnit_team][enemyUnit_id];
 		delete this.visibleForTeam[allyUnit_team][enemyUnit_id];
 		if(enemyUnit.visibleForEnemy == visibleForEnemy)
 			return;
@@ -25,7 +27,7 @@ class MovementSimulation {
 		//	allyUnit.vision(enemyUnit, visibleForEnemy);
 		//}
 	}
-	visionProcess(){
+	visionProcess(){//todo..
 		//todo: `Object.values(obj).map` for better performance
 
 		const teams = {BLUE: 0, RED: 1};
@@ -35,10 +37,10 @@ class MovementSimulation {
 			for(var allyUnit_id in global.Units[allyUnit_team]['ALL']){
 
 				let allyUnit = global.Units[allyUnit_team]['ALL'][allyUnit_id];
-				let allyUnit_netId = allyUnit.netId;
+				//let allyUnit_netId = allyUnit.netId;
 
-				if(!this.moved[allyUnit_netId])
-					continue;
+				//if(!this.moved[allyUnit_netId])
+				//	continue;
 
 				let allyUnit_position = allyUnit.Waypoints[0];
 				if(allyUnit_position.x == 0 && allyUnit_position.y == 0)
@@ -57,14 +59,14 @@ class MovementSimulation {
 						let enemyUnit_position = enemyUnit.Waypoints[0];
 						if(enemyUnit_position.x == 0 && enemyUnit_position.y == 0)
 							continue;//for now
-						let enemyUnit_visionRange = enemyUnit.stats.visionRange || defaultVisionRange;
+						//let enemyUnit_visionRange = enemyUnit.stats.visionRange || defaultVisionRange;
 		
 						let dist = allyUnit_position.distanceTo(enemyUnit_position);
 						// ? let wplen = dist_allyorenemy && pathfinding.vision(allyUnit_position, enemyUnit_position).waypoints.length < 3;
 						if(!this.visibleForTeam[allyUnit_team][enemyUnit_id])
 							this.visibleForTeam[allyUnit_team][enemyUnit_id] = dist <= allyUnit_visionRange;
-						if(!this.visibleForTeam[enemyUnit_team][allyUnit_id])
-							this.visibleForTeam[enemyUnit_team][allyUnit_id] = dist <= enemyUnit_visionRange;
+						//if(!this.visibleForTeam[enemyUnit_team][allyUnit_id])
+						//	this.visibleForTeam[enemyUnit_team][allyUnit_id] = dist <= enemyUnit_visionRange;
 					}
 				}
 			}

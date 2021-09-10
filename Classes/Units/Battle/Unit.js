@@ -28,6 +28,8 @@ class BattleUnit {
 		this.parent.stats.CurrentHealth = 0;
 		this.died = Date.now() / 1000;
 		this.onDie(source);
+		global.Teams['ALL'].vision(this.parent, false);
+		this.parent.destructor();
 	}
 	died = false;
 	onDie(source){

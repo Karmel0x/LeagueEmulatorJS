@@ -1,5 +1,6 @@
 var MoveableUnit = require('./MoveableUnit');
 const { Vector2 } = require('three');
+const { removeGlobal } = require('./global.Units');
 
 var lanePaths = {
 	BLUE: [
@@ -82,6 +83,9 @@ class Minion extends MoveableUnit {
 		this.character.model = team.toCapitalCase() + '_Minion_' + character;
 		
 		this.initialized();
+	}
+	destructor(){
+		removeGlobal(this);
 	}
 	spawn(){
 		let pos = this.barrack.position;

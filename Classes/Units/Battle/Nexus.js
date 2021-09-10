@@ -1,5 +1,5 @@
 var BattleUnit = require('./Unit');
-const {createPacket, sendPacket} = require("../../../PacketUtilities");
+const { createPacket } = require('../../../PacketUtilities');
 
 
 class BattleNexus extends BattleUnit {

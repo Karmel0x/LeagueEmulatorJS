@@ -86,6 +86,7 @@ class Turret extends Unit {
 		SET_HEALTH.Health = this.stats.CurrentHealth;
 		var isSent = global.Teams.ALL.sendPacket(SET_HEALTH, loadingStages.NOT_CONNECTED);
 	}
+	acquisitionRange = 750;
 }
 
 

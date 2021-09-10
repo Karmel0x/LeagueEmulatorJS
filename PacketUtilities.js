@@ -2,6 +2,7 @@
 const enet = require('../enetcppjs/build/Release/enetcppjs.node');
 const Packets = require("./Packets");
 require("./BufferExtend");
+const fs = require("fs");
 
 
 /*function packetSize(packet, source = false){
@@ -83,12 +84,24 @@ function sendPacket(peer_num, packet){
 	return sendPacket2(peer_num, packet, buffer);
 }
 function sendPacket2(peer_num, packet, buffer){//todo:peer
+	logPackets({channel: packet.info.channel.id, buffer});
+
 	console.debug('sent:', packet.info.channel.name + '.' + packet.info.packet.name, 'peer_num:', peer_num, buffer);
-	//console.log('send:' + buffer.toString('hex').match(/../g).join('-'));
 	var enet_sendPacket = enet.sendPacket(peer_num, buffer, packet.info.channel.id);
 
 	console.debug('enet_sendPacket:', enet_sendPacket);
 	return enet_sendPacket;
 }
 
-module.exports = {createPacket, sendPacket};
+function logPackets(q){
+	return;
+	var p = {
+		Time: performance.now(),
+		Channel: q.channel,
+		BytesHex: q.buffer.toString('hex').match(/../g).join('-'),
+	};
+	//console.log('recv:' + p.BytesHex);
+	fs.appendFileSync('../LeagueEmulatorJS_replays/lejs.json', JSON.stringify(p) + ",\n");
+}
+
+module.exports = {createPacket, sendPacket, logPackets};

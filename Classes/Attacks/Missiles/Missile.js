@@ -34,7 +34,7 @@ class Missile {
 		this.stats = {};
 		this.stats.MoveSpeed = new IStat(options.speed || 2000);
 
-		console.debug(Date.now(), 'Created Missile', this);
+		console.debug(Date.now(), 'Created Missile', this.constructor.name);
 		this.appendGlobal();
 	}
 	destructor(){
