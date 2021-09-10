@@ -25,6 +25,7 @@ var ItemList = {
 	1055: class Item { // doran's blade
 		id = 1055;
 		static GoldCost = 440;
+		static GoldSell = 176;
 	},
 	2003: class Item { // health potion
 		id = 2003;
