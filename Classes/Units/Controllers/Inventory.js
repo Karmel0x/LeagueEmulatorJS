@@ -3,6 +3,7 @@ const ItemList = require("./ItemList");
 
 var ItemSlots = 6;// 0-5
 var TrinketSlot = 6;
+var itemsToRemove = []
 //var ExtraItemSlots = 6;// 7-12
 //var ExtraTrinketSlot = 13;
 //var RuneSlots = 30;// 14-44
@@ -54,13 +55,14 @@ class Inventory {
 		var Item = ItemList[itemId];
 		var slot = false;
 		var effectiveGoldCost = Item.GoldCost;
+		itemsToRemove = new Array()
 
 		// If an Item can be build from another items
 		// set the effective gold Cost to substract
 		// Meanwhile remove the "from" items
 		// At the end, reassign the item slot
 		if(Item.from)
-			effectiveGoldCost = this.buildFromItems( Item );
+			effectiveGoldCost = this.getEffectiveGoldCost( Item );
 
 		if(this.parent.stats.Gold < effectiveGoldCost)
 			return false;
@@ -73,6 +75,9 @@ class Inventory {
 		if(slot === false)
 			return false;
 
+		if( itemsToRemove.length )
+			this.removeBuildItems()
+
 		this.parent.stats.Gold -= effectiveGoldCost;
 
 		this.Items[slot] = this.Items[slot] || new Item();
@@ -82,21 +87,22 @@ class Inventory {
 		this.buyItemAns(slot);
 		this.parent.stats.charStats_send();
 	}
-	buildFromItems( item ){
+	getEffectiveGoldCost( item ){
 
 		var goldCost = item.GoldCost;
 		
 		item.from.forEach( childItemId =>{
 			for( var slot = 0; slot < ItemSlots; slot++ )
-			{
 				if( this.Items[slot] && this.Items[slot].id == childItemId )
 				{
 					goldCost -= ItemList[childItemId].GoldCost;
-					this.removeItem(slot);
+					itemsToRemove.push(slot)
 				}
-			}
 		})
 		return goldCost
+	}
+	removeBuildItems(){
+		itemsToRemove.forEach( slot => this.removeItem( slot ) )
 	}
 	swapItemsAns(slot1, slot2){
 		var SWAP_ITEMS = createPacket('SWAP_ITEMS');
