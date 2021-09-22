@@ -108,6 +108,7 @@ var Packets = {
 		MESSAGE_BOX_TOP:					{id: 0x36},
 		DESTROY_OBJECT:						{id: 0x38, packet: require('./Packets/S2C/0x38-DESTROY_OBJECT.js')},
 		SPAWN_PROJECTILE:					{id: 0x3B, packet: require('./Packets/S2C/0x3B-SPAWN_PROJECTILE.js')},
+		HighlightHUDElement:				{id: 0x3D, packet: require('./Packets/S2C/0x3D-HighlightHUDElement.js')},
 		SWAP_ITEMS:							{id: 0x3E, packet: require('./Packets/S2C/0x3E-SWAP_ITEMS.js')},
 		LEVEL_UP:							{id: 0x3F, packet: require('./Packets/S2C/0x3F-LEVEL_UP.js')},
 		ATTENTION_PING:						{id: 0x40, packet: require('./Packets/S2C/0x40-ATTENTION_PING.js')},
