@@ -5,34 +5,57 @@ const ItemList = require("./ItemList");
     Action List:
     0 - Sell
     1 - Buy
-    2 - Build Items
+    2 - Build Item
 */
 
 class UndoHistory {
-    constructor( parent ){
-        this.parent = parent
+    constructor( ){
+        this.history = new Array()
     }
     alternateUndoEnable(){
         var SetUndoEnabled = createPacket('SetUndoEnabled')
         SetUndoEnabled.netId = player.netId;
-        SetUndoEnabled.UndoStackSize = this.parent.undoHistory.length;
+        SetUndoEnabled.UndoStackSize = this.history.length;
         var isSent = player.sendPacket(SetUndoEnabled);
     }
 	clearUndoHistory(){
-		this.parent.undoHistory = new Array()
+		this.history = new Array()
 	}
-	addUndoHistory(itemId, action, items = null){
-		this.parent.undoHistory.push( { itemId: itemId, action: action, buildItems: items } );
+	addUndoHistory(itemId, slot, action, items = null){
+		this.history.push( { itemId: itemId, slot: slot, action: action, buildItems: items } );
         this.alternateUndoEnable()
     }
 	remUndoHistory(){
-		if( !this.parent.undoHistory.length )
-			return
+		if( !this.history.length )
+			return;
 
-		var itemId = this.parent.undoHistory[ this.parent.undoHistory.length - 1 ].itemId
-		var Item = ItemList[itemId]
+        var element = this.history[ this.history.length - 1 ];
+		var itemId = element.itemId;
+        var actionToUndo = element.action;
 
-		
+		var Item = ItemList[itemId];
+
+        switch( actionToUndo )
+        {
+            case( 0 ): // Undo a sell Item
+            {
+                debugger
+                break;
+            }
+            case( 1 ): // Undo a buy Item
+            {
+                player.stats.Gold += ItemList[itemId].GoldCost;
+                player.inventory.removeItem( element.slot );
+                player.stats.charStats_send();
+                this.history.slice( 0, this.history.length - 1)
+                break;
+            }
+            case( 2 ): // Undo a builded Item
+            {
+                debugger
+                break;
+            }
+        }
 	}
 }
 

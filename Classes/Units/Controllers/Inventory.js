@@ -12,7 +12,7 @@ class Inventory {
 
     constructor(parent){
         this.parent = parent;
-		this.UndoHistory = new UndoHistory(parent)
+		this.UndoHistory = new UndoHistory( this )
     }
 	Items = {};
 	getReuseSlot(itemId){
@@ -72,7 +72,7 @@ class Inventory {
 
 		this.buyItemAns(slot);
 		this.parent.stats.charStats_send();
-		this.UndoHistory.addUndoHistory( itemId, 1 );
+		this.UndoHistory.addUndoHistory( itemId, slot, 1 );
 	}
 	swapItemsAns(slot1, slot2){
 		var SWAP_ITEMS = createPacket('SWAP_ITEMS');
@@ -116,7 +116,7 @@ class Inventory {
 		
 		this.removeItem(slot);
 		this.parent.stats.charStats_send();
-		this.UndoHistory.addUndoHistory( itemId, 0 );
+		this.UndoHistory.addUndoHistory( itemId, slot, 0 );
 	}
 	useItem(slot, target = undefined){
 		console.log('inventory.useItem', this.Items[slot]);
@@ -129,6 +129,9 @@ class Inventory {
 	}
 	castSpell(packet){
 		this.useItem(packet.Slot - 6);
+	}
+	addItem(slot, itemId){
+
 	}
 }
 

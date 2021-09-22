@@ -35,7 +35,6 @@ var Handlers = {
 	0x20: 	{handler: require('./Handlers/0x20-SWAP_ITEMS.js')},
 	0x09: 	{handler: require('./Handlers/0x09-SELL_ITEM.js')},
 	0x10A:	{handler: require('./Handlers/0x10A-UndoItemReq.js')},
-	0x10B: 	{handler: require('./Handlers/0x10B-SetUndoEnabled.js')},
 	0xFE:	{handler: require('./Handlers/0xFE-UNK.js')}
 };
 

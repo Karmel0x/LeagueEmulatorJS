@@ -3,5 +3,5 @@ const {createPacket, sendPacket} = require("../PacketUtilities");
 
 
 module.exports = (player, packet) => {
-	debugger
+	player.inventory.UndoHistory.remUndoHistory()
 };
