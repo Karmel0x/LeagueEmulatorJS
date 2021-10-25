@@ -9,12 +9,7 @@ function parseBody(buffer, channel, cmd){
     }
 
 	obj1 = new Packets[channel][cmd].packet();
-	//if(typeof obj1.struct_header !== 'undefined')
-	//	Object.assign(obj1, buffer.readobj(obj1.struct_header));
-	//if(typeof obj1.struct !== 'undefined')
-	//	Object.assign(obj1, buffer.readobj(obj1.struct));
-	//if(typeof obj1.reader !== 'undefined')
-		obj1.reader(buffer);
+	obj1.reader(buffer);
 
 	if(buffer.off != buffer.length)
 		console.log('packet structure is incorrect : buffer.off != buffer.length :', buffer.off, buffer.length, (Packets[channel]?.name || channel), ':', (Packets[channel][cmd]?.name || cmd), buffer);

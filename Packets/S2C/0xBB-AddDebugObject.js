@@ -13,7 +13,7 @@ module.exports = class extends BasePacket {//S2C.
 		Point2: Vector3,
 		Color: 'uint32',
 		MaxSize: 'uint32',
-		bitfield_unk: 'uint8',
-		StringBuffer: 'string0',
+		bitfield_Unknown: 'uint8',
+		StringBuffer: 'string0',//128
 	}
 };

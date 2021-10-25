@@ -10,9 +10,10 @@ var ConnectionInfo = {
 };
 
 if(config.Version >= 4.18){
-    ConnectionInfo.bitfield = ['bitfield', {
-		Ready: 1,
-	}];
+	ConnectionInfo.bitfield_Ready = 'uint8';
+    //ConnectionInfo.bitfield = ['bitfield', {
+	//	Ready: 1,
+	//}];
 }
 
 module.exports = ConnectionInfo;

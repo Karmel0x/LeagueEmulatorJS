@@ -13,8 +13,13 @@ module.exports = (player, packet) => {
 		var ATTENTION_PING = createPacket('ATTENTION_PING');
 		ATTENTION_PING.Position = packet.Position;
 		ATTENTION_PING.TargetNetID = packet.TargetNetID;
-		ATTENTION_PING.pingType = packet.pingType;
-		ATTENTION_PING.unk1 = 0xFB;
+		ATTENTION_PING.PingCategory = packet.PingCategory;
+		ATTENTION_PING.bitfield = {//0xFB
+			PlayAudio: true,
+			ShowChat: true,
+			PingThrottled: false,
+			PlayVO: true,
+		};
 		var isSent = player.sendPacket(ATTENTION_PING);
 	}
 

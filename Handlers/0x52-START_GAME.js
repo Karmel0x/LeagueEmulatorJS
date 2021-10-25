@@ -23,7 +23,7 @@ module.exports = (player, packet) => {
 
 
 	var START_GAME = createPacket('START_GAME');
-	START_GAME.EnablePause_bitField = true;
+	START_GAME.bitfield_EnablePause = true;
 	var isSent = player.sendPacket(START_GAME, loadingStages.NOT_CONNECTED);
 
 	//var LOAD_SCREEN_INFO = createPacket('LOAD_SCREEN_INFO', 'LOADING_SCREEN');

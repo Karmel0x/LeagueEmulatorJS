@@ -81,8 +81,10 @@ const ChampionStats = {
 	WardsKilled: 'int32',//public int _WardsKilled;
 	//[FieldOffset(286)]
 	WardsPlaced: 'int32',//public int _WardsPlaced;
-	unk11: 'int32',////// sort of length (when above 0 sends malformed buffer error)
-	//public short Padding;
+	unk11: ['int32', 2],
+	//[FieldOffset(298)]////// sort of length (when above 0 sends malformed buffer error)
+	Padding: 'int16',//public short Padding;
+	unk12: 'int32',
 };
 
 module.exports = class extends BasePacket {//S2C.PLAYER_STATS

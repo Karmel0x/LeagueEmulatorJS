@@ -36,7 +36,7 @@ function createPacket(packetName, channel = 'S2C'){
 		return {};
 	}
 
-	var packet = new Packets[channel][packetName].packet;
+	var packet = new (Packets[channel][packetName].packet || Packets.BasePacket);
 
 	packet.cmd = Packets[channel][packetName].id;
 	if(packet.cmd > 0xFF){

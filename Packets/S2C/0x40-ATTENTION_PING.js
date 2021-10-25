@@ -5,8 +5,13 @@ module.exports = class extends BasePacket {//S2C.ATTENTION_PING
 	struct = {
 		Position: Vector2,
 		TargetNetID: 'uint32',
-		netId2: 'uint32',
-		pingType: 'uint8',
-		unk1: 'uint8',//0xFB // 4.18
+		SourceNetID: 'uint32',
+		PingCategory: 'uint8',
+		bitfield: ['bitfield', {
+			PlayAudio: 1,
+			ShowChat: 2,
+			PingThrottled: 4,
+			PlayVO: 8,
+		}],//0xFB // 4.18
 	}
 };

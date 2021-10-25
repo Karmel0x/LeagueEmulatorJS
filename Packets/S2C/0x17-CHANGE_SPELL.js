@@ -12,7 +12,7 @@ const ChangeSlotSpellDataType = {
 
 var ChangeSpellData = {
 	spellSlot: 'uint8',
-	isSummonerSpell: 'uint8',
+	bitfield_isSummonerSpell: 'uint8',
 	ChangeSlotSpellDataType: 'uint32',
 };
 

@@ -306,7 +306,7 @@ module.exports = class extends BasePacket {//LOW_PRIORITY.CHAR_STATS
 	}
 	writer(buffer){
         this.SyncID = this.SyncID || performance.now();
-		this.count = this.count || this.units.length;
+		this.count = this.count ?? this.units.length;
 		super.writer(buffer);
 
 		for(let i = 0; i < this.count; i++){

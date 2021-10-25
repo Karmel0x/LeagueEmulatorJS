@@ -5,6 +5,6 @@ module.exports = class extends BasePacket {//C2S.ATTENTION_PING
 	struct = {
 		Position: Vector2,
 		TargetNetID: 'uint32',
-		pingType: 'uint8',
+		PingCategory: 'uint8',
 	}
 };

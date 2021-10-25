@@ -9,6 +9,15 @@ module.exports = class extends BasePacket {//S2C.
 		TotalSize: 'int32',
 		Duration: 'int32',
 		NextChunkID: 'int32',
-		Data: 'ReadLeft',//todo
+	}
+	reader(buffer){
+		super.reader(buffer);
+
+		this.Data = buffer.readobj(['uint8', buffer.length - buffer.off]);
+	}
+	writer(buffer){
+		super.writer(buffer);
+
+		buffer.writeobj(['uint8', buffer.length - buffer.off], this.Data);
 	}
 };

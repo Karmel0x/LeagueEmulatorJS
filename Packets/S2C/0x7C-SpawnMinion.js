@@ -19,8 +19,8 @@ module.exports = class extends BasePacket {//S2C.
 		}],
 		IsTargetableToTeamSpellFlags: 'uint32',
 		VisibilitySize: 'float',
-		Name: 'string0',
-		SkinName: 'string0',
+		Name: ['char', 64],
+		SkinName: ['char', 64],
 		InitialLevel: 'uint16',
 		OnlyVisibleToNetID: 'uint32',
 	}

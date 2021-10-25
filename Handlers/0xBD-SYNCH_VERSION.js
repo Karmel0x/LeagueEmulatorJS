@@ -50,7 +50,7 @@ module.exports = (player, packet) => {
 
 	var SYNCH_VERSION = createPacket('SYNCH_VERSION');
 	
-	SYNCH_VERSION.bitField = {
+	SYNCH_VERSION.bitfield = {
 		VersionMatches: true,
 	};
 	SYNCH_VERSION.MapToLoad = MapId.SummonersRift_Original;

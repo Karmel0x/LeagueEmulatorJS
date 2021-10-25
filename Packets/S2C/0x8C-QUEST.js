@@ -2,10 +2,10 @@ var BasePacket = require('../BasePacket');
 
 module.exports = class extends BasePacket {//S2C.
 	struct = {
-		Objective: 'string0',
-		Icon: 'string0',
-		Tooltip: 'string0',
-		Reward: 'string0',
+		Objective: ['char', 128],
+		Icon: ['char', 128],
+		Tooltip: ['char', 128],
+		Reward: ['char', 128],
 		QuestType: 'uint8',
 		QuestCommand: 'uint8',
 		bitfield: ['bitfield', {

@@ -20,7 +20,7 @@ module.exports = class extends BasePacket {//S2C.
 		BuffInGroupAdd: [BuffInGroupAdd, 'numInGroup'],
 	}
 	writer(buffer){
-		this.numInGroup = this.numInGroup || this.BuffInGroupAdd.length;
+		this.numInGroup = this.numInGroup ?? this.BuffInGroupAdd.length;
 		super.writer(buffer);
 	}
 };

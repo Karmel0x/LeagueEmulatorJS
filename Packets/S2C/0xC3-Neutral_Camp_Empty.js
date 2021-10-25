@@ -7,7 +7,6 @@ module.exports = class extends BasePacket {//S2C.
 		CampIndex: 'int32',
 		TimerType: 'int32',
 		TimerExpire: 'float',
-		bitfield: 'uint8',
-        //this.DoPlayVO = (bitfield & 1) != 0;
+		bitfield_DoPlayVO: 'uint8',
 	}
 };

@@ -3,15 +3,17 @@ var BasePacket = require('../BasePacket');
 
 module.exports = class extends BasePacket {//S2C.
 	struct = {
+		Targets_length: 'int16',
 	}
 	reader(buffer){
 		super.reader(buffer);
-		let Targets_length = buffer.read1('int16');
-		this.Targets = buffer.readobj(['uint32', Targets_length]);
+		
+		this.Targets = buffer.readobj(['uint32', this.Targets_length]);
 	}
 	writer(buffer){
+		this.Targets_length = this.Targets.length;
 		super.writer(buffer);
-		buffer.write1('int16', this.Targets.length);
-		buffer.writeobj(['uint32', this.Targets.length], this.Targets);
+		
+		buffer.writeobj(['uint32', this.Targets_length], this.Targets);
 	}
 };

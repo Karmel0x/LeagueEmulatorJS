@@ -15,6 +15,6 @@ module.exports = class extends BasePacket {//S2C.LEVEL_PROP_SPAWN
 		SkillLevel: 'uint8',
 		Type: 'uint32',
 		Name: ['char', 64],
-		PropName: ['char', 64],
+		PropName: 'string0',//64
 	}
 };

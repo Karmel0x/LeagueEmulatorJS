@@ -10,6 +10,6 @@ module.exports = (player, packet) => {
     
 
 	var QUERY_STATUS_ANS = createPacket('QUERY_STATUS_ANS');
-    QUERY_STATUS_ANS.ok = true;
+    QUERY_STATUS_ANS.Response = true;
 	var isSent = player.sendPacket(QUERY_STATUS_ANS, loadingStages.NOT_CONNECTED);
 };

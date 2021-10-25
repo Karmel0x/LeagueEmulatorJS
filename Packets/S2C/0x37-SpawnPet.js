@@ -11,10 +11,10 @@ module.exports = class extends BasePacket {//S2C.
 		TeamID: 'uint32',
 		DamageBonus: 'int32',
 		HealthBonus: 'int32',
-		Name: 'string0',
-		Skin: 'string0',
+		Name: ['char', 128],
+		Skin: ['char', 32],
 		SkinID: 'int32',
-		BuffName: 'string0',
+		BuffName: ['char', 64],
 		CloneID: 'uint32',
 		bitfield: ['bitfield', {
 			CloneInventory: 1,
@@ -22,6 +22,6 @@ module.exports = class extends BasePacket {//S2C.
 			Unknown4: 4,
 			DoFade: 8,
 		}],
-		AIscript: 'string0',
+		AIscript: 'string0',//32
 	}
 };

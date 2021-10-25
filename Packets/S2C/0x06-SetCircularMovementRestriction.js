@@ -5,6 +5,6 @@ module.exports = class extends BasePacket {//S2C.SetCircularMovementRestriction
 	struct = {
 		Center: Vector3,
 		Radius: 'float',
-		RestrictCamera: 'uint8',
+		bitfield_RestrictCamera: 'uint8',
 	}
 };

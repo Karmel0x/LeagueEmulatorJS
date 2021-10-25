@@ -15,11 +15,15 @@ module.exports = class extends BasePacket {//C2S.MOVE_REQ
 		OrderType: 'uint8',
 		Position: Vector2,
 		TargetNetID: 'uint32',
-		//MovementData: MovementDataNormal,
 	}
 	reader(buffer){
 		super.reader(buffer);
 
 		this.MovementData = MovementDataNormal.reader(buffer);
+	}
+	writer(buffer){
+		super.writer(buffer);
+
+		MovementDataNormal.writer(buffer, this.MovementData);
 	}
 };

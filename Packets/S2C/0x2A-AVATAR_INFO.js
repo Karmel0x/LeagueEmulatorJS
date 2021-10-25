@@ -1,8 +1,10 @@
 var BasePacket = require('../BasePacket');
+
 var Talent = {
 	Hash: 'uint32',
 	Level: 'uint8',
 };
+
 
 module.exports = class extends BasePacket {//S2C.AVATAR_INFO
 	struct = {

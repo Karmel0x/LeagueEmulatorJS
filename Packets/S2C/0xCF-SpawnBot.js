@@ -7,9 +7,9 @@ module.exports = class extends BasePacket {//S2C.
 		NetNodeID: 'uint8',
 		Position: Vector3,
 		BotRank: 'uint8',
-		bitfield_TeamID: 'bitfield16',//(bitfield & 0x1FF)
+		bitfield_TeamID: 'uint16',//(bitfield & 0x1FF)
 		SkinID: 'int32',
-		Name: 'string0',
-		SkinName: 'string0',
+		Name: ['char', 64],
+		SkinName: 'string0',//64
 	}
 };

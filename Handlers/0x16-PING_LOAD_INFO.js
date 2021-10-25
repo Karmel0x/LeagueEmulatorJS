@@ -16,9 +16,10 @@ module.exports = (player, packet) => {
 		PING_LOAD_INFO.ETA = packet.ETA;
 		PING_LOAD_INFO.Count = packet.Count;
 		PING_LOAD_INFO.Ping = packet.Ping;
-		PING_LOAD_INFO.bitField = {
-			Ready: packet.bitfield.Ready,
-		};
+		PING_LOAD_INFO.bitfield_Ready = packet.bitfield_Ready;
+		//PING_LOAD_INFO.bitfield = {
+		//	Ready: packet.bitfield.Ready,
+		//};
 		var isSent = player.sendPacket(PING_LOAD_INFO, loadingStages.NOT_CONNECTED);
 	}
 };

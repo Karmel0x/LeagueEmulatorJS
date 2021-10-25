@@ -11,7 +11,7 @@ module.exports = class extends BasePacket {//S2C.
 
 		this.Packets = [];
 
-		let totalSize = buffer.read1('uint16');
+		let totalSize = buffer.read1('uint16');// & 0x1FFF
 		for(; totalSize > 0;){
 			let packetSize = buffer.read1('uint16');
 			totalSize -= 2;
@@ -39,7 +39,7 @@ module.exports = class extends BasePacket {//S2C.
 			let packetSize = this.Packets[i].length;
 			totalSize += packetSize;
 		}
-		buffer.write1('uint16', totalSize);
+		buffer.write1('uint16', totalSize);// & 0x1FFF
 
 		for(let i = 0; this.Packets.length < i; i++){
 			let packetSize = this.Packets[i].length;

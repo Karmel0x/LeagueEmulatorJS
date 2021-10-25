@@ -10,6 +10,6 @@ module.exports = class extends BasePacket {//S2C.
 	struct = {
 		BuffNameHash: 'uint32',
 		count: 'uint8',
-		BuffRemoveGroupEntry: [BuffRemoveGroupEntry, 'count'],
+		Entries: [BuffRemoveGroupEntry, 'count'],
 	}
 };

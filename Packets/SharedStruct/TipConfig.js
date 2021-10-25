@@ -1,3 +1,4 @@
+
 module.exports = {//TipConfig
 	TipID: 'int8',
 	ColorID: 'int8',

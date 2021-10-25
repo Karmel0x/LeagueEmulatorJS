@@ -8,6 +8,6 @@ module.exports = class extends BasePacket {//S2C.
 			IgnoreLock: 2,
 			StopAll: 4,
 		}],
-		AnimationName: 'string0',//['char', 64],
+		AnimationName: 'string0',//64
 	}
 };

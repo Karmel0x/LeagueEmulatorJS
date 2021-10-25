@@ -11,7 +11,7 @@ module.exports = class extends BasePacket {//S2C.
         AnimationOverrides: [AnimationOverrides, 'count'],
 	}
 	writer(buffer){
-		this.count = this.count || this.AnimationOverrides.length;
+		this.count = this.count ?? this.AnimationOverrides.length;
 		super.writer(buffer);
 	}
 };

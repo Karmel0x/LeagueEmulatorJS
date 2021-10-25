@@ -2,17 +2,7 @@
 var CompressedWaypoint = require('./CompressedWaypoint');
 var TranslateCenteredCoordinates = require('../../Functions/TranslateCenteredCoordinates');
 const Vector2 = require('./Vector2');
-
-var SpeedParams = {
-	PathSpeedOverride: 'float',
-	ParabolicGravity: 'float',
-	ParabolicStartPoint: Vector2,
-	Facing: 'uint8',
-	FollowNetID: 'uint32',
-	FollowDistance: 'float',
-	FollowBackDistance: 'float',
-	FollowTravelTime: 'float',
-};
+const SpeedParams = require('./SpeedParams');
 
 
 module.exports = {//MovementDataWithSpeed

@@ -1,14 +1,13 @@
 var BasePacket = require('../BasePacket');
+var EVENT_ARGUMENTS = require('../EVENT-ARGUMENTS');
 
-
-const EventHistory = {
+const EventHistoryEntry = {
 	timestamp: 'float',
 	count: 'uint16',
 	id: 'uint8',
 	source: 'uint32',
-
-	NetID: 'uint32',
 };
+
 
 module.exports = class extends BasePacket {//S2C.
 	struct = {
@@ -16,21 +15,22 @@ module.exports = class extends BasePacket {//S2C.
 		KillerNetID: 'uint32',
 		Duration: 'float',
 		count: 'int32',
-
-		//Entries: [EventHistory, 'count'],
 	}
 	reader(buffer){
 		super.reader(buffer);
 
-		if(buffer.off >= buffer.length)
-			return;
-
-		this.Unk1 = buffer.read1('uint32');
+		this.Entries = [];
+		for(let i = 0; i < this.count; i++){
+			this.Entries[i] = buffer.readobj(EventHistoryEntry);
+			this.Entries[i].EventData = buffer.readobj(EVENT_ARGUMENTS[this.Entries[i].id] || EVENT_ARGUMENTS[0]);
+		}
 	}
 	writer(buffer){
 		super.writer(buffer);
 
-		if(this.Unk1)
-			buffer.write1('uint32', this.Unk1);
+		for(let i = 0; i < this.count; i++){
+			buffer.writeobj(EventHistoryEntry, this.Entries[i]);
+			buffer.writeobj(EVENT_ARGUMENTS[this.Entries[i].id] || EVENT_ARGUMENTS[0], this.Entries[i].EventData);
+		}
 	}
 };

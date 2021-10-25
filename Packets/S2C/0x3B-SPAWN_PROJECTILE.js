@@ -17,9 +17,7 @@ module.exports = class extends BasePacket {//S2C.
 		LifePercentage: 'float',
 		TimedSpeedDelta: 'float',
 		TimedSpeedDeltaTime: 'float',
-		bitfield: ['bitfield', {
-			Bounced: 1,
-		}],
-		CastInfo: JSON.parse(JSON.stringify(CastInfo)),
+		bitfield_Bounced: 'uint8',
+		CastInfo: JSON.parse(JSON.stringify(CastInfo)),//todo
 	}
 };

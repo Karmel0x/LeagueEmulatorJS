@@ -1,14 +1,10 @@
 var BasePacket = require('../BasePacket');
-var Item = {
-	ItemID: 'uint32',
-	Slot: 'uint8',
-	ItemsInSlot: 'uint8',
-	SpellCharges: 'uint8',
-};
+var ItemPacket = require('../SharedStruct/ItemPacket');
+
 
 module.exports = class extends BasePacket {//S2C.BUY_ITEM_ANS
 	struct = {
-		Item: Item,
+		Item: ItemPacket,
 		bitfield: ['bitfield', {
 			unk0: 1 << 0,
 			unk1: 1 << 1,

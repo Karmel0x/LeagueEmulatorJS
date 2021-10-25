@@ -4,6 +4,6 @@ module.exports = class extends BasePacket {//S2C.
 	struct = {
 		Slot: 'uint8',
 		ItemsInSlot: 'uint8',
-		NotifyInventoryChange: 'uint8',
+		bitfield_NotifyInventoryChange: 'uint8',
 	}
 };

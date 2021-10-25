@@ -16,10 +16,11 @@ module.exports = class extends BasePacket {//S2C.
 		GrassRadius: 'float',
 		SizeMultiplier: 'float',
 		SizeAdditive: 'float',
-		flags: 'uint8',
-        //this.HasCollision = (flags & 1) != 0;
-        //this.GrantVision = (flags & 2) != 0;
-        //this.RevealStealth = (flags & 4) != 0;
+		flags: ['bitfield', {
+			HasCollision: 1,
+			GrantVision: 2,
+			RevealStealth: 4,
+		}],
 		BaseRadius: 'float',
 	}
 };

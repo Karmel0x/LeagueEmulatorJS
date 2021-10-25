@@ -8,10 +8,10 @@ module.exports = class extends BasePacket {//S2C.
 		Position: Vector3,
 		GroupPosition: Vector3,
 		FaceDirectionPosition: Vector3,
-		Name: 'string0',
-		SkinName: 'string0',
-		UniqueName: 'string0',
-		SpawnAnimationName: 'string0',
+		Name: ['char', 64],
+		SkinName: ['char', 64],
+		UniqueName: ['char', 64],
+		SpawnAnimationName: ['char', 64],
 		TeamID: 'uint32',
 		DamageBonus: 'int32',
 		HealthBonus: 'int32',
@@ -23,6 +23,6 @@ module.exports = class extends BasePacket {//S2C.
 		SpawnDuration: 'float',
 		SpawnTime: 'float',
 		BehaviorTree: 'uint8',
-		AIscript: 'string0',
+		AIscript: 'string0',//32
 	}
 };

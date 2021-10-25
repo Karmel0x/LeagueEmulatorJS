@@ -10,7 +10,7 @@ module.exports = class extends BasePacket {//S2C.DASH
 	writer(buffer){
         this.SyncID = this.SyncID || performance.now();
         this.MovementData = this.MovementData || [this];
-        this.count = this.count || this.MovementData.length;
+        this.count = this.count ?? this.MovementData.length;
 		super.writer(buffer);
 
         for(let i = 0; i < this.count; i++)

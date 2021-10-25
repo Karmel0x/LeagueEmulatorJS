@@ -5,7 +5,7 @@ module.exports = class extends BasePacket {//S2C.
 		NetID: 'uint32',
 		NetNodeID: 'uint8',
 		SkinID: 'int32',
-		InternalName: 'string0',
+		InternalName: ['char', 64],
 		CharacterName: 'string0',
 	}
 };

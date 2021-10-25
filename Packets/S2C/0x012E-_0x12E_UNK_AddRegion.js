@@ -22,8 +22,8 @@ module.exports = class extends ExtendedPacket {//S2C.
 			RevealStealth: 4,
 		}],
 		BaseRadius: 'float',
-		unk1: 'float',
-		unk2: 'float',
-		unk3: 'float',
+		Unknown: 'float',
+		Unknown2: 'float',
+		Unknown3: 'float',
 	}
 };

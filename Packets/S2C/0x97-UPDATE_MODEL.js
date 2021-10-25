@@ -10,6 +10,6 @@ module.exports = class extends BasePacket {//S2C.UPDATE_MODEL
 		}],
         ID: 'uint32',
         SkinID: 'uint32',
-        SkinName: ['char', 64],
+        SkinName: 'string0',//64
 	}
 };
