@@ -71,6 +71,10 @@ class Inventory {
 		this.Items[slot].count++;
 
 		this.buyItemAns(slot);
+
+		if( this.Items[slot].hasOwnProperty( 'stats' ) )
+			this.parent.stats.increaseStats( this.Items[slot].stats )
+
 		this.parent.stats.charStats_send();
 		this.UndoHistory.addUndoHistory( itemId, slot, 1 );
 	}
@@ -103,6 +107,9 @@ class Inventory {
 		this.Items[slot].count--;
 		this.removeItemAns(slot);
 
+		if( this.Items[slot].hasOwnProperty( 'stats' ) )
+			this.parent.stats.decreaseStats( this.Items[slot].stats )
+
 		if(!this.Items[slot].count)
 			delete this.Items[slot];
 	}
@@ -115,6 +122,10 @@ class Inventory {
 		this.parent.stats.Gold += Item.GoldCost * 0.4;
 		
 		this.removeItem(slot);
+		
+		if( this.Items[slot].hasOwnProperty( 'stats' ) )
+			this.parent.stats.decreaseStats( this.Items[slot].stats )
+
 		this.parent.stats.charStats_send();
 		this.UndoHistory.addUndoHistory( itemId, slot, 0 );
 	}

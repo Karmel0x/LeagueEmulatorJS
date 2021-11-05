@@ -33,6 +33,32 @@ class StatsUnit {
         this.Size = new IStat(defaultValues.Size || 1);
         this.sightRange = new IStat(defaultValues.sightRange || 1350);
     }
+
+    increaseStats( stats ){
+        if( stats.hasOwnProperty( 'Flat' ) )
+            Object.keys(stats.Flat).forEach( stat =>
+                {
+                    this[stat].FlatBonus += stats.Flat[stat]
+                })
+        if( stats.hasOwnProperty( 'Percent' ) )
+        Object.keys(stats.Percent).forEach( stat =>
+            {
+                this[stat].PercentBonus += stats.Percent[stat]
+            })
+    }
+
+    decreaseStats( stats ){
+        if( stats.hasOwnProperty( 'Flat' ) )
+            Object.keys(stats.Flat).forEach( stat =>
+                {
+                    this[stat].FlatBonus -= stats.Flat[stat]
+                })
+        if( stats.hasOwnProperty( 'Percent' ) )
+        Object.keys(stats.Percent).forEach( stat =>
+            {
+                this[stat].PercentBonus -= stats.Percent[stat]
+            })
+    }
 }
 
 

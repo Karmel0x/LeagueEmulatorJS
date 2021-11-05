@@ -39,16 +39,18 @@ class UndoHistory {
         {
             case( 0 ): // Undo a sell Item
             {
-                debugger
+                player.stats.Gold -= ItemList[itemId].GoldCost;
+                player.inventory.addItem( element.slot );
+                this.history.slice( 0, this.history.length - 1);
+                this.alternateUndoEnable();
                 break;
             }
             case( 1 ): // Undo a buy Item
             {
                 player.stats.Gold += ItemList[itemId].GoldCost;
                 player.inventory.removeItem( element.slot );
-                player.stats.charStats_send();
-                this.history.slice( 0, this.history.length - 1)
-                this.alternateUndoEnable()
+                this.history.slice( 0, this.history.length - 1);
+                this.alternateUndoEnable();
                 break;
             }
             case( 2 ): // Undo a builded Item
