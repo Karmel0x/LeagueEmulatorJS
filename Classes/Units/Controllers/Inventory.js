@@ -72,7 +72,7 @@ class Inventory {
 
 		this.buyItemAns(slot);
 
-		if( this.Items[slot].hasOwnProperty( 'stats' ) )
+		if( this.Items[slot].stats )
 			this.parent.stats.increaseStats( this.Items[slot].stats )
 
 		this.parent.stats.charStats_send();
@@ -107,7 +107,7 @@ class Inventory {
 		this.Items[slot].count--;
 		this.removeItemAns(slot);
 
-		if( this.Items[slot].hasOwnProperty( 'stats' ) )
+		if( this.Items[slot].stats )
 			this.parent.stats.decreaseStats( this.Items[slot].stats )
 
 		if(!this.Items[slot].count)
