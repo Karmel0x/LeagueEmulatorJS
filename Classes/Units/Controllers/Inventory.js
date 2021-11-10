@@ -5,6 +5,7 @@ const UndoHistory = require('./UndoHistory')
 
 var ItemSlots = 6;// 0-5
 var TrinketSlot = 6;
+var itemsToRemove = []
 //var ExtraItemSlots = 6;// 7-12
 //var ExtraTrinketSlot = 13;
 //var RuneSlots = 30;// 14-44
@@ -55,11 +56,20 @@ class Inventory {
 			return false;
 
 		var Item = ItemList[itemId];
-		if(this.parent.stats.Gold < Item.GoldCost)
-			return false;
-		this.parent.stats.Gold -= Item.GoldCost;
-
 		var slot = false;
+		var effectiveGoldCost = Item.GoldCost;
+		itemsToRemove = new Array()
+
+		// If an Item can be build from another items
+		// set the effective gold Cost to substract
+		// Meanwhile remove the "from" items
+		// At the end, reassign the item slot
+		if(Item.from)
+			effectiveGoldCost = this.getEffectiveGoldCost( Item );
+
+		if(this.parent.stats.Gold < effectiveGoldCost)
+			return false;
+
 		if( !Item.isTrinket )
 			slot = this.getReuseSlot(itemId)
 		else
@@ -67,6 +77,11 @@ class Inventory {
 
 		if(slot === false)
 			return false;
+
+		if( itemsToRemove.length )
+			this.removeBuildItems()
+
+		this.parent.stats.Gold -= effectiveGoldCost;
 
 		this.Items[slot] = this.Items[slot] || new Item();
 		this.Items[slot].count = this.Items[slot].count || 0;
@@ -79,6 +94,23 @@ class Inventory {
 
 		this.parent.stats.charStats_send();
 		this.UndoHistory.addUndoHistory( itemId, slot, 1 );
+	}
+	getEffectiveGoldCost( item ){
+
+		var goldCost = item.GoldCost;
+		
+		item.from.forEach( childItemId =>{
+			for( var slot = 0; slot < ItemSlots; slot++ )
+				if( this.Items[slot] && this.Items[slot].id == childItemId )
+				{
+					goldCost -= ItemList[childItemId].GoldCost;
+					itemsToRemove.push(slot)
+				}
+		})
+		return goldCost
+	}
+	removeBuildItems(){
+		itemsToRemove.forEach( slot => this.removeItem( slot ) )
 	}
 	swapItemsAns(slot1, slot2){
 		var SWAP_ITEMS = createPacket('SWAP_ITEMS');
@@ -119,9 +151,8 @@ class Inventory {
 		if(!this.Items[slot])
 			return false;
 
-		var itemId = this.Items[slot].id
-		var Item = ItemList[ itemId ];
-		this.parent.stats.Gold += Item.GoldCost * 0.4;
+		var Item = ItemList[this.Items[slot].id];
+		this.parent.stats.Gold += Item.GoldSell ?? (Item.GoldCost * 0.7);
 		
 		this.removeItem(slot);
 
