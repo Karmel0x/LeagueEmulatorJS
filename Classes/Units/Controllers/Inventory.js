@@ -5,7 +5,6 @@ const UndoHistory = require('./UndoHistory')
 
 var ItemSlots = 6;// 0-5
 var TrinketSlot = 6;
-var itemsToRemove = []
 //var ExtraItemSlots = 6;// 7-12
 //var ExtraTrinketSlot = 13;
 //var RuneSlots = 30;// 14-44
@@ -17,6 +16,8 @@ class Inventory {
 		this.UndoHistory = new UndoHistory( this )
     }
 	Items = {};
+	itemsToRemove = [];
+
 	getReuseSlot(itemId){	// * -> I don't like this but actually work... probably I will take look about this soon
 
 		if(!ItemList[itemId].isStackable)
@@ -58,7 +59,7 @@ class Inventory {
 		var Item = ItemList[itemId];
 		var slot = false;
 		var effectiveGoldCost = Item.GoldCost;
-		itemsToRemove = new Array()
+		itemsToRemove = new Array();
 
 		// If an Item can be build from another items
 		// set the effective gold Cost to substract
@@ -71,7 +72,7 @@ class Inventory {
 			return false;
 
 		if( !Item.isTrinket )
-			slot = this.getReuseSlot(itemId)
+			slot = this.getReuseSlot(itemId);
 		else
 			slot = TrinketSlot;
 
@@ -79,7 +80,7 @@ class Inventory {
 			return false;
 
 		if( itemsToRemove.length )
-			this.removeBuildItems()
+			this.removeBuildItems();
 
 		this.parent.stats.Gold -= effectiveGoldCost;
 
@@ -90,7 +91,7 @@ class Inventory {
 		this.buyItemAns(slot);
 
 		if( this.Items[slot].stats )
-			this.parent.stats.increaseStats( this.Items[slot].stats )
+			this.parent.stats.increaseStats( this.Items[slot].stats );
 
 		this.parent.stats.charStats_send();
 		this.UndoHistory.addUndoHistory( itemId, slot, 1 );
@@ -104,13 +105,13 @@ class Inventory {
 				if( this.Items[slot] && this.Items[slot].id == childItemId )
 				{
 					goldCost -= ItemList[childItemId].GoldCost;
-					itemsToRemove.push(slot)
+					itemsToRemove.push(slot);
 				}
 		})
-		return goldCost
+		return goldCost;
 	}
 	removeBuildItems(){
-		itemsToRemove.forEach( slot => this.removeItem( slot ) )
+		itemsToRemove.forEach( slot => this.removeItem( slot ) );
 	}
 	swapItemsAns(slot1, slot2){
 		var SWAP_ITEMS = createPacket('SWAP_ITEMS');
@@ -165,6 +166,7 @@ class Inventory {
 			return false;
 
 		(new ItemSpells[this.Items[slot].id]).onUse(target || undefined);
+		
 		if(this.Items[slot].isConsumable)
 			this.removeItem(slot);
 	}
