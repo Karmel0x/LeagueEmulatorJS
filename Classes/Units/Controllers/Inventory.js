@@ -1,5 +1,6 @@
 const { createPacket } = require("../../../PacketUtilities");
 const ItemList = require("./ItemList");
+const ItemSpells = require("./ItemSpells")
 const UndoHistory = require('./UndoHistory')
 
 var ItemSlots = 6;// 0-5
@@ -15,15 +16,16 @@ class Inventory {
 		this.UndoHistory = new UndoHistory( this )
     }
 	Items = {};
-	getReuseSlot(itemId){
+	getReuseSlot(itemId){	// * -> I don't like this but actually work... probably I will take look about this soon
+
 		if(!ItemList[itemId].isStackable)
-			return false;
+			return this.getEmptySlot(); // *
 
 		for(var slot = 0; slot < ItemSlots; slot++)
 			if(this.Items[slot] && this.Items[slot].id == itemId)
 				return slot;
 
-		return false;
+		return this.getEmptySlot(); // *
 	}
 	getEmptySlot(){
 		for(var slot = 0; slot < ItemSlots; slot++)
@@ -58,8 +60,8 @@ class Inventory {
 		this.parent.stats.Gold -= Item.GoldCost;
 
 		var slot = false;
-		if(!Item.isTrinket)
-			slot = this.getReuseSlot(itemId) || this.getEmptySlot();
+		if( !Item.isTrinket )
+			slot = this.getReuseSlot(itemId)
 		else
 			slot = TrinketSlot;
 
@@ -128,10 +130,10 @@ class Inventory {
 	}
 	useItem(slot, target = undefined){
 		console.log('inventory.useItem', this.Items[slot]);
-		if(!this.Items[slot] || !this.Items[slot].use)
+		if(!this.Items[slot] || !ItemSpells[this.Items[slot].id])
 			return false;
 
-		this.Items[slot].use(target || undefined);
+		(new ItemSpells[this.Items[slot].id]).onUse(target || undefined);
 		if(this.Items[slot].isConsumable)
 			this.removeItem(slot);
 	}
