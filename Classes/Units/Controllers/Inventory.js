@@ -59,7 +59,7 @@ class Inventory {
 		var Item = ItemList[itemId];
 		var slot = false;
 		var effectiveGoldCost = Item.GoldCost;
-		itemsToRemove = new Array();
+		this.itemsToRemove = new Array();
 
 		// If an Item can be build from another items
 		// set the effective gold Cost to substract
@@ -79,7 +79,7 @@ class Inventory {
 		if(slot === false)
 			return false;
 
-		if( itemsToRemove.length )
+		if( this.itemsToRemove.length )
 			this.removeBuildItems();
 
 		this.parent.stats.Gold -= effectiveGoldCost;
@@ -94,7 +94,14 @@ class Inventory {
 			this.parent.stats.increaseStats( this.Items[slot].stats );
 
 		this.parent.stats.charStats_send();
-		this.UndoHistory.addUndoHistory( itemId, slot, 1 );
+
+		if( this.itemsToRemove.length )
+		{
+			this.Items[slot].itemsRemoved = this.itemsToRemove;
+			this.UndoHistory.addUndoHistory( itemId, slot, 2 );
+		}
+		else
+			this.UndoHistory.addUndoHistory( itemId, slot, 1 );
 	}
 	getEffectiveGoldCost( item ){
 
@@ -105,13 +112,13 @@ class Inventory {
 				if( this.Items[slot] && this.Items[slot].id == childItemId )
 				{
 					goldCost -= ItemList[childItemId].GoldCost;
-					itemsToRemove.push(slot);
+					this.itemsToRemove.push([slot, this.Item[slot]]);
 				}
 		})
 		return goldCost;
 	}
 	removeBuildItems(){
-		itemsToRemove.forEach( slot => this.removeItem( slot ) );
+		this.itemsToRemove.forEach( item => this.removeItem( item[0] ) );
 	}
 	swapItemsAns(slot1, slot2){
 		var SWAP_ITEMS = createPacket('SWAP_ITEMS');
@@ -153,6 +160,7 @@ class Inventory {
 			return false;
 
 		var Item = ItemList[this.Items[slot].id];
+		var itemId = this.Items[slot].id;
 		this.parent.stats.Gold += Item.GoldSell ?? (Item.GoldCost * 0.7);
 		
 		this.removeItem(slot);

@@ -315,6 +315,7 @@ var ItemList = {
 	3031: class Item { // Infinity Edge
 		id = 3031;
 		static GoldCost = 645;
+		static from = [1038, 1037, 1018]
 	},
 	3035: class Item { // Last Whisper
 		id = 3035;
