@@ -149,8 +149,10 @@ class Inventory {
 		this.Items[slot].count--;
 		this.removeItemAns(slot);
 
-		if( ItemList[itemId].stats )
-			this.parent.stats.decreaseStats( ItemList[itemId].stats )
+		if( ItemList[ this.Items[slot].id ].stats )
+			this.parent.stats.decreaseStats( ItemList[ this.Items[slot].id ].stats )
+
+		this.parent.stats.charStats_send();
 
 		if(!this.Items[slot].count)
 			delete this.Items[slot];
@@ -165,7 +167,6 @@ class Inventory {
 		
 		this.removeItem(slot);
 
-		this.parent.stats.charStats_send();
 		this.UndoHistory.addUndoHistory( itemId, slot, 0 );
 	}
 	useItem(slot, target = undefined){

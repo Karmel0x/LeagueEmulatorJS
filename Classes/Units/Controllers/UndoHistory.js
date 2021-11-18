@@ -47,7 +47,7 @@ class UndoHistory {
             {
                 player.stats.Gold -= ItemList[itemId].GoldCost;
                 player.inventory.addItem( element.slot );
-                this.history.slice( 0, this.history.length - 1);
+                this.history = this.history.splice( 0, this.history.length - 1);
                 this.alternateUndoEnable();
                 break;
             }
@@ -55,7 +55,7 @@ class UndoHistory {
             {
                 player.stats.Gold += ItemList[itemId].GoldCost;
                 player.inventory.removeItem( element.slot );
-                this.history.slice( 0, this.history.length - 1);
+                this.history = this.history.splice( 0, this.history.length - 1);
                 this.alternateUndoEnable();
                 break;
             }

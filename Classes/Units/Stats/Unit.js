@@ -59,12 +59,11 @@ class StatsUnit {
     decreaseStats( stats ){
         Object.keys( stats ).forEach( stat =>
             {
-                if( stat.Flat )
-                    this[stat].FlatBonus -= stat.Flat
+                if( stats[stat].Flat )
+                    this[stat].FlatBonus -= stats[stat].Flat
                 
-                if( stat.Percent )
-                    this[stat].PercentBonus -= stat.Percent
-                
+                if( stats[stat].Percent )
+                    this[stat].PercentBonus -= stats[stat].Percent
             })
     }
 }
