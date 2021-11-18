@@ -45,28 +45,26 @@ class StatsUnit {
     }
 
     increaseStats( stats ){
-        if( stats.hasOwnProperty( 'Flat' ) )
-            Object.keys(stats.Flat).forEach( stat =>
-                {
-                    this[stat].FlatBonus += stats.Flat[stat]
-                })
-        if( stats.hasOwnProperty( 'Percent' ) )
-        Object.keys(stats.Percent).forEach( stat =>
+    
+        Object.keys( stats ).forEach( stat =>
             {
-                this[stat].PercentBonus += stats.Percent[stat]
+                if( stats[stat].Flat )
+                    this[stat].FlatBonus += stats[stat].Flat
+                
+                if( stats[stat].Percent )
+                    this[stat].PercentBonus += stats[stat].Percent
             })
     }
 
     decreaseStats( stats ){
-        if( stats.hasOwnProperty( 'Flat' ) )
-            Object.keys(stats.Flat).forEach( stat =>
-                {
-                    this[stat].FlatBonus -= stats.Flat[stat]
-                })
-        if( stats.hasOwnProperty( 'Percent' ) )
-        Object.keys(stats.Percent).forEach( stat =>
+        Object.keys( stats ).forEach( stat =>
             {
-                this[stat].PercentBonus -= stats.Percent[stat]
+                if( stat.Flat )
+                    this[stat].FlatBonus -= stat.Flat
+                
+                if( stat.Percent )
+                    this[stat].PercentBonus -= stat.Percent
+                
             })
     }
 }

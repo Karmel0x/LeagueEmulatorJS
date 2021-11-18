@@ -90,8 +90,8 @@ class Inventory {
 
 		this.buyItemAns(slot);
 
-		if( this.Items[slot].stats )
-			this.parent.stats.increaseStats( this.Items[slot].stats );
+		if( ItemList[itemId].stats )
+			this.parent.stats.increaseStats( ItemList[itemId].stats );
 
 		this.parent.stats.charStats_send();
 
@@ -149,8 +149,8 @@ class Inventory {
 		this.Items[slot].count--;
 		this.removeItemAns(slot);
 
-		if( this.Items[slot].stats )
-			this.parent.stats.decreaseStats( this.Items[slot].stats )
+		if( ItemList[itemId].stats )
+			this.parent.stats.decreaseStats( ItemList[itemId].stats )
 
 		if(!this.Items[slot].count)
 			delete this.Items[slot];
