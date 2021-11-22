@@ -48,7 +48,7 @@ var ItemList = {
 		id = 1027		
 		static GoldCost = 400
 		static stats = {
-			HealthPoints:{
+			ManaPoints:{
 				Flat:200
 			}
 		}
@@ -459,7 +459,7 @@ var ItemList = {
 		static GoldCost = 2700
 		static from = [ 3070, 1026 ]
 		static stats = {
-			HealthPoints:{
+			ManaPoints:{
 				Flat:250
 			},
 			AbilityPower:{
@@ -472,7 +472,7 @@ var ItemList = {
 		static GoldCost = 2200
 		static from = [ 3070, 1037 ]
 		static stats = {
-			HealthPoints:{
+			ManaPoints:{
 				Flat:250
 			},
 			AttackDamage:{
@@ -550,7 +550,7 @@ var ItemList = {
 			HealthPoints:{
 				Flat:200
 			},
-			HealthPoints:{
+			ManaPoints:{
 				Flat:300
 			}
 		}
@@ -597,7 +597,7 @@ var ItemList = {
 		static GoldCost = 950
 		static from = [ 1027, 1029 ]
 		static stats = {
-			HealthPoints:{
+			ManaPoints:{
 				Flat:250
 			},
 			Armor:{
@@ -610,7 +610,7 @@ var ItemList = {
 		static GoldCost = 2900
 		static from = [ 3057, 3024 ]
 		static stats = {
-			HealthPoints:{
+			ManaPoints:{
 				Flat:500
 			},
 			Armor:{
@@ -642,7 +642,7 @@ var ItemList = {
 			HealthPoints:{
 				Flat:450
 			},
-			HealthPoints:{
+			ManaPoints:{
 				Flat:450
 			},
 			AbilityPower:{
@@ -834,7 +834,7 @@ var ItemList = {
 		static GoldCost = 1200
 		static from = [ 1027, 1052 ]
 		static stats = {
-			HealthPoints:{
+			ManaPoints:{
 				Flat:200
 			},
 			AbilityPower:{
@@ -906,7 +906,7 @@ var ItemList = {
 		static GoldCost = 720
 		static from = [ 1027, 1004 ]
 		static stats = {
-			HealthPoints:{
+			ManaPoints:{
 				Flat:250
 			}
 		}
@@ -939,7 +939,7 @@ var ItemList = {
 		static GoldCost = 720
 		static from = [ 1027, 1004 ]
 		static stats = {
-			HealthPoints:{
+			ManaPoints:{
 				Flat:250
 			}
 		}
@@ -987,7 +987,7 @@ var ItemList = {
 			HealthPoints:{
 				Flat:250
 			},
-			HealthPoints:{
+			ManaPoints:{
 				Flat:200
 			},
 			AttackDamage:{
@@ -1169,7 +1169,7 @@ var ItemList = {
 		static GoldCost = 3000
 		static from = [ 3057, 3113 ]
 		static stats = {
-			HealthPoints:{
+			ManaPoints:{
 				Flat:250
 			},
 			AbilityPower:{
@@ -1254,7 +1254,7 @@ var ItemList = {
 		static GoldCost = 2450
 		static from = [ 3082, 3024 ]
 		static stats = {
-			HealthPoints:{
+			ManaPoints:{
 				Flat:400
 			},
 			Armor:{
@@ -2800,7 +2800,7 @@ var ItemList = {
 			HealthPoints:{
 				Flat:500
 			},
-			HealthPoints:{
+			ManaPoints:{
 				Flat:300
 			}
 		}

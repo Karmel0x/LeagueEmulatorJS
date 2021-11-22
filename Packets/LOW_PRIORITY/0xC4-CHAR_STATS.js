@@ -268,7 +268,7 @@ module.exports = class extends BasePacket {//LOW_PRIORITY.CHAR_STATS
 		this.UpdateReplicant(unit, unit.stats?.ArmorPenetration?.PercentBonus, 1, 25);//ok
 		this.UpdateReplicant(unit, unit.stats?.MagicPenetration?.FlatBonus, 1, 26);//ok
 		this.UpdateReplicant(unit, unit.stats?.MagicPenetration?.PercentBonus, 1, 27);//ok
-		this.UpdateReplicant(unit, unit.stats?.LifeSteal?.Total, 1, 28);//ok
+		this.UpdateReplicant(unit, unit.stats?.LifeSteal?.PercentBonus, 1, 28);//ok
 		this.UpdateReplicant(unit, unit.stats?.SpellVamp?.Total, 1, 29);//ok
 		this.UpdateReplicant(unit, unit.stats?.Tenacity?.Total, 1, 30);//ok
 
