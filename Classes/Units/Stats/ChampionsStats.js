@@ -12,7 +12,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":60.376,
 		"AttackSpeedMultiplier":-0.04,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints": 85,
 			"ManaPoints": 45,
 			"Armor": 3.8,
@@ -36,7 +36,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":53.04,
 		"AttackSpeedMultiplier":-0.065,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":80,
 			"ManaPoints":50,
 			"Armor":3.5,
@@ -60,7 +60,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":58.376,
 		"AttackSpeedMultiplier":-0.1,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":85,
 			"ManaPoints":0,
 			"Armor":3.5,
@@ -84,7 +84,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":61.1116,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":102,
 			"ManaPoints":38,
 			"Armor":3.5,
@@ -108,7 +108,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":53.384,
 		"AttackSpeedMultiplier":-0.02,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":84,
 			"ManaPoints":40,
 			"Armor":3.3,
@@ -132,7 +132,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":51.376,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":70,
 			"ManaPoints":53,
 			"Armor":4,
@@ -156,7 +156,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":50.41,
 		"AttackSpeedMultiplier":0.08,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":76,
 			"ManaPoints":50,
 			"Armor":4,
@@ -180,7 +180,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":51.088,
 		"AttackSpeedMultiplier":-0.05,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":79,
 			"ManaPoints":35,
 			"Armor":3.4,
@@ -204,7 +204,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":49.704,
 		"AttackSpeedMultiplier":0.2,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":80,
 			"ManaPoints":42,
 			"Armor":3,
@@ -228,7 +228,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":61.54,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":95,
 			"ManaPoints":40,
 			"Armor":3.5,
@@ -252,7 +252,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":57.04,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":76,
 			"ManaPoints":45,
 			"Armor":3.5,
@@ -276,7 +276,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":55.376,
 		"AttackSpeedMultiplier":-0.03,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":87,
 			"ManaPoints":45,
 			"Armor":4,
@@ -300,7 +300,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":50.04,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":80,
 			"ManaPoints":35,
 			"Armor":3.5,
@@ -324,7 +324,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":50.376,
 		"AttackSpeedMultiplier":-0.034,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":75,
 			"ManaPoints":60,
 			"Armor":4,
@@ -348,7 +348,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":61.156,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":80,
 			"ManaPoints":40,
 			"Armor":3.5,
@@ -372,7 +372,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":51.24,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":82,
 			"ManaPoints":37,
 			"Armor":3.5,
@@ -396,7 +396,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":55.88,
 		"AttackSpeedMultiplier":-0.08,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":93,
 			"ManaPoints":37.5,
 			"Armor":3.5,
@@ -420,7 +420,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":53.04,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":90,
 			"ManaPoints":40,
 			"Armor":3.6,
@@ -444,7 +444,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":50.38,
 		"AttackSpeedMultiplier":-0.08,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":82,
 			"ManaPoints":42,
 			"Armor":3.3,
@@ -468,7 +468,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":61.27,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":89,
 			"ManaPoints":0,
 			"Armor":3.5,
@@ -492,7 +492,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":50.54,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":80,
 			"ManaPoints":50,
 			"Armor":3.35,
@@ -516,7 +516,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":53.88,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":90,
 			"ManaPoints":45,
 			"Armor":3.8,
@@ -540,7 +540,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":50.24,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":80,
 			"ManaPoints":45,
 			"Armor":3.5,
@@ -564,7 +564,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":48.36,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":80,
 			"ManaPoints":59,
 			"Armor":3.5,
@@ -588,7 +588,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":59.876,
 		"AttackSpeedMultiplier":-0.07,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":85,
 			"ManaPoints":40,
 			"Armor":3.5,
@@ -612,7 +612,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":58.04,
 		"AttackSpeedMultiplier":-0.05,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":86,
 			"ManaPoints":40,
 			"Armor":3.4,
@@ -636,7 +636,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":61.97,
 		"AttackSpeedMultiplier":-0.02,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":85,
 			"ManaPoints":50,
 			"Armor":3.5,
@@ -660,7 +660,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":59.04,
 		"AttackSpeedMultiplier":-0.04,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":81,
 			"ManaPoints":40,
 			"Armor":3.3,
@@ -684,7 +684,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":57.88,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":96,
 			"ManaPoints":0,
 			"Armor":2.7,
@@ -708,7 +708,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":48,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":65,
 			"ManaPoints":0,
 			"Armor":2.5,
@@ -732,7 +732,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":61.38,
 		"AttackSpeedMultiplier":-0.04,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":89,
 			"ManaPoints":47,
 			"Armor":3.6,
@@ -756,7 +756,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":54.208,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":84,
 			"ManaPoints":40,
 			"Armor":3.2,
@@ -780,7 +780,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":61.376,
 		"AttackSpeedMultiplier":-0.0672,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":95,
 			"ManaPoints":40,
 			"Armor":4,
@@ -804,7 +804,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":55.536,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":75,
 			"ManaPoints":40,
 			"Armor":3,
@@ -828,7 +828,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":61.544,
 		"AttackSpeedMultiplier":-0.06,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":90,
 			"ManaPoints":35,
 			"Armor":3.75,
@@ -852,7 +852,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":51.956,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":78,
 			"ManaPoints":64,
 			"Armor":3.8,
@@ -876,7 +876,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":55.712,
 		"AttackSpeedMultiplier":-0.05,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":90,
 			"ManaPoints":40,
 			"Armor":3.6,
@@ -900,7 +900,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":61.97,
 		"AttackSpeedMultiplier":-0.02,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":85,
 			"ManaPoints":35,
 			"Armor":3,
@@ -924,7 +924,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":50.38,
 		"AttackSpeedMultiplier":-0.05,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":90,
 			"ManaPoints":40,
 			"Armor":3.5,
@@ -948,7 +948,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":53.04,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":82,
 			"ManaPoints":45,
 			"Armor":3.5,
@@ -972,7 +972,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":53.46,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":83,
 			"ManaPoints":35,
 			"Armor":3.5,
@@ -996,7 +996,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":53.544,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":83,
 			"ManaPoints":50,
 			"Armor":3.8,
@@ -1020,7 +1020,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":45.66,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":75,
 			"ManaPoints":61,
 			"Armor":3.5,
@@ -1044,7 +1044,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":58.852,
 		"AttackSpeedMultiplier":-0.023,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":78,
 			"ManaPoints":70,
 			"Armor":3.2,
@@ -1068,7 +1068,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":58.376,
 		"AttackSpeedMultiplier":-0.05,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":80,
 			"ManaPoints":0,
 			"Armor":3.5,
@@ -1092,7 +1092,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":56.004,
 		"AttackSpeedMultiplier":-0.02,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":93,
 			"ManaPoints":40,
 			"Armor":3.5,
@@ -1116,7 +1116,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":50.544,
 		"AttackSpeedMultiplier":-0.0947,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":79,
 			"ManaPoints":0,
 			"Armor":3.75,
@@ -1140,7 +1140,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":55.208,
 		"AttackSpeedMultiplier":-0.065,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":85,
 			"ManaPoints":40,
 			"Armor":3,
@@ -1164,7 +1164,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":49.04,
 		"AttackSpeedMultiplier":-0.06,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":87,
 			"ManaPoints":40,
 			"Armor":3.5,
@@ -1188,7 +1188,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":54.88,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":75,
 			"ManaPoints":50,
 			"Armor":3.5,
@@ -1212,7 +1212,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":61.176,
 		"AttackSpeedMultiplier":-0.04,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":85,
 			"ManaPoints":0,
 			"Armor":3.7,
@@ -1236,7 +1236,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":60.04,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":87,
 			"ManaPoints":40,
 			"Armor":3.1,
@@ -1260,7 +1260,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":50.536,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":84,
 			"ManaPoints":50,
 			"Armor":3.7,
@@ -1284,7 +1284,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":52.04,
 		"AttackSpeedMultiplier":-0.02,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":80,
 			"ManaPoints":41,
 			"Armor":3,
@@ -1308,7 +1308,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":46.368,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":82,
 			"ManaPoints":55,
 			"Armor":3.7,
@@ -1332,7 +1332,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":53.544,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":79,
 			"ManaPoints":50,
 			"Armor":4,
@@ -1356,7 +1356,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":61.97,
 		"AttackSpeedMultiplier":-0.02,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":90,
 			"ManaPoints":40,
 			"Armor":3.75,
@@ -1380,7 +1380,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":54.7,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":80,
 			"ManaPoints":45,
 			"Armor":3.5,
@@ -1404,7 +1404,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":63.544,
 		"AttackSpeedMultiplier":-0.1,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":90,
 			"ManaPoints":46,
 			"Armor":4,
@@ -1428,7 +1428,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":60.04,
 		"AttackSpeedMultiplier":-0.08,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":92,
 			"ManaPoints":42,
 			"Armor":3,
@@ -1452,7 +1452,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":49.54,
 		"AttackSpeedMultiplier":-0.04734,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":85,
 			"ManaPoints":38,
 			"Armor":3,
@@ -1476,7 +1476,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":59.876,
 		"AttackSpeedMultiplier":-0.05,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":85,
 			"ManaPoints":38,
 			"Armor":3.5,
@@ -1500,7 +1500,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":57.58,
 		"AttackSpeedMultiplier":-0.1,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":80,
 			"ManaPoints":0,
 			"Armor":3.5,
@@ -1524,7 +1524,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":55.46,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":86,
 			"ManaPoints":60,
 			"Armor":3.8,
@@ -1548,7 +1548,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":51.208,
 		"AttackSpeedMultiplier":-0.03,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":74,
 			"ManaPoints":43,
 			"Armor":4,
@@ -1572,7 +1572,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":59.18,
 		"AttackSpeedMultiplier":-0.02,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":90,
 			"ManaPoints":45,
 			"Armor":3.5,
@@ -1596,7 +1596,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":57.544,
 		"AttackSpeedMultiplier":0.02,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":86,
 			"ManaPoints":50,
 			"Armor":3.25,
@@ -1620,7 +1620,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":47.88,
 		"AttackSpeedMultiplier":-0.02,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":90,
 			"ManaPoints":45,
 			"Armor":3.5,
@@ -1644,7 +1644,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":59.208,
 		"AttackSpeedMultiplier":-0.065,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":85,
 			"ManaPoints":35,
 			"Armor":3.5,
@@ -1668,7 +1668,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":56.856,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":96,
 			"ManaPoints":42,
 			"Armor":3.5,
@@ -1692,7 +1692,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":59.98,
 		"AttackSpeedMultiplier":-0.1,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":93,
 			"ManaPoints":45,
 			"Armor":3,
@@ -1716,7 +1716,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":40.368,
 		"AttackSpeedMultiplier":-0.05,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":79,
 			"ManaPoints":50,
 			"Armor":3,
@@ -1740,7 +1740,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":55.572,
 		"AttackSpeedMultiplier":-0.08,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":87,
 			"ManaPoints":34,
 			"Armor":3.9,
@@ -1764,7 +1764,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":61.97,
 		"AttackSpeedMultiplier":-0.02,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":81,
 			"ManaPoints":30,
 			"Armor":4,
@@ -1788,7 +1788,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":51.04,
 		"AttackSpeedMultiplier":-0.065,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":85,
 			"ManaPoints":35,
 			"Armor":3.5,
@@ -1812,7 +1812,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":55.88,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":86,
 			"ManaPoints":33,
 			"Armor":3.8,
@@ -1836,7 +1836,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":58.328,
 		"AttackSpeedMultiplier":-0.06,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":87,
 			"ManaPoints":0,
 			"Armor":3.8,
@@ -1860,7 +1860,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":60.04,
 		"AttackSpeedMultiplier":-0.08,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":90,
 			"ManaPoints":0,
 			"Armor":3.5,
@@ -1884,7 +1884,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":56.04,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":86,
 			"ManaPoints":0,
 			"Armor":3.2,
@@ -1908,7 +1908,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":61.036,
 		"AttackSpeedMultiplier":-0.03,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":80,
 			"ManaPoints":0,
 			"Armor":3.5,
@@ -1932,7 +1932,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":55.04,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":86,
 			"ManaPoints":55,
 			"Armor":3.9,
@@ -1956,7 +1956,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":57.544,
 		"AttackSpeedMultiplier":-0.0672,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":95,
 			"ManaPoints":40,
 			"Armor":3,
@@ -1980,7 +1980,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":57.58,
 		"AttackSpeedMultiplier":-0.1,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":84,
 			"ManaPoints":40,
 			"Armor":3.5,
@@ -2004,7 +2004,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":60.17,
 		"AttackSpeedMultiplier":-0.04,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":85,
 			"ManaPoints":0,
 			"Armor":4,
@@ -2028,7 +2028,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":60.712,
 		"AttackSpeedMultiplier":-0.05,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":95,
 			"ManaPoints":0,
 			"Armor":3.35,
@@ -2052,7 +2052,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":62.32,
 		"AttackSpeedMultiplier":0.02,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":82,
 			"ManaPoints":45,
 			"Armor":3.5,
@@ -2076,7 +2076,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":59.72,
 		"AttackSpeedMultiplier":-0.08,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":73,
 			"ManaPoints":45,
 			"Armor":3,
@@ -2100,7 +2100,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":52.04,
 		"AttackSpeedMultiplier":-0.05,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":82,
 			"ManaPoints":50,
 			"Armor":3.25,
@@ -2124,7 +2124,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":61.156,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":96,
 			"ManaPoints":40,
 			"Armor":3.8,
@@ -2148,7 +2148,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":50.04,
 		"AttackSpeedMultiplier":-0.03,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":77,
 			"ManaPoints":45,
 			"Armor":3.3,
@@ -2172,7 +2172,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":50.04,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":78,
 			"ManaPoints":60,
 			"Armor":3.8,
@@ -2196,7 +2196,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":52.04,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":78,
 			"ManaPoints":50,
 			"Armor":4,
@@ -2220,7 +2220,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":53.872,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":78,
 			"ManaPoints":50,
 			"Armor":3.4,
@@ -2244,7 +2244,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":55.208,
 		"AttackSpeedMultiplier":-0.065,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":85,
 			"ManaPoints":40,
 			"Armor":3.5,
@@ -2268,7 +2268,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":57.88,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":90,
 			"ManaPoints":56,
 			"Armor":3.2,
@@ -2292,7 +2292,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":47.54,
 		"AttackSpeedMultiplier":-0.0947,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":82,
 			"ManaPoints":40,
 			"Armor":3.75,
@@ -2316,7 +2316,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":47.696,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":89,
 			"ManaPoints":44,
 			"Armor":0,
@@ -2340,7 +2340,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":49.54,
 		"AttackSpeedMultiplier":-0.04734,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":82,
 			"ManaPoints":32,
 			"Armor":3,
@@ -2364,7 +2364,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":60.04,
 		"AttackSpeedMultiplier":-0.0672,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":96,
 			"ManaPoints":45,
 			"Armor":2.7,
@@ -2388,7 +2388,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":61.376,
 		"AttackSpeedMultiplier":-0.0672,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":98,
 			"ManaPoints":0,
 			"Armor":3.1,
@@ -2412,7 +2412,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":49.954,
 		"AttackSpeedMultiplier":-0.04,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":82,
 			"ManaPoints":38,
 			"Armor":3.15,
@@ -2436,7 +2436,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":49.04,
 		"AttackSpeedMultiplier":-0.08,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":81,
 			"ManaPoints":40,
 			"Armor":3,
@@ -2460,7 +2460,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":58.286,
 		"AttackSpeedMultiplier":-0.05,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":99,
 			"ManaPoints":30,
 			"Armor":4,
@@ -2484,7 +2484,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":52.048,
 		"AttackSpeedMultiplier":-0.03,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":89,
 			"ManaPoints":55,
 			"Armor":3.3,
@@ -2508,7 +2508,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":49.04,
 		"AttackSpeedMultiplier":-0.05,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":82,
 			"ManaPoints":36,
 			"Armor":3.4,
@@ -2532,7 +2532,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":53.46,
 		"AttackSpeedMultiplier":-0.05,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":83,
 			"ManaPoints":35,
 			"Armor":3.4,
@@ -2556,7 +2556,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":50.71,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":82,
 			"ManaPoints":55,
 			"Armor":3.75,
@@ -2580,7 +2580,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":54.937875658,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":76,
 			"ManaPoints":45,
 			"Armor":3.5,
@@ -2604,7 +2604,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":55.88,
 		"AttackSpeedMultiplier":-0.03,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":85,
 			"ManaPoints":45,
 			"Armor":3.5,
@@ -2628,7 +2628,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":52.04,
 		"AttackSpeedMultiplier":-0.05,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":78,
 			"ManaPoints":50,
 			"Armor":4,
@@ -2652,7 +2652,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":48.04,
 		"AttackSpeedMultiplier":-0.05,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":85,
 			"ManaPoints":0,
 			"Armor":3.5,
@@ -2676,7 +2676,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":59.544,
 		"AttackSpeedMultiplier":-0.05,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":86,
 			"ManaPoints":30,
 			"Armor":3.5,
@@ -2700,7 +2700,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":62.43,
 		"AttackSpeedMultiplier":-0.08,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":98,
 			"ManaPoints":30,
 			"Armor":3.5,
@@ -2724,7 +2724,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":54.7,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":80,
 			"ManaPoints":47,
 			"Armor":3.5,
@@ -2748,7 +2748,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":57.544,
 		"AttackSpeedMultiplier":-0.07,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":87,
 			"ManaPoints":35,
 			"Armor":3.5,
@@ -2772,7 +2772,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":55.376,
 		"AttackSpeedMultiplier":-0.05,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":82,
 			"ManaPoints":0,
 			"Armor":3.4,
@@ -2796,7 +2796,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":57.58,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":85,
 			"ManaPoints":35,
 			"Armor":3.6,
@@ -2820,7 +2820,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":59.67,
 		"AttackSpeedMultiplier":-0.02,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":95,
 			"ManaPoints":0,
 			"Armor":3.5,
@@ -2844,7 +2844,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":54.712,
 		"AttackSpeedMultiplier":-0.05,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":80,
 			"ManaPoints":0,
 			"Armor":3.5,
@@ -2868,7 +2868,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":54.208,
 		"AttackSpeedMultiplier":-0.04734,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":80,
 			"ManaPoints":50,
 			"Armor":3.3,
@@ -2892,7 +2892,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":51.64,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":71,
 			"ManaPoints":60,
 			"Armor":3.8,
@@ -2916,7 +2916,7 @@ var Stats = {
 		"CriticalChance":0,
 		"AttackDamage":53.376,
 		"AttackSpeedMultiplier":0,
-		"GrowthStat":{
+		"LevelUp":{
 			"HealthPoints":74,
 			"ManaPoints":50,
 			"Armor":3,
