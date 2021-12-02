@@ -1,5 +1,5 @@
 var BattleUnit = require('./Unit');
-const { createPacket } = require('../../../PacketUtilities');
+const { createPacket } = require('../../../Core/PacketUtilities');
 const EVENT = require("../../../Packets/EVENT");
 
 

@@ -1,5 +1,6 @@
-const Packets = require("../Packets");
-require("../BufferExtend");
+
+const Packets = require('../Core/Packets');
+require("../Core/BufferExtend");
 const util = require('util');
 
 var packet = {};

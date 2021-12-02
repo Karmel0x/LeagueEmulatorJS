@@ -1,4 +1,4 @@
-const {createPacket, sendPacket} = require("../../PacketUtilities");
+const {createPacket, sendPacket} = require("../../Core/PacketUtilities");
 const { Vector2 } = require('three');
 
 const Unit = require('./Unit');
@@ -13,6 +13,15 @@ const Unit = require('./Unit');
 
 
 class MoveableUnit extends Unit {
+	PositionSyncID = 0;
+	Waypoints_ = [];
+	set Waypoints(val){
+		this.PositionSyncID = performance.now();
+		this.Waypoints_ = val;
+	}
+	get Waypoints(){
+		return this.Waypoints_;
+	}
 
 	setWaypoints(Waypoints, send = true){//todo: repath if needed
 		//console.log('setWaypoints', Waypoints, this.Waypoints, this.WaypointsPending);
@@ -26,9 +35,11 @@ class MoveableUnit extends Unit {
 		if(send)
 			this.moveAns();
 	}
-	teleport(position){
+	teleport(position, send = true){
 		this.Waypoints = [position];
-		this.moveAns(true);
+
+		if(send)
+			this.moveAns(true);
 	}
 	dashAns(){
 		var DASH = createPacket('DASH');
@@ -178,6 +189,7 @@ class MoveableUnit extends Unit {
 		// this should be in Movement_Simulation so we can resend if destination will change (following moveable unit)
 		// or following should be made with dash.SpeedParams.FollowNetID ?
 		var MOVE_ANS = createPacket('MOVE_ANS', 'LOW_PRIORITY');
+		MOVE_ANS.SyncID = this.PositionSyncID;
 
 		MOVE_ANS.netId = 0;
 		MOVE_ANS.TeleportNetID = this.netId;

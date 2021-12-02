@@ -1,7 +1,6 @@
 
-const Packets = require("../Packets");
-const {createPacket, sendPacket} = require("../PacketUtilities");
-const loadingStages = require("../Constants/loadingStages");
+const Packets = require('../Core/Packets');
+const {createPacket, sendPacket} = require('../Core/PacketUtilities');
 
 
 module.exports = (player, packet) => {

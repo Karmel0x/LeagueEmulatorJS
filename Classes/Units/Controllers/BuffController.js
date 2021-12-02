@@ -3,7 +3,7 @@
 //	SummonerHeal: require('./Buffs/SummonerHeal'),
 //};
 
-const { createPacket } = require("../../../PacketUtilities");
+const { createPacket } = require("../../../Core/PacketUtilities");
 
 module.exports = class BuffController {
 	constructor(parent){

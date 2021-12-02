@@ -1,7 +1,6 @@
 var MoveableUnit = require('./MoveableUnit');
-const {createPacket, sendPacket} = require("../../PacketUtilities");
+const {createPacket, sendPacket} = require("../../Core/PacketUtilities");
 const loadingStages = require('../../Constants/loadingStages');
-const playersConfig = require('../../Constants/playersConfig');
 const SummonerSpells = require("../../Characters/SummonerSpells");
 const TranslateCenteredCoordinates = require('../../Functions/TranslateCenteredCoordinates');
 
@@ -69,7 +68,7 @@ class Player extends MoveableUnit {
 
 		var CAST_SPELL_ANS = createPacket('CAST_SPELL_ANS', 'S2C');
 		CAST_SPELL_ANS.netId = this.netId;
-		CAST_SPELL_ANS.CasterPositionSyncID = performance.now();
+		CAST_SPELL_ANS.CasterPositionSyncID = this.PositionSyncID;
 		CAST_SPELL_ANS.CastInfo = {
 			SpellHash: 0,
 			SpellNetID: 1073743439,
@@ -97,8 +96,6 @@ class Player extends MoveableUnit {
 		};
 		Object.assign(CAST_SPELL_ANS.CastInfo, CastInfo);
 
-		CAST_SPELL_ANS.CastInfo.targetCount = CAST_SPELL_ANS.CastInfo.target.length;
-		CAST_SPELL_ANS.CastInfo.size = 102 + CAST_SPELL_ANS.CastInfo.targetCount * 5;
 		var isSent = this.sendPacket(CAST_SPELL_ANS);
 		console.log(CAST_SPELL_ANS);
 	}
@@ -149,8 +146,6 @@ class Player extends MoveableUnit {
 		SPAWN_PROJECTILE.UnitPosition = SPAWN_PROJECTILE.CastInfo.SpellCastLaunchPosition;
 		SPAWN_PROJECTILE.Speed = speed;
 
-		SPAWN_PROJECTILE.CastInfo.targetCount = SPAWN_PROJECTILE.CastInfo.target.length;
-		SPAWN_PROJECTILE.CastInfo.size = 102 + SPAWN_PROJECTILE.CastInfo.targetCount * 5;
 		var isSent = this.sendPacket(SPAWN_PROJECTILE);
 		console.log(SPAWN_PROJECTILE);
 	}

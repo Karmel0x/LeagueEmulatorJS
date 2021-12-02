@@ -1,9 +1,9 @@
 
-const loadingStages = require('./Constants/loadingStages');
+const loadingStages = require('../Constants/loadingStages');
 var GameComponents = {
-	Spawn: require('./Game/Spawn'),
+	Spawn: require('../Game/Spawn'),
 	//Fountain: require('./Game/Fountain'),
-	MovementSimulation: require('./Classes/Movement/Simulation'),
+	MovementSimulation: require('../Classes/Movement/Simulation'),
 };
 
 async function run_game(){
@@ -19,7 +19,6 @@ function start_game(){
 	run_game();
 }
 
-// depends on './init_players'
 async function wait_start_game(){
 	global.Movement = new GameComponents.MovementSimulation();
 	global.Movement.start();

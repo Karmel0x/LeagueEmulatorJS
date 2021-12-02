@@ -1,5 +1,4 @@
 const { Vector2 } = require("three");
-const { createPacket } = require("../PacketUtilities");
 
 
 module.exports = class Spell {
@@ -13,6 +12,8 @@ module.exports = class Spell {
 	buffDeactivate(){
         // override
 	}
+
+	// return angle from pos1 to pos2
 	static anglePosition(pos1, pos2){//todo
 		var targetPosition = new Vector2(pos1.x, pos1.y);
 		targetPosition.sub(pos2);
@@ -35,9 +36,16 @@ module.exports = class Spell {
 		
 		return CastInfo;
 	}
-    getRealPosition(packet){
+    static getUnitPosition(TargetNetID){
+        if(global.UnitsNetId[TargetNetID])
+            return new Vector2(global.UnitsNetId[TargetNetID].position.x, global.UnitsNetId[TargetNetID].position.y);
+
+		return null;
+    }
+	// returns Vector2 of unit if exists
+    static getRealPosition(packet){
         if(packet.TargetNetID)
-            return new Vector2(global.UnitsNetId[packet.TargetNetID].position.x, global.UnitsNetId[packet.TargetNetID].position.y);
+            return Spell.getUnitPosition(packet.TargetNetID) || new Vector2(packet.Position.x, packet.Position.y);
 
 		return new Vector2(packet.Position.x, packet.Position.y);
     }
@@ -47,7 +55,7 @@ module.exports = class Spell {
             return;
 
 		var owner = this.parent.parent;
-		var realPosition = this.getRealPosition(packet);
+		var realPosition = Spell.getRealPosition(packet);
 
 		if(owner.position.distanceTo(realPosition) >= (this.castRange || (this.range * 2))){
 			owner.move1(realPosition);

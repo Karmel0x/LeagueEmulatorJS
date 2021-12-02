@@ -41,7 +41,9 @@ function fill_struct_length(struct, source){
 
 }
 
-module.exports = class {// BasePacket
+module.exports = class BasePacket {
+	static offDEBUG = {};
+
 	baseSize = 10240
 	struct_header = {
 		cmd: 'uint8',
@@ -59,6 +61,7 @@ module.exports = class {// BasePacket
 	reader(buffer){
 		Object.assign(this, buffer.readobj(this.struct_header));
 		Object.assign(this, buffer.readobj(this.struct));
+		BasePacket.offDEBUG = buffer.offDEBUG;
 
 		this.deleteN();
 	}

@@ -21,3 +21,11 @@ node main
 # copy runLol.bat to client directory and run
 # say `.help` ingame to get list of available commands
 ```
+
+# Tools
+### Packet inspector
+```
+# download replay from /issues/2 and put to ../LeagueEmulatorJS_replays/
+node tools/packet-inspector
+# open browser at http://127.0.0.1/
+```

@@ -2,6 +2,7 @@ const { Vector2 } = require("three");
 const Spell = require("../Spell");
 const Skillshot = require("../../Classes/Attacks/Missiles/Skillshot");
 const _Champion_ = require("../_Champion_");
+const { target } = require("../../Packets/SharedStruct/CastInfo");
 
 const spellHash = {
 	YasuoQ: 0,
@@ -16,7 +17,10 @@ const spellHash = {
 
 	YasuoWMovingWall: 0,
 	YasuoDashWrapper: 0,
+
 	YasuoRKnockUpComboW: 0,
+	YasuoRDummySpell: 0,
+	TempYasuoRMissile: 0,
 };
 const particleHash = {
 	'Yasuo_Base_Q3_Hand.troy': 0,
@@ -155,7 +159,7 @@ class E extends Spell {
 		owner.castingSpell = true;
 		//owner.SET_COOLDOWN(packet.Slot, 3);
 
-		var realPosition = this.getRealPosition(packet);
+		var realPosition = Spell.getRealPosition(packet);
 		var CastInfo = this.CastInfo_Position(packet);
 
 		//CastInfo.SpellHash = spellHash.EzrealArcaneShift;
@@ -216,21 +220,244 @@ class E extends Spell {
 		owner.battle.attack(target);
 	}
 };
-class R extends Spell {
-	async cast(packet){
-		var owner = this.parent.parent;
+class SpellInternalDefaults {
+	static TargetPosition(packet){
+		return {
+            x: packet.Position.x,
+            y: packet.Position.y,
+            z: 0,
+        }
+	}
+	static TargetPositionEnd(packet){
+		return {
+            x: packet.EndPosition.x,
+            y: packet.EndPosition.y,
+            z: 0,
+        }
+	}
+}
+class YasuoRKnockUpComboW {
 
-		if(owner.castingSpell)
+	static collect(packet){
+		return {
+			//target: global.UnitsNetId[packet.TargetNetID] || false,
+		};
+	}
+	static async cast(spellChain){
+
+		var missile = {
+			netId: ++global.lastNetId,
+		};
+
+		var spellInternal_1 = new YasuoRKnockUpComboW(spellChain, missile);
+		await global.Utilities.wait(spellInternal_1.windup * 1000);
+		spellInternal_1.shot();
+		return spellInternal_1;
+	}
+
+	netId;
+	CastInfo = {};
+	windup = 0.01;//?
+
+	constructor(spellChain, missile){
+		this.netId = ++global.lastNetId;
+		this.spellChain = spellChain;
+		
+		this.CastInfo.TargetPosition = {
+			x: this.spellChain.owner.position.x,
+			y: this.spellChain.owner.position.y,
+			z: 0,
+		};
+		this.CastInfo.TargetPositionEnd = {
+			x: this.spellChain.owner.position.x,
+			y: this.spellChain.owner.position.y,
+			z: 0,
+		};
+		
+		this.CastInfo.SpellHash = spellHash.YasuoRKnockUpComboW;
+		this.CastInfo.SpellSlot = 0;
+		this.CastInfo.SpellNetID = this.netId;
+		this.CastInfo.MissileNetID = missile.netId;
+		this.CastInfo.target = [];
+		this.CastInfo.DesignerCastTime = 0.25;
+		this.CastInfo.DesignerTotalTime = 1.00;
+		this.CastInfo.SpellLevel = 1;
+		this.CastInfo.SpellChainOwnerNetID = this.spellChain.owner.netId;
+	}
+	collidedWith = [];
+	shot(){
+		//this.spellChain.owner.teleport(realPosition, false);
+
+		this.CastInfo.TargetPosition = this.spellChain.collection.Positions.angle.add(this.spellChain.owner.position);
+		var skillshot = Skillshot.create(this.spellChain.owner, this.CastInfo.TargetPosition, {
+			speed: 1200, range: 1150, radius: 90
+		});
+		this.CastInfo.TargetPosition = skillshot.target.Waypoints[0];
+		this.CastInfo.TargetPositionEnd = skillshot.target.Waypoints[0];
+
+		var collidedWith = [];
+		skillshot.missile.callbacks.collision._ = {
+			options: {
+				range: 90,
+			},
+			function: (target) => {
+				if(skillshot.missile.parent == target || collidedWith.includes(target))
+					return;
+				
+				collidedWith.push(target);
+				
+				skillshot.missile.parent.battle.attack(target);
+				if(target.knockUp)
+					target.knockUp({
+						duration: 0.75,
+						ParabolicGravity: 16.5,
+						Facing: 1,
+					});
+			},
+		};
+		this.collidedWith = collidedWith;
+	}
+}
+class YasuoRDummySpell {
+
+	static async cast(spellChain){
+		var missile = {
+			netId: ++global.lastNetId,
+		};
+
+		var spellInternal_1 = new YasuoRDummySpell(spellChain, missile);
+		await global.Utilities.wait(spellInternal_1.windup * 1000);
+		spellInternal_1.shot();
+		return spellInternal_1;
+	}
+
+	netId;
+	CastInfo = {};
+	windup = 0.01;//?
+
+	spellChain = null;
+
+	constructor(spellChain, missile){
+		this.netId = ++global.lastNetId;
+		this.spellChain = spellChain;
+		
+		this.CastInfo = Object.assign({}, this.spellChain.spellsChained[0].CastInfo);
+
+		this.CastInfo.TargetPosition = SpellInternalDefaults.TargetPosition(this.spellChain.collection.packet);
+		this.CastInfo.TargetPositionEnd = {
+			x: 0,
+			y: 0,
+			z: 0,
+		};
+
+		this.CastInfo.SpellHash = spellHash.YasuoRDummySpell;
+		this.CastInfo.SpellNetID = this.netId;
+		this.CastInfo.MissileNetID = missile.netId;
+		this.CastInfo.SpellSlot = 45;
+		this.CastInfo.SpellLevel = 0;
+		this.CastInfo.target = [{
+			unit: this.spellChain.owner.netId,
+			hitResult: 1,
+		}];
+	}
+	shot(){
+		//this.spellChain.owner.teleport(realPosition, false);
+	}
+}
+class TempYasuoRMissile {
+
+	static async cast(spellChain){
+		var missile = {
+			netId: ++global.lastNetId,
+		};
+
+		var spellInternal_1 = new TempYasuoRMissile(spellChain, missile);
+		await global.Utilities.wait(spellInternal_1.windup * 1000);
+		spellInternal_1.shot();
+		return spellInternal_1;
+	}
+
+	netId;
+	CastInfo = {};
+	windup = 0.05;//?
+
+	spellChain = null;
+
+	constructor(spellChain, missile){
+		this.netId = ++global.lastNetId;
+		this.spellChain = spellChain;
+		
+		this.CastInfo = Object.assign({}, this.spellChain.spellsChained[1].CastInfo);
+
+		this.CastInfo.TargetPositionEnd = SpellInternalDefaults.TargetPositionEnd(this.spellChain.collection.packet);
+
+		this.CastInfo.SpellHash = spellHash.TempYasuoRMissile;
+		this.CastInfo.SpellNetID = this.netId;
+		this.CastInfo.MissileNetID = missile.netId;
+		this.CastInfo.DesignerCastTime = -1;
+		this.CastInfo.DesignerTotalTime = 0.70;
+		this.CastInfo.SpellSlot = 50;
+		this.CastInfo.target = [{
+			unit: 0,//this.spellChain.spellChain.collidedWith[0].netId,
+			hitResult: 1,
+		}];
+		this.CastInfo.bitfield = {
+			IsForceCastingOrChannel: true,
+			IsOverrideCastPosition: true,
+		};
+	}
+	shot(){
+		
+	}
+}
+class R extends Spell {
+	castRange = 1200;
+
+	owner = null;
+	spellsChained = [];
+	collection = {};
+
+	makeCollection(packet){
+		//this.collection.Target = global.UnitsNetId[packet.TargetNetID] || false;
+		//if(!this.collection.Target)
+		//	return false;
+		
+		this.collection.packet = packet;
+
+		this.collection.Positions = {};
+		this.collection.Positions.angle = Spell.anglePosition(packet.Position, this.owner.position);
+		this.collection.Positions.real = Spell.getRealPosition(packet);
+		return true;
+	}
+	async castSpellchain(packet){
+
+		this.spellsChained[0] = await YasuoRKnockUpComboW.cast(this);
+		this.owner.castSpellAns(this.spellsChained[0].CastInfo);
+
+		this.spellsChained[1] = await YasuoRDummySpell.cast(this);
+		this.owner.castSpellAns(this.spellsChained[1].CastInfo);
+
+		this.spellsChained[2] = await TempYasuoRMissile.cast(this);
+		this.owner.spawnProjectileAns(this.spellsChained[2].CastInfo);
+
+		console.log([this.spellsChained[0].CastInfo, this.spellsChained[1].CastInfo, this.spellsChained[2].CastInfo]);
+
+	}
+	async cast(packet){
+		this.owner = this.parent.parent;
+		if(!this.makeCollection(packet))
 			return;
 
-		owner.castingSpell = true;
-		//owner.SET_COOLDOWN(packet.Slot, 4);
-        owner.halt_start();
+		if(this.owner.castingSpell)
+			return;
 
+		this.owner.castingSpell = true;
+        this.owner.halt_start();
 
+		await this.castSpellchain(packet);
 
-		owner.castingSpell = false;
-        owner.halt_stop();
+		this.owner.castingSpell = false;
+        this.owner.halt_stop();
 	}
 };
 

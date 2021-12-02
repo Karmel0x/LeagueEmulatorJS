@@ -1,5 +1,5 @@
 
-const enet = require('../enetcppjs/build/Release/enetcppjs.node');
+const enet = require('../../enetcppjs/build/Release/enetcppjs.node');
 const Packets = require("./Packets");
 require("./BufferExtend");
 const fs = require("fs");

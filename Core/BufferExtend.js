@@ -1,7 +1,29 @@
 
+Buffer.typeSize = {
+	'uint8': 1,
+	'uint16': 2,
+	'uint32': 4,
+	'uint64': 8,
+
+	'int8': 1,
+	'int16': 2,
+	'int32': 4,
+	'int64': 8,
+
+	'float': 4,
+	//'float8': 1,
+	//'float16': 2,
+	'double': 8,
+	
+	'char': 1,
+	'string': 0,
+	'string_': 0,
+	'string0': 0,
+	'bitfield': 1,
+};
+
 Buffer.prototype.read1 = function(type) {
-	if(!this.off)
-		this.off = 0;
+	this.off = this.off || 0;
 	
 	var variable;
 	try{
@@ -72,10 +94,8 @@ Buffer.prototype.read1 = function(type) {
 	return variable;
 };
 Buffer.prototype.write1 = function(type, value) {
-	if(!this.off)
-		this.off = 0;
-	if(typeof value == 'undefined')
-		value = 0;
+	this.off = this.off || 0;
+	value = value || 0;
 		
 	//todo: buffer expand if overflowing
 	
@@ -131,23 +151,31 @@ Buffer.prototype.write1 = function(type, value) {
 	return variable;
 };
 Buffer.prototype.readobj = function(template){
+	this.off = this.off || 0;
+	this.offDEBUG = this.offDEBUG || {};
+
 	try{
 		if(typeof template == 'string')
 			return this.read1(template);
+			
 		if(typeof template == 'object'){
 			if(Array.isArray(template)){
 				if(template[0] === 'bitfield'){
 					let bitfield = this.read1('uint8');
 					let obj = {};
+
 					for(let i in template[1])
 						obj[i] = (bitfield & template[1][i]) != 0;
+
 					return obj;
 				}
 				else if(template[0] === 'bitfield64'){
 					let bitfield = this.read1('uint64');
 					let obj = {};
+
 					for(let i in template[1])
 						obj[i] = (bitfield & BigInt(template[1][i])) != 0;
+						
 					return obj;
 				}
 
@@ -171,6 +199,7 @@ Buffer.prototype.readobj = function(template){
 				if(typeof template[i]?.[1] == 'string')
 					template[i][1] = obj[template[i][1]];
 
+				this.offDEBUG[i] = this.off;
 				obj[i] = this.readobj(template[i]);
 				//console.log(template[i], this.off);
 			}
@@ -188,19 +217,24 @@ Buffer.prototype.writeobj = function(template, source){
 
 		if(typeof template == 'string')
 			return this.write1(template, source || 0);
+
 		if(typeof template == 'object'){
 			if(Array.isArray(template)){
 				if(template[0] === 'bitfield'){
 					let bitfield = 0;
+
 					for(let i in source)
 						bitfield |= !!source[i] * template[1][i];
+
 					this.write1('uint8', bitfield);
 					return;
 				}
 				else if(template[0] === 'bitfield64'){
 					let bitfield = 0n;
+
 					for(let i in source)
 						bitfield |= BigInt(!!source[i]) * BigInt(template[1][i]);
+
 					this.write1('uint64', bitfield);
 					return;
 				}
@@ -223,26 +257,4 @@ Buffer.prototype.writeobj = function(template, source){
 	catch(e){
 		console.log(e.stack);
 	}
-};
-Buffer.typeSize = {
-	'uint8': 1,
-	'uint16': 2,
-	'uint32': 4,
-	'uint64': 8,
-
-	'int8': 1,
-	'int16': 2,
-	'int32': 4,
-	'int64': 8,
-
-	'float': 4,
-	//'float8': 1,
-	//'float16': 2,
-	'double': 8,
-	
-	'char': 1,
-	'string': 0,
-	'string_': 0,
-	'string0': 0,
-	'bitfield': 1,
 };

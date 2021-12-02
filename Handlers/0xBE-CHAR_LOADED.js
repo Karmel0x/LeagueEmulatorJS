@@ -1,6 +1,6 @@
 
-const Packets = require("../Packets");
-const {createPacket, sendPacket} = require("../PacketUtilities");
+const Packets = require('../Core/Packets');
+const {createPacket, sendPacket} = require('../Core/PacketUtilities');
 const loadingStages = require("../Constants/loadingStages");
 
 const Inhibitor = require("../Classes/Units/Inhibitor");

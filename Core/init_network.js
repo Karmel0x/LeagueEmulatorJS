@@ -1,4 +1,4 @@
-const enet = require('../enetcppjs/build/Release/enetcppjs.node');
+const enet = require('../../enetcppjs/build/Release/enetcppjs.node');
 const Handlers = require('./Handlers');
 
 

@@ -1,5 +1,5 @@
 var Types = require('../../Constants/Types');
-const { getIntBytes_r, binaryToByteArray, byteArrayToBinary } = require("../../Utilities");
+const { getIntBytes_r, binaryToByteArray, byteArrayToBinary } = require("../../Core/Utilities");
 
 
 module.exports = {//CompressedWaypoint

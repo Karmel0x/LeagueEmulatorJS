@@ -1,5 +1,5 @@
 var ConstantsUnit = require('../../../Constants/Unit');
-const {createPacket, sendPacket} = require("../../../PacketUtilities");
+const {createPacket, sendPacket} = require("../../../Core/PacketUtilities");
 var IStat = require('./IStat');
 
 

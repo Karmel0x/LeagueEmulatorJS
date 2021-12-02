@@ -1,6 +1,6 @@
 var StatsUnit = require('./Unit');
 var ConstantsUnit = require('../../../Constants/Unit');
-const {createPacket, sendPacket} = require("../../../PacketUtilities");
+const {createPacket, sendPacket} = require("../../../Core/PacketUtilities");
 
 const spellLevelMax = [5, 5, 5, 3];
 const ExpCurve = [

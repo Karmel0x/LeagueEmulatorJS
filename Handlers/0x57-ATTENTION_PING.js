@@ -1,7 +1,7 @@
 
+const Packets = require('../Core/Packets');
+const {createPacket, sendPacket} = require('../Core/PacketUtilities');
 const { Vector2 } = require("three");
-const Packets = require("../Packets");
-const {createPacket, sendPacket} = require("../PacketUtilities");
 
 
 module.exports = (player, packet) => {

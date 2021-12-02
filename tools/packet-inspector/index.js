@@ -1,23 +1,29 @@
-// sends recorded packets to the server, will give more control than in game client and possibility to verify response
-// ... for now it's more 'todo' than 'ready', but it's parsing packets at least
-// bad code and bad behavior here, but who cares, it's only for testing / developing purposes
 
-// run with 'node tools/client-emulator' then open link in your browser: `http://127.0.0.1/`
-//Example recordings: https://github.com/Karmel0x/LeagueEmulatorJS/issues/2
+// allows you to inspect packets, parses them to readable objects
+// bad code and behavior here, but who cares, it's only for testing / developing purposes
+
+// todo: reading .lrf files (for now it has to be unpacked with https://github.com/moonshadow565/LoLReplayUnpacker)
+// todo: sending recorded packets to the server, will give more control than in game client and possibility to verify response
+// todo: sending recorded packets to the client, with ability to set breakpoints, pause etc.
+
+// run with 'node tools/packet-inspector' then open link in your browser: `http://127.0.0.1/`
+// example recordings: https://github.com/Karmel0x/LeagueEmulatorJS/issues/2
 
 var replayDir = '../LeagueEmulatorJS_replays/';
 
 
-require('../../init_utilities')();
+require('../../Core/init_utilities')();
 var {server, wss} = require('./init_client-server');
 const fs = require('fs');
 
 const enet = require('../../../enetcppjs/build/Release/enetcppjs.node');
-const Packets = require("../../Packets");
-require("../../BufferExtend");
-const {createPacket, sendPacket} = require("../../PacketUtilities");
-const HandlersParse = require("../../HandlersParse");
+require("../../Core/BufferExtend");
+const Packets = require('../../Core/Packets');
+const {createPacket, sendPacket} = require('../../Core/PacketUtilities');
+
+const HandlersParse = require("../../Core/HandlersParse");
 var BatchPacket = require('../../Packets/BatchPacket');
+const BasePacket = require('../../Packets/BasePacket');
 
 
 var replayUnpacked;
@@ -31,6 +37,7 @@ wss.onMessage = (data) => {
 		
 		let offset = res.offset || 0;
 		let limit = (res.limit || 5000) + offset;
+		let packetnames = res.packetnames || [];
 		for(let i = offset; i < replayUnpacked.length && i < limit; i++){
 
       		var buffer = replayUnpacked[i].Bytes ? Buffer.from(replayUnpacked[i].Bytes, 'base64') : Buffer.from(replayUnpacked[i].BytesHex.split(' ').join('').split('-').join(''), 'hex');
@@ -97,17 +104,23 @@ wss.onMessage = (data) => {
 					typeof value === "bigint" ? value.toString() + "n" : value, 2);
 			}catch(e){}
 
+			var packetData = {
+				Id: i,
+				Time: replayUnpacked[i].Time || (replayUnpacked[i].TimeS * 1000).toFixed(3),
+				Channel: replayUnpacked[i].Channel,
+				Bytes: bytes,
+				Parsed: parsedStr,
+				channelName: Packets[replayUnpacked[i].Channel || 0]?.name || replayUnpacked[i].Channel,
+				cmdName: Packets[replayUnpacked[i].Channel || 0]?.[parsed.cmd2 || parsed.cmd]?.name || parsed.cmd2 || parsed.cmd,
+				offDEBUG: JSON.stringify(BasePacket.offDEBUG),
+			}
+
+			if(packetnames && packetnames.length && !packetnames.includes(packetData.cmdName))
+				continue;
+
 			wss.clients.sendToAll(JSON.stringify({
 				cmd: 'newpacket',
-				packet: {
-					Id: i,
-					Time: replayUnpacked[i].Time || (replayUnpacked[i].TimeS * 1000).toFixed(3),
-					Channel: replayUnpacked[i].Channel,
-					Bytes: bytes,
-					Parsed: parsedStr,
-					channelName: Packets[replayUnpacked[i].Channel || 0]?.name || replayUnpacked[i].Channel,
-					cmdName: Packets[replayUnpacked[i].Channel || 0]?.[parsed.cmd2 || parsed.cmd]?.name || parsed.cmd2 || parsed.cmd,
-				},
+				packet: packetData,
 			}));
 
 		}

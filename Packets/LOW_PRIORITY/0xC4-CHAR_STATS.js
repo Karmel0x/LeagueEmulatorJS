@@ -1,5 +1,5 @@
 var BasePacket = require('../BasePacket');
-const { getIntBytes_r, childByAddress } = require("../../Utilities");
+const { getIntBytes_r, childByAddress } = require("../../Core/Utilities");
 
 //todo: replicantList and replicantTypes is definitely wrong
 const replicantList = {

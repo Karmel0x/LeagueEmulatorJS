@@ -1,5 +1,5 @@
-var playersConfig = require('./Constants/playersConfig');
-var Player = require('./Classes/Units/Player');
+var playersConfig = require('../Constants/playersConfig');
+var Player = require('../Classes/Units/Player');
 
 
 function init_players(){

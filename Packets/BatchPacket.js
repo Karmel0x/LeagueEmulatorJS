@@ -1,7 +1,6 @@
-var BasePacket = require('./BasePacket');
-const Packets = require("../Packets");
+
 var Types = require('../Constants/Types');
-const { getIntBytes_r } = require("../Utilities");
+const { getIntBytes_r } = require("../Core/Utilities");
 
 module.exports = class {//S2C.BATCH
 	reader(buffer){

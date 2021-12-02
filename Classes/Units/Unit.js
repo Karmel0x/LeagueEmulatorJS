@@ -1,7 +1,7 @@
 var ConstantsUnit = require('../../Constants/Unit');
 //var Types = require('../Constants/Types');
-//const Packets = require("../Packets");
-const {createPacket, sendPacket} = require("../../PacketUtilities");
+//const Packets = require('../Core/Packets');
+const {createPacket, sendPacket} = require('../../Core/PacketUtilities');
 const { Vector2 } = require('three');
 var Targetedshot = require('../Attacks/Missiles/Targetedshot');
 const { appendGlobal, removeGlobal } = require('./global.Units');

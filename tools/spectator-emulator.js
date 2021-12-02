@@ -16,13 +16,14 @@ var replayUnpacked = require('../../LeagueEmulatorJS_replays/LOL-REPLAY.rlp.json
 //return;
 
 const enet = require('../../enetcppjs/build/Release/enetcppjs.node');
-//const Handlers = require('../Handlers');
-const Packets = require('../Packets');
-require("../BufferExtend");
+//const Handlers = require('../Core/Handlers');
+const Packets = require('../Core/Packets');
+require("../Core/BufferExtend");
 
 async function start_spectator(){
 	var time = Date.now();
 
+	console.log('packet count:', replayUnpacked.length);
 	for(let i = 0; i < replayUnpacked.length; i++){
 		if(i < 5)
 			continue;// skip key exchange
@@ -31,6 +32,7 @@ async function start_spectator(){
 			await global.Utilities.wait(1);
 		};
 
+		// todo: ignore some packets: S2C.VIEW_ANS ?
 
 		var buffer = replayUnpacked[i].Bytes ? Buffer.from(replayUnpacked[i].Bytes, 'base64') : Buffer.from(replayUnpacked[i].BytesHex.split(' ').join(''), 'hex');
 		enet.sendPacket(0, buffer, replayUnpacked[i].Channel);
@@ -71,5 +73,5 @@ async function init_network(){
 	}
 }
 
-require('../init_utilities')();
+require('../Core/init_utilities')();
 init_network();

@@ -1,5 +1,5 @@
 const Minion = require("./Minion");
-const {createPacket, sendPacket} = require("../../PacketUtilities");
+const {createPacket, sendPacket} = require("../../Core/PacketUtilities");
 
 
 const Barracks = {//0xFF000000 | Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(m.BarracksName));//{x: 1533.0, y: 1321.0}

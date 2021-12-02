@@ -25,6 +25,7 @@ module.exports = {
 	DesignerCastTime: 'float',
 	ExtraCastTime: 'float',
 	DesignerTotalTime: 'float',
+	// if DesignerCastTime == -1 then Cooldown is different
 	Cooldown: 'float',
 	StartCastTime: 'float',
 

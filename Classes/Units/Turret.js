@@ -1,5 +1,5 @@
 var Unit = require('./Unit');
-const {createPacket, sendPacket} = require("../../PacketUtilities");
+const {createPacket, sendPacket} = require("../../Core/PacketUtilities");
 const loadingStages = require("../../Constants/loadingStages");
 const { Vector2 } = require('three');
 
