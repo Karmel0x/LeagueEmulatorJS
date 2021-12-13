@@ -2,8 +2,9 @@ const { Vector2 } = require('three');
 const NavigationGrid = require('../Constants/NavigationGrid.json');
 // need to verify NavigationGrid.MiddleOfMap
 
-module.exports = {//TranslateCenteredCoordinates
-	from: (waypointsCC) => {
+
+module.exports = class TranslateCenteredCoordinates {
+	static from(waypointsCC){
 		var obj = [];
 
 		for(let waypoint of waypointsCC){
@@ -17,8 +18,8 @@ module.exports = {//TranslateCenteredCoordinates
 			));
 		}
 		return obj;
-	},
-	to: (waypoints) => {
+	}
+	static to(waypoints){
 		var obj = [];
 
 		for(let waypoint of waypoints){
@@ -32,5 +33,5 @@ module.exports = {//TranslateCenteredCoordinates
 			));
 		}
 		return obj;
-	},
+	}
 };

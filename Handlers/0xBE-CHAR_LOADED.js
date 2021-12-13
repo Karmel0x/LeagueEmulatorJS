@@ -3,10 +3,10 @@ const Packets = require('../Core/Packets');
 const {createPacket, sendPacket} = require('../Core/PacketUtilities');
 const loadingStages = require("../Constants/loadingStages");
 
-const Inhibitor = require("../Classes/Units/Inhibitor");
-const Nexus = require("../Classes/Units/Nexus");
-const Turret = require("../Classes/Units/Turret");
-const Barrack = require("../Classes/Units/Barrack");
+const Inhibitor = require("../Game/Units/Inhibitor");
+const Nexus = require("../Game/Units/Nexus");
+const Turret = require("../Game/Units/Turret");
+const Barrack = require("../Game/Units/Barrack");
 
 const CreateHeroDeath = {
 	Alive: 0,

@@ -2,7 +2,7 @@
 const Packets = require('../Core/Packets');
 const {createPacket, sendPacket} = require('../Core/PacketUtilities');
 
-const Minion = require("../Classes/Units/Minion");
+const Minion = require("../Game/Units/Minion");
 const { Vector2 } = require('three');
 
 function chatBoxMessage(target, message){
@@ -65,7 +65,7 @@ module.exports = (player, packet) => {
 		}
 		else if(commandArgs[0] === 'qq'){
 			for(let i = parseInt(commandArgs[1] || 1); i > 0; i--){
-				global.Barracks['RED'][0].spawnUnit('Basic').teleport(new Vector2(1000 + (i * 150), 600));
+				global.Barracks['RED'][0].spawnUnit('Basic').Movement.teleport(new Vector2(1000 + (i * 150), 600));
 			}
 		}
 		else if(commandArgs[0] === 'w'){
@@ -74,7 +74,7 @@ module.exports = (player, packet) => {
 		else if(commandArgs[0] === 'ww'){
 			var pos = new Vector2(10200, 13200);
 			for(let i in global.Units['RED']['Minion'])
-				global.Units['RED']['Minion'][i].move1(pos.clone());
+				global.Units['RED']['Minion'][i].Movement.move1(pos.clone());
 		}
 		//else if(commandArgs[0] === 'ee'){
 		//	player.battle.attack(global.Units[1]);
@@ -131,14 +131,14 @@ module.exports = (player, packet) => {
 		}
 		else if(commandArgs[0] == 'test'){
 			for(let i = 22; i > 0; i--)
-				global.Barracks['RED'][0].spawnUnit('Basic').teleport(new Vector2(1000 + (i * 150), 600));
+				global.Barracks['RED'][0].spawnUnit('Basic').Movement.teleport(new Vector2(1000 + (i * 150), 600));
 
 			for(let i = 5; i > 0; i--)
 				player.stats.levelUp();
 		}
 		else if(commandArgs[0] == 'champion'){
 			var character = commandArgs[1] || 'Ezreal';
-			const Champion_ = require('../Characters/Champions/' + character);
+			const Champion_ = require('../Game/Characters/Champions/' + character);
 			player.character = new Champion_(player);
 			player.UPDATE_MODEL(character);
 		}

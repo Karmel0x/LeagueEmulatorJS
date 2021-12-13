@@ -7,7 +7,7 @@ const loadingStages = require('../Constants/loadingStages');
 async function GameTimeHeartBeat(){
 	
 	var time = 0;
-	for(;;){
+	for(let i = 0; i < 3; i++){//for(;;){
 		var GAME_TIMER = createPacket('GAME_TIMER');
 		GAME_TIMER.SynchTime = time;
 		var isSent = global.Teams.ALL.sendPacket(GAME_TIMER);

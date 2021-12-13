@@ -11,11 +11,11 @@
 
 require('./Core/init_utilities')();
 
-require('./Classes/Team').createAll();
+require('./Game/Initializers/Team').initialize();
 
-require('./Core/init_players')();
+require('./Game/Initializers/Players').initialize();
 require('./Core/init_network')();
-require('./Core/init_game')();
+require('./Game/Initializers/Game').initialize();
 
 
 //process.on('uncaughtException', (err) => {
