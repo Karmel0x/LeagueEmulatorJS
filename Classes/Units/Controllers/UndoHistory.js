@@ -27,17 +27,18 @@ class UndoHistory {
     clearUndoHistory(){
         this.history = new Array()
     }
-    addUndoHistory(itemId, slot, action, items = null){
-        this.history.push( { itemId: itemId, slot: slot, action: action, buildItems: items } );
+    addUndoHistory(itemId, slot, action){
+        this.history.push( { itemId: itemId, slot: slot, action: action } );
         this.alternateUndoEnable()
     }
     remUndoHistory(){
         if( !this.history.length )
             return;
 
-        var element = this.history[ this.history.length - 1 ];
+        var element = this.history.pop();
         var itemId = element.itemId;
         var actionToUndo = element.action;
+        var slot = element.slot;
 
         var Item = ItemList[itemId];
 
@@ -45,26 +46,44 @@ class UndoHistory {
         {
             case( ItemActionList.SELL ): // Undo a sell Item
             {
-                player.stats.Gold -= ItemList[itemId].GoldCost;
-                player.inventory.addItem( element.slot );
-                this.history = this.history.splice( 0, this.history.length - 1);
-                this.alternateUndoEnable();
+                player.stats.Gold -= Item.GoldCost * 0.7;
+                player.inventory.addItem( slot, itemId );
                 break;
             }
             case( ItemActionList.BUY ): // Undo a buy Item
             {
-                player.stats.Gold += ItemList[itemId].GoldCost;
-                player.inventory.removeItem( element.slot );
-                this.history = this.history.splice( 0, this.history.length - 1);
-                this.alternateUndoEnable();
+                player.stats.Gold += Item.GoldCost;
+                player.inventory.removeItem( slot );
                 break;
             }
             case( ItemActionList.BUILD_ITEM ): // Undo a builded Item
             {
-                debugger
+                var buildedItem = player.inventory.Items[ slot ];
+                var goldsToRepay = Item.GoldCost;
+
+                buildedItem.itemsRemoved.forEach( item => {
+                    player.inventory.addItem( item[0], item[1].id );
+                    goldsToRepay -= ItemList[ item[1].id ].GoldCost;
+                })
+
+                player.stats.Gold += goldsToRepay;
+                player.inventory.removeItem( slot );
                 break;
             }
         }
+        
+        //this.history = this.history.splice( 0, this.history.length - 1);
+        this.alternateUndoEnable();
+    }
+    fixHistoryAfterSwapItems( slot1, slot2 ){
+
+        var tempArr = Array.from( this.history ).reverse();
+
+        var itemIndex = tempArr.findIndex( idx => idx.slot == slot1 )
+        var item = this.history[ this.history.length - ( itemIndex + 1 ) ]
+
+        if( player.inventory.Items[slot1].id == item.itemId )
+            item.slot = slot2
     }
 }
 

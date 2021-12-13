@@ -112,7 +112,8 @@ class Inventory {
 				if( this.Items[slot] && this.Items[slot].id == childItemId )
 				{
 					goldCost -= ItemList[childItemId].GoldCost;
-					this.itemsToRemove.push([slot, this.Item[slot]]);
+					this.itemsToRemove.push([slot, this.Items[slot]]);
+					break;
 				}
 		})
 		return goldCost;
@@ -130,6 +131,8 @@ class Inventory {
 	swapItems(slot1, slot2){
 		if(slot1 < 0 || slot1 >= ItemSlots || slot2 < 0 || slot2 >= ItemSlots)
 			return false;
+
+		this.UndoHistory.fixHistoryAfterSwapItems( slot1, slot2 )
 
 		var swap1 = this.Items[slot1] || undefined;
 		this.Items[slot1] = this.Items[slot2] || undefined;
@@ -183,7 +186,18 @@ class Inventory {
 		this.useItem(packet.Slot - 6);
 	}
 	addItem(slot, itemId){
+		var Item = ItemList[ itemId ];
 
+		this.Items[slot] = this.Items[slot] || new Item();
+		this.Items[slot].count = this.Items[slot].count || 0;
+		this.Items[slot].count++;
+
+		this.buyItemAns(slot);
+
+		if( ItemList[itemId].stats )
+			this.parent.stats.increaseStats( ItemList[itemId].stats );
+
+		this.parent.stats.charStats_send();
 	}
 }
 

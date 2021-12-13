@@ -69,7 +69,7 @@ class StatsTurret extends StatsUnit {
                 break;
             }
         }
-        debugger;
+        //debugger;
     }
 
 }
