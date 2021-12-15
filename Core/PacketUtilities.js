@@ -84,24 +84,23 @@ function sendPacket(peer_num, packet){
 	return sendPacket2(peer_num, packet, buffer);
 }
 function sendPacket2(peer_num, packet, buffer){//todo:peer
-	logPackets({channel: packet.info.channel.id, buffer});
+	logPackets({channel: packet.info.channel.id, buffer, packet});
+	console.debug('peer:', peer_num, 'sent:', packet.info.channel.name + '.' + packet.info.packet.name);//, buffer);
 
-	console.debug('sent:', packet.info.channel.name + '.' + packet.info.packet.name, 'peer_num:', peer_num, buffer);
 	var enet_sendPacket = enet.sendPacket(peer_num, buffer, packet.info.channel.id);
 
-	console.debug('enet_sendPacket:', enet_sendPacket);
+	//console.debug('enet_sendPacket:', enet_sendPacket);
 	return enet_sendPacket;
 }
 
 function logPackets(q){
-	return;
-	var p = {
-		Time: performance.now(),
-		Channel: q.channel,
-		BytesHex: q.buffer.toString('hex').match(/../g).join('-'),
-	};
-	//console.log('recv:' + p.BytesHex);
-	fs.appendFileSync('../LeagueEmulatorJS_replays/lejs.json', JSON.stringify(p) + ",\n");
+	global.Logging.packet({
+		channel: q.channel || 0,
+		//peer_num: q.peer_num,
+		bytes: q.buffer.toString('hex'),
+		time: Math.round(performance.now()),
+		packet: q.packet,
+	});
 }
 
 module.exports = {createPacket, sendPacket, logPackets};

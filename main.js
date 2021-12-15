@@ -1,12 +1,10 @@
 
-// too many console logs makes server a bit laggy..
-// turn off/on with `.debugMode [<debugLevel(0/1)>]`
-//console.debug_mp = console.debug;
-//console.debug = () => {};
-
-// for even better debugging you can run this by `node --inspect main`
-// then open chrome browser and go to `chrome://inspect`
-// or use Visual Studio Code debugger
+// if using websocket at first run `node tools/packet-inspector` and open your browser at `127.0.0.1`
+global.Logging = require('./Core/Logging');
+global.Logging.changeOptions({
+	debug: Logging.output.console,
+	packet: Logging.output.websocket,
+});
 
 
 require('./Core/init_utilities')();

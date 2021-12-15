@@ -2,7 +2,7 @@ const socket = new WebSocket('ws://127.0.0.1:80/ws');
 
 // Connection opened
 socket.addEventListener('open', (event) => {
-	loadreplaylist();
+	Messages.loadreplaylist();
 });
 
 /*var Channels = {
@@ -53,14 +53,14 @@ socket.addEventListener('message', (event) => {
 	<div class="row">
 		<div class="Id col">Id:` + (res.packet.Id || 0) + `</div>
 		<div class="Time col">Time:` + (res.packet.Time || '') + ' (' + (new Date(res.packet.Time).toISOString().slice(11, 19)) + `)</div>
-		<div class="Channel col">` + res.packet.channelName + `.` + res.packet.cmdName + ` (Size:` + ((res.packet.Bytes || '').split(' ').length + 1) + `)</div>
+		<div class="Channel col">` + res.packet.channelName + `.` + res.packet.cmdName + ` (Size:` + (res.packet.Bytes || '').split(' ').length + `)</div>
 	</div>
 	<div class="row">
 		<div class="Bytes col"><textarea class="Bytes_Parsed_textarea Bytes_textarea" rows="` + parsedLines + `">` + (res.packet.Bytes || '') + `</textarea></div>
 		<div class="Parsed col"><textarea onclick="getPacketSel(this, ` + (res.packet.Id || 0) + `)" class="Bytes_Parsed_textarea" rows="` + parsedLines + `">` + (res.packet.Parsed || '') + `</textarea></div>
 	</div>
-	<div class="row">
-		<div class="col"><button class="btn btn-light" onclick="sendpacket(` + (res.packet.Id || 0) + `)">send packet</button></div>
+	<div class="row" style="display:none">
+		<div class="col"><button class="btn btn-light" onclick="Messages.sendpacket(` + (res.packet.Id || 0) + `)">send packet</button></div>
 	</div>
 </div>`;
 
@@ -79,55 +79,75 @@ socket.addEventListener('message', (event) => {
 	}
 });
 
-function sendpacket_type(name, channel){
-	socket.send(JSON.stringify({
-		cmd: 'sendpacket_type',
-		name: name,
-		channel: channel,
-	}));
+class Messages {
+	static sendpacket_type(name, channel){
+		socket.send(JSON.stringify({
+			cmd: 'sendpacket_type',
+			name: name,
+			channel: channel,
+		}));
+	}
+	static sendpacket(Id){
+		socket.send(JSON.stringify({
+			cmd: 'sendpacket',
+			Id: Id,
+		}));
+	}
+	static initialize_client(){
+		socket.send(JSON.stringify({
+			cmd: 'initialize_client',
+		}));
+		document.getElementById('send_handshake').disabled = false;
+	}
+	static loadpackets(offset = 0, limit = 5000, packetnames = []){
+		socket.send(JSON.stringify({
+			cmd: 'loadpackets',
+			offset: offset,
+			limit: limit,
+			packetnames: packetnames,
+		}));
+	}
+	static loadreplaylist(){
+		socket.send(JSON.stringify({
+			cmd: 'loadreplaylist',
+		}));
+	}
+	static loadreplayfile(name = '', offset = undefined, limit = undefined, packetnames = []){
+		socket.send(JSON.stringify({
+			cmd: 'loadreplayfile',
+			name: name,
+		}));
+		Messages.loadpackets(offset, limit, packetnames);
+	}
+	static addpacket(bytes, channel){
+		socket.send(JSON.stringify({
+			cmd: 'addpacket',
+			data: {
+				bytes: bytes,
+				channel: channel,
+			}
+		}));
+	}
 }
-function sendpacket(Id){
-	socket.send(JSON.stringify({
-		cmd: 'sendpacket',
-		Id: Id,
-	}));
-}
-function initialize_client(){
-	socket.send(JSON.stringify({
-		cmd: 'initialize_client',
-	}));
-	document.getElementById('send_handshake').disabled = false;
-}
-function loadpackets(offset = 0, limit = 5000, packetnames = []){
-	socket.send(JSON.stringify({
-		cmd: 'loadpackets',
-		offset: offset,
-		limit: limit,
-		packetnames: packetnames,
-	}));
-}
-function loadreplaylist(){
-	socket.send(JSON.stringify({
-		cmd: 'loadreplaylist',
-	}));
-}
-function loadreplayfile(name = '', offset = undefined, limit = undefined, packetnames = []){
-	socket.send(JSON.stringify({
-		cmd: 'loadreplayfile',
-		name: name,
-	}));
-	loadpackets(offset, limit, packetnames);
-}
-function loadreplayfileDOM(){
-	var replayFile = document.getElementById('loadreplaylist').value;
-	var offset_limit = document.getElementById('loadreplay_limit').value;
-	var packetnames = document.getElementById('loadreplay_packetnames').value;
 
-	offset_limit = offset_limit.split(' ').join('').split(',').filter(n => n);
-	packetnames = packetnames.split(' ').join('').split(',').filter(n => n);
+class Controls {
+	static loadreplayfile(){
+		var replayFile = document.getElementById('loadreplaylist').value;
+		var offset_limit = document.getElementById('loadreplay_limit').value;
+		var packetnames = document.getElementById('loadreplay_packetnames').value;
 
-	var offset = parseInt(offset_limit[0]) || undefined;
-	var limit = parseInt(offset_limit[1]) || undefined;
+		offset_limit = offset_limit.split(' ').join('').split(',').filter(n => n);
+		packetnames = packetnames.split(' ').join('').split(',').filter(n => n);
 
-	loadreplayfile(replayFile, offset, limit, packetnames);
+		var offset = parseInt(offset_limit[0]) || undefined;
+		var limit = parseInt(offset_limit[1]) || undefined;
+
+		Messages.loadreplayfile(replayFile, offset, limit, packetnames);
+	}
+	static addpacket(){
+		var packet = document.getElementById('addpacket_packet').value;
+		var channel = document.getElementById('addpacket_channel').value;
+
+		Messages.addpacket(packet, channel);
+	}
 }

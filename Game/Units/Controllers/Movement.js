@@ -211,6 +211,9 @@ class Movement {
 		return movementData;
 	}
 	TeleportID = 0;
+	getNextTeleportID(){
+		return (this.TeleportID++ % 255) + 1;
+	}
 	moveAns(teleport = false){
 		// this should be in Movement_Simulation so we can resend if destination will change (following moveable unit)
 		// or following should be made with dash.SpeedParams.FollowNetID ?
@@ -220,7 +223,7 @@ class Movement {
 		MOVE_ANS.netId = 0;
 		MOVE_ANS.TeleportNetID = this.parent.netId;
 
-		MOVE_ANS.TeleportID = teleport ? ++this.TeleportID : 0;
+		MOVE_ANS.TeleportID = teleport ? this.getNextTeleportID() : 0;
 		MOVE_ANS.Waypoints = this.WaypointsHalt ? [this.Waypoints[0]] : this.Waypoints;
 		
 		var isSent = global.Teams.ALL.sendPacket_withVision(MOVE_ANS);

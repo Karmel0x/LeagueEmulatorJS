@@ -1,5 +1,6 @@
 const HandlersParse = require("./HandlersParse");
 const { logPackets } = require("./PacketUtilities");
+const Packets = require("./Packets");
 
 
 var Handlers = {
@@ -55,7 +56,6 @@ var Handlers = {
 };
 
 module.exports = async function(q){
-	logPackets(q);
 
 	var player = q.peer_num;
 	if(q.channel){// not HANDSHAKE
@@ -63,7 +63,8 @@ module.exports = async function(q){
 		player = global.Units['ALL'].Player[clientId];
 	}
 	var packet = HandlersParse.parsePacket(q);
-	console.debug('channel:', q.channel || 0, 'peer_num:', q.peer_num, 'packet:', packet);
+	logPackets({...q, packet});
+	console.debug('peer:', q.peer_num, 'recv:', (Packets[q.channel]?.name || 0) + '.' + (Packets[q.channel]?.[packet.cmd]?.name || 0));//, 'packet:', packet);
 
 	try {
 		if(typeof Handlers[packet.cmd] == 'undefined' || typeof Handlers[packet.cmd].handler == 'undefined')

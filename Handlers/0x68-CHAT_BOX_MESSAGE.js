@@ -46,7 +46,6 @@ module.exports = (player, packet) => {
 				.w :: starting game (start spawning minions)
 				.r :: reading player stats from '/Constants/TestStats.json'
 				.e :: sending player stats to client
-				.debugMode [<debugLevel(0/1)>] :: turning off/on debug mode (debug logs)
 				.levelup [<levelAmount>] :: adding levels for player
 				.expup [<expAmount>] :: adding experience for player
 				.hp [<percent>] :: setting player health
@@ -54,6 +53,7 @@ module.exports = (player, packet) => {
 				.champion <championName> :: switching player champion
 				.info <type(position)> :: printing in console some informations you may need
 			`;
+				//.debugMode [<debugLevel(0/1)>] :: turning off/on debug mode (debug logs)
 			chatBoxMessage(player, message.split('\t\t').join(' '));
 		}
 		else if(commandArgs[0] === 'q'){
@@ -101,22 +101,22 @@ module.exports = (player, packet) => {
 				Object.assign(player.stats, require('../Constants/TestStats.json'));
 			}
 		}
-		else if(commandArgs[0] == 'debugMode'){
-			let debugLevel = parseInt(commandArgs[1] || '');
-			if(isNaN(debugLevel))
-				debugLevel = 1;
-
-			//global.debugLevel = debugLevel;
-
-			if(debugLevel == 0){
-				console.debug_mp = console.debug_mp || console.debug;
-				console.debug = () => {};
-			}
-			else if(debugLevel == 1){
-				console.debug_mp = console.debug_mp || console.debug;
-				console.debug = console.debug_mp || console.debug;
-			}
-		}
+		//else if(commandArgs[0] == 'debugMode'){
+		//	let debugLevel = parseInt(commandArgs[1] || '');
+		//	if(isNaN(debugLevel))
+		//		debugLevel = 1;
+		//
+		//	//global.debugLevel = debugLevel;
+		//
+		//	if(debugLevel == 0){
+		//		console.debug_mp = console.debug_mp || console.debug;
+		//		console.debug = () => {};
+		//	}
+		//	else if(debugLevel == 1){
+		//		console.debug_mp = console.debug_mp || console.debug;
+		//		console.debug = console.debug_mp || console.debug;
+		//	}
+		//}
 		else if(commandArgs[0] == 'levelup'){
 			for(let i = parseInt(commandArgs[1] || 1); i > 0; i--)
 				player.stats.levelUp();

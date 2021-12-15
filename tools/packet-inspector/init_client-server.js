@@ -9,23 +9,38 @@ var server = http.createServer((req, res) => {
 	if(req.url == '/')
 		req.url = '/index.html';
 
-	if(req.url == '/index.html' || req.url == '/index.js' || req.url == '/style.css' || req.url == '/favicon.ico'){
-		fs.readFile(__dirname + '/public' + req.url, (err, data) => {
-			if(err){
-				res.writeHead(404);
-				res.end(JSON.stringify(err));
-				return;
-			}
-			res.writeHead(200);
-			res.end(data);
-		});
+	// do not allow access to files outside of the public directory
+	// allow only alphanumeric, dots, underscores, slashes
+	if(req.url.indexOf('..') != -1 || !req.url.match(/^\/[a-zA-Z0-9\.\/_]+$/)){
+		res.writeHead(403);
+		res.end('403 Forbidden');
+		return;
+	}
+	if(!fs.existsSync(__dirname + '/public' + req.url)){
+		res.writeHead(404);
+		res.end('404 Not Found');
 		return;
 	}
 
-	res.writeHead(200, { 'Content-Type': 'application/json' });
-	res.end(JSON.stringify({
-			data: 'Hello World!'
-	}));
+	fs.readFile(__dirname + '/public' + req.url, (err, data) => {
+		if(err){
+			res.writeHead(404);
+			res.end(JSON.stringify(err));
+			return;
+		}
+		
+		// mimetype
+		var mime = 'text/plain';
+		if(req.url.match(/\.html$/))
+			mime = 'text/html';
+		else if(req.url.match(/\.css$/))
+			mime = 'text/css';
+		else if(req.url.match(/\.js$/))
+			mime = 'text/javascript';
+
+		res.writeHead(200, {'Content-Type': mime});
+		res.end(data);
+	});
 });
 
 
