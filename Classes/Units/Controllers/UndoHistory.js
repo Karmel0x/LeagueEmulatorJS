@@ -16,20 +16,20 @@ class ItemActionList {
 
 class UndoHistory {
     constructor(){
-        this.history = new Array()
+        this.history = new Array();
     }
     alternateUndoEnable(){
-        var SetUndoEnabled = createPacket('SetUndoEnabled')
+        var SetUndoEnabled = createPacket('SetUndoEnabled');
         SetUndoEnabled.netId = player.netId;
         SetUndoEnabled.UndoStackSize = this.history.length;
         var isSent = player.sendPacket(SetUndoEnabled);
     }
     clearUndoHistory(){
-        this.history = new Array()
+        this.history = new Array();
     }
     addUndoHistory(itemId, slot, action){
         this.history.push( { itemId: itemId, slot: slot, action: action } );
-        this.alternateUndoEnable()
+        this.alternateUndoEnable();
     }
     remUndoHistory(){
         if( !this.history.length )
@@ -71,19 +71,17 @@ class UndoHistory {
                 break;
             }
         }
-        
-        //this.history = this.history.splice( 0, this.history.length - 1);
         this.alternateUndoEnable();
     }
     fixHistoryAfterSwapItems( slot1, slot2 ){
 
         var tempArr = Array.from( this.history ).reverse();
 
-        var itemIndex = tempArr.findIndex( idx => idx.slot == slot1 )
-        var item = this.history[ this.history.length - ( itemIndex + 1 ) ]
+        var itemIndex = tempArr.findIndex( idx => idx.slot == slot1 );
+        var item = this.history[ this.history.length - ( itemIndex + 1 ) ];
 
         if( player.inventory.Items[slot1].id == item.itemId )
-            item.slot = slot2
+            item.slot = slot2;
     }
 }
 

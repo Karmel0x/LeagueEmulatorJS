@@ -69,10 +69,7 @@ class StatsTurret extends StatsUnit {
                 break;
             }
         }
-        //debugger;
     }
-
 }
-
 
 module.exports = StatsTurret;

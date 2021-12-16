@@ -13,7 +13,7 @@ class Inventory {
 
     constructor(parent){
         this.parent = parent;
-		this.UndoHistory = new UndoHistory( this )
+		this.UndoHistory = new UndoHistory( this );
     }
 	Items = {};
 	itemsToRemove = [];
@@ -132,7 +132,7 @@ class Inventory {
 		if(slot1 < 0 || slot1 >= ItemSlots || slot2 < 0 || slot2 >= ItemSlots)
 			return false;
 
-		this.UndoHistory.fixHistoryAfterSwapItems( slot1, slot2 )
+		this.UndoHistory.fixHistoryAfterSwapItems( slot1, slot2 );
 
 		var swap1 = this.Items[slot1] || undefined;
 		this.Items[slot1] = this.Items[slot2] || undefined;
@@ -153,7 +153,7 @@ class Inventory {
 		this.removeItemAns(slot);
 
 		if( ItemList[ this.Items[slot].id ].stats )
-			this.parent.stats.decreaseStats( ItemList[ this.Items[slot].id ].stats )
+			this.parent.stats.decreaseStats( ItemList[ this.Items[slot].id ].stats );
 
 		this.parent.stats.charStats_send();
 
@@ -200,6 +200,5 @@ class Inventory {
 		this.parent.stats.charStats_send();
 	}
 }
-
 
 module.exports = Inventory;
