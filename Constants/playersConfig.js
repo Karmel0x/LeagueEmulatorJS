@@ -13,7 +13,56 @@ module.exports = {//todo: config
 			icon: 0,
 			//blowfishKey: '',
 			runes: [],
-		}
+			_PlayerInfo: {
+				PlayerID: 1,
+				SummonorLevel: 30,
+				SummonorSpell1: "HEAL",
+				SummonorSpell2: "FLASH",
+				Bitfield: 0,//108
+				TeamId: "BLUE",
+				BotName: '',
+				BotSkinName: '',
+				EloRanking: "DIAMOND",
+				BotSkinID: 0,
+				BotDifficulty: 0,
+				ProfileIconId: 0,//666,
+				AllyBadgeID: 2,
+				EnemyBadgeID: 0,
+				ClientID: 0,
+			}
+		},
 	],
-	//'RED': [],
+	RED: [
+		{
+			playerId: 2,
+			rank: '',
+			name: '',
+			characterName: 'Yasuo',
+			//team: 'BLUE',
+			skin: 0,
+			summoner1: '',
+			summoner2: '',
+			ribbon: 0,
+			icon: 0,
+			//blowfishKey: '',
+			runes: [],
+			_PlayerInfo: {
+				PlayerID: 2,
+				SummonorLevel: 30,
+				SummonorSpell1: "HEAL",
+				SummonorSpell2: "FLASH",
+				Bitfield: 0,//108
+				TeamId: "RED",
+				BotName: '',
+				BotSkinName: '',
+				EloRanking: "DIAMOND",
+				BotSkinID: 0,
+				BotDifficulty: 0,
+				ProfileIconId: 0,//666,
+				AllyBadgeID: 2,
+				EnemyBadgeID: 0,
+				ClientID: 1,
+			}
+		},
+	],
 };

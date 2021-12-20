@@ -56,26 +56,10 @@ module.exports = (player, packet) => {
 	SYNCH_VERSION.MapToLoad = MapId.SummonersRift_Original;
 	SYNCH_VERSION.VersionString = VersionString;
 
-	SYNCH_VERSION.PlayerInfo = [
-		{
-			PlayerID: 1,
-			SummonorLevel: 30,
-			SummonorSpell1: SummonerSpells.HEAL,
-			SummonorSpell2: SummonerSpells.FLASH,
-			Bitfield: 0,//108
-			TeamId: TEAM.BLUE,
-			BotName: '',
-			BotSkinName: '',
-			EloRanking: "DIAMOND",
-			BotSkinID: 0,
-			BotDifficulty: 0,
-			ProfileIconId: 0,//666,
-			AllyBadgeID: 2,
-			EnemyBadgeID: 0,
-		},
-		{PlayerID: -1}, {PlayerID: -1}, {PlayerID: -1}, {PlayerID: -1}, {PlayerID: -1}, {PlayerID: -1},
-		{PlayerID: -1}, {PlayerID: -1}, {PlayerID: -1}, {PlayerID: -1}, {PlayerID: -1},
-	];
+	SYNCH_VERSION.PlayerInfo = [];
+	for(let i = 0; i < 12; i++)
+		SYNCH_VERSION.PlayerInfo.push(global.Players[i] ? global.Players[i].PlayerInfo : {PlayerID: -1});
+
 	SYNCH_VERSION.MapMode = 'CLASSIC';
 	SYNCH_VERSION.PlatformID = 'NA1';
 	SYNCH_VERSION.GameFeatures = {//487890
@@ -96,5 +80,5 @@ module.exports = (player, packet) => {
 		SYNCH_VERSION.EnabledDradisMessages[i] = true;
 
 	var isSent = player.sendPacket(SYNCH_VERSION, loadingStages.NOT_CONNECTED);
-	console.debug(SYNCH_VERSION);
+	//console.debug(SYNCH_VERSION);
 };

@@ -26,7 +26,7 @@ class Nexus extends Unit {
 		var OBJECT_SPAWN = createPacket('OBJECT_SPAWN');
 		OBJECT_SPAWN.netId = this.netId;
 		OBJECT_SPAWN.isTurret = true;
-		var isSent = global.Teams.ALL.sendPacket(OBJECT_SPAWN, loadingStages.NOT_CONNECTED);
+		this.packetController.sendTo_everyone(OBJECT_SPAWN, loadingStages.NOT_CONNECTED);
 
 		super.spawn();
 	}
@@ -40,7 +40,7 @@ class Nexus extends Unit {
 		SET_HEALTH.count = 0;
 		SET_HEALTH.MaxHealth = this.stats.HealthPoints.Total;
 		SET_HEALTH.Health = this.stats.CurrentHealth;
-		var isSent = global.Teams.ALL.sendPacket(SET_HEALTH, loadingStages.NOT_CONNECTED);
+		this.packetController.sendTo_everyone(SET_HEALTH, loadingStages.NOT_CONNECTED);
 	}
 }
 

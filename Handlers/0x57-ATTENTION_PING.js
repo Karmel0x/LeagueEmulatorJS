@@ -21,7 +21,7 @@ module.exports = (player, packet) => {
 			PingThrottled: false,
 			PlayVO: true,
 		};
-		var isSent = player.sendPacket(ATTENTION_PING);
+		player.packetController.sendTo_team(ATTENTION_PING);
 	}
 
 	//test

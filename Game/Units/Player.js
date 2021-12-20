@@ -1,5 +1,5 @@
 
-const {createPacket, sendPacket} = require("../../Core/PacketUtilities");
+const {createPacket, sendPacket, sendPacketS} = require("../../Core/PacketUtilities");
 const loadingStages = require('../../Constants/loadingStages');
 const SpellsSummoner = require("../Spells/Summoner");
 const TranslateCenteredCoordinates = require('../../Functions/TranslateCenteredCoordinates');
@@ -7,12 +7,66 @@ const TranslateCenteredCoordinates = require('../../Functions/TranslateCenteredC
 const Unit = require('./Unit');
 const Movement = require('./Controllers/Movement');
 const CharactersChampions = require('../Characters/Champions');
+const TEAM = require('../../Constants/TEAM');
+const CreateHeroDeath = {
+	Alive: 0,
+	Zombie: 1,
+	Dead: 2
+};
+
+global.Players = global.Players || [];
 
 class Player extends Unit {
+	HERO_SPAWN(dest = global.Teams['ALL']){
+		//todo
+		
+		var HERO_SPAWN = createPacket('HERO_SPAWN');
+		//HERO_SPAWN.netId = this.netId;
+		HERO_SPAWN.NetID = this.netId;
+		HERO_SPAWN.ClientID = this._PlayerInfo.ClientID;
+		HERO_SPAWN.NetNodeID = 0;//0x40;
+		HERO_SPAWN.SkinID = 0;
+		HERO_SPAWN.Name = 'Test';//playerName
+		HERO_SPAWN.Skin = this.character.name;//modelName
+
+		HERO_SPAWN.bitfield = {
+			TeamIsOrder: this.info.team == 'BLUE',
+			IsBot: false
+		};
+		HERO_SPAWN.CreateHeroDeath = CreateHeroDeath.Alive;
+		HERO_SPAWN.SpawnPositionIndex = 0;//2;
+
+		dest.sendPacket(HERO_SPAWN, loadingStages.NOT_CONNECTED);
+	}
+	AVATAR_INFO(dest = global.Teams['ALL']){
+		//todo
+		var AVATAR_INFO = createPacket('AVATAR_INFO');
+		AVATAR_INFO.netId = this.netId;
+		AVATAR_INFO.ItemIDs = [
+			0,
+			0x147d, 0x147d, 0x147d, 0x147d, 0x147d, 0x147d, 0x147d, 0x147d, 0x147d,
+			0x14c5, 0x14c5, 0x14c5, 0x14c5, 0x14c5, 0x14c5, 0x14c5, 0x14c5, 0x14c5,
+			0x14a9, 0x14a9, 0x14a9, 0x14a9, 0x14a9, 0x14a9, 0x14a9, 0x14a9, 0x14a9,
+			0x14d7, 0x14d7
+		];
+		AVATAR_INFO.SummonerIDs = [0x0364af1c, 0x06496ea8];
+		AVATAR_INFO.SummonerIDs2 = AVATAR_INFO.SummonerIDs;
+		
+		dest.sendPacket(AVATAR_INFO, loadingStages.NOT_CONNECTED);
+	}
+	sendReconnectPackets(){
+		global.Players.forEach(player => {
+			player.HERO_SPAWN(this);
+			player.AVATAR_INFO(this);
+			
+		});
+	}
+
 	static create(team, num, config = {}){
 		var unit = new Player(team, num, config.characterName, config);
 		unit.character = CharactersChampions.create(unit, config.characterName);
 		unit.initialized();
+		global.Players.push(unit);
 		return unit;
 	}
 
@@ -33,6 +87,24 @@ class Player extends Unit {
 		this.Movement = new Movement(this);
 		
 	}
+	get PlayerInfo(){
+		return Object.assign({}, this._PlayerInfo, {
+			SummonorSpell1: this.summonerSpells.spells[0].spellHash,
+			SummonorSpell2: this.summonerSpells.spells[1].spellHash,
+			TeamId: TEAM[this.info.team] || 0,
+		});
+	}
+	//_storePacket = [];
+	//storePacket(packet){
+	//	this._storePacket.push(packet);
+	//}
+	//restorePackets(){
+	//	console.log('restorePackets', this._storePacket);
+	//	while(this._storePacket.length){
+	//		var packet = this._storePacket.shift();
+	//		sendPacketS([this.peer_num], packet.channel, packet.buffer);
+	//	}
+	//}
 	//todo: packet batching
 	//packetBatching = false;
 	//batchedPackets = [];
@@ -54,7 +126,7 @@ class Player extends Unit {
 		//if(this.packetBatching)
 		//    this.batchPackets.push(packet);
 		//else
-			sendPacket(this.peer_num, packet);
+			sendPacket([this.peer_num], packet);
 	}
 	
 	chatBoxMessage(message){
@@ -65,7 +137,7 @@ class Player extends Unit {
 		CHAT_BOX_MESSAGE.messageSize = message.length;
 
 		CHAT_BOX_MESSAGE.netId = this.netId;
-		var isSent = this.sendPacket(CHAT_BOX_MESSAGE);
+		this.packetController.sendTo_self(CHAT_BOX_MESSAGE);
 		console.debug(CHAT_BOX_MESSAGE);
 	}
 	SET_HEALTH(){
@@ -81,7 +153,7 @@ class Player extends Unit {
 		};
 		SET_COOLDOWN.Cooldown = cooldown;
 		SET_COOLDOWN.MaxCooldownForDisplay = cooldown;
-		var isSent = this.sendPacket(SET_COOLDOWN);
+		this.packetController.sendTo_self(SET_COOLDOWN);
 		console.log(SET_COOLDOWN);
 	}
 	castSpell(packet){
@@ -124,7 +196,7 @@ class Player extends Unit {
 		};
 		Object.assign(CAST_SPELL_ANS.CastInfo, CastInfo);
 
-		var isSent = this.sendPacket(CAST_SPELL_ANS);
+		this.packetController.sendTo_vision(CAST_SPELL_ANS);
 		console.log(CAST_SPELL_ANS);
 	}
 	spawnProjectileAns(CastInfo, PackageHash, speed = 1200){//todo
@@ -174,7 +246,7 @@ class Player extends Unit {
 		SPAWN_PROJECTILE.UnitPosition = SPAWN_PROJECTILE.CastInfo.SpellCastLaunchPosition;
 		SPAWN_PROJECTILE.Speed = speed;
 
-		var isSent = this.sendPacket(SPAWN_PROJECTILE);
+		this.packetController.sendTo_vision(SPAWN_PROJECTILE);
 		console.log(SPAWN_PROJECTILE);
 	}
 
@@ -201,7 +273,7 @@ class Player extends Unit {
 			ScriptScale: 1,
 		};
 
-		var ownerPositionCC = TranslateCenteredCoordinates.to([player.position])[0];
+		var ownerPositionCC = TranslateCenteredCoordinates.to([this.Movement.position])[0];
 		var targetPositionCC = target ? TranslateCenteredCoordinates.to([target.position])[0] : ownerPositionCC;
 		targetPositionCC.z = 0;// don't know if it's necessary to set z
 		ownerPositionCC.z = 50;
@@ -218,7 +290,8 @@ class Player extends Unit {
 
 		SPAWN_PARTICLE.FXCreateGroupData[0].count = SPAWN_PARTICLE.FXCreateGroupData[0].FXCreateData.length;
 		SPAWN_PARTICLE.count = SPAWN_PARTICLE.FXCreateGroupData.length;
-		var isSent = this.sendPacket(SPAWN_PARTICLE);
+		
+		this.packetController.sendTo_vision(SPAWN_PARTICLE);
 		console.log(SPAWN_PARTICLE);
 		console.log(SPAWN_PARTICLE.FXCreateGroupData[0].FXCreateData);
 	}

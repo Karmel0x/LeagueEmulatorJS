@@ -45,7 +45,7 @@ class Inventory {
 		//	unk3: true,
 		//	unk5: true,
 		//};
-		var isSent = this.parent.sendPacket(BUY_ITEM_ANS);
+		this.parent.packetController.sendTo_vision(BUY_ITEM_ANS);
 	}
 	buyItem(itemId){
 		if(!itemId || !ItemList[itemId])
@@ -77,7 +77,7 @@ class Inventory {
 		SWAP_ITEMS.netId = this.parent.netId;
 		SWAP_ITEMS.Source = slot1;
 		SWAP_ITEMS.Destination = slot2;
-		var isSent = this.parent.sendPacket(SWAP_ITEMS);
+		this.parent.packetController.sendTo_vision(SWAP_ITEMS);
 	}
 	swapItems(slot1, slot2){
 		if(slot1 < 0 || slot1 >= ItemSlots || slot2 < 0 || slot2 >= ItemSlots)
@@ -95,7 +95,7 @@ class Inventory {
 		REMOVE_ITEM.Slot = slot;
 		REMOVE_ITEM.ItemsInSlot = this.Items[slot].count;
 		//REMOVE_ITEM.NotifyInventoryChange = false;
-		var isSent = this.parent.sendPacket(REMOVE_ITEM);
+		this.parent.packetController.sendTo_vision(REMOVE_ITEM);
 	}
 	removeItem(slot){
 		this.Items[slot].count--;

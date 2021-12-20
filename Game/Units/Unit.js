@@ -26,6 +26,7 @@ var Battle = {
 
 const Inventory = require('./Controllers/Inventory');
 const BuffController = require('./Controllers/BuffController');
+const PacketController = require('./Controllers/PacketController');
 
 const oppositeTeam = {'BLUE': 'RED', 'RED': 'BLUE'};
 
@@ -58,9 +59,10 @@ class Unit {
 		this.battle = new (Battle[this.info.type] || Battle.Unit)(this);
 		this.inventory = new Inventory(this);
 		this.buffController = new BuffController(this);
+		this.packetController = new PacketController(this);
 
 		appendGlobal(this);
-		console.debug(Date.now(), 'Created Unit', this);
+		console.debug(Date.now(), 'Created Unit', this.constructor.name, this.netId);
 		console.log('UnitsCount', global.UnitsCount.count);
 		//console.log(global.Units);
 
@@ -132,7 +134,7 @@ class Unit {
 			ExtraTime: 127,
 		};
 		
-		var isSent = global.Teams.ALL.sendPacket_withVision(NEXT_AUTO_ATTACK);
+		this.packetController.sendTo_vision(NEXT_AUTO_ATTACK);
 	}
 	attackProcess(target){
 		var missile = new Targetedshot(this, {speed: 2000});
@@ -212,7 +214,7 @@ class Unit {
 	//    var SET_HEALTH = createPacket('SET_HEALTH');
 	//    SET_HEALTH.netId = this.netId;
 	//    SET_HEALTH.count = 0;
-	//    var isSent = global.Teams.ALL.sendPacket_withVision(SET_HEALTH);
+	//    this.packetController.sendTo_vision(SET_HEALTH);
 	//}
 	SET_HEALTH(){
 		var SET_HEALTH = createPacket('SET_HEALTH');
@@ -220,7 +222,7 @@ class Unit {
 		SET_HEALTH.count = 0;
 		SET_HEALTH.MaxHealth = this.stats.HealthPoints.Total;
 		SET_HEALTH.Health = this.stats.CurrentHealth;
-		var isSent = global.Teams.ALL.sendPacket_withVision(SET_HEALTH);
+		this.packetController.sendTo_vision(SET_HEALTH);
 	}
 	UPDATE_MODEL(character){
 		var UPDATE_MODEL = createPacket('UPDATE_MODEL');
@@ -233,7 +235,7 @@ class Unit {
 		UPDATE_MODEL.ID = 0;
 		UPDATE_MODEL.SkinID = 0;
 		UPDATE_MODEL.SkinName = character;
-		var isSent = this.sendPacket(UPDATE_MODEL);
+		this.packetController.sendTo_vision(UPDATE_MODEL);
 	}
 	SET_ANIMATION(animPairs){
 		var SET_ANIMATION = createPacket('SET_ANIMATION');
@@ -244,7 +246,7 @@ class Unit {
 				fromAnim: animPairs[i][0],
 				toAnim: animPairs[i][1],
 			});
-		var isSent = this.sendPacket(SET_ANIMATION);
+		this.packetController.sendTo_vision(SET_ANIMATION);
 	}
 }
 

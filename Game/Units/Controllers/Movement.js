@@ -53,7 +53,7 @@ class Movement {
 		DASH.Waypoints = this.Waypoints;
 		DASH.SpeedParams = this.SpeedParams;
 		
-		var isSent = global.Teams.ALL.sendPacket_withVision(DASH);
+		this.parent.packetController.sendTo_vision(DASH);
 		//console.log(DASH);
 	}
 	dash(position, options){
@@ -226,7 +226,7 @@ class Movement {
 		MOVE_ANS.TeleportID = teleport ? this.getNextTeleportID() : 0;
 		MOVE_ANS.Waypoints = this.WaypointsHalt ? [this.Waypoints[0]] : this.Waypoints;
 		
-		var isSent = global.Teams.ALL.sendPacket_withVision(MOVE_ANS);
+		this.parent.packetController.sendTo_vision(MOVE_ANS);
 		//console.log('MOVE_ANS', MOVE_ANS);
 		//console.log('MOVE_ANS.Waypoints', MOVE_ANS.Waypoints);
 	}

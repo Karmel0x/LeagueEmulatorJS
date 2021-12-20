@@ -1,5 +1,5 @@
 var ConstantsUnit = require('../../Constants/Unit');
-const {createPacket, sendPacket} = require("../../Core/PacketUtilities");
+const {createPacket, sendPacket, sendPacketP} = require("../../Core/PacketUtilities");
 const TEAM = require('../../Constants/TEAM');
 const loadingStages = require('../../Constants/loadingStages');
 
@@ -28,8 +28,28 @@ class Team {
 		this.sendPacket(packet);
 	}
 	sendPacket(packet, minStage = loadingStages.IN_GAME){
-		for(let player_num in global.Units[this.team].Player)
-			global.Units[this.team].Player[player_num].sendPacket(packet, minStage);
+		//var peer_nums = [];
+		var players = [];
+		for(let player_num in global.Units[this.team].Player){
+			var player = global.Units[this.team].Player[player_num];
+			
+			if(player.loadingStage < minStage)
+				continue;
+
+			//if(typeof player.peer_num == 'undefined'){
+			//	//var cPacket = JSON.parse(JSON.stringify(packet));
+			//	//player.storePacket(cPacket);
+			//	continue;
+			//}
+
+			//peer_nums.push(player.peer_num);
+			players.push(player);
+		}
+
+		//if(peer_nums.length > 0)
+		//	sendPacket(peer_nums, packet);
+		if(players.length > 0)
+			sendPacketP(players, packet);
 	}
 	vision(target, enters = true){
 		if(target.info.type == 'Nexus' || target.info.type == 'Inhibitor' || target.info.type == 'Turret')
@@ -37,7 +57,7 @@ class Team {
 
 		//console.log('vision', target);
 		if(enters){
-			console.debug('enters vision', this.team, target.netId);
+			console.debug('enters vision', this.team, target.constructor.name, target.netId);
 
 			var OBJECT_SPAWN = createPacket('OBJECT_SPAWN');
 			OBJECT_SPAWN.netId = target.netId;
@@ -53,19 +73,19 @@ class Team {
 				}
 			];
 			OBJECT_SPAWN.MovementData = target.MovementData;
-			var isSent = this.sendPacket(OBJECT_SPAWN, loadingStages.IN_GAME);
-			//console.log(OBJECT_SPAWN.MovementData);
+			var isSent = this.sendPacket(OBJECT_SPAWN);
+			//console.log(OBJECT_SPAWN);
 
 			//var SET_HEALTH = createPacket('SET_HEALTH');
 			//SET_HEALTH.netId = target.netId;
 			//SET_HEALTH.count = 0;
 			//var isSent = this.sendPacket(SET_HEALTH);
 		}else{
-			console.debug('leaves vision', this.team, target.netId);
+			console.debug('leaves vision', this.team, target.constructor.name, target.netId);
 
 			var LEAVE_VISION = createPacket('LEAVE_VISION');
 			LEAVE_VISION.netId = target.netId;
-			var isSent = this.sendPacket(LEAVE_VISION, loadingStages.IN_GAME);
+			var isSent = this.sendPacket(LEAVE_VISION);
 		}
 
 	}

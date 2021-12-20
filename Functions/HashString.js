@@ -8,9 +8,11 @@ module.exports = class HashString {
 		path = path.toLowerCase();
 
 		var hash = 0;
-		var mask = 0xF0000000;
+		const magic = 16;
+		const mask = 0xF0000000;
+
 		for(var i = 0; i < path.length; i++){
-			hash = path.charCodeAt(i) + 0x10 * hash;
+			hash = path.charCodeAt(i) + magic * hash;
 			
 			let hm = (hash & mask) >>> 0;
 			if(hm > 0)
@@ -27,9 +29,10 @@ module.exports = class HashString {
 		str = str.toLowerCase();
 
 		var hash = 0;
+		const magic = 65599;
 
 		for (var i = 0; i < str.length; i++)
-			hash = (str.charCodeAt(i) + 65599 * hash) >>> 0;
+			hash = (str.charCodeAt(i) + magic * hash) >>> 0;
 
 		return hash;
 	}

@@ -22,7 +22,7 @@ module.exports = class BuffController {
         ADD_BUFF.RunningTime = 0;
         ADD_BUFF.Duration = spellObject.buff.Duration;
         ADD_BUFF.CasterNetID = this.parent.netId;
-        var isSent = this.parent.sendPacket(ADD_BUFF);
+		this.parent.packetController.sendTo_vision(ADD_BUFF);
 	}
 	removeBuffAns(spellObject){
         var REMOVE_BUFF = createPacket('REMOVE_BUFF', 'S2C');
@@ -30,7 +30,7 @@ module.exports = class BuffController {
         REMOVE_BUFF.BuffSlot = spellObject.BuffSlot;
         REMOVE_BUFF.BuffNameHash = spellObject.spellHash;
         REMOVE_BUFF.RunTimeRemove = 0;
-        var isSent = this.parent.sendPacket(REMOVE_BUFF);
+		this.parent.packetController.sendTo_vision(REMOVE_BUFF);
 	}
 	buffs = {};
 	BuffSlots = 0;

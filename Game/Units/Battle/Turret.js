@@ -12,7 +12,7 @@ class BattleTurret extends BattleUnit {
 		ANNOUNCE2.EventData = {
 			OtherNetID: source.parent.netId
 		};
-		var isSent = global.Teams.ALL.sendPacket(ANNOUNCE2);
+		this.parent.packetController.sendTo_everyone(ANNOUNCE2);
 		
 	}
 

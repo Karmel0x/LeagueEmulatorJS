@@ -52,7 +52,7 @@ module.exports = class Barrack {
 		Barrack_SpawnUnit.DamageBonus = this.DamageBonus;
 		Barrack_SpawnUnit.HealthBonus = this.HealthBonus;
 		Barrack_SpawnUnit.MinionLevel = this.MinionLevel;
-		var isSent = global.Teams.ALL.sendPacket(Barrack_SpawnUnit);
+		global.Teams.ALL.sendPacket(Barrack_SpawnUnit);
 		//console.debug(Barrack_SpawnUnit);
 	}
 	spawnUnit(characterName){

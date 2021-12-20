@@ -34,7 +34,7 @@ class StatsPlayer extends StatsUnit {
 		
 		var CHAR_STATS = createPacket('CHAR_STATS', 'LOW_PRIORITY');
 		CHAR_STATS.units = [this.parent];
-		var isSent = this.parent.sendPacket(CHAR_STATS);
+		this.parent.packetController.sendTo_everyone(CHAR_STATS);
 	}
 	skillUpgrade_send(Slot){
 		var SKILL_UP = createPacket('SKILL_UP', 'S2C');
@@ -42,7 +42,7 @@ class StatsPlayer extends StatsUnit {
 		SKILL_UP.Slot = Slot;
 		SKILL_UP.SpellLevel = this.SpellLevel[Slot];
 		SKILL_UP.SkillPoints = this.SkillPoints;
-		var isSent = this.parent.sendPacket(SKILL_UP);
+		this.parent.packetController.sendTo_self(SKILL_UP);
 		console.debug(SKILL_UP);
 	}
 	Exp = 0;

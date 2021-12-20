@@ -12,12 +12,12 @@ class BattleInhibitor extends BattleUnit {
 		ANNOUNCE2.EventData = {
 			OtherNetID: source.parent.netId
 		};
-		var isSent = global.Teams.ALL.sendPacket(ANNOUNCE2);
+		this.parent.packetController.sendTo_everyone(ANNOUNCE2);
 
 		var Building_Die = createPacket('Building_Die');
 		Building_Die.netId = this.parent.netId;
 		Building_Die.AttackerNetID = source.parent.netId;
-		var isSent = global.Teams.ALL.sendPacket(Building_Die);
+		this.parent.packetController.sendTo_everyone(Building_Die);
 	}
 
 }

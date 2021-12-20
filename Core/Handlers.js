@@ -59,8 +59,8 @@ module.exports = async function(q){
 
 	var player = q.peer_num;
 	if(q.channel){// not HANDSHAKE
-		var clientId = global.PlayerPeers[q.peer_num];
-		player = global.Units['ALL'].Player[clientId];
+		var ClientID = global.PlayerPeers[q.peer_num];
+		player = global.Units['ALL'].Player[ClientID];
 	}
 	var packet = HandlersParse.parsePacket(q);
 	logPackets({...q, packet});

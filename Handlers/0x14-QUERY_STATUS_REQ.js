@@ -8,8 +8,9 @@ module.exports = (player, packet) => {
     console.log('handle: C2S.QUERY_STATUS_REQ');
 	//console.log(packet);
     
-
-	var QUERY_STATUS_ANS = createPacket('QUERY_STATUS_ANS');
-    QUERY_STATUS_ANS.Response = true;
-	var isSent = player.sendPacket(QUERY_STATUS_ANS, loadingStages.NOT_CONNECTED);
+	{
+		var QUERY_STATUS_ANS = createPacket('QUERY_STATUS_ANS');
+		QUERY_STATUS_ANS.Response = true;
+		player.packetController.sendTo_self(QUERY_STATUS_ANS, loadingStages.NOT_CONNECTED);
+	}
 };

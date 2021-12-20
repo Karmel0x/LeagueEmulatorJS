@@ -65,8 +65,7 @@ class Turret extends Unit {
 			IsTargetable: true,
 		};
 		TURRET_SPAWN.IsTargetableToTeamSpellFlags = 0x01800000;
-		var isSent = global.Teams.ALL.sendPacket(TURRET_SPAWN, loadingStages.NOT_CONNECTED);
-
+		this.packetController.sendTo_everyone(TURRET_SPAWN, loadingStages.NOT_CONNECTED);
 
 		super.spawn();
 	}
@@ -84,7 +83,7 @@ class Turret extends Unit {
 		SET_HEALTH.count = 0;
 		SET_HEALTH.MaxHealth = this.stats.HealthPoints.Total;
 		SET_HEALTH.Health = this.stats.CurrentHealth;
-		var isSent = global.Teams.ALL.sendPacket(SET_HEALTH, loadingStages.NOT_CONNECTED);
+		this.packetController.sendTo_everyone(SET_HEALTH, loadingStages.NOT_CONNECTED);
 	}
 	acquisitionRange = 750;
 }
