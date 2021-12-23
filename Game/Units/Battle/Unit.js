@@ -7,6 +7,9 @@ class BattleUnit {
 	}
 
 	attack(target){
+		//if(this.parent.info.team === target.info.team)
+		//	return;
+
 		console.log('BattleUnit.attack', this.parent.netId, target.netId);
 		var dmg = {
 			ad: 0,

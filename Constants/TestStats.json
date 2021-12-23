@@ -16,8 +16,8 @@
 		"Total": 30.0,
 		"BaseValue": 20.0
 	},
-	"LifeSteal": {"Total": 3.0},
-	"SpellVamp": {"Total": 4.0},
+	"LifeSteal": {"Total": 0.3},
+	"SpellVamp": {"Total": 0.4},
 	"Armor": {
 		"Total": 15.0,
 		"PercentBonus": 2.0

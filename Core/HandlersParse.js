@@ -35,6 +35,8 @@ function parsePacket(packet){
     Object.assign(obj1, parseBody(packet.buffer, packet.channel || 0, obj1.cmd));
     packet.buffer.off = 0;
 
+	//obj1.cmd = obj1.cmd2 ?? obj1.cmd;
+
 	return obj1;
 }
 
