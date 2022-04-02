@@ -5,8 +5,8 @@ const Handlers = require('./Handlers');
 global.PlayerPeers = global.PlayerPeers || {};
 
 
-async function init_network(){
-	var enet_initialize = Boolean(enet.initialize());
+async function init_network(config = {port: 5119, host: "127.0.0.1", blowfishKey: "17BLOhi6KZsTtldTsizvHg=="}, handlers = Handlers){
+	var enet_initialize = Boolean(enet.initialize(config.port, config.host, config.blowfishKey));
 	console.log('enet_initialize:', enet_initialize);
 	if(!enet_initialize)
 		return false;
@@ -20,7 +20,7 @@ async function init_network(){
 		}
 
 		if(q.type == enet.ENET_EVENT_TYPE_RECEIVE){
-			Handlers(q);
+			handlers(q);
 		}
 	}
 }

@@ -3,11 +3,7 @@ const Packets = require('../Core/Packets');
 const {createPacket, sendPacket} = require('../Core/PacketUtilities');
 const loadingStages = require("../Constants/loadingStages");
 
-const Inhibitor = require("../Game/Units/Inhibitor");
-const Nexus = require("../Game/Units/Nexus");
-const Turret = require("../Game/Units/Turret");
-const Barrack = require("../Game/Units/Barrack");
-const Player = require("../Game/Units/Player");
+const Game = require('../Game/Initializers/Game');
 
 var spawned = false;
 
@@ -21,11 +17,7 @@ module.exports = (player, packet) => {
 	
 	if(!spawned){//temporary here
 		spawned = true;
-		//Player.spawnAll();
-		Nexus.spawnAll();
-		Inhibitor.spawnAll();
-		Turret.spawnAll();
-		Barrack.spawnAll();
+		Game.loaded();
 	}
 	player.sendReconnectPackets();
 

@@ -60,7 +60,7 @@ module.exports = async function(q){
 	var player = q.peer_num;
 	if(q.channel){// not HANDSHAKE
 		var ClientID = global.PlayerPeers[q.peer_num];
-		player = global.Units['ALL'].Player[ClientID];
+		player = global.getUnitsF('ALL', 'Player')[ClientID];
 	}
 	var packet = HandlersParse.parsePacket(q);
 	logPackets({...q, packet});

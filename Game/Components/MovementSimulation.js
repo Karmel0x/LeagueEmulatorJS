@@ -12,72 +12,40 @@ class MovementSimulation {
 		RED: {},
 		//NEUTRAL: {},
 	}
-	broadcastVision(allyUnit_team, enemyUnit_id){//todo..
-		let enemyUnit = global.Units['ALL']['ALL'][enemyUnit_id];
-		if(!enemyUnit)
-			return;
-		let visibleForEnemy = !enemyUnit.battle.died && this.visibleForTeam[allyUnit_team][enemyUnit_id];
-		delete this.visibleForTeam[allyUnit_team][enemyUnit_id];
-		if(enemyUnit.visibleForEnemy == visibleForEnemy)
-			return;
-		enemyUnit.visibleForEnemy = visibleForEnemy;
-		global.Teams[allyUnit_team].vision(enemyUnit, visibleForEnemy);
-		//for(var allyUnit_id in global.Teams[allyUnit_team].Player){
-		//	let allyUnit = global.Teams[allyUnit_team].Player[allyUnit_id];
-		//	allyUnit.vision(enemyUnit, visibleForEnemy);
-		//}
+	
+	broadcastVision(){
+		global.units.forEach(unit => {
+			let visibleForEnemy = !unit.battle.died && unit.visibleForEnemy2;
+			if(unit.visibleForEnemy != visibleForEnemy){
+				unit.visibleForEnemy = visibleForEnemy;
+				global.Teams[unit.getEnemyTeam()].vision(unit, visibleForEnemy);
+			}
+
+			let visibleForTeam = !unit.battle.died && unit.visibleForTeam2;
+			if(unit.visibleForTeam != visibleForTeam){
+				unit.visibleForTeam = visibleForTeam;
+				global.Teams[unit.getAllyTeam()].vision(unit, visibleForTeam);
+			}
+		});
 	}
-	visionProcess(){//todo..
-		//todo: `Object.values(obj).map` for better performance
+	visionProcess(){
+		const oppositeTeams = {BLUE: 'RED', RED: 'BLUE'};
+		for(var allyUnit_team in oppositeTeams){
+			var enemyUnit_team = oppositeTeams[allyUnit_team];
 
-		const teams = {BLUE: 0, RED: 1};
-		//var allyUnit_team = 'BLUE';
-		for(var allyUnit_team in teams)
-		{
-			for(var allyUnit_id in global.Units[allyUnit_team]['ALL']){
-
-				let allyUnit = global.Units[allyUnit_team]['ALL'][allyUnit_id];
-				//let allyUnit_netId = allyUnit.netId;
-
-				//if(!this.moved[allyUnit_netId])
-				//	continue;
-
-				let allyUnit_position = allyUnit.Position;
-				if(allyUnit_position.x == 0 && allyUnit_position.y == 0)
-					continue;//for now
+			var allyUnits = global.getUnitsF(allyUnit_team);
+			var enemyUnits = global.getUnitsF(enemyUnit_team);
+			
+			allyUnits.forEach(allyUnit => {
 				let allyUnit_visionRange = allyUnit.stats.visionRange || defaultVisionRange;
-
-				//var enemyUnit_team = 'RED';
-				for(var enemyUnit_team in teams)
-				{
-					if(enemyUnit_team == allyUnit_team)
-						continue;
-		
-					for(var enemyUnit_id in global.Units[enemyUnit_team]['ALL']){
-						let enemyUnit = global.Units[enemyUnit_team]['ALL'][enemyUnit_id];
-						//let enemyUnit_netId = enemyUnit.netId;
-						let enemyUnit_position = enemyUnit.Position;
-						if(enemyUnit_position.x == 0 && enemyUnit_position.y == 0)
-							continue;//for now
-						//let enemyUnit_visionRange = enemyUnit.stats.visionRange || defaultVisionRange;
-		
-						let dist = allyUnit_position.distanceTo(enemyUnit_position);
-						// ? let wplen = dist_allyorenemy && pathfinding.vision(allyUnit_position, enemyUnit_position).waypoints.length < 3;
-						if(!this.visibleForTeam[allyUnit_team][enemyUnit_id])
-							this.visibleForTeam[allyUnit_team][enemyUnit_id] = dist <= allyUnit_visionRange;
-						//if(!this.visibleForTeam[enemyUnit_team][allyUnit_id])
-						//	this.visibleForTeam[enemyUnit_team][allyUnit_id] = dist <= enemyUnit_visionRange;
-					}
-				}
-			}
+				var visibleUnits = enemyUnits.filter(enemyUnit => {
+					return allyUnit.distanceTo(enemyUnit) <= allyUnit_visionRange;
+				});
+				allyUnit.visibleForEnemy2 = !!visibleUnits.length;
+			});
 		}
-		//console.log(this.visibleForTeam);
-		for(var allyUnit_team in this.visibleForTeam){
-			for(var enemyUnit_id in this.visibleForTeam[allyUnit_team]){
-				this.broadcastVision(allyUnit_team, enemyUnit_id);
-			}
 
-		}
+		this.broadcastVision();
 	}
 	move(unit, diff){
 		if(!unit.Movement?.Waypoints || unit.Movement.Waypoints.length < 2 || unit.Movement.WaypointsHalt)
@@ -110,8 +78,9 @@ class MovementSimulation {
 
 		for(let i in unit.callbacks.collision){
 			//unit.callbacks.collision[i].options.flags;//todo: flags like self targetable, ally targetable, enemy targetable
-			for(var unitId in global.Units['ALL']['ALL']){
-				let unit2 = global.Units['ALL']['ALL'][unitId];
+			var units = global.getUnits();
+			for(var unitId in units){
+				let unit2 = units[unitId];
 				//todo: for better performance we could divide units array to territories
 				let dist2 = unit.Position.distanceTo(unit2.Position);
 				if(dist2 <= ((unit.callbacks.collision[i].options?.range || unit.collisionRadius) + unit2.collisionRadius)){
@@ -139,8 +108,9 @@ class MovementSimulation {
 			await global.Utilities.wait(20);//lower this?
 			this.moved = {};
 			
-			for(var i in global.Units['ALL']['ALL']){
-				let unit = global.Units['ALL']['ALL'][i];
+			var units = global.getUnits();
+			for(var i in units){
+				let unit = units[i];
 				let diff = this.unitDiff(unit);
 				let moved = this.move(unit, diff);
 				if(moved)

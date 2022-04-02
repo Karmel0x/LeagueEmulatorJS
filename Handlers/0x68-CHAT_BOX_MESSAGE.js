@@ -73,12 +73,13 @@ module.exports = (player, packet) => {
 		}
 		else if(commandArgs[0] === 'ww'){
 			var pos = new Vector2(10200, 13200);
-			for(let i in global.Units['RED']['Minion'])
-				global.Units['RED']['Minion'][i].Movement.move1(pos.clone());
+			var redMinionUnits = global.getUnitsF('RED', 'Minion');
+			for(let i in redMinionUnits)
+				redMinionUnits[i].Movement.move1(pos.clone());
 		}
 		//else if(commandArgs[0] === 'ee'){
-		//	player.battle.attack(global.Units[1]);
-		//	global.Units[1].battle.attack(player);
+		//	player.battle.attack(global.units[1]);
+		//	global.units[1].battle.attack(player);
 		//}
 		else if(commandArgs[0] === 'e'){
 			var CHAR_STATS = createPacket('CHAR_STATS', 'LOW_PRIORITY');
@@ -88,7 +89,7 @@ module.exports = (player, packet) => {
 			
 			//var CHAR_STATS = createPacket('CHAR_STATS', 'LOW_PRIORITY');
 			//CHAR_STATS.SyncID = performance.now();
-			//CHAR_STATS.units = [global.Units[0]];
+			//CHAR_STATS.units = [global.units[0]];
 			//var isSent = player.sendPacket(CHAR_STATS);
 			//console.log(CHAR_STATS);
 		}
@@ -138,7 +139,7 @@ module.exports = (player, packet) => {
 		}
 		else if(commandArgs[0] == 'champion'){
 			var character = commandArgs[1] || 'Ezreal';
-			const Champion_ = require('../Game/Characters/Champions/' + character);
+			const Champion_ = require('../Game/League/Characters/Champions/' + character);
 			player.character = new Champion_(player);
 			player.UPDATE_MODEL(character);
 		}

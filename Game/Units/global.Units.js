@@ -1,77 +1,59 @@
 
+//const unitTypes = require('../../Constants/unitTypes');
+//const teamIds = require('../../Constants/teamIds');
+
+
 global.lastNetId = global.lastNetId || 0x40000000;
+global.lastUnitId = global.lastUnitId || 0;
+global.unitCount = global.unitCount || 0;
+global.units = global.units || [];
+global.unitsNetId = global.unitsNetId || {};
+global.destroyedUnits = global.destroyedUnits || [];
 
-const UnitTypes = {
-	ALL: -1,
-	Unit: 0,
-	Player: 1,
-	Minion: 2,
-	Turret: 3,
-	Inhibitor: 4,
-	Nexus: 5,
+
+var unitsCache = {};
+var unitsCache_lastUnitId = 0;
+
+// get units by team and type, TODO: make caching more advanced
+global.getUnits = function(team = 'ALL', type = 'ALL'){
+	if(team == 'ALL' && type == 'ALL')
+		return global.units;
+
+	var key = team + '_' + type;
+	if(!unitsCache[key] || global.lastUnitId !== unitsCache_lastUnitId){
+		unitsCache[key] = global.units.filter(unit => {
+			// would be better to use bitwise but teamIds and unitTypes enums are not bitwise
+			return (unit.info.team === team || team === 'ALL') && (unit.info.type === type || type === 'ALL');
+		});
+	}
+	return unitsCache[key];
+};
+global.getUnitCount = function(team = 'ALL', type = 'ALL'){
+	var units = global.getUnits(team, type);
+	return units.length;
 };
 
-const TEAMs = {
-	ALL: -1,
-	UNKNOWN: 0,
-	BLUE: 100,//ORDER
-	RED: 200,//CHAOS
-	NEUTRAL: 300,
-	MAX: 400,
+global.getUnitsF = function(team = 'ALL', type = 'ALL'){
+	return global.getUnits(team, type);
 };
-
-global.UnitsNetId = global.UnitsNetId || {};
-global.UnitsCount = global.UnitsCount || {count: 0};
-for(let team in TEAMs){
-	global.UnitsCount[team] = global.UnitsCount[team] || {count: 0};
-	for(let unit in UnitTypes){
-		global.UnitsCount[team][unit] = global.UnitsCount[team][unit] || {count: 0};
-	}
-}
-
-global.Units = global.Units || {};
-for(let team in TEAMs){
-	global.Units[team] = global.Units[team] || {};
-	for(let unit in UnitTypes){
-		global.Units[team][unit] = global.Units[team][unit] || {};
-	}
-}
-
-global.UnitsTyped = global.UnitsTyped || {};
-for(let unit in UnitTypes){
-	global.UnitsTyped[unit] = global.UnitsTyped[unit] || {};
-	for(let team in TEAMs){
-		global.UnitsTyped[unit][team] = global.UnitsTyped[unit][team] || {};
-	}
-}
 
 
 function appendGlobal(unit){
-	unit.id = global.UnitsCount.count;
-	++global.UnitsCount.count;
-	++global.UnitsCount[unit.info.team].count;
-	++global.UnitsCount[unit.info.team][unit.info.type].count;
+	unit.id = global.lastUnitId++;
+	++global.unitCount;
 
-	global.Units[unit.info.team][unit.info.type][unit.id] = unit;
-	global.Units[unit.info.team]['ALL'][unit.id] = unit;
-	global.Units['ALL'][unit.info.type][unit.id] = unit;
-	global.Units['ALL']['ALL'][unit.id] = unit;
-
-	global.UnitsNetId[unit.netId] = unit;
-	global.UnitsTyped[unit.info.type][unit.info.team][unit.info.num] = unit;
+	global.units.push(unit);
+	global.unitsNetId[unit.netId] = unit;
 }
 function removeGlobal(unit){
-	--global.UnitsCount.count;
-	--global.UnitsCount[unit.info.team].count;
-	--global.UnitsCount[unit.info.team][unit.info.type].count;
+	--global.unitCount;
 
-	delete global.Units[unit.info.team][unit.info.type][unit.id];
-	delete global.Units[unit.info.team]['ALL'][unit.id];
-	delete global.Units['ALL'][unit.info.type][unit.id];
-	delete global.Units['ALL']['ALL'][unit.id];
+	var index = global.units.indexOf(unit);
+	if(index !== -1)
+		global.units.splice(index, 1);
 
-	delete global.UnitsNetId[unit.netId];
-	delete global.UnitsTyped[unit.info.type][unit.info.team][unit.info.num];
+	global.destroyedUnits.push(unit);
+
 }
 
 module.exports = { appendGlobal, removeGlobal };

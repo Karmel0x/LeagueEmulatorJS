@@ -8,6 +8,12 @@ var GameComponents = {
 var playersConfig = require('../../Constants/playersConfig');
 const { createPacket } = require('../../Core/PacketUtilities');
 
+const Inhibitor = require("../Units/Inhibitor");
+const Nexus = require("../Units/Nexus");
+const Turret = require("../Units/Turret");
+const Barrack = require("../Units/Barrack");
+const Player = require("../Units/Player");
+
 class Game {
 	// STAGE client opened ==========================================================
 	static PING_LOAD_INFO(player, packet){
@@ -32,12 +38,14 @@ class Game {
 		LOAD_SCREEN_INFO.teamBlue_playerIds = [];
 		LOAD_SCREEN_INFO.teamRed_playerIds = [];
 		
-		for(let player_num in global.Units['BLUE'].Player){
-			var player = global.Units['BLUE'].Player[player_num];
+		var bluePlayersUnits = global.getUnitsF('BLUE', 'Player');
+		for(let player_num in bluePlayersUnits){
+			var player = bluePlayersUnits[player_num];
 			LOAD_SCREEN_INFO.teamBlue_playerIds.push(player._PlayerInfo.PlayerID);
 		}
-		for(let player_num in global.Units['RED'].Player){
-			var player = global.Units['RED'].Player[player_num];
+		var redPlayersUnits = global.getUnitsF('RED', 'Player');
+		for(let player_num in redPlayersUnits){
+			var player = redPlayersUnits[player_num];
 			LOAD_SCREEN_INFO.teamRed_playerIds.push(player._PlayerInfo.PlayerID);
 		}
 
@@ -56,7 +64,7 @@ class Game {
 		var LOAD_HERO = createPacket('LOAD_HERO', 'LOADING_SCREEN');
 		LOAD_HERO.PlayerId = player._PlayerInfo.PlayerID;
 		LOAD_HERO.SkinId = 0;
-		LOAD_HERO.SkinName = global.Units['ALL'].Player[0].character.name;
+		LOAD_HERO.SkinName = global.getUnitsF('ALL', 'Player')[0].character.name;
 		global.Teams.ALL.sendPacket(LOAD_HERO, loadingStages.NOT_CONNECTED);
 	}
 	static connected(player){
@@ -92,7 +100,8 @@ class Game {
 		}
 	}
 	// this should be in Game.run
-	static async loaded(player){
+	static async playerLoaded(player){
+		global.Game.loaded = Date.now() / 1000;// this shouldn't be here
 		Game.START_GAME();
 		Game.GameTimeHeartBeat();
 		Game.GAME_TIMER_UPDATE();
@@ -113,7 +122,16 @@ class Game {
 
 	}
 
-	static start(){
+	static loaded(){
+		global.Game.loaded = Date.now() / 1000;
+		
+		Nexus.spawnAll();
+		Inhibitor.spawnAll();
+		Turret.spawnAll();
+		Barrack.spawnAll();
+
+	}
+	static started(){
 		global.Game.started = Date.now() / 1000;
 		global.Game.paused = false;
 		
@@ -121,13 +139,15 @@ class Game {
 	}
 
 	static async startWhenReady(){
+		//Game.loaded();
 		global.Movement = new GameComponents.MovementSimulation();
 		global.Movement.start();
 
 		while(!global.Game.started){
 			await global.Utilities.wait(100);
 
-			if(!global.Units.BLUE.Player || Object.keys(global.Units.BLUE.Player).length === 0){
+			var playerUnits = global.getUnitsF('ALL', 'Player');
+			if(!playerUnits || !playerUnits.length){
 				console.log('[weird] players has been not initialized yet?');
 				continue;
 			}
@@ -136,8 +156,9 @@ class Game {
 			//	start_game();// start game if 5 minutes passed
 			//else{
 			//	let playersLoaded = true;
-			//	for(let i in global.Units['ALL'].Player){
-			//		if(global.Units['ALL'].Player[i].loadingStage < loadingStages.LOADED){
+			//	var players = global.getUnitsF('ALL', 'Player');
+			//	for(let i in players){
+			//		if(players[i].loadingStage < loadingStages.LOADED){
 			//			playersLoaded = false;
 			//			break;
 			//		}
@@ -146,7 +167,7 @@ class Game {
 			//		start_game();// or all players has loaded
 			//}
 			if(global.command_START_GAME)
-				Game.start();
+				Game.started();
 		}
 		
 	}
@@ -155,6 +176,7 @@ class Game {
 
 		global.Game = {
 			initialized: Date.now() / 1000,
+			loaded: false,
 			started: false,
 			paused: true,
 		};

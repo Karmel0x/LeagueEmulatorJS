@@ -1,6 +1,6 @@
 
 const { Vector2 } = require('three');
-const IStat = require('../../Units/Stats/IStat');
+const IStat = require('../../Units/IStat');
 
 
 //global.baseMissileNetId = 0x60000000;
@@ -42,10 +42,10 @@ class Missile {
 	}
 	fire_TargetNetID(TargetNetID, WindupPercent = 20){
 
-		if(!global.UnitsNetId[TargetNetID])
-			return console.log('global.Units[netId] does not contain', TargetNetID);
+		if(!global.unitsNetId[TargetNetID])
+			return console.log('global.unitsNetId[netId] does not contain', TargetNetID);
 
-		var target = global.UnitsNetId[TargetNetID];
+		var target = global.unitsNetId[TargetNetID];
 		this.fire(target, WindupPercent);
 	}
 	async fire(target, WindupPercentt = 10){

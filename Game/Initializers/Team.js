@@ -30,8 +30,9 @@ class Team {
 	sendPacket(packet, minStage = loadingStages.IN_GAME){
 		//var peer_nums = [];
 		var players = [];
-		for(let player_num in global.Units[this.team].Player){
-			var player = global.Units[this.team].Player[player_num];
+		var teamPlayerUnits = global.getUnitsF(this.team, 'Player');
+		for(let player_num in teamPlayerUnits){
+			var player = teamPlayerUnits[player_num];
 			
 			if(player.loadingStage < minStage)
 				continue;
@@ -72,7 +73,7 @@ class Team {
 					SkinName: target.character.model
 				}
 			];
-			OBJECT_SPAWN.MovementData = target.MovementData;
+			OBJECT_SPAWN.MovementData = target.Movement.MovementData;
 			var isSent = this.sendPacket(OBJECT_SPAWN);
 			//console.log(OBJECT_SPAWN);
 
