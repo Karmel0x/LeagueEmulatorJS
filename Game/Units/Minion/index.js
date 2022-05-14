@@ -77,7 +77,6 @@ var lanePaths = {
 };
 
 const CharactersMinions = require('../../League/Characters/Minions');
-const AttackController = require('../Unit/Controllers/AttackController');
 
 class Minion extends Unit {
 	static create(barrack, characterName){
@@ -92,7 +91,6 @@ class Minion extends Unit {
 		
 		//this.character = character;
 		this.Movement = new Movement(this);
-		this.attackController = new AttackController(this);
 		
 	}
 	destructor(){
@@ -107,6 +105,12 @@ class Minion extends Unit {
 		super.spawn();
 		this.moveLane(this.barrack.team, this.barrack.num);
 	}
+	/**
+	 * Get the nearest point to the end of the path
+	 * @param {Vector2} position 
+	 * @param {Array.<Vector2>} arrayVector2 
+	 * @returns {Vector2}
+	 */
 	static getFromNearestToEnd(position, arrayVector2){
 		var nearest = 0;
 		arrayVector2.reduce((previousValue, currentValue, index) => {
@@ -119,8 +123,13 @@ class Minion extends Unit {
 		}, 25000);
 		return arrayVector2.slice(nearest);
 	}
-	moveLane(team, num){
-		var lanePath = lanePaths[team][num].map(a => a.clone());
+	/**
+	 * Set waypoints for the unit to pathing
+	 * @param {String} team (BLUE/RED)
+	 * @param {Number} lane (0/1/2 TOP/MID/BOT)
+	 */
+	moveLane(team, lane){
+		var lanePath = lanePaths[team][lane].map(a => a.clone());
 		lanePath = Minion.getFromNearestToEnd(this.position, lanePath);
 
 		this.Movement.setWaypoints(lanePath);

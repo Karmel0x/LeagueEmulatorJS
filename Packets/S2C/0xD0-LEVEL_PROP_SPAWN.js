@@ -3,7 +3,7 @@ var Vector3 = require('../SharedStruct/Vector3');
 
 module.exports = class extends BasePacket {//S2C.LEVEL_PROP_SPAWN
 	struct = {
-		NetID: 'uint32',
+		NetId: 'uint32',
 		NetNodeID: 'uint8',
 		SkinID: 'int32',
 		Position: Vector3,

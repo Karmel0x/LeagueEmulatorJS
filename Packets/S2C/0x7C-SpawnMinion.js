@@ -3,12 +3,12 @@ const Vector3 = require('../SharedStruct/Vector3');
 
 module.exports = class extends BasePacket {//S2C.
 	struct = {
-		NetID: 'uint32',
-		OwnerNetID: 'uint32',
+		NetId: 'uint32',
+		OwnerNetId: 'uint32',
 		NetNodeID: 'uint8',
 		Position: Vector3,
 		SkinID: 'int32',
-		CloneNetID: 'uint32',
+		CloneNetId: 'uint32',
 		TeamID: 'uint16',
 		bitfield: ['bitfield', {
 			IgnoreCollision: 1,
@@ -22,6 +22,6 @@ module.exports = class extends BasePacket {//S2C.
 		Name: ['char', 64],
 		SkinName: ['char', 64],
 		InitialLevel: 'uint16',
-		OnlyVisibleToNetID: 'uint32',
+		OnlyVisibleToNetId: 'uint32',
 	}
 };

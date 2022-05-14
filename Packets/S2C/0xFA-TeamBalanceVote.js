@@ -6,7 +6,7 @@ module.exports = class extends BasePacket {//S2C.
 			VoteYes: 1,
 			OpenVoteMenu: 2,
 		}],
-		PlayerNetID: 'uint32',
+		PlayerNetId: 'uint32',
 		ForVote: 'uint8',
 		AgainstVote: 'uint8',
 		NumPlayers: 'uint8',

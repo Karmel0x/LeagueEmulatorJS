@@ -1,8 +1,8 @@
-const _Spell = require("../../_Spell");
+const _Spellchain = require("../../_Spellchain");
 const _Yasuo = require("../_Yasuo");
 
 
-module.exports = class YasuoE extends _Yasuo {
+module.exports = class YasuoE extends _Spellchain {
 	castRange = 475;
 	cast(packet){
 		var owner = this.owner;
@@ -13,15 +13,15 @@ module.exports = class YasuoE extends _Yasuo {
 		owner.castingSpell = true;
 		//owner.SET_COOLDOWN(packet.Slot, 3);
 
-		var realPosition = _Spell.getRealPosition(packet);
+		var realPosition = _Spellchain.getRealPosition(packet);
 		var CastInfo = this.CastInfo_Position(packet);
 
 		CastInfo.SpellHash = _Yasuo.hashes.spellHash.YasuoDashWrapper;
 		CastInfo.ManaCost = 0;
 		CastInfo.SpellSlot = 2;//?
-		CastInfo.SpellNetID = this.netId;
-		CastInfo.MissileNetID = 1073743444;
-		owner.spawnProjectileAns(CastInfo, this.PackageHash);
+		CastInfo.SpellNetId = this.netId;
+		CastInfo.MissileNetId = 1073743444;
+		this.spawnProjectileAns(CastInfo, this.parent.PackageHash);
 
 		owner.SET_ANIMATION([
 			['RUN', 'Spell3']
@@ -31,7 +31,7 @@ module.exports = class YasuoE extends _Yasuo {
 				range: owner.collisionRadius,
 			},
 			function: (target) => {
-				if(target.netId != packet.TargetNetID)
+				if(target.netId != packet.TargetNetId)
 					return;
 
 				delete owner.callbacks.collision[this.netId];
@@ -46,7 +46,7 @@ module.exports = class YasuoE extends _Yasuo {
 				if(owner.callbacks.collision[this.netId])
 					delete owner.callbacks.collision[this.netId];
 				//else
-				//	this.hit_TargetNetID(packet.TargetNetID);
+				//	this.hit_TargetNetId(packet.TargetNetId);
 
 				owner.SET_ANIMATION([
 					['Spell3', 'RUN']
@@ -56,11 +56,11 @@ module.exports = class YasuoE extends _Yasuo {
 		
 		owner.castingSpell = false;
 	}
-	//hit_TargetNetID(TargetNetID){
-	//	if(!TargetNetID || !global.unitsNetId[TargetNetID])
+	//hit_TargetNetId(TargetNetId){
+	//	if(!TargetNetId || !global.unitsNetId[TargetNetId])
 	//		return;
 //
-	//	var target = global.unitsNetId[TargetNetID];
+	//	var target = global.unitsNetId[TargetNetId];
 	//	this.hit(target);
 	//}
 	hit(target){

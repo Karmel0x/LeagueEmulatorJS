@@ -4,6 +4,11 @@ const NavigationGrid = require('../Constants/NavigationGrid.json');
 
 
 module.exports = class TranslateCenteredCoordinates {
+	/**
+	 * Convert CenteredCoordinates to waypoints
+	 * @param {Array.<Vector2>} waypointsCC
+	 * @returns {Array.<Vector2>}
+	 */
 	static from(waypointsCC){
 		var obj = [];
 
@@ -19,6 +24,11 @@ module.exports = class TranslateCenteredCoordinates {
 		}
 		return obj;
 	}
+	/**
+	 * Convert waypoints to CenteredCoordinates
+	 * @param {Array.<Vector2>} waypoints
+	 * @returns {Array.<Vector2>}
+	 */
 	static to(waypoints){
 		var obj = [];
 

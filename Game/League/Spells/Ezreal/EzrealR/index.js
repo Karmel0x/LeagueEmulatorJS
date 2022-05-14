@@ -1,8 +1,9 @@
 const _Ezreal = require("../_Ezreal");
 const Skillshot = require("../../../../Attacks/Missiles/Skillshot");
+const _Spellchain = require("../../_Spellchain");
 
 
-module.exports = class EzrealR extends _Ezreal {
+module.exports = class EzrealR extends _Spellchain {
 	async cast(packet){
 		var owner = this.owner;
 
@@ -13,7 +14,7 @@ module.exports = class EzrealR extends _Ezreal {
 		owner.SET_COOLDOWN(packet.Slot, 4);
         owner.Movement.halt_start();
 
-		owner.AddParticleTarget(this.PackageHash, _Ezreal.hashes.particleHash['Ezreal_bow_huge.troy'], _Ezreal.hashes.boneHash['L_HAND']);
+		owner.AddParticleTarget(this.parent.PackageHash, _Ezreal.hashes.particleHash['Ezreal_bow_huge.troy'], _Ezreal.hashes.boneHash['L_HAND']);
 		var CastInfo = this.CastInfo_Position(packet);
 
 
@@ -24,15 +25,15 @@ module.exports = class EzrealR extends _Ezreal {
 		CastInfo.SpellHash = _Ezreal.hashes.spellHash.EzrealTrueshotBarrage;
 		CastInfo.ManaCost = 0;
 		CastInfo.SpellSlot = 45;
-		CastInfo.SpellNetID = this.netId;
-		CastInfo.MissileNetID = skillshot.missile.netId;
+		CastInfo.SpellNetId = this.netId;
+		CastInfo.MissileNetId = skillshot.netId;
 		CastInfo.DesignerCastTime = 1;
 		CastInfo.DesignerTotalTime = 1;
-		owner.castSpellAns(CastInfo);
+		this.castSpellAns(CastInfo);
 
 		var windup = 1;//?
 		await global.Utilities.wait(windup * 1000);
-        skillshot.missile.firefire(skillshot.target);
+        skillshot.firefire(skillshot.target);
 
 		await global.Utilities.wait(windup * 1000 / 2);
 

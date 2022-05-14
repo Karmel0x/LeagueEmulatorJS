@@ -1,7 +1,7 @@
 var BasePacket = require('../BasePacket');
 
 var Tooltip = {
-    OwnerNetID: 'uint32',
+    OwnerNetId: 'uint32',
     SlotIndex: 'uint8',
     Values: ['float', 16],
     HideFromEnemy: ['uint8', 16],

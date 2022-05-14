@@ -1,5 +1,6 @@
 var BasePacket = require('../BasePacket');
 const SpeedParams = require('../SharedStruct/SpeedParams');
+const Vector2 = require('../SharedStruct/Vector2');
 
 
 module.exports = class extends BasePacket {//S2C.

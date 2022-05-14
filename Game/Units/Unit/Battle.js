@@ -3,6 +3,7 @@ class BattleUnit {
 
 	constructor(parent){
 		this.parent = parent;
+		this.owner = parent.owner || parent.parent || parent;
 
 	}
 
@@ -35,11 +36,15 @@ class BattleUnit {
 		this.parent.destructor();
 	}
 	died = false;
+	/**
+	 * Called when unit dies
+	 * @param {Unit} source - who killed this unit
+	 */
 	onDie(source){
 		// override
 	}
 	distanceTo(target){
-		return this.parent.Position.distanceTo(target.Position);
+		return this.parent.distanceTo(target);
 	}
 	inRange(target, range){
 		return this.distanceTo(target) <= range;

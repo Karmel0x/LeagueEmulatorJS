@@ -1,43 +1,44 @@
 const { Vector2 } = require('three');
+const _Spellchain = require('../_Spellchain');
 const _Summoner = require('./_Summoner');
 
 
-class SummonerBarrier extends _Summoner {// Barrier
+class SummonerBarrier extends _Spellchain {// Barrier
 	spellHash = 214940034;
 	cast(packet){
 		super.cast(packet);
 
 	}
 }
-class SummonerBoost extends _Summoner {// Cleanse
+class SummonerBoost extends _Spellchain {// Cleanse
 	spellHash = 105717908;
 	cast(packet){
 		super.cast(packet);
 
 	}
 }
-class SummonerClairvoyance extends _Summoner {// Clairvoyance
+class SummonerClairvoyance extends _Spellchain {// Clairvoyance
 	spellHash = 159999845;
 	cast(packet){
 		super.cast(packet);
 
 	}
 }
-class SummonerDot extends _Summoner {// Ignite
+class SummonerDot extends _Spellchain {// Ignite
 	spellHash = 104222500;
 	cast(packet){
 		super.cast(packet);
 
 	}
 }
-class SummonerExhaust extends _Summoner {// Exhaust
+class SummonerExhaust extends _Spellchain {// Exhaust
 	spellHash = 145275620;
 	cast(packet){
 		super.cast(packet);
 
 	}
 }
-class SummonerFlash extends _Summoner {// Flash
+class SummonerFlash extends _Spellchain {// Flash
 	spellHash = 105475752;
 	cast(packet){
 		super.cast(packet);
@@ -46,17 +47,17 @@ class SummonerFlash extends _Summoner {// Flash
 		this.parent.parent.Movement.teleport(pos);
 	}
 }
-class SummonerHaste extends _Summoner {// Ghost
+class SummonerHaste extends _Spellchain {// Ghost
 	spellHash = 105565333;
 	cast(packet){
 		super.cast(packet);
 
 	}
 }
-//class SummonerHealReduce? extends Spell {// Heal Reduce
+//class SummonerHealReduce? extends _Spellchain {// Heal Reduce
 //	//todo
 //}
-class SummonerHeal extends _Summoner {// Heal
+class SummonerHeal extends _Spellchain {// Heal
 	spellHash = 56930076;
 	effect = {
 		Base: 75,
@@ -84,35 +85,35 @@ class SummonerHeal extends _Summoner {// Heal
 		source.stats.charStats_send();
 	}
 }
-class SummonerMana extends _Summoner {// Clarity
+class SummonerMana extends _Spellchain {// Clarity
 	spellHash = 56980513;
 	cast(packet){
 		super.cast(packet);
 
 	}
 }
-//class SummonerOdinGarrison extends _Summoner {// OdinGarrison
+//class SummonerOdinGarrison extends _Spellchain {// OdinGarrison
 //	spellHash = 226996206;
 //	cast(packet){
 //		super.cast(packet);
 //
 //	}
 //}
-class SummonerRevive extends _Summoner {// Revive
+class SummonerRevive extends _Spellchain {// Revive
 	spellHash = 97039269;
 	cast(packet){
 		super.cast(packet);
 
 	}
 }
-class SummonerSmite extends _Summoner {// Smite
+class SummonerSmite extends _Spellchain {// Smite
 	spellHash = 106858133;
 	cast(packet){
 		super.cast(packet);
 
 	}
 }
-class SummonerTeleport extends _Summoner {// Teleport
+class SummonerTeleport extends _Spellchain {// Teleport
 	spellHash = 5182308;
 	cast(packet){
 		super.cast(packet);

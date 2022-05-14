@@ -2,9 +2,9 @@
 
 module.exports = class _Character {
 	PackageHash = 0;
-	attackWindupPercent = 20;
 	constructor(parent){
 		this.parent = parent;
+		this.owner = parent.owner || parent.parent || parent;
 
 	}
 	get name(){

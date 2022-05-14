@@ -17,6 +17,8 @@ function chatBoxMessage(target, message){
 	console.debug(CHAT_BOX_MESSAGE);
 }
 
+var lastCommand = '';
+
 module.exports = (player, packet) => {
     console.log('handle: COMMUNICATION.CHAT_BOX_MESSAGE');
 	//console.log(packet);
@@ -34,6 +36,10 @@ module.exports = (player, packet) => {
     //var isSent = player.sendPacket(DEBUG_MESSAGE);
     
 
+	if(packet.msg === '.')
+		packet.msg = lastCommand;
+	lastCommand = packet.msg;
+	
 	if(packet.msg[0] === '.'){
 		let command = packet.msg.slice(1);
 		let commandArgs = command.split(' ');
@@ -52,6 +58,8 @@ module.exports = (player, packet) => {
 				.test :: levelingUp player 5 levels and spawning 22 RED minions in BLUE base
 				.champion <championName> :: switching player champion
 				.info <type(position)> :: printing in console some informations you may need
+				.goto <netId> :: teleporting to unit with netId
+				. :: run last command again
 			`;
 				//.debugMode [<debugLevel(0/1)>] :: turning off/on debug mode (debug logs)
 			chatBoxMessage(player, message.split('\t\t').join(' '));
@@ -146,6 +154,14 @@ module.exports = (player, packet) => {
 		else if(commandArgs[0] == 'info'){
 			if(commandArgs[1] == 'position'){
 				console.log(commandArgs, player.position);
+			}
+		}
+		else if(commandArgs[0] == 'goto'){
+			// teleport to unit by netId
+			var netId = parseInt(commandArgs[1] || 0);
+			var unit = global.getUnitByNetId(netId);
+			if(unit){
+				player.Movement.teleport(unit.position);
 			}
 		}
 

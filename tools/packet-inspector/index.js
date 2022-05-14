@@ -39,6 +39,8 @@ wss.onMessage = (data) => {
 		for(let i = offset; i < replayUnpacked.length && i < limit; i++){
 			var packetData = packetParser(replayUnpacked[i], i);
 
+			if(!packetData)
+				continue;
 			if(packetnames && packetnames.length && !packetnames.includes(packetData.cmdName))
 				continue;
 
@@ -82,21 +84,38 @@ wss.onMessage = (data) => {
 		//}
 	}
 	else if(res.cmd == 'addpacket'){
-		var packet = {
-			Id: pId++,
-			Channel: res.data.channel,
-			BytesHex: res.data.bytes,
-			Time: res.data.time || 1,
-		};
-		
-		var packetData = packetParser(packet);
-		if(!packetData)
-			return;
+		var bytesHexList = res.data.bytes.split("\n");
 
-		wss.clients.sendToAll(JSON.stringify({
-			cmd: 'newpacket',
-			packet: packetData,
-		}));
+		for(var i = 0; i < bytesHexList.length; i++){
+			var channel = res.data.channel;
+			var bytesHex = bytesHexList[i];
+
+			if(bytesHex.includes('sent:'))
+				channel = 3;
+			else if(bytesHex.includes('recv:'))
+				channel = 1;
+
+			bytesHex = bytesHex.replace('sent:', '').replace('recv:', '').trim();
+
+			if(!bytesHex)
+				continue;
+
+			var packet = {
+				Id: pId++,
+				Channel: channel,
+				BytesHex: bytesHex,
+				Time: res.data.time || 1,
+			};
+			
+			var packetData = packetParser(packet);
+			if(!packetData)
+				return;
+
+			wss.clients.sendToAll(JSON.stringify({
+				cmd: 'newpacket',
+				packet: packetData,
+			}));
+		}
 	}
 
 }

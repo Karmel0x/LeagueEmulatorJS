@@ -3,6 +3,7 @@ const loadingStages = require("../../../../Constants/loadingStages");
 module.exports = class PacketController {
 	constructor(parent){
 		this.parent = parent;
+		this.owner = parent.owner || parent.parent || parent;
 
 	}
 

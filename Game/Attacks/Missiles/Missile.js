@@ -28,24 +28,28 @@ class Missile {
 	}
 	constructor(parent, options = {}){
 		this.parent = parent;
+		this.owner = parent.owner || parent.parent || parent;
+		
+		this.options = options;
 		this.initialize();
 		//Object.assign(this, config);
 		this.netId = this.netId || ++global.lastNetId;
 		this.stats = {};
 		this.stats.MoveSpeed = new IStat(options.speed || 2000);
 
-		console.debug(Date.now(), 'Created Missile', this.constructor.name);
+		//console.debug(Date.now(), 'Created Missile', this.constructor.name);
+		this.Movement.Waypoints = [this.parent.Position.clone()];
 		this.appendGlobal();
 	}
 	destructor(){
 		this.removeGlobal();
 	}
-	fire_TargetNetID(TargetNetID, WindupPercent = 20){
+	fire_TargetNetId(TargetNetId, WindupPercent = 20){
 
-		if(!global.unitsNetId[TargetNetID])
-			return console.log('global.unitsNetId[netId] does not contain', TargetNetID);
+		if(!global.unitsNetId[TargetNetId])
+			return console.log('global.unitsNetId[netId] does not contain', TargetNetId);
 
-		var target = global.unitsNetId[TargetNetID];
+		var target = global.unitsNetId[TargetNetId];
 		this.fire(target, WindupPercent);
 	}
 	async fire(target, WindupPercentt = 10){
@@ -67,10 +71,12 @@ class Missile {
 	get Position(){
 		return this.Movement.Waypoints[0];
 	}
+	set Position(position){
+		this.Movement.Waypoints = [position];
+	}
 	moveTime = 0;
 	firefire(target){
 
-		this.Movement.Waypoints = [this.parent.Position.clone()];
 		console.debug('Missile.firefire',
 			'this.parent.netId', this.parent.netId, 'this.parent.Position', this.parent.Position,
 			'this.netId', this.netId, 'this.Position', this.Position,
@@ -78,6 +84,11 @@ class Missile {
 
 		this.fly(target);
 	}
+	/**
+	 * Called when the missile reaches its destination (hit the target)
+	 * @abstract
+	 * @param {Unit} target 
+	 */
 	reachedDest(target){
 		// override
 		console.log('Missile.reachedDest');

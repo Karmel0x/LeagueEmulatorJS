@@ -13,12 +13,14 @@ const { Vector2 } = require('three');
 class Movement {
 	constructor(parent){
 		this.parent = parent;
+		this.owner = parent.owner || parent.parent || parent;
+		
 	}
 
 	PositionSyncID = 0;
 	Waypoints_ = [];
 	set Waypoints(val){
-		this.PositionSyncID = performance.now();
+		this.PositionSyncID = parseInt(performance.now());
 		this.Waypoints_ = val;
 	}
 	get Waypoints(){
@@ -26,6 +28,11 @@ class Movement {
 	}
 	SpeedParams = null;
 
+	/**
+	 * Set waypoint for movement, 0 is current position and it will be overwritten
+	 * @param {Array.<Vector2>} Waypoints
+	 * @param {Boolean} send - send packet to client
+	 */
 	setWaypoints(Waypoints, send = true){//todo: repath if needed
 		//console.log('setWaypoints', Waypoints, this.Waypoints, this.WaypointsPending);
 		if(this.SpeedParams){
@@ -38,6 +45,11 @@ class Movement {
 		if(send)
 			this.moveAns();
 	}
+	/**
+	 * Teleport to position (..)
+	 * @param {Vector2} position
+	 * @param {Boolean} send - send packet to client
+	 */
 	teleport(position, send = true){
 		this.Waypoints = [position];
 
@@ -48,7 +60,7 @@ class Movement {
 		var DASH = createPacket('DASH');
 
 		DASH.netId = 0;
-		DASH.TeleportNetID = this.parent.netId;
+		DASH.TeleportNetId = this.parent.netId;
 
 		DASH.Waypoints = this.Waypoints;
 		DASH.SpeedParams = this.SpeedParams;
@@ -56,6 +68,11 @@ class Movement {
 		this.parent.packetController.sendTo_vision(DASH);
 		//console.log(DASH);
 	}
+	/**
+	 * Dash to position
+	 * @param {Vector2} position
+	 * @param {Object} options
+	 */
 	dash(position, options){
 		//this.ACTION = ACTIONS.DASHING;
 
@@ -64,7 +81,7 @@ class Movement {
 			ParabolicGravity: options.ParabolicGravity || 0,
 			ParabolicStartPoint: options.ParabolicStartPoint || {x: 0, y: 0},
 			Facing: options.Facing || 0,
-			FollowNetID: options.FollowNetID || 0,
+			FollowNetId: options.FollowNetId || 0,
 			FollowDistance: options.FollowDistance || 0,
 			FollowBackDistance: options.FollowBackDistance || 0,
 			FollowTravelTime: options.FollowTravelTime || 0,
@@ -91,14 +108,22 @@ class Movement {
 		};
 		this.dashAns();
 	}
-	static getPositionBetweenRange(SourcePosition, TargetPosition, range = 0, minRange = 0){
+	/**
+	 * Get position not farther than range and not closer than minRange
+	 * @param {Vector2} SourcePosition
+	 * @param {Vector2} TargetPosition
+	 * @param {Number} range
+	 * @param {Number} minRange
+	 * @returns {Vector2}
+	 */
+	static getPositionBetweenRange(sourcePosition, targetPosition, range = 0, minRange = 0){
 
-		var PositionBetweenRange = new Vector2(TargetPosition.x, TargetPosition.y);
-		PositionBetweenRange.sub(SourcePosition);
+		var PositionBetweenRange = new Vector2(targetPosition.x, targetPosition.y);
+		PositionBetweenRange.sub(sourcePosition);
 		if(PositionBetweenRange.length() == 0)
 			PositionBetweenRange.x = 0.001;
 		PositionBetweenRange.clampLength(minRange ?? range, range);
-		PositionBetweenRange.add(SourcePosition);
+		PositionBetweenRange.add(sourcePosition);
 
 		return PositionBetweenRange;
 	}
@@ -106,6 +131,11 @@ class Movement {
 		var pos = Movement.getPositionBetweenRange(this.Waypoints[0], position, options.range, options.minRange);
 		this.dash(pos, options);
 	}
+	/**
+	 * Get random position in range
+	 * @param {Number} length 
+	 * @returns {Vector2}
+	 */
 	static getRandomPositionClamped(length = 10){
 		var RandomPositionClamped = new Vector2().random();
 		RandomPositionClamped.subScalar(0.5).normalize();
@@ -195,7 +225,7 @@ class Movement {
 	}
 	get MovementData(){
 		let movementData = {
-			TeleportNetID: this.parent.netId,
+			TeleportNetId: this.parent.netId,
 			//SyncID: performance.now(),
 		};
 
@@ -216,12 +246,12 @@ class Movement {
 	}
 	moveAns(teleport = false){
 		// this should be in Movement_Simulation so we can resend if destination will change (following moveable unit)
-		// or following should be made with dash.SpeedParams.FollowNetID ?
+		// or following should be made with dash.SpeedParams.FollowNetId ?
 		var MOVE_ANS = createPacket('MOVE_ANS', 'LOW_PRIORITY');
 		MOVE_ANS.SyncID = this.PositionSyncID;
 
 		MOVE_ANS.netId = 0;
-		MOVE_ANS.TeleportNetID = this.parent.netId;
+		MOVE_ANS.TeleportNetId = this.parent.netId;
 
 		MOVE_ANS.TeleportID = teleport ? this.getNextTeleportID() : 0;
 		MOVE_ANS.Waypoints = this.WaypointsHalt ? [this.Waypoints[0]] : this.Waypoints;

@@ -33,6 +33,7 @@ var PacketConstructors = {
 const Inventory = require('./Controllers/Inventory');
 const BuffController = require('./Controllers/BuffController');
 const PacketController = require('./Controllers/PacketController');
+const SpellSlot = require('../../../Constants/SpellSlot');
 
 
 class Unit {
@@ -95,16 +96,21 @@ class Unit {
 	get position(){
 		return this.Position;
 	}
+	/**
+	 * Get distance from this unit to target unit
+	 * @param {Unit} target 
+	 * @returns {Number}
+	 */
 	distanceTo(target){
 		return this.position.distanceTo(target.position);
 	}
 	moveTime = 0;
 	ACTION = 0;
-	attack_TargetNetID(TargetNetID, MovementData = []){
-		if(!global.unitsNetId[TargetNetID])
-			return console.log('global.Units[netId] does not contain', TargetNetID);
+	attack_TargetNetId(TargetNetId, MovementData = []){
+		if(!global.unitsNetId[TargetNetId])
+			return console.log('global.Units[netId] does not contain', TargetNetId);
 
-		this.attackController?.attack(global.unitsNetId[TargetNetID], MovementData);
+		this.character.spells.spells[SpellSlot.A]?.attack(global.unitsNetId[TargetNetId], MovementData);
 	}
 	isDead(){
 		return this.battle.died;
@@ -119,7 +125,7 @@ class Unit {
 		return true;
 	}
 	isAbleForAttacking(){
-		if(!this.attackController)
+		if(!this.character.spells.spells[SpellSlot.A])
 			return false;
 
 		if(this.isDead())
@@ -129,28 +135,63 @@ class Unit {
 	}
 	// some static position functions ==========================
 
+	/**
+	 * Filter units by team
+	 * @param {Array.<Unit>} units
+	 * @param {String} team (RED/BLUE/NEUTRAL/ALL)
+	 * @returns {Array.<Unit>}
+	 */
 	static filterUnitsInTeam(units, team = 'ALL'){
 		if(team === 'ALL')
 			return units;
 
 		return units.filter(unit => unit.info.team === team);
 	}
+	/**
+	 * Filter units by range
+	 * @param {Array.<Unit>} units
+	 * @param {Vector2} position
+	 * @param {Number} range
+	 * @returns {Array.<Unit>}
+	 */
 	static filterUnitsInRange(units, position, range){
 		return units.filter(unit => unit.Position.distanceTo(position) <= range);
 	}
+	/**
+	 * Filter units by Unit type
+	 * @param {Array.<Unit>} units
+	 * @param {*} types (Minion/Player/Turret/Inhibitor/Nexus)
+	 * @returns {Array.<Unit>}
+	 */
 	static filterUnitsByType(units, types){
 		return units.filter(unit => types.includes(unit.info.type));
 	}
+	/**
+	 * Sort units by type
+	 * @param {Array.<Unit>} units
+	 * @param {*} types (Minion/Player/Turret/Inhibitor/Nexus)
+	 */
 	static sortUnitsByType(units, types){
 		units.sort((a, b) => {
 			return types.indexOf(a.info.type) - types.indexOf(b.info.type);
 		});
 	}
+	/**
+	 * Sort units by distance to position
+	 * @param {Array.<Unit>} units
+	 * @param {Vector2} position
+	 */
 	static sortUnitsByDistance(units, position){
 		units.sort((a, b) => {
 			return a.Position.distanceTo(position) - b.Position.distanceTo(position);
 		});
 	}
+	/**
+	 * Get nearest unit to position
+	 * @param {Array.<Unit>} units 
+	 * @param {Vector2} position 
+	 * @returns {Unit}
+	 */
 	static filterNearestUnit(units, position){
 		Unit.sortUnitsByDistance(units, position);
 		return units[0] || null;
@@ -183,6 +224,10 @@ class Unit {
 	getTeam(){
 		return 'ALL';
 	}
+	/**
+	 * Get ally team to this unit
+	 * @returns {String} (RED/BLUE/NEUTRAL)
+	 */
 	getAllyTeam(){
 		return this.info.team;
 	}
@@ -190,10 +235,18 @@ class Unit {
 		const oppositeTeam = {'BLUE': 'RED', 'RED': 'BLUE'};
 		return oppositeTeam[team] || 'NEUTRAL';
 	}
+	/**
+	 * Get enemy team to this unit
+	 * @returns {String} (RED/BLUE/NEUTRAL)
+	 */
 	getEnemyTeam(){
 		return Unit.getEnemyTeam(this.info.team);
 	}
 
+	/**
+	 * Remove this unit from array
+	 * @param {Array.<Unit>} array
+	 */
 	removeThisFromArray(array){
 		var index = array.indexOf(this);
 		if(index === -1)
@@ -202,48 +255,106 @@ class Unit {
 		array.splice(index, 1);
 	}
 
+	/**
+	 * Get all units
+	 * @returns {Array.<Unit>}
+	 */
 	getUnits(team = 'ALL'){
 		return global.getUnits(team);
 	}
+	/**
+	 * Get ally units to this unit
+	 * @returns {Array.<Unit>}
+	 */
 	getAllyUnits(){
 		return this.getUnits(this.getAllyTeam());
 	}
+	/**
+	 * Get enemy units to this unit
+	 * @returns {Array.<Unit>}
+	 */
 	getEnemyUnits(){
 		return this.getUnits(this.getOppositeTeam());
 	}
 
+	/**
+	 * Get all units except this
+	 * @returns {Array.<Unit>}
+	 */
 	getOtherUnits(team = 'ALL'){
 		var units = this.getUnits(team);
 		this.removeThisFromArray(units);
 		return units;
 	}
+	/**
+	 * Get ally units except this
+	 * @returns {Array.<Unit>}
+	 */
 	getOtherAllyUnits(){
 		return this.getOtherUnits(this.getAllyTeam());
 	}
+	/**
+	 * Get enemy units except this
+	 * @returns {Array.<Unit>}
+	 */
 	getOtherEnemyUnits(){
 		return this.getOtherUnits(this.getOppositeTeam());
 	}
 
-	// get units in range of this unit
+	/**
+	 * Get units in range of this unit
+	 * @param {Number} range 
+	 * @param {String} team (RED/BLUE/NEUTRAL/ALL)
+	 * @returns 
+	 */
 	getUnitsInRange(range = this.stats.Range.Total, team = 'ALL'){
 		var units = this.getOtherUnits(team);
 		return Unit.filterUnitsInRange(units, this.position, range);
 	}
+	/**
+	 * Get ally units in range of this unit
+	 * @param {Number} range 
+	 * @param {String} team (RED/BLUE/NEUTRAL/ALL)
+	 * @returns 
+	 */
 	getAllyUnitsInRange(range = this.stats.Range.Total){
 		return this.getUnitsInRange(range, this.getAllyTeam());
 	}
+	/**
+	 * Get enemy units in range of this unit
+	 * @param {Number} range 
+	 * @param {String} team (RED/BLUE/NEUTRAL/ALL)
+	 * @returns 
+	 */
 	getEnemyUnitsInRange(range = this.stats.Range.Total){
 		return this.getUnitsInRange(range, this.getEnemyTeam());
 	}
 
-	// get nearest unit to this unit
+	/**
+	 * Get nearest unit to this unit
+	 * @param {Number} range 
+	 * @param {String} team (RED/BLUE/NEUTRAL/ALL)
+	 * @returns 
+	 */
 	getNearestUnit(maxRange = 25000, team = 'ALL'){
 		var unitsInRange = this.getUnitsInRange(maxRange, team);
 		return Unit.filterNearestUnit(unitsInRange, this.position);
 	}
+	/**
+	 * Get nearest ally unit to this unit
+	 * @param {Number} range 
+	 * @param {String} team (RED/BLUE/NEUTRAL/ALL)
+	 * @returns 
+	 */
 	getNearestAllyUnit(maxRange = 25000){
 		return this.getNearestUnit(maxRange, this.getAllyTeam());
 	}
+	/**
+	 * Get nearest enemy unit to this unit
+	 * @param {Number} range 
+	 * @param {String} team (RED/BLUE/NEUTRAL/ALL)
+	 * @returns 
+	 */
 	getNearestEnemyUnit(maxRange = 25000){
 		return this.getNearestUnit(maxRange, this.getEnemyTeam());
 	}
@@ -258,15 +369,14 @@ class Unit {
 	autoAttackToggle = true;
 	acquisitionRange = 400;
 	autoAttack(){
-		var oppositeTeamArray = global.getUnitsF(this.getOppositeTeam(), 'ALL');
-		var target = Unit.getNearestUnit(this.position, oppositeTeamArray, this.acquisitionRange);
-		if(this.constructor.name == 'Player')
-			console.log('autoAttack target', target);
+		var target = Unit.getNearestEnemyUnit(this.position, this.acquisitionRange)
+		if(this.constructor.name == 'Player')//
+			console.log('autoAttack target', target);//
 		if(!target)
 			return;
 
 		console.log('autoAttack s', this.netId, target.netId);
-		this.attackController?.attack(target);
+		this.character.spells.spells[SpellSlot.A]?.attack(target);
 	}
 	async update(){
 		for(;;){

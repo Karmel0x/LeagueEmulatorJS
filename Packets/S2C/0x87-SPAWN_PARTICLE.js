@@ -4,11 +4,11 @@ var Vector3b = require('../SharedStruct/Vector3b');
 
 
 var FXCreateData = {
-	TargetNetID: 'uint32',
-	NetAssignedNetID: 'uint32',
-	CasterNetID: 'uint32',
-	BindNetID: 'uint32',
-	KeywordNetID: 'uint32',
+	TargetNetId: 'uint32',
+	NetAssignedNetId: 'uint32',
+	CasterNetId: 'uint32',
+	BindNetId: 'uint32',
+	KeywordNetId: 'uint32',
 	Position: Vector3b,
 	TargetPosition: Vector3b,
 	OwnerPosition: Vector3b,

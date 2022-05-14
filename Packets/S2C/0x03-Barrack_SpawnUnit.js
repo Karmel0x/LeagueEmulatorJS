@@ -4,7 +4,7 @@ module.exports = class extends BasePacket {//S2C.Barrack_SpawnUnit
 	struct = {
 		ObjectID: 'uint32',
 		ObjectNodeID: 'uint8',
-		BarracksNetID: 'uint32',
+		BarracksNetId: 'uint32',
 		WaveCount: 'uint8',
 		MinionType: 'uint8',
 		DamageBonus: 'int16',

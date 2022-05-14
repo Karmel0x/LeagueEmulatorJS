@@ -10,13 +10,13 @@ class BattleInhibitor extends BattleUnit {
 		ANNOUNCE2.netId = this.parent.netId;
 		ANNOUNCE2.id = EVENT.OnDampenerDie;
 		ANNOUNCE2.EventData = {
-			OtherNetID: source.parent.netId
+			OtherNetId: source.parent.netId
 		};
 		this.parent.packetController.sendTo_everyone(ANNOUNCE2);
 
 		var Building_Die = createPacket('Building_Die');
 		Building_Die.netId = this.parent.netId;
-		Building_Die.AttackerNetID = source.parent.netId;
+		Building_Die.AttackerNetId = source.parent.netId;
 		this.parent.packetController.sendTo_everyone(Building_Die);
 	}
 

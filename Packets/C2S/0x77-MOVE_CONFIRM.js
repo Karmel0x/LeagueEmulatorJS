@@ -1,7 +1,7 @@
 var BasePacket = require('../BasePacket');
 
 const TeleportData = {
-	TeleportNetID: 'uint32',
+	TeleportNetId: 'uint32',
 	TeleportID: 'uint8',
 };
 

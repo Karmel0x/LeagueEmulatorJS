@@ -1,8 +1,8 @@
 var BasePacket = require('../BasePacket');
 
 const BuffInGroupAdd = {
-	OwnerNetID: 'uint32',
-	CasterNetID: 'uint32',
+	OwnerNetId: 'uint32',
+	CasterNetId: 'uint32',
 	Slot: 'uint8',
 	Count: 'uint8',
 	IsHidden: 'uint8',

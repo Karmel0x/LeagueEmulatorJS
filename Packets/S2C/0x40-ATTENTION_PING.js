@@ -4,8 +4,8 @@ var Vector2 = require('../SharedStruct/Vector2');
 module.exports = class extends BasePacket {//S2C.ATTENTION_PING
 	struct = {
 		Position: Vector2,
-		TargetNetID: 'uint32',
-		SourceNetID: 'uint32',
+		TargetNetId: 'uint32',
+		SourceNetId: 'uint32',
 		PingCategory: 'uint8',
 		bitfield: ['bitfield', {
 			PlayAudio: 1,

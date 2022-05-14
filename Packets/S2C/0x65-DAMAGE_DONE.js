@@ -7,7 +7,7 @@ module.exports = class extends BasePacket {//S2C.
 		dummy: 'uint8',
 		DamageType: 'uint8',
 		Damage: 'float',
-		TargetNetID: 'uint32',
-		SourceNetID: 'uint32',
+		TargetNetId: 'uint32',
+		SourceNetId: 'uint32',
 	}
 };

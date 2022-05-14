@@ -12,8 +12,8 @@ module.exports = (player, packet) => {
 	{
 		var ATTENTION_PING = createPacket('ATTENTION_PING');
 		ATTENTION_PING.Position = packet.Position;
-		ATTENTION_PING.TargetNetID = packet.TargetNetID;
-		ATTENTION_PING.SourceNetID = player.netId;
+		ATTENTION_PING.TargetNetId = packet.TargetNetId;
+		ATTENTION_PING.SourceNetId = player.netId;
 		ATTENTION_PING.PingCategory = packet.PingCategory;
 		ATTENTION_PING.bitfield = {//0xFB
 			PlayAudio: true,

@@ -16,7 +16,7 @@ class PacketConstructorsPlayer extends PacketConstructorsUnit {
 		
 		var HERO_SPAWN = createPacket('HERO_SPAWN');
 		//HERO_SPAWN.netId = this.parent.netId;
-		HERO_SPAWN.NetID = this.parent.netId;
+		HERO_SPAWN.NetId = this.parent.netId;
 		HERO_SPAWN.ClientID = this.parent._PlayerInfo.ClientID;
 		HERO_SPAWN.NetNodeID = 0;//0x40;
 		HERO_SPAWN.SkinID = 0;
@@ -72,92 +72,6 @@ class PacketConstructorsPlayer extends PacketConstructorsUnit {
 		this.parent.packetController.sendTo_self(SET_COOLDOWN);
 		console.log(SET_COOLDOWN);
 	}
-	castSpellAns(CastInfo, PackageHash){
-
-		var CAST_SPELL_ANS = createPacket('CAST_SPELL_ANS', 'S2C');
-		CAST_SPELL_ANS.netId = this.parent.netId;
-		CAST_SPELL_ANS.CasterPositionSyncID = this.parent.PositionSyncID;
-		CAST_SPELL_ANS.CastInfo = {
-			SpellHash: 0,
-			SpellNetID: 1073743439,
-			SpellLevel: 1,
-			AttackSpeedModifier: 1,
-			CasterNetID: this.parent.netId,
-			SpellChainOwnerNetID: this.parent.netId,
-			PackageHash: PackageHash,
-			MissileNetID: 1073743440,
-			TargetPosition: {},
-			TargetPositionEnd: {},
-			DesignerCastTime: 0.25,
-			DesignerTotalTime: 0.25,
-			ManaCost: 28,
-			SpellCastLaunchPosition: {
-				x: this.parent.position.x,
-				y: this.parent.position.y,
-				z: 0,
-			},
-			AmmoUsed: 1,
-			target: [{
-				unit: 0,
-				hitResult: 0,
-			}],
-		};
-		Object.assign(CAST_SPELL_ANS.CastInfo, CastInfo);
-
-		this.parent.packetController.sendTo_vision(CAST_SPELL_ANS);
-		console.log(CAST_SPELL_ANS);
-	}
-	spawnProjectileAns(CastInfo, PackageHash, speed = 1200){//todo
-		//return this.castSpellAns(CastInfo);
-		var SPAWN_PROJECTILE = createPacket('SPAWN_PROJECTILE', 'S2C');
-		SPAWN_PROJECTILE.CastInfo = {
-			SpellHash: 0,
-			SpellNetID: 1073743439,
-			SpellLevel: 1,
-			AttackSpeedModifier: 1,
-			CasterNetID: this.parent.netId,
-			SpellChainOwnerNetID: this.parent.netId,
-			PackageHash: PackageHash,
-			MissileNetID: 1073743440,
-			TargetPosition: {},
-			TargetPositionEnd: {},
-			DesignerCastTime: 0.25,
-			DesignerTotalTime: 0.25,
-			ManaCost: 28,
-			SpellCastLaunchPosition: {
-				x: this.parent.position.x,
-				y: this.parent.position.y,
-				z: 0,
-			},
-			AmmoUsed: 1,
-			target: [{
-				unit: 0,
-				hitResult: 0,
-			}],
-		};
-		Object.assign(SPAWN_PROJECTILE.CastInfo, CastInfo);
-		SPAWN_PROJECTILE.netId = SPAWN_PROJECTILE.CastInfo.MissileNetID;// ??
-		SPAWN_PROJECTILE.Position = SPAWN_PROJECTILE.CastInfo.SpellCastLaunchPosition;
-		SPAWN_PROJECTILE.CasterPosition = SPAWN_PROJECTILE.CastInfo.SpellCastLaunchPosition;
-		//SPAWN_PROJECTILE.Direction = {
-		//    "x": 0.36772018671035767,
-		//    "z": 0,
-		//    "y": 0.9299365282058716
-		//}
-		//SPAWN_PROJECTILE.Velocity = {
-		//    "x": 441.2642517089844,
-		//    "z": -109.0909194946289,
-		//    "y": 1115.9239501953125
-		//};
-		SPAWN_PROJECTILE.StartPoint = SPAWN_PROJECTILE.CastInfo.SpellCastLaunchPosition;
-		SPAWN_PROJECTILE.EndPoint = SPAWN_PROJECTILE.CastInfo.TargetPosition;
-		SPAWN_PROJECTILE.UnitPosition = SPAWN_PROJECTILE.CastInfo.SpellCastLaunchPosition;
-		SPAWN_PROJECTILE.Speed = speed;
-
-		this.parent.packetController.sendTo_vision(SPAWN_PROJECTILE);
-		console.log(SPAWN_PROJECTILE);
-	}
-
 	// 497252 = root
 	AddParticleTarget(PackageHash, EffectNameHash, BoneNameHash = 497252, target = undefined){
 		var SPAWN_PARTICLE = createPacket('SPAWN_PARTICLE', 'S2C');
@@ -172,11 +86,11 @@ class PacketConstructorsPlayer extends PacketConstructorsUnit {
 		};
 		SPAWN_PARTICLE.FXCreateGroupData[0].FXCreateData = [];
 		SPAWN_PARTICLE.FXCreateGroupData[0].FXCreateData[0] = {
-			TargetNetID: target?.netId || 0,//this.netId,
-			NetAssignedNetID: ++global.lastNetId,//?
-			CasterNetID: 0,//this.netId,
-			BindNetID: this.parent.netId,
-			KeywordNetID: 0,//this.netId,
+			TargetNetId: target?.netId || 0,//this.netId,
+			NetAssignedNetId: ++global.lastNetId,//?
+			CasterNetId: 0,//this.netId,
+			BindNetId: this.parent.netId,
+			KeywordNetId: 0,//this.netId,
 			TimeSpent: 0,
 			ScriptScale: 1,
 		};

@@ -1,4 +1,3 @@
-const _Spell = require('../_Spell');
 
 const spellHash = {
 	YasuoQ: 0,
@@ -35,11 +34,12 @@ const boneHash = {
 	HashStringObject(boneHash);
 }
 
-module.exports = class _Yasuo extends _Spell {
+module.exports = class _Yasuo {
 	PackageHash = 3275499062;
 
     static hashes = {
         spellHash, particleHash, boneHash
     };
+	hashes = _Yasuo.hashes;
 
 };

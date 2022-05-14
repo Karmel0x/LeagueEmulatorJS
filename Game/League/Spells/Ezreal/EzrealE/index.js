@@ -1,7 +1,8 @@
+const _Spellchain = require("../../_Spellchain");
 const _Ezreal = require("../_Ezreal");
 
 
-module.exports = class EzrealE extends _Ezreal {
+module.exports = class EzrealE extends _Spellchain {
 	cast(packet){
 		var owner = this.owner;
 		
@@ -30,9 +31,9 @@ module.exports = class EzrealE extends _Ezreal {
 		CastInfo.SpellHash = _Ezreal.hashes.spellHash.EzrealArcaneShiftMissile;
 		CastInfo.ManaCost = 0;
 		CastInfo.SpellSlot = 47;//?
-		CastInfo.SpellNetID = this.netId;
-		CastInfo.MissileNetID = 1073743444;
-		owner.castSpellAns(CastInfo);
+		CastInfo.SpellNetId = this.netId;
+		CastInfo.MissileNetId = 1073743444;
+		this.castSpellAns(CastInfo);
 		
 		owner.Movement.dashTo(CastInfo.TargetPosition, {speed: 1800, range: 400});
 		

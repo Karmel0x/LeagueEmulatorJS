@@ -9,13 +9,13 @@ var target = {
 module.exports = {
 	size: 'uint16',
 	SpellHash: 'uint32',
-	SpellNetID: 'uint32',
+	SpellNetId: 'uint32',
 	SpellLevel: 'uint8',
 	AttackSpeedModifier: 'float',
-	CasterNetID: 'uint32',
-	SpellChainOwnerNetID: 'uint32',
+	CasterNetId: 'uint32',
+	SpellChainOwnerNetId: 'uint32',
 	PackageHash: 'uint32',
-	MissileNetID: 'uint32',
+	MissileNetId: 'uint32',
 	TargetPosition: Vector3,
 	TargetPositionEnd: Vector3,
 

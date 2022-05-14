@@ -5,6 +5,7 @@ const BasePacket = require('../../Packets/BasePacket');
 const Packets = require('../../Core/Packets');
 
 
+var packetId = 0;
 function packetParser(packet1) {
 
 	var buffer;
@@ -80,8 +81,8 @@ function packetParser(packet1) {
 	}catch(e){}
 
 	var packetData = {
-		Id: packet1.Id || 0,
-		Time: packet1.Time || (packet1.TimeS * 1000).toFixed(3),
+		Id: packet1.Id ?? ++packetId,
+		Time: (packet1.Time ?? (packet1.TimeS ?? 0 * 1000)).toFixed(3),
 		Channel: packet1.Channel,
 		Bytes: bytes,
 		Parsed: parsedStr,

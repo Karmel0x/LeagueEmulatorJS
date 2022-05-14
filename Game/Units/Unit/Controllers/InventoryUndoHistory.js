@@ -12,9 +12,11 @@ class UndoHistory {
 	history = [];
 	constructor(parent){
 		this.parent = parent;
+		this.owner = parent.owner || parent.parent || parent;
+		
 	}
 	alternateUndoEnable(){
-		var player = this.parent.parent;
+		var player = this.owner;
 		var SetUndoEnabled = createPacket('SetUndoEnabled');
 		SetUndoEnabled.netId = player.netId;
 		SetUndoEnabled.UndoStackSize = this.history.length;
@@ -31,7 +33,7 @@ class UndoHistory {
 		if(!this.history.length)
 			return;
 
-		var player = this.parent.parent;
+		var player = this.owner;
 
 		var element = this.history.pop();
 		var itemId = element.itemId;
@@ -78,6 +80,7 @@ class UndoHistory {
 		var itemIndex = tempArr.findIndex(idx => idx.slot == slot1);
 		var item = this.history[this.history.length - (itemIndex + 1)];
 
+		var player = this.owner;
 		if(player.inventory.Items[slot1].id == item.itemId)
 			item.slot = slot2;
 	}

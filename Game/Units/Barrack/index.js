@@ -50,7 +50,7 @@ module.exports = class Barrack {
 		Barrack_SpawnUnit.netId = netId;
 		Barrack_SpawnUnit.ObjectID = netId;
 		Barrack_SpawnUnit.ObjectNodeID = 0x40;
-		Barrack_SpawnUnit.BarracksNetID = this.hash;
+		Barrack_SpawnUnit.BarracksNetId = this.hash;
 		Barrack_SpawnUnit.WaveCount = this.WaveCount;
 		Barrack_SpawnUnit.MinionType = minionType;
 		Barrack_SpawnUnit.DamageBonus = this.DamageBonus;
@@ -62,6 +62,9 @@ module.exports = class Barrack {
 	spawnUnit(characterName){
 		return Minion.create(this, characterName);
 	}
+	/**
+	 * Spawn next minion wave at position of this barrack
+	 */
 	async spawnWave(){
 		++this.WaveCount;
 

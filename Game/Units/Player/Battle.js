@@ -10,7 +10,7 @@ class BattlePlayer extends BattleUnit {
 		ANNOUNCE2.netId = this.parent.netId;
 		ANNOUNCE2.id = EVENT.OnChampionDie;
 		ANNOUNCE2.EventData = {
-			OtherNetID: source.parent.netId
+			OtherNetId: source.parent.netId
 		};
 		this.parent.packetController.sendTo_everyone(ANNOUNCE2);
 

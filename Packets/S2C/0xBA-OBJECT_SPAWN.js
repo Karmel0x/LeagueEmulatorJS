@@ -63,7 +63,7 @@ module.exports = class extends BasePacket {//S2C.OBJECT_SPAWN
 			buffer.writeobj([CharacterStackData, this.CharacterStackData.length], this.CharacterStackData);
 
 		buffer.writeobj({
-			LookAtNetID: 'uint32',
+			LookAtNetId: 'uint32',
 			LookAtType: 'uint8',
 			LookAtPosition: Vector3,
 		}, this);
@@ -125,7 +125,7 @@ module.exports = class extends BasePacket {//S2C.OBJECT_SPAWN
 			this.CharacterStackData = buffer.readobj([CharacterStackData, CharacterStackData_length]);
 
 		Object.assign(this, buffer.readobj({
-			LookAtNetID: 'uint32',
+			LookAtNetId: 'uint32',
 			LookAtType: 'uint8',
 			LookAtPosition: Vector3,
 		}));

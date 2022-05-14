@@ -14,7 +14,7 @@ module.exports = class extends BasePacket {//C2S.MOVE_REQ
 	struct = {
 		OrderType: 'uint8',
 		Position: Vector2,
-		TargetNetID: 'uint32',
+		TargetNetId: 'uint32',
 	}
 	reader(buffer){
 		super.reader(buffer);

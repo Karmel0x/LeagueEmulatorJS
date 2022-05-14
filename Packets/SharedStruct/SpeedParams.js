@@ -5,7 +5,7 @@ module.exports = {//SpeedParams
 	ParabolicGravity: 'float',
 	ParabolicStartPoint: Vector2,
 	Facing: 'uint8',
-	FollowNetID: 'uint32',
+	FollowNetId: 'uint32',
 	FollowDistance: 'float',
 	FollowBackDistance: 'float',
 	FollowTravelTime: 'float',

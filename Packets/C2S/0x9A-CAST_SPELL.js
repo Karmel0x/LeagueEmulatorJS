@@ -11,6 +11,6 @@ module.exports = class extends BasePacket {//S2C.
 		Slot: 'uint8',
 		Position: Vector2,
 		EndPosition: Vector2,
-		TargetNetID: 'uint32',
+		TargetNetId: 'uint32',
 	}
 };

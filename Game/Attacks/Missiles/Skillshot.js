@@ -26,25 +26,41 @@ class Skillshot extends Missile {
 		},
 	}
 
-	static getMaxRangePosition(SourcePosition, TargetPosition, range = 0){
-		return Movement.getPositionBetweenRange(SourcePosition, TargetPosition, range, range);
-	//	var MaxRangePosition = new Vector2(TargetPosition.x, TargetPosition.y);
-	//	MaxRangePosition.sub(SourcePosition);
+	/**
+	 * Get position not farther than range and not closer than range
+	 * @param {Vector2} sourcePosition
+	 * @param {Vector2} targetPosition
+	 * @param {Number} range
+	 * @returns {Vector2}
+	 */
+	static getMaxRangePosition(sourcePosition, targetPosition, range = 0){
+		return Movement.getPositionBetweenRange(sourcePosition, targetPosition, range, range);
+	//	var MaxRangePosition = new Vector2(targetPosition.x, targetPosition.y);
+	//	MaxRangePosition.sub(sourcePosition);
 	//	MaxRangePosition.normalize().multiplyScalar(range);
-	//	MaxRangePosition.add(SourcePosition);
+	//	MaxRangePosition.add(sourcePosition);
 	//	return MaxRangePosition;
 	}
-	static create(source, TargetPosition, options = {}){
-		var skillshot = {};
-		skillshot.missile = new Skillshot(source, options);
-		skillshot.missile.callbacks.collision._.options.range = options.radius;
+	/**
+	 * 
+	 * @param {Unit} source - usually owner Unit
+	 * @param {Vector2} targetPosition
+	 * @param {Object} options
+	 * @returns 
+	 */
+	static create(source, targetPosition, options = {}){
+		var missile = new Skillshot(source, options);
+		missile.callbacks.collision._.options.range = options.radius;
 		
-		skillshot.target = new Dummytarget([
+		missile.target = new Dummytarget([
 			// idk if `options.range - (options.radius / 2)` is correct here, corners on max range will not hit
-			Skillshot.getMaxRangePosition(source.Position, TargetPosition, options.range - (options.radius / 2))
+			Skillshot.getMaxRangePosition(source.Position, targetPosition, options.range - (options.radius / 2))
 		]);
 		
-		return skillshot;
+		return missile;
+	}
+	doFire(){
+		this.firefire(this.target);
 	}
 }
 

@@ -21,8 +21,8 @@ module.exports = (player, packet) => {
 		player.Movement.move0(packet.MovementData);
 	}
 	else if(packet.OrderType == 3){ // right click attack
-		if(packet.TargetNetID){
-			player.attack_TargetNetID(packet.TargetNetID, packet.MovementData);
+		if(packet.TargetNetId){
+			player.attack_TargetNetId(packet.TargetNetId, packet.MovementData);
 		}
 	}
 	else if(packet.OrderType == 10){ // s key stop

@@ -2,7 +2,7 @@ var BasePacket = require('../BasePacket');
 
 module.exports = class extends BasePacket {//S2C.HERO_SPAWN
 	struct = {
-		NetID: 'uint32',
+		NetId: 'uint32',
 		ClientID: 'int32',
 		NetNodeID: 'uint8',
 		SkillLevel: 'uint8',

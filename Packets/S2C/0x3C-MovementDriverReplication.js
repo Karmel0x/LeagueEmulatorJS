@@ -2,7 +2,7 @@ var BasePacket = require('../BasePacket');
 const Vector3 = require('../SharedStruct/Vector3');
 
 var MovementDriverHomingData = {
-	TargetNetID: 'uint32',
+	TargetNetId: 'uint32',
 	TargetHeightModifier: 'float',
 	TargetPosition: Vector3,
 	Speed: 'float',

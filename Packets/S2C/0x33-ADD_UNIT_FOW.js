@@ -3,6 +3,6 @@ var BasePacket = require('../BasePacket');
 
 module.exports = class extends BasePacket {//S2C.
 	struct = {
-		RegionNetID: 'uint32',
+		RegionNetId: 'uint32',
 	}
 };

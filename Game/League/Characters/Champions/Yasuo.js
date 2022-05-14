@@ -5,7 +5,6 @@ const SpellsYasuo = require('../../Spells/Yasuo');
 
 module.exports = class Yasuo extends _Champion {
 	//PackageHash = 3275499062;
-	attackWindupPercent = 22;
 	constructor(parent){
 		super(parent);
 

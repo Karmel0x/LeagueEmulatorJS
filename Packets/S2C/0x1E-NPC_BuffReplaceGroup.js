@@ -1,8 +1,8 @@
 var BasePacket = require('../BasePacket');
 
 const BuffInGroupReplace = {
-	OwnerNetID: 'uint32',
-	CasterNetID: 'uint32',
+	OwnerNetId: 'uint32',
+	CasterNetId: 'uint32',
 	Slot: 'uint8',
 };
 

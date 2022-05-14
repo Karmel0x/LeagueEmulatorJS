@@ -8,6 +8,7 @@ const { createPacket } = require("../../../../Core/PacketUtilities");
 module.exports = class BuffController {
 	constructor(parent){
 		this.parent = parent;
+		this.owner = parent.owner || parent.parent || parent;
 
 	}
 	addBuffAns(spellObject){console.log(spellObject);
@@ -21,7 +22,7 @@ module.exports = class BuffController {
         ADD_BUFF.PackageHash = spellObject.PackageHash;
         ADD_BUFF.RunningTime = 0;
         ADD_BUFF.Duration = spellObject.buff.Duration;
-        ADD_BUFF.CasterNetID = this.parent.netId;
+        ADD_BUFF.CasterNetId = this.parent.netId;
 		this.parent.packetController.sendTo_vision(ADD_BUFF);
 	}
 	removeBuffAns(spellObject){
@@ -37,6 +38,11 @@ module.exports = class BuffController {
 	//addBuff(buffName = 'SummonerHeal'){
 	//	//this.buffs[buffName] = new BuffList[buffName](this);
 	//}
+
+	/**
+	 * Function holding waiting loop to check for buff end
+	 * @param {*} buff (spellObject)
+	 */
 	async buffEnd(buff){
 		if(!buff.EndTime)
 			return;
@@ -46,6 +52,10 @@ module.exports = class BuffController {
 
 		this.removeBuffC(buff);
 	}
+	/**
+	 * Adding spell to buff list
+	 * @param {Spell} spellObject
+	 */
 	addBuffC(spellObject){
 		if(!this.buffs[spellObject.constructor.name]){
 			this.buffs[spellObject.constructor.name] = spellObject;
@@ -63,6 +73,10 @@ module.exports = class BuffController {
 	//	this.removeBuffAns(this.buffs[buffName]);
 	//	delete this.buffs[buffName];
 	//}
+	/**
+	 * Remove buff by spellObject, usually called automatically when spell ends
+	 * @param {*} spellObject
+	 */
 	removeBuffC(spellObject){
 		spellObject.buffDeactivate();
 
@@ -70,6 +84,11 @@ module.exports = class BuffController {
 		this.removeBuffAns(spellObject);
 		delete this.buffs[spellObject.constructor.name];
 	}
+	/**
+	 * Check if buff is active in buff list
+	 * @param {Spell} spellObject
+	 * @returns {Boolean}
+	 */
 	hasBuffC(spellObject){
 		return !!this.buffs[spellObject.constructor.name];
 	}

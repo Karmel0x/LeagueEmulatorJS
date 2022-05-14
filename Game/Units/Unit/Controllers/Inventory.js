@@ -13,7 +13,9 @@ var TrinketSlot = 6;
 class Inventory {
 
     constructor(parent){
-        this.parent = parent;
+		this.parent = parent;
+		this.owner = parent.owner || parent.parent || parent;
+		
 		this.UndoHistory = new InventoryUndoHistory(this);
     }
 	Items = {};

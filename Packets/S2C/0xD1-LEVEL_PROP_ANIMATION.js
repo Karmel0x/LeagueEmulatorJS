@@ -4,7 +4,7 @@ var UpdateLevelPropData = {//todo
 	stringParam1: ['char', 64],
 	floatParam1: 'float',
 	floatParam2: 'float',
-	netID: 'uint32',
+	netId: 'uint32',
 	flags1: 'uint32',
 	command: 'uint32',
 	byteParam1: 'uint8',

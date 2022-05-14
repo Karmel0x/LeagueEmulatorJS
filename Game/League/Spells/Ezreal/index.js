@@ -1,5 +1,8 @@
+const SpellSlot = require("../../../../Constants/SpellSlot");
+const _Ezreal = require("./_Ezreal");
 
-module.exports = class SpellsEzreal {
+
+module.exports = class SpellsEzreal extends _Ezreal {
 	static list = {
 		EzrealQ: require('./EzrealQ'),
 		EzrealW: require('./EzrealW'),
@@ -8,13 +11,15 @@ module.exports = class SpellsEzreal {
 	};
 	
     constructor(parent){
+        super();
 		this.parent = parent;
+		this.owner = parent.owner || parent.parent || parent;
 
         this.spells = {
-			0: new SpellsEzreal.list.EzrealQ(this),
-			1: new SpellsEzreal.list.EzrealW(this),
-			2: new SpellsEzreal.list.EzrealE(this),
-			3: new SpellsEzreal.list.EzrealR(this),
+			[SpellSlot.Q]: new SpellsEzreal.list.EzrealQ(this),
+			[SpellSlot.W]: new SpellsEzreal.list.EzrealW(this),
+			[SpellSlot.E]: new SpellsEzreal.list.EzrealE(this),
+			[SpellSlot.R]: new SpellsEzreal.list.EzrealR(this),
         }
     }
 	castSpell(packet){

@@ -37,6 +37,10 @@ global.getUnitsF = function(team = 'ALL', type = 'ALL'){
 	return global.getUnits(team, type);
 };
 
+global.getUnitByNetId = function(netId){
+	return global.unitsNetId[netId];
+};
+
 
 function appendGlobal(unit){
 	unit.id = global.lastUnitId++;

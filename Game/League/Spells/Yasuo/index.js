@@ -1,20 +1,28 @@
+const SpellSlot = require("../../../../Constants/SpellSlot");
+const _Yasuo = require("./_Yasuo");
 
-module.exports = class SpellsYasuo {
+
+module.exports = class SpellsYasuo extends _Yasuo {
 	static list = {
 		YasuoQ: require('./YasuoQ'),
 		YasuoW: require('./YasuoW'),
 		YasuoE: require('./YasuoE'),
 		YasuoR: require('./YasuoR'),
+		YasuoA: require('./YasuoA'),
 	};
 	
     constructor(parent){
+        super();
 		this.parent = parent;
+		this.owner = parent.owner || parent.parent || parent;
 
         this.spells = {
-			0: new SpellsYasuo.list.YasuoQ(this),
-			1: new SpellsYasuo.list.YasuoW(this),
-			2: new SpellsYasuo.list.YasuoE(this),
-			3: new SpellsYasuo.list.YasuoR(this),
+			[SpellSlot.Q]: new SpellsYasuo.list.YasuoQ(this),
+			[SpellSlot.W]: new SpellsYasuo.list.YasuoW(this),
+			[SpellSlot.E]: new SpellsYasuo.list.YasuoE(this),
+			[SpellSlot.R]: new SpellsYasuo.list.YasuoR(this),
+			
+			[SpellSlot.A]: new SpellsYasuo.list.YasuoA(this),
         }
     }
 	castSpell(packet){

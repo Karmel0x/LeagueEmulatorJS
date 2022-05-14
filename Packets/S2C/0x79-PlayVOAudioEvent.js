@@ -6,6 +6,6 @@ module.exports = class extends BasePacket {//S2C.
 		EventID: ['char', 64],
 		AudioCallbackType: 'uint8',
 		AudioVOEventType: 'uint8',
-		AudioEventNetID: 'uint32',
+		AudioEventNetId: 'uint32',
 	}
 };

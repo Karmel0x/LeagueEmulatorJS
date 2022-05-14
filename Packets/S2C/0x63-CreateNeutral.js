@@ -3,7 +3,7 @@ const Vector3 = require('../SharedStruct/Vector3');
 
 module.exports = class extends BasePacket {//S2C.
 	struct = {
-		NetID: 'uint32',
+		NetId: 'uint32',
 		NetNodeID: 'uint8',
 		Position: Vector3,
 		GroupPosition: Vector3,

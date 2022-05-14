@@ -44,7 +44,11 @@ socket.addEventListener('message', (event) => {
 		var parsedLines = parseInt((res.packet.Parsed || '').split('\n').length + (res.packet.Parsed || '').length / 100);
 		parsedLines = parsedLines > 10 ? 10 : parsedLines;
 
-		offDEBUGobj[res.packet.Id] = JSON.parse(res.packet.offDEBUG);
+		try{
+			offDEBUGobj[res.packet.Id] = JSON.parse(res.packet.offDEBUG);
+		}catch(e){
+			console.error(e, res);
+		}
 
 		var newpacket = document.createElement('div');
 		newpacket.className = 'Packet';
@@ -52,7 +56,7 @@ socket.addEventListener('message', (event) => {
 <div class="packetrow">
 	<div class="row">
 		<div class="Id col">Id:` + (res.packet.Id || 0) + `</div>
-		<div class="Time col">Time:` + (res.packet.Time || '') + ' (' + (new Date(res.packet.Time).toISOString().slice(11, 19)) + `)</div>
+		<div class="Time col">Time:` + (res.packet.Time || '') + ' (' + (new Date(parseFloat(res.packet.Time || 0)).toISOString().slice(11, 19)) + `)</div>
 		<div class="Channel col">` + res.packet.channelName + `.` + res.packet.cmdName + ` (Size:` + (res.packet.Bytes || '').split(' ').length + `)</div>
 	</div>
 	<div class="row">

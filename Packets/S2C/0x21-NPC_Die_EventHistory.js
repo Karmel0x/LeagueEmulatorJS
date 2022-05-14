@@ -12,7 +12,7 @@ const EventHistoryEntry = {
 module.exports = class extends BasePacket {//S2C.
 	struct = {
 		EventSourceType: 'uint8',
-		KillerNetID: 'uint32',
+		KillerNetId: 'uint32',
 		Duration: 'float',
 		count: 'int32',
 	}

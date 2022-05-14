@@ -5,6 +5,8 @@ class PacketConstructorsUnit {
 
 	constructor(parent){
 		this.parent = parent;
+		this.owner = parent.owner || parent.parent || parent;
+		
 	}
 
 	//SET_HEALTH(){
@@ -45,6 +47,7 @@ class PacketConstructorsUnit {
 			});
 		this.parent.packetController.sendTo_vision(SET_ANIMATION);
 	}
+
 }
 
 

@@ -16,7 +16,7 @@ module.exports = {//MovementDataWithSpeed
 		obj.HasTeleportID = (obj.bitfield & 1) != 0;
 
 		if(obj.WaypointsSize){
-			obj.TeleportNetID = buffer.read1('uint32');
+			obj.TeleportNetId = buffer.read1('uint32');
 			if(obj.HasTeleportID){
 				obj.TeleportID = buffer.read1('uint8');
 			}
@@ -38,7 +38,7 @@ module.exports = {//MovementDataWithSpeed
 	
 		buffer.write1('uint8', source.bitfield);
 		if(source.WaypointsCC.length){
-			buffer.write1('uint32', source.TeleportNetID);
+			buffer.write1('uint32', source.TeleportNetId);
 			if(source.TeleportID)
 				buffer.write1('uint8', source.TeleportID);
 			buffer.writeobj(SpeedParams, source.SpeedParams);

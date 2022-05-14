@@ -2,8 +2,8 @@ var BasePacket = require('../BasePacket');
 
 
 var BuffUpdateCountGroupEntry = {
-    OwnerNetID: 'uint32',
-    CasterNetID: 'uint32',
+    OwnerNetId: 'uint32',
+    CasterNetId: 'uint32',
     BuffSlot: 'uint8',
     Count: 'uint8',
 };

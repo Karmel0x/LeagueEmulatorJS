@@ -11,7 +11,7 @@ const Movement = require('../Unit/Controllers/Movement');
 const CharactersChampions = require('../../League/Characters/Champions');
 const TEAM = require('../../../Constants/TEAM');
 const { Vector2 } = require("three");
-const AttackController = require("../Unit/Controllers/AttackController");
+const SpellSlot = require("../../../Constants/SpellSlot");
 
 global.Players = global.Players || [];
 
@@ -53,13 +53,12 @@ class Player extends Unit {
 		//this.character = character;
 		this.summonerSpells = new SpellsSummoner(this, 'SummonerHeal', 'SummonerFlash');
 		this.Movement = new Movement(this);
-		this.attackController = new AttackController(this);
 		
 	}
 	get PlayerInfo(){
 		return Object.assign({}, this._PlayerInfo, {
-			SummonorSpell1: this.summonerSpells.spells[0].spellHash,
-			SummonorSpell2: this.summonerSpells.spells[1].spellHash,
+			SummonorSpell1: this.summonerSpells.spells[SpellSlot.D].spellHash,
+			SummonorSpell2: this.summonerSpells.spells[SpellSlot.F].spellHash,
 			TeamId: TEAM[this.info.team] || 0,
 		});
 	}
@@ -114,12 +113,6 @@ class Player extends Unit {
 			this.summonerSpells.castSpell(packet);
 		else if(packet.Slot >= 6 && packet.Slot <= 12)
 			this.inventory.castSpell(packet);
-	}
-	castSpellAns(CastInfo, PackageHash){
-		this.PacketConstructors.castSpellAns(CastInfo, PackageHash);
-	}
-	spawnProjectileAns(CastInfo, PackageHash, speed = 1200){
-		this.PacketConstructors.spawnProjectileAns(CastInfo, PackageHash, speed);
 	}
 
 	// 497252 = root

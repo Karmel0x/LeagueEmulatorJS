@@ -1,7 +1,7 @@
 var BasePacket = require('../BasePacket');
 
 var BuffRemoveGroupEntry = {
-    OwnerNetID: 'uint32',
+    OwnerNetId: 'uint32',
     Slot: 'uint8',
     RunTimeRemove: 'float',
 };

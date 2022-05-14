@@ -7,6 +7,6 @@ module.exports = class extends BasePacket {//S2C.
 		Count: 'uint8',
 		Duration: 'float',
 		RunningTime: 'float',
-		CasterNetID: 'uint32',
+		CasterNetId: 'uint32',
 	}
 };

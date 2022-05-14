@@ -8,6 +8,7 @@ class StatsUnit {
 
 	constructor(parent, defaultValues = {}){
 		this.parent = parent;
+		this.owner = parent.owner || parent.parent || parent;
 
 		//if(parent.constructor.name == 'Player')
 		//{

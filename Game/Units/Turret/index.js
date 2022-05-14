@@ -2,7 +2,9 @@ var Unit = require('../Unit');
 const {createPacket, sendPacket} = require("../../../Core/PacketUtilities");
 const loadingStages = require("../../../Constants/loadingStages");
 const { Vector2 } = require('three');
-const AttackController = require('../Unit/Controllers/AttackController');
+const Vector3b = require('../../../Packets/SharedStruct/Vector3b');
+const CharactersTurrets = require('../../League/Characters/Turrets');
+const SpellSlot = require('../../../Constants/SpellSlot');
 
 const Turrets = {
 	BLUE: {
@@ -47,23 +49,18 @@ class Turret extends Unit {
 	constructor(team, num = 0, character = '', config = {}){
 		super(team, num, character, config);
 		
-		this.character = {
-			name: character,
-		};
-		
-		this.attackController = new AttackController(this);
-		
+		this.character = CharactersTurrets.create(this, config.characterName || character || this.constructor.name);
 		this.initialized();
 	}
 	spawn(){
-		let pos = Turrets[this.info.team][this.character.name].position;
+		let pos = Turrets[this.info.team][this.character.modelName].position;
 		this.spawnPosition = new Vector2(pos.x, pos.y);
 		
 		var TURRET_SPAWN = createPacket('TURRET_SPAWN', 'S2C');
 		TURRET_SPAWN.netId = this.netId;
-		TURRET_SPAWN.NetID = this.netId;
+		TURRET_SPAWN.NetId = this.netId;
 		TURRET_SPAWN.NetNodeID = 0x40;
-		TURRET_SPAWN.Name = this.character.name;
+		TURRET_SPAWN.Name = this.character.modelName;
 		TURRET_SPAWN.bitfield = {
 			IsTargetable: true,
 		};
@@ -90,10 +87,17 @@ class Turret extends Unit {
 	}
 	acquisitionRange = 750;
 
+	/**
+	 * Get current target if in range
+	 * @returns {?Unit}
+	 */
 	getCurrentTargetIfInRange(){
 		return this.target && this.inRange(this.target, this.stats.Range.Total) ? this.target : null;
 	}
-	// find new target in range, sort by type and distance
+	/**
+	 * Find new target in range, sort by type and distance
+	 * @returns {Unit}
+	 */
 	getNewTarget(){
 		var unitsInRange = this.getEnemyUnitsInRange(this.stats.Range.Total);
 		if(!unitsInRange.length)
@@ -104,6 +108,10 @@ class Turret extends Unit {
 		Unit.sortUnitsByType(unitsInRange, targetUnitTypesOrder);
 		return unitsInRange[0];
 	}
+	/**
+	 * Find target to attack or get previous target if still in range
+	 * @returns {?Unit}
+	 */
 	findTarget(){
 		var target = this.getCurrentTargetIfInRange();
 		if(target)
@@ -115,6 +123,10 @@ class Turret extends Unit {
 
 		return null;
 	}
+	/**
+	 * Set target for turret to attack
+	 * @param {Unit} target
+	 */
 	setTarget(target){
 		if(this.target === target)
 			return;
@@ -125,14 +137,40 @@ class Turret extends Unit {
 		SET_TARGET.targetNetId = target.netId;
 		this.packetController.sendTo_everyone(SET_TARGET);
 	}
-	// scan for enemy units in range and attack nearest one
+	//FACE_DIRECTION(){
+	//	var FACE_DIRECTION = createPacket('FACE_DIRECTION');
+	//	FACE_DIRECTION.netId = this.netId;
+	//	FACE_DIRECTION.flags_DoLerpTime = 1;
+	//	FACE_DIRECTION.Direction = new Vector3b(-0.93, 0, -0.35);
+	//	FACE_DIRECTION.LerpTime = 0.08;
+	//	this.packetController.sendTo_everyone(FACE_DIRECTION, loadingStages.NOT_CONNECTED);
+	//}
+	//DAMAGE_DONE(target, damage){
+	//	var DAMAGE_DONE = createPacket('DAMAGE_DONE');
+	//	DAMAGE_DONE.netId = this.netId;
+	//	DAMAGE_DONE.DamageResultType = 4;
+	//	DAMAGE_DONE.dummy = 0;
+	//	DAMAGE_DONE.DamageType = 0;
+	//	DAMAGE_DONE.Damage = damage;
+	//	DAMAGE_DONE.TargetNetId = target.netId;
+	//	DAMAGE_DONE.SourceNetId = this.netId;
+	//	this.packetController.sendTo_everyone(DAMAGE_DONE, loadingStages.NOT_CONNECTED);
+	//}
+	/**
+	 * Scan for enemy units in range and attack nearest one
+	 */
 	attackInRange(){
 		var target = this.findTarget();
 		if(!target)
 			return;
 
-		this.setTarget(target);
-		this.attackController?.attackProcess(target);
+		this.setTarget(target);//console.log(this.character.spells.spells[SpellSlot.A]);
+		var attackSlot = this.character.spells.spells[SpellSlot.A];
+		//var basicattack = attackSlot.attackProcess(target);
+		var basicattack = attackSlot.castAttack(target);
+		//this.FACE_DIRECTION();
+		//this.DAMAGE_DONE(target, 100);
+		//attackSlot.turretAttackProjectile(basicattack);
 	}
 
 	

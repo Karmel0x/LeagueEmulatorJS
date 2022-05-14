@@ -1,7 +1,8 @@
+const _Spellchain = require("../../_Spellchain");
 const _Yasuo = require("../_Yasuo");
 
 
-module.exports = class YasuoW extends _Yasuo {
+module.exports = class YasuoW extends _Spellchain {
 	async cast(packet){
 		var owner = this.owner;
 		

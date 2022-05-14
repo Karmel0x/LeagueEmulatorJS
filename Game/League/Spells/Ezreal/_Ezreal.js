@@ -1,4 +1,3 @@
-const _Spell = require('../_Spell');
 
 const spellHash = {
 	EzrealMysticShot: 25116740,
@@ -29,7 +28,7 @@ const boneHash = {
 	HashStringObject(boneHash);
 }
 
-module.exports = class _Ezreal extends _Spell {
+module.exports = class _Ezreal {
 	PackageHash = 2618078626;//[Character]Ezreal00
 
     static hashes = {
