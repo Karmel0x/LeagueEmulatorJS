@@ -30,6 +30,13 @@ class Player extends Unit {
 		});
 	}
 
+	/**
+	 * 
+	 * @param {String} team (RED/BLUE)
+	 * @param {Number} num playerNumber (0-4)
+	 * @param {Object} config 
+	 * @returns 
+	 */
 	static create(team, num, config = {}){
 		var unit = new Player(team, num, config.characterName, config);
 		unit.character = CharactersChampions.create(unit, config.characterName);
@@ -97,8 +104,8 @@ class Player extends Unit {
 			sendPacket([this.peer_num], packet);
 	}
 	
-	chatBoxMessage(message){
-		this.PacketConstructors.chatBoxMessage(message);
+	chatBoxMessage(){
+		this.PacketConstructors.chatBoxMessage(...arguments);
 	}
 	SET_HEALTH(){
 		this.stats.charStats_send();

@@ -20,7 +20,6 @@ module.exports = class _Basicattackchain extends _Spellchain {
 					}
 				};
 				this.owner.Movement.move1(target.Position);
-				//this.Movement.move0(MovementData);
 			}
 			return;
 		}

@@ -5,7 +5,7 @@ const EVENT = require("../../../Packets/EVENT");
 
 class BattleInhibitor extends BattleUnit {
 
-	async onDie(source){
+	announceDie(source){
 		var ANNOUNCE2 = createPacket('ANNOUNCE2');
 		ANNOUNCE2.netId = this.parent.netId;
 		ANNOUNCE2.id = EVENT.OnDampenerDie;
@@ -18,6 +18,9 @@ class BattleInhibitor extends BattleUnit {
 		Building_Die.netId = this.parent.netId;
 		Building_Die.AttackerNetId = source.parent.netId;
 		this.parent.packetController.sendTo_everyone(Building_Die);
+	}
+	async onDie(source){
+		this.announceDie(source);
 	}
 
 }

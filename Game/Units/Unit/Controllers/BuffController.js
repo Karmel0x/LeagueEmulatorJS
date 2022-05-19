@@ -11,6 +11,11 @@ module.exports = class BuffController {
 		this.owner = parent.owner || parent.parent || parent;
 
 	}
+	/**
+	 * Sending packet to client to add buff
+	 * @private
+	 * @param {_Spellchain} spellObject 
+	 */
 	addBuffAns(spellObject){console.log(spellObject);
         var ADD_BUFF = createPacket('ADD_BUFF', 'S2C');
         ADD_BUFF.netId = this.parent.netId;
@@ -25,6 +30,11 @@ module.exports = class BuffController {
         ADD_BUFF.CasterNetId = this.parent.netId;
 		this.parent.packetController.sendTo_vision(ADD_BUFF);
 	}
+	/**
+	 * Sending packet to client to remove buff
+	 * @private
+	 * @param {_Spellchain} spellObject 
+	 */
 	removeBuffAns(spellObject){
         var REMOVE_BUFF = createPacket('REMOVE_BUFF', 'S2C');
         REMOVE_BUFF.netId = this.parent.netId;
@@ -41,7 +51,8 @@ module.exports = class BuffController {
 
 	/**
 	 * Function holding waiting loop to check for buff end
-	 * @param {*} buff (spellObject)
+	 * @private
+	 * @param {_Spellchain} buff
 	 */
 	async buffEnd(buff){
 		if(!buff.EndTime)
@@ -54,7 +65,7 @@ module.exports = class BuffController {
 	}
 	/**
 	 * Adding spell to buff list
-	 * @param {Spell} spellObject
+	 * @param {_Spellchain} spellObject
 	 */
 	addBuffC(spellObject){
 		if(!this.buffs[spellObject.constructor.name]){
@@ -75,7 +86,7 @@ module.exports = class BuffController {
 	//}
 	/**
 	 * Remove buff by spellObject, usually called automatically when spell ends
-	 * @param {*} spellObject
+	 * @param {_Spellchain} spellObject
 	 */
 	removeBuffC(spellObject){
 		spellObject.buffDeactivate();
@@ -86,7 +97,7 @@ module.exports = class BuffController {
 	}
 	/**
 	 * Check if buff is active in buff list
-	 * @param {Spell} spellObject
+	 * @param {_Spellchain} spellObject
 	 * @returns {Boolean}
 	 */
 	hasBuffC(spellObject){

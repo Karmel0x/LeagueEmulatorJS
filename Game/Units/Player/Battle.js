@@ -5,7 +5,7 @@ const EVENT = require("../../../Packets/EVENT");
 
 class BattlePlayer extends BattleUnit {
 
-	async onDie(source){
+	announceDie(source){
 		var ANNOUNCE2 = createPacket('ANNOUNCE2');
 		ANNOUNCE2.netId = this.parent.netId;
 		ANNOUNCE2.id = EVENT.OnChampionDie;
@@ -13,10 +13,12 @@ class BattlePlayer extends BattleUnit {
 			OtherNetId: source.parent.netId
 		};
 		this.parent.packetController.sendTo_everyone(ANNOUNCE2);
-
-		if(!this.died)
-			return console.log('[weird] died but not died?');
-
+	}
+	/**
+	 * Wait for respawn time to pass to respawn
+	 * @todo should be in Unit loop ?
+	 */
+	async respawnWaiter(){
 		this.parent.death.lastRespawnTime = this.parent.death.respawnTime || false;
 
 		if(this.parent.death.lastRespawnTime === false)
@@ -29,6 +31,14 @@ class BattlePlayer extends BattleUnit {
 		}
 
 		this.parent.respawn();
+	}
+	async onDie(source){
+		this.announceDie(source);
+
+		if(!this.died)
+			return console.log('[weird] died but not died?');
+
+		this.respawnWaiter();
 	}
 
 }

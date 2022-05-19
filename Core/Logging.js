@@ -34,10 +34,16 @@ class Logging {
 	static _debug = Logging.output.none;
 	static _packet = Logging.output.none;
 
+	/**
+	 * @arguments printable arguments
+	 */
 	static debug(){
 		//Logging._debug(arguments.callee.caller.name, ...arguments);
 		Logging._debug(...arguments);
 	}
+	/**
+	 * @arguments printable arguments (packet ({channel, bytes, time}))
+	 */
 	static packet(){
 		if(Logging._packet == Logging.output.none)
 			return;
@@ -60,6 +66,11 @@ class Logging {
 			});
 		}
 	}
+
+	/**
+	 * Set where log should output (none/console/websocket/file)
+	 * @param {Object.<Logging.output>} options { debug, packet }
+	 */
 	static changeOptions(options){
 		this.options = options;
 

@@ -1,5 +1,11 @@
 
 module.exports = {
+	/**
+	 * Convert number to array of bytes
+	 * @param {Number} x 
+	 * @param {Number} len 4=32bit, 8=64bit
+	 * @returns {Array.<Number>}
+	 */
 	getIntBytes_r: (x, len = 4) => {
 		var bytes = [];
 		for(; len > 0; --len){
@@ -26,6 +32,12 @@ module.exports = {
 		}
 		return ret;
 	},
+	/**
+	 * @deprecated
+	 * @param {Object} element 
+	 * @param {String} address 
+	 * @returns {Object}
+	 */
 	childByAddress: (element, address) => {
 		if(typeof element !== 'object')
 			return element;

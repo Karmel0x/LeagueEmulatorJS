@@ -9,11 +9,26 @@ const respawnTimes = [
 
 class DeathPlayer extends DeathUnit {
 
+	/**
+	 * Respawn time in seconds
+	 */
 	get respawnTime(){
 		return respawnTimes[this.parent.stats.Level];
 	}
+
+	/**
+	 * Exp amount to give to enemy player
+	 */
 	Exp = 0;
+
+	/**
+	 * Kill death counter to calculate bounties
+	 */
 	KillDeathCounter = 0;
+
+	/**
+	 * Gold amount to give to enemy player
+	 */
 	get Gold(){
 		if(this.KillDeathCounter >= 5)
 			return 500;

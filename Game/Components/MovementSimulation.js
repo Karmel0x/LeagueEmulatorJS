@@ -3,6 +3,10 @@ const { Vector2 } = require('three');
 // https://leagueoflegends.fandom.com/wiki/Sight#Sight_Ranges
 var defaultVisionRange = 1350;
 
+/**
+ * @todo a lot of stuff to create here
+ * and a lot of stuff to improve here
+ */
 class MovementSimulation {
 
 	Map = new Vector2(14000, 14000);
@@ -13,6 +17,9 @@ class MovementSimulation {
 		//NEUTRAL: {},
 	}
 	
+	/**
+	 * Broadcast vision for enemy
+	 */
 	broadcastVision(){
 		global.units.forEach(unit => {
 			let visibleForEnemy = !unit.battle.died && unit.visibleForEnemy2;
@@ -28,6 +35,10 @@ class MovementSimulation {
 			}
 		});
 	}
+
+	/**
+	 * Checks if unit is visible for enemy and broadcasting it
+	 */
 	visionProcess(){
 		const oppositeTeams = {BLUE: 'RED', RED: 'BLUE'};
 		for(var allyUnit_team in oppositeTeams){
@@ -47,6 +58,13 @@ class MovementSimulation {
 
 		this.broadcastVision();
 	}
+
+	/**
+	 * Actually move unit
+	 * @param {Unit|Missile} unit 
+	 * @param {Number} diff 
+	 * @returns {Boolean} hasMoved
+	 */
 	move(unit, diff){
 		if(!unit.Movement?.Waypoints || unit.Movement.Waypoints.length < 2 || unit.Movement.WaypointsHalt)
 			return false;
@@ -67,6 +85,12 @@ class MovementSimulation {
 		//console.log(unit.Movement.Waypoints[0], unit.Movement.Waypoints[1], dest, dist, diff);
 		return true;
 	}
+
+	/**
+	 * Called if unit has moved to call unit movement callbacks
+	 * @param {Unit|Missile} unit 
+	 * @param {Number} diff 
+	 */
 	callbacks(unit, diff){
 		if(!unit.callbacks)
 			return false;
@@ -77,7 +101,8 @@ class MovementSimulation {
 		}
 
 		for(let i in unit.callbacks.collision){
-			//unit.callbacks.collision[i].options.flags;//todo: flags like self targetable, ally targetable, enemy targetable
+			//todo: flags like self targetable, ally targetable, enemy targetable
+			//unit.callbacks.collision[i].options.flags;
 			var units = global.getUnits();
 			for(var unitId in units){
 				let unit2 = units[unitId];
@@ -93,6 +118,12 @@ class MovementSimulation {
 
 		return true;
 	}
+
+	/**
+	 * Get unit elapsed time in ms since last movement update
+	 * @param {Unit|Missile} unit 
+	 * @returns {Number}
+	 */
 	unitDiff(unit){
 		let now = performance.now();
 		if(!unit.moveTime){
@@ -103,6 +134,10 @@ class MovementSimulation {
 		unit.moveTime = now;
 		return diff;
 	}
+
+	/**
+	 * Movement main loop for units to make them move
+	 */
 	async update(){
 		for(;;){
 			await global.Utilities.wait(20);//lower this?

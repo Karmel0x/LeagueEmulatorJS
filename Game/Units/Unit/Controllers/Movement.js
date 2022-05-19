@@ -1,5 +1,7 @@
 const {createPacket, sendPacket} = require("../../../../Core/PacketUtilities");
 const { Vector2 } = require('three');
+const Pathfinding = require("../../../Components/Pathfinding");
+
 
 //var ACTIONS = {
 //    FREE: 0,
@@ -69,7 +71,7 @@ class Movement {
 		//console.log(DASH);
 	}
 	/**
-	 * Dash to position
+	 * Dash to position, but you should use dashTo probably
 	 * @param {Vector2} position
 	 * @param {Object} options
 	 */
@@ -127,6 +129,11 @@ class Movement {
 
 		return PositionBetweenRange;
 	}
+	/**
+	 * Public function to dash unit to position
+	 * @param {Vector2} position 
+	 * @param {Object} options {speed, range, minRange, callback}
+	 */
 	dashTo(position, options){
 		var pos = Movement.getPositionBetweenRange(this.Waypoints[0], position, options.range, options.minRange);
 		this.dash(pos, options);
@@ -143,19 +150,38 @@ class Movement {
 
 		return RandomPositionClamped;
 	}
-	// idk, i belive it can be made better
-	knockAside(SourcePosition, distance = 100, minDistance = null, options = {}){
+	/**
+	 * Knock unit aside (closer to us)
+	 * @todo calculate options for easier usage
+	 * @param {Vector2} position 
+	 * @param {Number} distance 
+	 * @param {Number} minDistance 
+	 * @param {Object} options {speed, duration}
+	 */
+	knockAside(position, distance = 100, minDistance = null, options = {}){
 		minDistance = minDistance ?? distance;
 		options.speed = options.speed || (Math.abs(distance) / (options.duration || 1));
 		options.ParabolicGravity = options.ParabolicGravity || 0;
 		options.Facing = options.Facing ?? 1;
 
-		var position = Movement.getPositionBetweenRange(this.Waypoints[0], SourcePosition, distance, minDistance);
-		this.dash(position, options);
+		var pos = Movement.getPositionBetweenRange(this.Waypoints[0], position, distance, minDistance);
+		this.dash(pos, options);
 	}
-	knockBack(SourcePosition, distance = 100, minDistance = null, options = {}){
-		this.knockAside(SourcePosition, -distance, -minDistance, options);
+	/**
+	 * Knock unit back (further to us)
+	 * @param {Vector2} position 
+	 * @param {Number} distance 
+	 * @param {Number} minDistance 
+	 * @param {Object} options {speed, duration}
+	 */
+	knockBack(position, distance = 100, minDistance = null, options = {}){
+		this.knockAside(position, -distance, -minDistance, options);
 	}
+	/**
+	 * Knock unit up
+	 * @todo calculate options for easier usage
+	 * @param {Object} options {speed, duration}
+	 */
 	knockUp(options = {}){
 		options.speed = options.speed || (10 / (options.duration || 1));
 		options.ParabolicGravity = options.ParabolicGravity || 16.5;
@@ -189,15 +215,23 @@ class Movement {
 
 		this.parent.chatBoxMessage(message);
 	}
-	move0(MovementData){
+	move0(packet){
+		var MovementData = packet.MovementData;
 		this.sendDebugData('move0', MovementData);
 		//if(this.ACTION != ACTIONS.DASHING)
 		//    this.moveCallback = null;
 		if(this.parent.callbacks.move.pending)
 			delete this.parent.callbacks.move.pending;
 		
-		if(MovementData.Waypoints && MovementData.Waypoints.length){
-			this.setWaypoints(MovementData.Waypoints);
+		var newWaipoints = MovementData.Waypoints;
+		if(!global.doNotUsePathfinding){
+			// idk if it's even necessary here but MoveData.Waypoints are wrong when character is dashing
+			newWaipoints = Pathfinding.getPath(this.owner.position, packet.Position);
+			console.log({Waypoints: MovementData.Waypoints, newWaipoints});
+		}
+
+		if(newWaipoints && newWaipoints.length){
+			this.setWaypoints(newWaipoints);
 		}
 	}
 	halt0(send = false, MovementData = {}){

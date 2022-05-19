@@ -7,7 +7,7 @@ const {createPacket, sendPacket} = require('../Core/PacketUtilities');
 module.exports = (player, packet) => {
     console.log('handle: C2S.MOVE_REQ');
 	//console.log(packet);
-    //console.log('C2S.MOVE_REQ Waypoints', packet.MovementData.Waypoints);
+    console.log('C2S.MOVE_REQ Position', packet.Position, 'Waypoints', packet.MovementData.Waypoints);
 
 	//todo: probably we should use `packet.Position` instead of `packet.MovementData.Waypoints`
 	// because while dashing it gives us current using waypoints ?? instead of where we want to go
@@ -18,7 +18,7 @@ module.exports = (player, packet) => {
 		//		new Vector2(packet.Position.x, packet.Position.y),
 		//	],
 		//};
-		player.Movement.move0(packet.MovementData);
+		player.Movement.move0(packet);
 	}
 	else if(packet.OrderType == 3){ // right click attack
 		if(packet.TargetNetId){

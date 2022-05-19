@@ -26,6 +26,12 @@ class Missile {
 	initialize(){
 		// override
 	}
+
+	/**
+	 * 
+	 * @param {*} parent usually it will be {Unit}
+	 * @param {*} options {speed, ...}
+	 */
 	constructor(parent, options = {}){
 		this.parent = parent;
 		this.owner = parent.owner || parent.parent || parent;
@@ -38,6 +44,7 @@ class Missile {
 		this.stats.MoveSpeed = new IStat(options.speed || 2000);
 
 		//console.debug(Date.now(), 'Created Missile', this.constructor.name);
+		// todo Movement class similar to unit's Movement class
 		this.Movement.Waypoints = [this.parent.Position.clone()];
 		this.appendGlobal();
 	}

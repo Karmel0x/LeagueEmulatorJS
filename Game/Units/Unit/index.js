@@ -106,15 +106,29 @@ class Unit {
 	}
 	moveTime = 0;
 	ACTION = 0;
+	/**
+	 * 
+	 * @todo move it to attack controller ?
+	 * @param {Number} TargetNetId 
+	 * @param {MovementData} MovementData 
+	 */
 	attack_TargetNetId(TargetNetId, MovementData = []){
 		if(!global.unitsNetId[TargetNetId])
 			return console.log('global.Units[netId] does not contain', TargetNetId);
 
 		this.character.spells.spells[SpellSlot.A]?.attack(global.unitsNetId[TargetNetId], MovementData);
 	}
+	/**
+	 * Returns if unit is dead
+	 * @returns {Boolean}
+	 */
 	isDead(){
 		return this.battle.died;
 	}
+	/**
+	 * Returns if unit is able to move
+	 * @returns {Boolean}
+	 */
 	isAbleForMoving(){
 		if(!this.Movement)
 			return false;
@@ -124,6 +138,10 @@ class Unit {
 
 		return true;
 	}
+	/**
+	 * Returns if unit is able to attack
+	 * @returns {Boolean}
+	 */
 	isAbleForAttacking(){
 		if(!this.character.spells.spells[SpellSlot.A])
 			return false;
@@ -368,6 +386,10 @@ class Unit {
 
 	autoAttackToggle = true;
 	acquisitionRange = 400;
+	/**
+	 * 
+	 * @todo move it to attack controller ?
+	 */
 	autoAttack(){
 		var target = Unit.getNearestEnemyUnit(this.position, this.acquisitionRange)
 		if(this.constructor.name == 'Player')//

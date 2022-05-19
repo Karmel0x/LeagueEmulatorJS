@@ -45,6 +45,10 @@ class StatsUnit {
 
 	}
 
+	/**
+	 * 
+	 * @param {Object} stats 
+	 */
 	increaseStats(stats){
 		Object.keys(stats).forEach(stat => {
 			if(stats[stat].Flat)
@@ -55,6 +59,10 @@ class StatsUnit {
 		});
 	}
 
+	/**
+	 * 
+	 * @param {Object} stats 
+	 */
 	decreaseStats(stats){
 		Object.keys(stats).forEach(stat => {
 			if(stats[stat].Flat)
@@ -63,6 +71,16 @@ class StatsUnit {
 			if(stats[stat].Percent)
 				this[stat].PercentBonus -= stats[stat].Percent;
 		});
+	}
+
+	/**
+	 * Friendly funtion to add stats to the unit and holding decrease function
+	 * call this() to decrease stats
+	 * @param {Object} stats 
+	 */
+	tempStats(stats){
+		increaseStats(stats);
+		return () => decreaseStats(stats);
 	}
 }
 

@@ -27,6 +27,11 @@ module.exports = class Barrack {
 	position = new Vector2(0, 0);
 	team = '';
 	num = 0;
+	/**
+	 * 
+	 * @param {String} team {BLUE/RED}
+	 * @param {Number} num {0=TOP/1=MID/2=BOT}
+	 */
 	constructor(team, num){
 		this.team = team;
 		this.num = num;
@@ -45,10 +50,15 @@ module.exports = class Barrack {
 	HealthBonus = 7;
 	MinionLevel = 1;
 
-	spawnUnitAns(netId, minionType){
+	/**
+	 * Send packet to client to spawn unit
+	 * @param {Number} UnitNetId 
+	 * @param {Number} minionType 
+	 */
+	spawnUnitAns(UnitNetId, minionType){
 		var Barrack_SpawnUnit = createPacket('Barrack_SpawnUnit');
-		Barrack_SpawnUnit.netId = netId;
-		Barrack_SpawnUnit.ObjectID = netId;
+		Barrack_SpawnUnit.netId = UnitNetId;
+		Barrack_SpawnUnit.ObjectID = UnitNetId;
 		Barrack_SpawnUnit.ObjectNodeID = 0x40;
 		Barrack_SpawnUnit.BarracksNetId = this.hash;
 		Barrack_SpawnUnit.WaveCount = this.WaveCount;
@@ -59,6 +69,11 @@ module.exports = class Barrack {
 		global.Teams.ALL.sendPacket(Barrack_SpawnUnit);
 		//console.debug(Barrack_SpawnUnit);
 	}
+	/**
+	 * Spawn minion at position of this barrack
+	 * @param {String} characterName (Basic/MechCannon/MechMalee/Wizard)
+	 * @returns {Minion}
+	 */
 	spawnUnit(characterName){
 		return Minion.create(this, characterName);
 	}

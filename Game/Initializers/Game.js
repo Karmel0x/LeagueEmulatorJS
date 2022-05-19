@@ -16,6 +16,13 @@ const Player = require("../Units/Player");
 
 class Game {
 	// STAGE client opened ==========================================================
+
+	/**
+	 * Send packet to client about loding state and ping
+	 * it's just answer to C2S.PING_LOAD_INFO
+	 * @param {Player} player 
+	 * @param {Object} packet request packet
+	 */
 	static PING_LOAD_INFO(player, packet){
 		var PING_LOAD_INFO = createPacket('PING_LOAD_INFO', 'LOW_PRIORITY');
 		PING_LOAD_INFO.ClientID = player._PlayerInfo.ClientID;
@@ -31,6 +38,10 @@ class Game {
 		global.Teams.ALL.sendPacket(PING_LOAD_INFO, loadingStages.NOT_CONNECTED);
 	}
 
+	/**
+	 * Send packet to client to load screen info with info about game
+	 * @param {Player} player 
+	 */
 	static LOAD_SCREEN_INFO(player){
 		var LOAD_SCREEN_INFO = createPacket('LOAD_SCREEN_INFO', 'LOADING_SCREEN');
 		LOAD_SCREEN_INFO.blueMax = 6;
@@ -53,6 +64,11 @@ class Game {
 		LOAD_SCREEN_INFO.currentRed = LOAD_SCREEN_INFO.teamRed_playerIds.length;
 		global.Teams.ALL.sendPacket(LOAD_SCREEN_INFO, loadingStages.NOT_CONNECTED);
 	}
+
+	/**
+	 * Send packet to client to show name of player
+	 * @param {Player} player 
+	 */
 	static LOAD_NAME(player){
 		var LOAD_NAME = createPacket('LOAD_NAME', 'LOADING_SCREEN');
 		LOAD_NAME.PlayerId = player._PlayerInfo.PlayerID;
@@ -60,6 +76,11 @@ class Game {
 		LOAD_NAME.playerName = 'Test';
 		global.Teams.ALL.sendPacket(LOAD_NAME, loadingStages.NOT_CONNECTED);
 	}
+
+	/**
+	 * Send packet to client to show player champion and skin
+	 * @param {Player} player 
+	 */
 	static LOAD_HERO(player){
 		var LOAD_HERO = createPacket('LOAD_HERO', 'LOADING_SCREEN');
 		LOAD_HERO.PlayerId = player._PlayerInfo.PlayerID;
@@ -67,6 +88,7 @@ class Game {
 		LOAD_HERO.SkinName = global.getUnitsF('ALL', 'Player')[0].character.name;
 		global.Teams.ALL.sendPacket(LOAD_HERO, loadingStages.NOT_CONNECTED);
 	}
+
 	static connected(player){
 		Game.LOAD_SCREEN_INFO(player);
 		Game.LOAD_NAME(player);
@@ -74,11 +96,20 @@ class Game {
 	}
 
 	// STAGE client loaded ==========================================================
+
+	/**
+	 * Send packet to client to start game (switch from loading screen to game)
+	 */
 	static START_GAME(){
 		var START_GAME = createPacket('START_GAME');
 		START_GAME.bitfield_EnablePause = true;
 		global.Teams.ALL.sendPacket(START_GAME, loadingStages.NOT_CONNECTED);
 	}
+
+	/**
+	 * Send packet to client to synchronize game time
+	 * @param {Number} time 
+	 */
 	static GAME_TIMER(time = 0){
 		var GAME_TIMER = createPacket('GAME_TIMER');
 		GAME_TIMER.SynchTime = time;
@@ -89,6 +120,11 @@ class Game {
 		GAME_TIMER_UPDATE.StartTime = time;
 		global.Teams.ALL.sendPacket(GAME_TIMER_UPDATE, loadingStages.NOT_CONNECTED);
 	}
+
+	/**
+	 * 
+	 * @todo
+	 */
 	static async GameTimeHeartBeat(){
 		
 		var time = 0;
@@ -96,10 +132,15 @@ class Game {
 			Game.GAME_TIMER(time);
 	
 			await global.Utilities.wait(10 * 1000);
-			time += 10;// temporary logic
+			time += 10;
 		}
 	}
-	// this should be in Game.run
+
+	/**
+	 * 
+	 * @todo should be in Game.run
+	 * @param {Player} player 
+	 */
 	static async playerLoaded(player){
 		global.Game.loaded = Date.now() / 1000;// this shouldn't be here
 		Game.START_GAME();
@@ -107,14 +148,11 @@ class Game {
 		Game.GAME_TIMER_UPDATE();
 	}
 
-
-
-
 	// STAGE start game flow ==========================================================
+
 	static initialize(){
 		Game.initGame();
 	}
-
 
 	static async run(){
 		GameComponents.Spawn();
@@ -166,6 +204,8 @@ class Game {
 			//	if(playersLoaded)
 			//		start_game();// or all players has loaded
 			//}
+
+			// atm we start game with '.start' chat command
 			if(global.command_START_GAME)
 				Game.started();
 		}

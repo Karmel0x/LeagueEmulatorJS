@@ -48,7 +48,8 @@ class PacketConstructorsPlayer extends PacketConstructorsUnit {
 		
 		dest.sendPacket(AVATAR_INFO, loadingStages.NOT_CONNECTED);
 	}
-	chatBoxMessage(message){
+	chatBoxMessage(){
+		var message = Array.prototype.slice.call(arguments).join(' ');
 		
 		var CHAT_BOX_MESSAGE = createPacket('CHAT_BOX_MESSAGE', 'COMMUNICATION');
 		

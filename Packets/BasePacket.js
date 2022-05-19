@@ -1,4 +1,10 @@
 
+/**
+ * @deprecated
+ * @param {Object} element 
+ * @param {String} address 
+ * @returns {Object}
+ */
 function childByAddressPlusMath(element, address){
     var addressSplitted = address.split('.');
     if(addressSplitted.length > 1)
@@ -29,6 +35,11 @@ function childByAddressPlusMath(element, address){
     return element[address];
 }
 
+/**
+ * @deprecated
+ * @param {Object} struct 
+ * @param {Object} source 
+ */
 function fill_struct_length(struct, source){
     for(let i in struct)
         if(typeof struct[i] == 'object' && typeof struct[i][1] == 'string'){

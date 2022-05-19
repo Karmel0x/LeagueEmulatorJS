@@ -5,7 +5,7 @@ const EVENT = require("../../../Packets/EVENT");
 
 class BattleTurret extends BattleUnit {
 
-	async onDie(source){
+	announceDie(source){
 		var ANNOUNCE2 = createPacket('ANNOUNCE2');
 		ANNOUNCE2.netId = this.parent.netId;
 		ANNOUNCE2.id = EVENT.OnTurretDie;
@@ -13,7 +13,9 @@ class BattleTurret extends BattleUnit {
 			OtherNetId: source.parent.netId
 		};
 		this.parent.packetController.sendTo_everyone(ANNOUNCE2);
-		
+	}
+	async onDie(source){
+		this.announceDie(source);
 	}
 
 }

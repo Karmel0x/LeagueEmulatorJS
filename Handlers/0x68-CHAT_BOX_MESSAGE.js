@@ -49,7 +49,7 @@ module.exports = (player, packet) => {
 				Available commands:
 				.q [<minionsAmount>] :: spawning BLUE and RED minions
 				.qq [<minionsAmount>] :: spawning RED minion and teleports to BLUE base
-				.w :: starting game (start spawning minions)
+				.start :: starting game (start spawning minions)
 				.r :: reading player stats from '/Constants/TestStats.json'
 				.e :: sending player stats to client
 				.levelup [<levelAmount>] :: adding levels for player
@@ -60,6 +60,7 @@ module.exports = (player, packet) => {
 				.info <type(position)> :: printing in console some informations you may need
 				.goto <netId> :: teleporting to unit with netId
 				. :: run last command again
+				.pathfinding [<1/0>] :: turning pathfinding on/off
 			`;
 				//.debugMode [<debugLevel(0/1)>] :: turning off/on debug mode (debug logs)
 			chatBoxMessage(player, message.split('\t\t').join(' '));
@@ -76,8 +77,9 @@ module.exports = (player, packet) => {
 				global.Barracks['RED'][0].spawnUnit('Basic').Movement.teleport(new Vector2(1000 + (i * 150), 600));
 			}
 		}
-		else if(commandArgs[0] === 'w'){
+		else if(commandArgs[0] === 'start'){
 			global.command_START_GAME = true;
+			player.chatBoxMessage('starting game');
 		}
 		else if(commandArgs[0] === 'ww'){
 			var pos = new Vector2(10200, 13200);
@@ -127,11 +129,16 @@ module.exports = (player, packet) => {
 		//	}
 		//}
 		else if(commandArgs[0] == 'levelup'){
-			for(let i = parseInt(commandArgs[1] || 1); i > 0; i--)
+			var levelCount = parseInt(commandArgs[1] || 1);
+			for(let i = levelCount; i > 0; i--)
 				player.stats.levelUp();
+
+			player.chatBoxMessage('levelup:', levelCount);
 		}
 		else if(commandArgs[0] == 'expup'){
-			player.stats.expUp(parseInt(commandArgs[1] || 1));
+			var expCount = parseInt(commandArgs[1] || 1);
+			player.stats.expUp(expCount);
+			player.chatBoxMessage('expup:', expCount);
 		}
 		else if(commandArgs[0] == 'hp'){
 			var hpPercent = parseInt(commandArgs[1] || 100);
@@ -150,10 +157,12 @@ module.exports = (player, packet) => {
 			const Champion_ = require('../Game/League/Characters/Champions/' + character);
 			player.character = new Champion_(player);
 			player.UPDATE_MODEL(character);
+			player.chatBoxMessage('switching champion to:', character);
 		}
 		else if(commandArgs[0] == 'info'){
 			if(commandArgs[1] == 'position'){
 				console.log(commandArgs, player.position);
+				player.chatBoxMessage(...commandArgs, player.position.x, player.position.y);
 			}
 		}
 		else if(commandArgs[0] == 'goto'){
@@ -163,6 +172,23 @@ module.exports = (player, packet) => {
 			if(unit){
 				player.Movement.teleport(unit.position);
 			}
+			player.chatBoxMessage('teleporting player to ', unit.constructor.name, netId, '-', unit.position.x, unit.position.y);
+		}
+		else if(commandArgs[0] == 'pathfinding'){
+			if(!commandArgs[1]){
+				global.doNotUsePathfinding = !global.doNotUsePathfinding;
+			}
+			if(commandArgs[1] == '0'){
+				global.doNotUsePathfinding = true;
+			}
+			else if(commandArgs[1] == '1'){
+				global.doNotUsePathfinding = false;
+			}
+			else if(commandArgs[1] == '2'){
+				global.useTerrainEscape = !global.useTerrainEscape;
+				player.chatBoxMessage('global.useTerrainEscape:', !!global.useTerrainEscape);
+			}
+			player.chatBoxMessage('global.doNotUsePathfinding:', !!global.doNotUsePathfinding);
 		}
 
 	}

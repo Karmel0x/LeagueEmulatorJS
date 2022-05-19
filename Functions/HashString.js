@@ -4,6 +4,11 @@ const fs = require('fs');
 
 
 module.exports = class HashString {
+	/**
+	 * Hash string with sdbm hash algorithm
+	 * @param {String} path 
+	 * @returns {Number}
+	 */
 	static HashString(path){
 		path = path.toLowerCase();
 

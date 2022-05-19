@@ -55,6 +55,11 @@ var Handlers = {
 	0x68: {handler: require('../Handlers/0x68-CHAT_BOX_MESSAGE')},
 };
 
+
+/**
+ * Handles received packets
+ * @param {Object} q packet {peer_num, channel, buffer}
+ */
 module.exports = async function(q){
 
 	var player = q.peer_num;

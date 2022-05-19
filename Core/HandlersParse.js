@@ -1,5 +1,12 @@
 const Packets = require("./Packets");
 
+/**
+ * Parse packet bytes to object
+ * @param {Buffer} buffer 
+ * @param {Number} channel Packets[channel]
+ * @param {Number} cmd Packets[channel][cmd]
+ * @returns {Object}
+ */
 function parseBody(buffer, channel, cmd){
 	var obj1 = {};
 	if(typeof Packets[channel] == 'undefined' || typeof Packets[channel][cmd] == 'undefined' || typeof Packets[channel][cmd].packet == 'undefined'){
@@ -17,6 +24,12 @@ function parseBody(buffer, channel, cmd){
 	//console.log(obj1);
 	return obj1;
 }
+
+/**
+ * Parse packet to object
+ * @param {Object} packet {buffer, channel}
+ * @returns {Object}
+ */
 function parsePacket(packet){
 	var obj1 = packet.buffer.readobj(Packets.Header);
     if(packet.buffer.off == packet.buffer.length){

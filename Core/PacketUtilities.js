@@ -31,6 +31,13 @@ class PacketUtilities {
 		if(typeof Packets.cmd[i].packet !== 'undefined')
 			PacketsSizes[Packets.cmd[i].id] = packetSize(Packets.cmd[i].packet);
 	*/
+
+	/**
+	 * Create packet instance to pass to sendPacket
+	 * @param {String} packetName 
+	 * @param {String} channel (S2C/C2S/...)
+	 * @returns {BasePacket}
+	 */
 	static createPacket(packetName, channel = 'S2C'){
 		if(typeof Packets[channel] === 'undefined' || typeof Packets[channel][packetName] === 'undefined'){
 			console.log('packet is not yet implemented', channel, packetName);
@@ -96,6 +103,12 @@ class PacketUtilities {
 			PacketUtilities.sendPacketS(peer_num, channel, buffer);
 		});
 	}
+	/**
+	 * 
+	 * @param {Array.<Number>} peer_nums 
+	 * @param {BasePacket} packet 
+	 * @returns 
+	 */
 	static sendPacket(peer_nums, packet){
 		if(typeof packet === 'undefined'){
 			//console.log('packet is not yet implemented', packet.id);

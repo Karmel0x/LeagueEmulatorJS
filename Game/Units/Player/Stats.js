@@ -28,10 +28,12 @@ const ExpCurve = [
 
 class StatsPlayer extends StatsUnit {
 
+	/**
+	 * Send packet to client to update char stats
+	 * @todo delay for few ms so it will not send multiple packets on same action
+	 * for example SummonerHeal will not send two packets (for heal and for buff)
+	 */
 	charStats_send(){
-		//todo: delay for few ms so it will not send multiple packets on same action
-		//  for example SummonerHeal will not send two packets (for heal and for buff)
-		
 		var CHAR_STATS = createPacket('CHAR_STATS', 'LOW_PRIORITY');
 		CHAR_STATS.units = [this.parent];
 		this.parent.packetController.sendTo_everyone(CHAR_STATS);
@@ -47,6 +49,10 @@ class StatsPlayer extends StatsUnit {
 	}
 	Exp = 0;
 	ExpTotal = 0;
+	/**
+	 * Increase exp and level up if needed
+	 * @param {Number} amount 
+	 */
 	expUp(amount){
 		this.Exp += amount;
 		this.ExpTotal += amount;
@@ -59,6 +65,10 @@ class StatsPlayer extends StatsUnit {
 		console.log('expUp', amount);
 	}
 	Level = 1;
+	/**
+	 * Level up
+	 * @param {Boolean} sendStats
+	 */
 	levelUp(sendStats = true){
 		if(this.Level >= 18)
 			return;
@@ -80,6 +90,13 @@ class StatsPlayer extends StatsUnit {
 	SkillPoints = 1;
 	SpellLevel = [0, 0, 0, 0];
 	SummonerSpellsEnabled = [true, true];
+
+	/**
+	 * Skill upgrade by 1
+	 * @param {Number} Slot 
+	 * @param {Boolean} IsEvolve 
+	 * @returns 
+	 */
 	skillUpgrade(Slot, IsEvolve = false){
 		
 		if(IsEvolve){

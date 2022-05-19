@@ -14,7 +14,14 @@ global.destroyedUnits = global.destroyedUnits || [];
 var unitsCache = {};
 var unitsCache_lastUnitId = 0;
 
-// get units by team and type, TODO: make caching more advanced
+// 
+/**
+ * Get units by team and type
+ * @todo make caching more advanced
+ * @param {String} team 
+ * @param {String} type 
+ * @returns {Array.<Unit>}
+ */
 global.getUnits = function(team = 'ALL', type = 'ALL'){
 	if(team == 'ALL' && type == 'ALL')
 		return global.units;
