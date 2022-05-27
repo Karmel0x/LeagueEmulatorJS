@@ -25,8 +25,8 @@ module.exports = class extends BasePacket {//S2C.
 		if(buffer.off >= buffer.length)
 			return;
 
-		this.MaxHealth = buffer.read1('float');
-		this.Health = buffer.read1('float');
+		this.health = buffer.read1('float');
+		this.currentHealth = buffer.read1('float');
 	}
 	writer(buffer){
 		super.writer(buffer);
@@ -48,12 +48,12 @@ module.exports = class extends BasePacket {//S2C.
 			buffer.writeobj(['uint8', packetSize], this.Packets[i]);
 		}
 
-		if(!this.MaxHealth)
+		if(!this.health)
 			return;
 			
 		buffer.writeobj({
-			MaxHealth: 'float',
-			Health: 'float',
+			health: 'float',
+			currentHealth: 'float',
 		}, this);
 	}
 };

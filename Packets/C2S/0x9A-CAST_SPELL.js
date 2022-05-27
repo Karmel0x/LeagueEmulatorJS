@@ -9,7 +9,7 @@ module.exports = class extends BasePacket {//S2C.
 			IsHudClickCast: 2,
 		}],
 		Slot: 'uint8',
-		Position: Vector2,
+		position: Vector2,
 		EndPosition: Vector2,
 		TargetNetId: 'uint32',
 	}

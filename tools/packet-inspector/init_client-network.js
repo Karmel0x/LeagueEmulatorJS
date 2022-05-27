@@ -1,6 +1,6 @@
 
-const enet = require('../../../enetcppjs/build/Release/enetcppjs.node');
-//const Handlers = require('../Core/Handlers');
+const enet = require('../../Core/enet');
+//const Handlers = require('../../Core/Handlers');
 
 
 async function init_network(handlers = null){

@@ -1,0 +1,7 @@
+module.exports = {
+	INVULNERABLE: 0x0,
+	DODGE: 0x2,
+	CRITICAL: 0x3,
+	NORMAL: 0x4,
+	MISS: 0x5,
+};

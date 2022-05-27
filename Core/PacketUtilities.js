@@ -1,5 +1,5 @@
 
-const enet = require('../../enetcppjs/build/Release/enetcppjs.node');
+const enet = require('./enet');
 const Packets = require("./Packets");
 require("./BufferExtend");
 const fs = require("fs");
@@ -132,7 +132,7 @@ class PacketUtilities {
 	static sendPacketP(players, packet){
 		var peer_nums = [];
 		players.forEach((player) => {
-			if(typeof player.peer_num == 'undefined')
+			if(typeof player.peer_num == 'undefined' || player.peer_num < 0)
 				return;
 
 			peer_nums.push(player.peer_num);

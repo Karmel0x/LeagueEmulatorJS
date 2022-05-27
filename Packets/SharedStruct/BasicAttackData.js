@@ -5,5 +5,5 @@ module.exports = {//BasicAttackData
 	ExtraTime: 'int8',//(ExtraTime - 128) / 100.0f
 	MissileNextID: 'uint32',
 	AttackSlot: 'int8',
-	TargetPosition: Vector3,
+	targetPosition: Vector3,
 };

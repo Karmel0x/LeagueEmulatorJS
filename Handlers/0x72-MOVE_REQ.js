@@ -1,36 +1,115 @@
 
 const { Vector2 } = require('three');
-const Packets = require('../Core/Packets');
-const {createPacket, sendPacket} = require('../Core/PacketUtilities');
+const slotId = require('../Constants/slotId');
 
+
+var waypointsDrawer = null;
+try{
+	const { createCanvas, loadImage } = require('canvas');
+	const fs = require('fs');
+
+	class WaypointsDrawer {
+
+		waypointsScale = 0.1;
+		outputFile = '../waypointsDrawer.png';
+		//deleteFirstWaypoint = false;
+		get deleteFirstWaypoint(){
+			return !global.doNotUsePathfinding;
+		}
+
+		canvas = null;
+		context = null;
+		hasChanged = false;
+
+		constructor(){
+			const width = 15000 * this.waypointsScale;
+			const height = 15000 * this.waypointsScale;
+
+			this.canvas = createCanvas(width, height);
+			this.context = this.canvas.getContext('2d');
+
+			this.context.fillStyle = 'black';
+			this.context.fillRect(0, 0, width, height);
+			this.context.strokeStyle = 'red';
+			this.context.lineWidth = 2;
+
+			loadImage(this.outputFile).then(image => {
+				this.context.drawImage(image, 0, 0, width, height);
+			}).catch(err => {
+				//console.log(err);
+			});
+
+			setInterval(() => {
+				this.saveFile();
+			}, 10000);
+		}
+		saveFile(){
+			if(!this.hasChanged)
+				return;
+			this.hasChanged = false;
+
+			const buffer = this.canvas.toBuffer('image/png');
+			fs.writeFile(this.outputFile, buffer, err => {
+				console.log('WaypointsDrawer file:', this.outputFile, 'saved:', !err);
+			});
+		}
+		drawWaypoints(waypoints){
+			if(this.deleteFirstWaypoint)
+				waypoints.shift();
+
+			if(waypoints.length < 2)
+				return;
+
+			waypoints = waypoints.map(waypoint => {
+				return {x: waypoint.x * this.waypointsScale, y: waypoint.y * this.waypointsScale}
+			});
+
+			var lastWaypoint = null;
+			waypoints.forEach(waypoint => {
+				if(lastWaypoint){
+					this.context.beginPath();
+					this.context.moveTo(lastWaypoint.x, lastWaypoint.y);
+					this.context.lineTo(waypoint.x, waypoint.y);
+					this.context.stroke(); 
+				}
+				lastWaypoint = waypoint;
+			});
+			this.hasChanged = true;
+		}
+	}
+
+	waypointsDrawer = new WaypointsDrawer();
+}catch(e){
+	//console.log(e);
+}
+
+
+const OrderTypes = {
+	rightClickMove: 2,
+	rightClickAttack: 3,
+	sKeyStop: 10,
+};
 
 module.exports = (player, packet) => {
     console.log('handle: C2S.MOVE_REQ');
 	//console.log(packet);
-    console.log('C2S.MOVE_REQ Position', packet.Position, 'Waypoints', packet.MovementData.Waypoints);
+    console.log('C2S.MOVE_REQ position', packet.position, 'Waypoints', packet.MovementData.Waypoints);
 
-	//todo: probably we should use `packet.Position` instead of `packet.MovementData.Waypoints`
-	// because while dashing it gives us current using waypoints ?? instead of where we want to go
-	if(packet.OrderType == 2){ // right click move
-		//var MovementData = {
-		//	Waypoints: [
-		//		packet.MovementData.Waypoints[0],
-		//		new Vector2(packet.Position.x, packet.Position.y),
-		//	],
-		//};
-		player.Movement.move0(packet);
+	if(packet.OrderType == OrderTypes.rightClickMove){
+		waypointsDrawer?.drawWaypoints(packet.MovementData.Waypoints);
+		player.move0(packet);
 	}
-	else if(packet.OrderType == 3){ // right click attack
+	else if(packet.OrderType == OrderTypes.rightClickAttack){
 		if(packet.TargetNetId){
-			player.attack_TargetNetId(packet.TargetNetId, packet.MovementData);
+			player.spellSlots[slotId.A]?.cast({target: packet.TargetNetId, packet});
 		}
 	}
-	else if(packet.OrderType == 10){ // s key stop
+	else if(packet.OrderType == OrderTypes.sKeyStop){
 		var MovementData = {
 			Waypoints: [
-				new Vector2(packet.Position.x, packet.Position.y),
+				new Vector2(packet.position.x, packet.position.y),
 			],
 		};
-		player.Movement.halt0(true, MovementData);//todo:move to client position?
+		player.halt0(true, MovementData);//todo:move to client position?
 	}
 };

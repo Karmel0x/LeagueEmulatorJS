@@ -3,7 +3,7 @@ var BasePacket = require('../BasePacket');
 const ChangeSlotSpellDataType = {
 	TargetingType: 1,
 	SpellName: 2,
-	Range: 3,
+	range: 3,
 	MaxGrowthRange: 4,
 	RangeDisplay: 5,
 	IconIndex: 6,
@@ -28,7 +28,7 @@ module.exports = class extends BasePacket {//S2C.CHANGE_SPELL
 		else if(this.ChangeSpellData.ChangeSlotSpellDataType == ChangeSlotSpellDataType.SpellName){
 			this.SpellName = buffer.read1('string0');//buffer.readobj(['char', 128]);
 		}
-		else if(this.ChangeSpellData.ChangeSlotSpellDataType == ChangeSlotSpellDataType.Range){
+		else if(this.ChangeSpellData.ChangeSlotSpellDataType == ChangeSlotSpellDataType.range){
 			this.CastRange = buffer.read1('float');
 		}
 		else if(this.ChangeSpellData.ChangeSlotSpellDataType == ChangeSlotSpellDataType.MaxGrowthRange){
@@ -53,7 +53,7 @@ module.exports = class extends BasePacket {//S2C.CHANGE_SPELL
 			else if(this.SpellName)
 				this.ChangeSpellData.ChangeSlotSpellDataType = ChangeSlotSpellDataType.SpellName;
 			else if(this.CastRange)
-				this.ChangeSpellData.ChangeSlotSpellDataType = ChangeSlotSpellDataType.Range;
+				this.ChangeSpellData.ChangeSlotSpellDataType = ChangeSlotSpellDataType.range;
 			else if(this.OverrideMaxCastRange)
 				this.ChangeSpellData.ChangeSlotSpellDataType = ChangeSlotSpellDataType.MaxGrowthRange;
 			else if(this.OverrideCastRangeDisplay)
@@ -70,7 +70,7 @@ module.exports = class extends BasePacket {//S2C.CHANGE_SPELL
 		else if(this.ChangeSpellData.ChangeSlotSpellDataType == ChangeSlotSpellDataType.SpellName){
 			buffer.write1('string0', this.SpellName);//buffer.writeobj(['char', 128], this.SpellName);
 		}
-		else if(this.ChangeSpellData.ChangeSlotSpellDataType == ChangeSlotSpellDataType.Range){
+		else if(this.ChangeSpellData.ChangeSlotSpellDataType == ChangeSlotSpellDataType.range){
 			buffer.write1('float', this.CastRange);
 		}
 		else if(this.ChangeSpellData.ChangeSlotSpellDataType == ChangeSlotSpellDataType.MaxGrowthRange){

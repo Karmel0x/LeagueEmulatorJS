@@ -95,7 +95,7 @@ module.exports = class extends BasePacket {//S2C.OBJECT_SPAWN
 			}
 			else if(this.MovementData.type == MovementDataType.Stop){
 				buffer.writeobj({
-					Position: Vector2,
+					position: Vector2,
 					Forward: Vector2,
 				}, this.MovementData);
 			}
@@ -152,7 +152,7 @@ module.exports = class extends BasePacket {//S2C.OBJECT_SPAWN
 			}
 			else if(this.MovementData.type == MovementDataType.Stop){
 				Object.assign(this.MovementData, buffer.readobj({
-					Position: Vector2,
+					position: Vector2,
 					Forward: Vector2,
 				}));
 			}

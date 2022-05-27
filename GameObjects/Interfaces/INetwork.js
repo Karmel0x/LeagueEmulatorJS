@@ -1,0 +1,59 @@
+
+const loadingStages = require('../../Constants/loadingStages');
+const {createPacket, sendPacket} = require('../../Core/PacketUtilities');
+
+
+module.exports = (I) => class INetwork extends I {
+
+	peer_num = -1;
+
+	constructor(...args){
+		super(...args);
+
+	}
+
+	sendPacket(packet, minStage = loadingStages.IN_GAME){
+		if(this.loadingStage < minStage)
+			return;
+		
+		//if(this.packetBatching)
+		//    this.batchPackets.push(packet);
+		//else
+			sendPacket([this.peer_num], packet);
+	}
+
+
+	sendReconnectPackets(){
+		global.Players.forEach(player => {
+			player.HERO_SPAWN(this);
+			player.AVATAR_INFO(this);
+		});
+	}
+	
+	//_storePacket = [];
+	//storePacket(packet){
+	//	this._storePacket.push(packet);
+	//}
+	//restorePackets(){
+	//	console.log('restorePackets', this._storePacket);
+	//	while(this._storePacket.length){
+	//		var packet = this._storePacket.shift();
+	//		sendPacketS([this.peer_num], packet.channel, packet.buffer);
+	//	}
+	//}
+	//todo: packet batching
+	//packetBatching = false;
+	//batchedPackets = [];
+	//batch_begin(){
+	//    this.packetBatching = true;
+	//}
+	//batch_end(){
+	//    this.packetBatching = false;
+	//    var packet = {};
+	//    packet.packets = this.batchedPackets;
+	//    this.batchedPackets = [];
+	//    //todo: create batchet packet
+	//    sendPacket(this.peer_num, packet);
+	//}
+
+};

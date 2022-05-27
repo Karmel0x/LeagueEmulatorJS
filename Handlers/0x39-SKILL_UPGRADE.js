@@ -8,6 +8,6 @@ module.exports = (player, packet) => {
 	//console.log(packet);
 
 	
-	player.stats.skillUpgrade(packet.Slot, packet.bitfield_IsEvolve);
+	player.skillUpgrade(packet.Slot, packet.bitfield_IsEvolve);
 
 };

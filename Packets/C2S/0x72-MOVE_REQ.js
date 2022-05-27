@@ -13,7 +13,7 @@ var MovementDataNormal = require('../SharedStruct/MovementDataNormal');
 module.exports = class extends BasePacket {//C2S.MOVE_REQ
 	struct = {
 		OrderType: 'uint8',
-		Position: Vector2,
+		position: Vector2,
 		TargetNetId: 'uint32',
 	}
 	reader(buffer){

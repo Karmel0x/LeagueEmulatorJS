@@ -1,7 +1,7 @@
 //
 //// need some changes in enetcppjs to make it working...
 //
-//const enet = require('../../enetcppjs/build/Release/enetcppjs.node');
+//const enet = require('../Core/enet');
 ////const Handlers = require('../Core/Handlers');
 //const Packets = require('../Core/Packets');
 //require("../Core/BufferExtend");

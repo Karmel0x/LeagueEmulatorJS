@@ -6,7 +6,7 @@ module.exports = class extends ExtendedPacket {//S2C.
 	struct = {
 		NetId: 'uint32',
 		NetNodeID: 'uint8',
-		Position: Vector3,
+		position: Vector3,
 		VisibilitySize: 'float',
 	}
 };

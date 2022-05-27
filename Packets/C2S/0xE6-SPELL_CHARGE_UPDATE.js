@@ -9,6 +9,6 @@ module.exports = class extends BasePacket {//C2S.
 			ForceStop: 2,
 		}],
 		Slot: 'uint8',
-		Position: Vector3,
+		position: Vector3,
 	}
 };

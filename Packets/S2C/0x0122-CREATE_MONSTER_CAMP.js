@@ -4,7 +4,7 @@ const Vector3 = require('../SharedStruct/Vector3');
 
 module.exports = class extends ExtendedPacket {//S2C.
 	struct = {
-		Position: Vector3,
+		position: Vector3,
 		MinimapIcon: ['char', 64],
 		CampIndex: 'uint8',
 		RevealAudioVOComponentEvent: 'uint8',

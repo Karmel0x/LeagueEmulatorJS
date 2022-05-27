@@ -6,7 +6,8 @@
 // Example replay: https://github.com/Karmel0x/LeagueEmulatorJS/files/6702341/Ezreal.zip
 // then run this with `node tools/spectator-emulator` and lol client with `runLol.bat`
 
-var replayUnpacked = require(process.argv[2] || '../../LeagueEmulatorJS_replays/LOL-REPLAY.rlp.json');
+const _replayreaders = require('./_replayreaders');
+var replayUnpacked = _replayreaders(process.argv[2] || '../../LeagueEmulatorJS_replays/LOL-REPLAY.rlp.json');
 
 // or if you just want packets in hex, uncomment these lines and run `node spectator-emulator > LOL-REPLAY.txt`
 //for(let i = 0; i < replayUnpacked.length; i++){
@@ -15,26 +16,33 @@ var replayUnpacked = require(process.argv[2] || '../../LeagueEmulatorJS_replays/
 //}
 //return;
 
-const enet = require('../../enetcppjs/build/Release/enetcppjs.node');
+const enet = require('../Core/enet');
 //const Handlers = require('../Core/Handlers');
 const Packets = require('../Core/Packets');
 require("../Core/BufferExtend");
 
 async function start_spectator(){
-	var time = Date.now();
+	var time = performance.now();
 
 	console.log('packet count:', replayUnpacked.length);
 	for(let i = 0; i < replayUnpacked.length; i++){
 		if(i < 5)
 			continue;// skip key exchange
 		
-		while(Date.now() - time < (replayUnpacked[i].Time || (replayUnpacked[i].TimeS * 1000).toFixed(3))){
+		while(performance.now() - time < (replayUnpacked[i].Time || (replayUnpacked[i].TimeS * 1000).toFixed(3))){
 			await global.Utilities.wait(1);
 		};
 
 		// todo: ignore some packets: S2C.VIEW_ANS ?
 
-		var buffer = replayUnpacked[i].Bytes ? Buffer.from(replayUnpacked[i].Bytes, 'base64') : Buffer.from(replayUnpacked[i].BytesHex.split(' ').join(''), 'hex');
+		var buffer = null;
+		if(replayUnpacked[i].Bytes || replayUnpacked[i].BytesB64)
+			buffer = Buffer.from(replayUnpacked[i].Bytes || replayUnpacked[i].BytesB64, 'base64');
+		else if(replayUnpacked[i].BytesHex)
+			buffer = Buffer.from(replayUnpacked[i].BytesHex.split(' ').join(''), 'hex');
+		else if(replayUnpacked[i].BytesBuffer)
+			buffer = replayUnpacked[i].BytesBuffer;
+
 		enet.sendPacket(0, buffer, replayUnpacked[i].Channel);
 
 		if(i % 100 == 0)

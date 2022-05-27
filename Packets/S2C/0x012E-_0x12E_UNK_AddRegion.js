@@ -10,7 +10,7 @@ module.exports = class extends ExtendedPacket {//S2C.
 		UnitNetId: 'uint32',
 		BubbleNetId: 'uint32',
 		VisionTargetNetId: 'uint32',
-		Position: Vector2,
+		position: Vector2,
 		TimeToLive: 'float',
 		ColisionRadius: 'float',
 		GrassRadius: 'float',

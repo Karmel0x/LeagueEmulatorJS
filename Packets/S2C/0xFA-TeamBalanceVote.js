@@ -13,7 +13,7 @@ module.exports = class extends BasePacket {//S2C.
 		TeamID: 'uint32',
 		TimeOut: 'float',
 		GoldGranted: 'float',
-		ExperienceGranted: 'int32',
+		experienceGranted: 'int32',
 		TowersGranted: 'int32',
 	}
 };

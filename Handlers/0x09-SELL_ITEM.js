@@ -4,8 +4,8 @@ const {createPacket, sendPacket} = require('../Core/PacketUtilities');
 
 
 module.exports = (player, packet) => {
-    console.log('handle: C2S.SWAP_ITEMS');
+    console.log('handle: C2S.SELL_ITEM');
 	//console.log(packet);
 
-	player.inventory.sellItem(packet.Slot);//, packet.Sell
+	player.sellItem(packet.Slot);//, packet.Sell
 };

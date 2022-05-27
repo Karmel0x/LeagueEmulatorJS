@@ -16,11 +16,12 @@ require('../../Core/init_utilities')();
 var {server, wss} = require('./init_client-server');
 const fs = require('fs');
 
-const enet = require('../../../enetcppjs/build/Release/enetcppjs.node');
+const enet = require('../../Core/enet');
 require("../../Core/BufferExtend");
 const {createPacket, sendPacket} = require('../../Core/PacketUtilities');
 
 const packetParser = require('./packetParser');
+const _replayreaders = require('../_replayreaders');
 
 
 var replayUnpacked;
@@ -69,7 +70,7 @@ wss.onMessage = (data) => {
 	}
 	else if(res.cmd == 'loadreplaylist'){
 		var replayList = fs.readdirSync(replayDir).filter((value) => {
-			return value.endsWith('.json');
+			return value.endsWith('.json') || value.endsWith('.lrpkt');
 		});
 		wss.clients.sendToAll(JSON.stringify({
 			cmd: 'loadreplaylist',
@@ -77,11 +78,7 @@ wss.onMessage = (data) => {
 		}));
 	}
 	else if(res.cmd == 'loadreplayfile'){
-		//try{
-			replayUnpacked = require('../../' + replayDir + res.name);
-		//}catch(e){
-		//	console.log(e);
-		//}
+		replayUnpacked = _replayreaders(replayDir + res.name);
 	}
 	else if(res.cmd == 'addpacket'){
 		var bytesHexList = res.data.bytes.split("\n");

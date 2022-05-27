@@ -5,7 +5,7 @@ module.exports = class extends BasePacket {//S2C.
 	struct = {
 		NetId: 'uint32',
 		NetNodeID: 'uint8',
-		Position: Vector3,
+		position: Vector3,
 		BotRank: 'uint8',
 		bitfield_TeamID: 'uint16',//(bitfield & 0x1FF)
 		SkinID: 'int32',

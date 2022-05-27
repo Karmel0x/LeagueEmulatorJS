@@ -24,8 +24,8 @@ module.exports = (player, packet) => {
 
 	//var SKILL_UP = createPacket('SKILL_UP');
 	//SKILL_UP.Slot = 13;
-	//SKILL_UP.SpellLevel = 1;
-	//SKILL_UP.SkillPoints = 1;
+	//SKILL_UP.spellLevel = 1;
+	//SKILL_UP.skillPoints = 1;
 	//var isSent = player.sendPacket(SKILL_UP);
 
 	

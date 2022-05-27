@@ -17,6 +17,7 @@ class Team {
 	static createAll(){
 		global.Teams['BLUE'] = new Team('BLUE');
 		global.Teams['RED'] = new Team('RED');
+		global.Teams['NEUTRAL'] = new Team('NEUTRAL');
 		global.Teams['ALL'] = new Team('ALL');
 	}
 	static initialize(){
@@ -67,7 +68,7 @@ class Team {
 				SkinName: unit.character.model
 			}
 		];
-		OBJECT_SPAWN.MovementData = unit.Movement.MovementData;
+		OBJECT_SPAWN.MovementData = unit.MovementData;
 		var isSent = this.sendPacket(OBJECT_SPAWN);
 		//console.log(OBJECT_SPAWN);
 	}
@@ -77,18 +78,13 @@ class Team {
 		var isSent = this.sendPacket(LEAVE_VISION);
 	}
 	vision(target, enters = true){
-		if(target.info.type == 'Nexus' || target.info.type == 'Inhibitor' || target.info.type == 'Turret')
+		if(target.type == 'Nexus' || target.type == 'Inhibitor' || target.type == 'Turret')
 			return;
 
 		//console.log('vision', target);
 		if(enters){
 			console.debug('enters vision', this.team, target.constructor.name, target.netId);
 			this.showUnit(target);
-
-			//var SET_HEALTH = createPacket('SET_HEALTH');
-			//SET_HEALTH.netId = target.netId;
-			//SET_HEALTH.count = 0;
-			//var isSent = this.sendPacket(SET_HEALTH);
 		}else{
 			console.debug('leaves vision', this.team, target.constructor.name, target.netId);
 			this.hideUnit(target);

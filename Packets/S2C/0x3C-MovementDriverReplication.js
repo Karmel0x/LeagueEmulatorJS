@@ -4,7 +4,7 @@ const Vector3 = require('../SharedStruct/Vector3');
 var MovementDriverHomingData = {
 	TargetNetId: 'uint32',
 	TargetHeightModifier: 'float',
-	TargetPosition: Vector3,
+	targetPosition: Vector3,
 	Speed: 'float',
 	Gravity: 'float',
 	RateOfTurn: 'float',
@@ -16,7 +16,7 @@ var MovementDriverHomingData = {
 module.exports = class extends BasePacket {//S2C.
 	struct = {
 		MovementTypeID: 'uint8',
-		Position: Vector3,
+		position: Vector3,
 		Velocity: Vector3,
 		movementDriverParamType: 'int32',
 	}

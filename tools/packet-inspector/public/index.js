@@ -57,7 +57,7 @@ socket.addEventListener('message', (event) => {
 	<div class="row">
 		<div class="Id col">Id:` + (res.packet.Id || 0) + `</div>
 		<div class="Time col">Time:` + (res.packet.Time || '') + ' (' + (new Date(parseFloat(res.packet.Time || 0)).toISOString().slice(11, 19)) + `)</div>
-		<div class="Channel col">` + res.packet.channelName + `.` + res.packet.cmdName + ` (Size:` + (res.packet.Bytes || '').split(' ').length + `)</div>
+		<div class="Channel col">` + res.packet.channelName + `.` + res.packet.cmdName + ` (size:` + (res.packet.Bytes || '').split(' ').length + `)</div>
 	</div>
 	<div class="row">
 		<div class="Bytes col"><textarea class="Bytes_Parsed_textarea Bytes_textarea" rows="` + parsedLines + `">` + (res.packet.Bytes || '') + `</textarea></div>

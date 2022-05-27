@@ -6,7 +6,7 @@ module.exports = class extends BasePacket {//S2C.LEVEL_PROP_SPAWN
 		NetId: 'uint32',
 		NetNodeID: 'uint8',
 		SkinID: 'int32',
-		Position: Vector3,
+		position: Vector3,
 		FacingDirection: Vector3,
 		PositionOffset: Vector3,
 		Scale: Vector3,

@@ -5,114 +5,114 @@ const { getIntBytes_r, childByAddress } = require("../../Core/Utilities");
 const replicantList = {
 	Player: [
 		[
-			'Gold', 'TotalGold',
-			'SpellsEnabled', 'SpellsEnabled_',
-			'SummonerSpellsEnabled', 'SummonerSpellsEnabled_',
-			'EvolvePoints', 'EvolveFlags',
-			'ManaCost4', 'ManaCost4', 'ManaCost4', 'ManaCost4',
-			'ManaCost16','ManaCost16','ManaCost16','ManaCost16','ManaCost16','ManaCost16','ManaCost16','ManaCost16',
-			'ManaCost16','ManaCost16','ManaCost16','ManaCost16','ManaCost16','ManaCost16','ManaCost16','ManaCost16',
+			'gold', 'totalGold',
+			'spellsEnabled', 'spellsEnabled_',
+			'summonerSpellsEnabled', 'summonerSpellsEnabled_',
+			'evolvePoints', 'evolveFlags',
+			'manaCost4', 'manaCost4', 'manaCost4', 'manaCost4',
+			'manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16',
+			'manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16',
 		],[
-			'ActionState', 'IsMagicImmune', 'IsInvulnerable', 'IsPhysicalImmune', 'IsLifestealImmune',
-			'AttackDamage_BaseValue', 'AbilityPower_BaseValue',
-			'CriticalChance', 'Armor', 'MagicResist', 'HealthRegeneration', 'ManaRegeneration', 'Range',
-			'AttackDamage_FlatBonus', 'AttackDamage_PercentBonus', 'AbilityPower_FlatBonus',
-			'MagicResist_FlatBonus', 'MagicResist_PercentBonus', 'AttackSpeedMultiplier', 'Range_FlatBonus',
-			'CooldownReduction', 'PassiveCooldownEndTime', 'PassiveCooldownTotalTime',
-			'ArmorPenetration_FlatBonus', 'ArmorPenetration_PercentBonus',
-			'MagicPenetration_FlatBonus', 'MagicPenetration_PercentBonus',
-			'LifeSteal', 'SpellVamp', 'Tenacity',
+			'actionState', 'isMagicImmune', 'isInvulnerable', 'isPhysicalImmune', 'isLifestealImmune',
+			'attackDamage_baseValue', 'abilityPower_baseValue',
+			'crit', 'armor', 'resist', 'healthRegen', 'manaRegen', 'attackRange',
+			'attackDamage_flatBonus', 'attackDamage_percentBonus', 'abilityPower_flatBonus',
+			'MagicResist_flatBonus', 'MagicResist_percentBonus', 'attackSpeedMultiplier', 'Range_flatBonus',
+			'cooldownReduction', 'PassiveCooldownEndTime', 'PassiveCooldownTotalTime',
+			'ArmorPenetration_flatBonus', 'ArmorPenetration_percentBonus',
+			'MagicPenetration_flatBonus', 'magicPenetration_percentBonus',
+			'lifeSteal', 'spellVamp', 'tenacity',
 		],[
-			'Armor_PercentBonus', 'MagicPenetration_PercentBonus',
-			'HealthRegeneration', 'ManaRegeneration',
+			'armor_percentBonus', 'magicPenetration_percentBonus',
+			'healthRegen', 'manaRegen',
 		],[
-			'CurrentHealth', 'CurrentMana', 'HealthPoints', 'ManaPoints',
-			'Experience', 'LifeTime', 'MaxLifeTime', 'LifeTimeTicks',
-			'PerceptionRange_FlatMod', 'PerceptionRange_PercentMod',
-			'MoveSpeed', 'Size', 'FlatPathfindingRadiusMod',
-			'Level', 'MinionCounter', 'IsTargetable', 'IsTargetableToTeam',
+			'currentHealth', 'currentMana', 'health', 'mana',
+			'experience', 'lifeTime', 'maxLifeTime', 'lifeTimeTicks',
+			'perceptionRange_flatMod', 'perceptionRange_percentMod',
+			'moveSpeed', 'size', 'flatPathfindingRadiusMod',
+			'level', 'minionCounter', 'isTargetable', 'isTargetableToTeam',
 		],[
 
 		],[
-			'IsTargetable', 'IsTargetableToTeam', 
+			'isTargetable', 'isTargetableToTeam', 
 		],
 	],
 	Turret: [
 		[
-			'Gold', 'TotalGold',
-			'SpellsEnabled', 'SpellsEnabled_',
-			'SummonerSpellsEnabled', 'SummonerSpellsEnabled_',
-			'EvolvePoints', 'EvolveFlags',
-			'ManaCost4', 'ManaCost4', 'ManaCost4', 'ManaCost4',
-			'ManaCost16','ManaCost16','ManaCost16','ManaCost16','ManaCost16','ManaCost16','ManaCost16','ManaCost16',
-			'ManaCost16','ManaCost16','ManaCost16','ManaCost16','ManaCost16','ManaCost16','ManaCost16','ManaCost16',
+			'gold', 'totalGold',
+			'spellsEnabled', 'spellsEnabled_',
+			'summonerSpellsEnabled', 'summonerSpellsEnabled_',
+			'evolvePoints', 'evolveFlags',
+			'manaCost4', 'manaCost4', 'manaCost4', 'manaCost4',
+			'manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16',
+			'manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16',
 		],[
-			'ManaPoints', 'CurrentMana', 'ActionState', 'IsMagicImmune', 'IsInvulnerable',
-			'AttackDamage.BaseValue', 'Armor.Total',
-			'MagicResist.Total', 'AttackSpeedMultiplier.Total', 'AttackDamage.FlatBonus', 'AttackDamage.PercentBonus', 
-			'AbilityPower.Total', 'HealthRegeneration.Total',
+			'mana', 'currentMana', 'actionState', 'isMagicImmune', 'isInvulnerable',
+			'attackDamage.baseValue', 'armor.total',
+			'resist.total', 'attackSpeedMultiplier.total', 'attackDamage.flatBonus', 'attackDamage.percentBonus', 
+			'abilityPower.total', 'healthRegen.total',
 		],[
-			'Armor_PercentBonus', 'MagicPenetration_PercentBonus',
-			'HealthRegeneration', 'ManaRegeneration',
+			'armor_percentBonus', 'magicPenetration_percentBonus',
+			'healthRegen', 'manaRegen',
 		],[
-			'CurrentHealth', 'HealthPoints.Total', 'PerceptionRange.FlatBonus', 'PerceptionRange.PercentBonus',
-			'MoveSpeed.Total', 'Size.Total',
+			'currentHealth', 'health.total', 'perceptionRange.flatBonus', 'perceptionRange.percentBonus',
+			'moveSpeed.total', 'size.total',
 		],[
 
 		],[
-			'IsTargetable', 'IsTargetableToTeam', 
+			'isTargetable', 'isTargetableToTeam', 
 		],
 	],
 	AnimatedBuilding: [
 		[
-			'Gold', 'TotalGold',
-			'SpellsEnabled', 'SpellsEnabled_',
-			'SummonerSpellsEnabled', 'SummonerSpellsEnabled_',
-			'EvolvePoints', 'EvolveFlags',
-			'ManaCost4', 'ManaCost4', 'ManaCost4', 'ManaCost4',
-			'ManaCost16','ManaCost16','ManaCost16','ManaCost16','ManaCost16','ManaCost16','ManaCost16','ManaCost16',
-			'ManaCost16','ManaCost16','ManaCost16','ManaCost16','ManaCost16','ManaCost16','ManaCost16','ManaCost16',
+			'gold', 'totalGold',
+			'spellsEnabled', 'spellsEnabled_',
+			'summonerSpellsEnabled', 'summonerSpellsEnabled_',
+			'evolvePoints', 'evolveFlags',
+			'manaCost4', 'manaCost4', 'manaCost4', 'manaCost4',
+			'manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16',
+			'manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16',
 		],[
-			'CurrentHealth', 'IsInvulnerable', 'IsTargetable', 'IsTargetableToTeam',
+			'currentHealth', 'isInvulnerable', 'isTargetable', 'isTargetableToTeam',
 		],[
-			'Armor_PercentBonus', 'MagicPenetration_PercentBonus',
-			'HealthRegeneration', 'ManaRegeneration',
+			'armor_percentBonus', 'magicPenetration_percentBonus',
+			'healthRegen', 'manaRegen',
 		],[
-			'CurrentHealth', 'HealthPoints.Total', 'PerceptionRange.FlatBonus', 'PerceptionRange.PercentBonus',
-			'MoveSpeed.Total', 'Size.Total',
+			'currentHealth', 'health.total', 'perceptionRange.flatBonus', 'perceptionRange.percentBonus',
+			'moveSpeed.total', 'size.total',
 		],[
 
 		],[
-			'IsTargetable', 'IsTargetableToTeam', 
+			'isTargetable', 'isTargetableToTeam', 
 		],
 	],
 	Minion: [
 		[
-			'Gold', 'TotalGold',
-			'SpellsEnabled', 'SpellsEnabled_',
-			'SummonerSpellsEnabled', 'SummonerSpellsEnabled_',
-			'EvolvePoints', 'EvolveFlags',
-			'ManaCost4', 'ManaCost4', 'ManaCost4', 'ManaCost4',
-			'ManaCost16','ManaCost16','ManaCost16','ManaCost16','ManaCost16','ManaCost16','ManaCost16','ManaCost16',
-			'ManaCost16','ManaCost16','ManaCost16','ManaCost16','ManaCost16','ManaCost16','ManaCost16','ManaCost16',
+			'gold', 'totalGold',
+			'spellsEnabled', 'spellsEnabled_',
+			'summonerSpellsEnabled', 'summonerSpellsEnabled_',
+			'evolvePoints', 'evolveFlags',
+			'manaCost4', 'manaCost4', 'manaCost4', 'manaCost4',
+			'manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16',
+			'manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16',
 		],[
-			'CurrentHealth', 'HealthPoints.Total',
-			'LifeTime', 'MaxLifeTime','LifeTimeTicks', 'ManaPoints.Total', 'CurrentMana',
-			'ActionState',
-			'IsMagicImmune', 'IsInvulnerable', 'IsPhysicalImmune', 'IsLifestealImmune',
-			'AttackDamage.BaseValue', 'Armor.Total', 'MagicResist.Total', 'AttackSpeedMultiplier.Total',
-			'AttackDamage.FlatBonus', 'AttackDamage.PercentBonus', 'AbilityPower.Total', 'HealthRegeneration.Total',
-			'ManaRegeneration.Total', 'MagicResist.FlatBonus', 'MagicResist.PercentBonus', 
+			'currentHealth', 'health.total',
+			'lifeTime', 'maxLifeTime','lifeTimeTicks', 'mana.total', 'currentMana',
+			'actionState',
+			'isMagicImmune', 'isInvulnerable', 'isPhysicalImmune', 'isLifestealImmune',
+			'attackDamage.baseValue', 'armor.total', 'resist.total', 'attackSpeedMultiplier.total',
+			'attackDamage.flatBonus', 'attackDamage.percentBonus', 'abilityPower.total', 'healthRegen.total',
+			'manaRegen.total', 'resist.flatBonus', 'resist.percentBonus', 
 		],[
-			'Armor_PercentBonus', 'MagicPenetration_PercentBonus',
-			'HealthRegeneration', 'ManaRegeneration',
+			'armor_percentBonus', 'magicPenetration_percentBonus',
+			'healthRegen', 'manaRegen',
 		],[
-			'PerceptionRange.FlatBonus', 'PerceptionRange.PercentBonus', 'Size.Total', 'IsTargetable', 'IsTargetableToTeam', 
-			'MoveSpeed.Total', 'Size.Total',
+			'perceptionRange.flatBonus', 'perceptionRange.percentBonus', 'size.total', 'isTargetable', 'isTargetableToTeam', 
+			'moveSpeed.total', 'size.total',
 		],[
 
 		],[
-			'IsTargetable', 'IsTargetableToTeam', 
+			'isTargetable', 'isTargetableToTeam', 
 		],
 	],
 };
@@ -215,85 +215,85 @@ module.exports = class extends BasePacket {//LOW_PRIORITY.CHAR_STATS
 	
 	Replicant_PLAYER(unit){//todo: some values may be wrong
 
-		this.UpdateReplicant(unit, unit.stats?.Gold, 0, 0);//ok
-		this.UpdateReplicant(unit, unit.stats?.TotalGold, 0, 1);
+		this.UpdateReplicant(unit, unit.gold, 0, 0);//ok
+		this.UpdateReplicant(unit, unit.totalGold, 0, 1);
 
-		var SpellsEnabled = 0;
-		for(var i in unit.stats.SpellLevel)
-			if(unit.stats.SpellLevel[i])
-				SpellsEnabled |= 1 << i;
+		var spellsEnabled = 0;
+		for(var i in unit.spellLevel)
+			if(unit.spellLevel[i])
+				spellsEnabled |= 1 << i;
 
-		this.UpdateReplicant(unit, SpellsEnabled, 0, 2);//ok?
-		this.UpdateReplicant(unit, SpellsEnabled ? SpellsEnabled >> 32 : undefined, 0, 3);//ok?
+		this.UpdateReplicant(unit, spellsEnabled, 0, 2);//ok?
+		this.UpdateReplicant(unit, spellsEnabled ? spellsEnabled >> 32 : undefined, 0, 3);//ok?
 		
-		var SummonerSpellsEnabled = 0;
-		for(var i in unit.stats.SummonerSpellsEnabled)
-			if(unit.stats.SummonerSpellsEnabled[i])
-				SummonerSpellsEnabled |= 16 << i;
+		var summonerSpellsEnabled = 0;
+		for(var i in unit.summonerSpellsEnabled)
+			if(unit.summonerSpellsEnabled[i])
+				summonerSpellsEnabled |= 16 << i;
 		
-		this.UpdateReplicant(unit, SummonerSpellsEnabled, 0, 4);
-		this.UpdateReplicant(unit, SummonerSpellsEnabled ? SummonerSpellsEnabled >> 32 : undefined, 0, 5);
-		this.UpdateReplicant(unit, unit.stats?.EvolvePoints, 0, 6);//ok?
-		this.UpdateReplicant(unit, unit.stats?.EvolveFlags, 0, 7);//ok?
+		this.UpdateReplicant(unit, summonerSpellsEnabled, 0, 4);
+		this.UpdateReplicant(unit, summonerSpellsEnabled ? summonerSpellsEnabled >> 32 : undefined, 0, 5);
+		this.UpdateReplicant(unit, unit.evolvePoints, 0, 6);//ok?
+		this.UpdateReplicant(unit, unit.evolveFlags, 0, 7);//ok?
 		for (var i = 0; i < 4; i++)
-			this.UpdateReplicant(unit, unit.stats?.ManaCost?.[i], 0, 8 + i);
+			this.UpdateReplicant(unit, unit.manaCost?.[i], 0, 8 + i);
 		for(var i = 0; i < 16; i++)
-			this.UpdateReplicant(unit, unit.stats?.ManaCost?.[45 + i], 0, 12 + i);
+			this.UpdateReplicant(unit, unit.manaCost?.[45 + i], 0, 12 + i);
 
-		this.UpdateReplicant(unit, unit.stats?.ActionState, 1, 0);
-		this.UpdateReplicant(unit, unit.stats?.IsMagicImmune, 1, 1);
-		this.UpdateReplicant(unit, unit.stats?.IsInvulnerable, 1, 2);
-		this.UpdateReplicant(unit, unit.stats?.IsPhysicalImmune, 1, 3);
-		this.UpdateReplicant(unit, unit.stats?.IsLifestealImmune, 1, 4);
-		this.UpdateReplicant(unit, unit.stats?.AttackDamage?.BaseValue, 1, 5);//ok ? in Champion Info
-		this.UpdateReplicant(unit, unit.stats?.AbilityPower?.BaseValue, 1, 6);//ok
-		this.UpdateReplicant(unit, unit.stats?.DodgeChance, 1, 7);
-		this.UpdateReplicant(unit, unit.stats?.CriticalChance?.Total, 1, 8);//ok
-		this.UpdateReplicant(unit, unit.stats?.Armor?.Total, 1, 9);//ok
-		this.UpdateReplicant(unit, unit.stats?.MagicResist?.Total, 1, 10);//ok
-		this.UpdateReplicant(unit, unit.stats?.HealthRegeneration?.Total, 1, 11);//ok
-		this.UpdateReplicant(unit, unit.stats?.ManaRegeneration?.Total, 1, 12);//ok
-		this.UpdateReplicant(unit, unit.stats?.Range?.Total, 1, 13);//ok
-		this.UpdateReplicant(unit, unit.stats?.AttackDamage?.FlatBonus, 1, 14);//ok
-		this.UpdateReplicant(unit, unit.stats?.AttackDamage?.PercentBonus, 1, 15);//ok
-		this.UpdateReplicant(unit, unit.stats?.AbilityPower?.FlatBonus, 1, 16);//ok
-		this.UpdateReplicant(unit, unit.stats?.MagicResist?.FlatBonus, 1, 17);//not working?
-		this.UpdateReplicant(unit, unit.stats?.MagicResist?.PercentBonus, 1, 18);//not working?
-		this.UpdateReplicant(unit, unit.stats?.AttackSpeedMultiplier?.Total, 1, 19);//ok
-		this.UpdateReplicant(unit, unit.stats?.Range?.FlatBonus, 1, 20);//not working?
-		this.UpdateReplicant(unit, unit.stats?.CooldownReduction?.Total ? -unit.stats?.CooldownReduction?.Total : undefined, 1, 21);//ok//-
-		this.UpdateReplicant(unit, unit.stats?.PassiveCooldownEndTime, 1, 22);//ok
-		this.UpdateReplicant(unit, unit.stats?.PassiveCooldownTotalTime, 1, 23);
-		this.UpdateReplicant(unit, unit.stats?.ArmorPenetration?.FlatBonus, 1, 24);//ok
-		this.UpdateReplicant(unit, unit.stats?.ArmorPenetration?.PercentBonus, 1, 25);//ok
-		this.UpdateReplicant(unit, unit.stats?.MagicPenetration?.FlatBonus, 1, 26);//ok
-		this.UpdateReplicant(unit, unit.stats?.MagicPenetration?.PercentBonus, 1, 27);//ok
-		this.UpdateReplicant(unit, unit.stats?.LifeSteal?.Total, 1, 28);//ok
-		this.UpdateReplicant(unit, unit.stats?.SpellVamp?.Total, 1, 29);//ok
-		this.UpdateReplicant(unit, unit.stats?.Tenacity?.Total, 1, 30);//ok
+		this.UpdateReplicant(unit, unit.actionState, 1, 0);
+		this.UpdateReplicant(unit, unit.isMagicImmune, 1, 1);
+		this.UpdateReplicant(unit, unit.isInvulnerable, 1, 2);
+		this.UpdateReplicant(unit, unit.isPhysicalImmune, 1, 3);
+		this.UpdateReplicant(unit, unit.isLifestealImmune, 1, 4);
+		this.UpdateReplicant(unit, unit.attackDamage?.baseValue, 1, 5);//ok ? in Champion Info
+		this.UpdateReplicant(unit, unit.abilityPower?.baseValue, 1, 6);//ok
+		this.UpdateReplicant(unit, unit.dodge, 1, 7);
+		this.UpdateReplicant(unit, unit.crit?.total, 1, 8);//ok
+		this.UpdateReplicant(unit, unit.armor?.total, 1, 9);//ok
+		this.UpdateReplicant(unit, unit.resist?.total, 1, 10);//ok
+		this.UpdateReplicant(unit, unit.healthRegen?.total, 1, 11);//ok
+		this.UpdateReplicant(unit, unit.manaRegen?.total, 1, 12);//ok
+		this.UpdateReplicant(unit, unit.attackRange?.total, 1, 13);//ok
+		this.UpdateReplicant(unit, unit.attackDamage?.flatBonus, 1, 14);//ok
+		this.UpdateReplicant(unit, unit.attackDamage?.percentBonus, 1, 15);//ok
+		this.UpdateReplicant(unit, unit.abilityPower?.flatBonus, 1, 16);//ok
+		this.UpdateReplicant(unit, unit.resist?.flatBonus, 1, 17);//not working?
+		this.UpdateReplicant(unit, unit.resist?.percentBonus, 1, 18);//not working?
+		this.UpdateReplicant(unit, unit.attackSpeedMultiplier?.total, 1, 19);//ok
+		this.UpdateReplicant(unit, unit.attackRange?.flatBonus, 1, 20);//not working?
+		this.UpdateReplicant(unit, unit.cooldownReduction?.total ? -unit.cooldownReduction?.total : undefined, 1, 21);//ok//-
+		this.UpdateReplicant(unit, unit.PassiveCooldownEndTime, 1, 22);//ok
+		this.UpdateReplicant(unit, unit.PassiveCooldownTotalTime, 1, 23);
+		this.UpdateReplicant(unit, unit.armorPenetration?.flatBonus, 1, 24);//ok
+		this.UpdateReplicant(unit, unit.armorPenetration?.percentBonus, 1, 25);//ok
+		this.UpdateReplicant(unit, unit.magicPenetration?.flatBonus, 1, 26);//ok
+		this.UpdateReplicant(unit, unit.magicPenetration?.percentBonus, 1, 27);//ok
+		this.UpdateReplicant(unit, unit.lifeSteal?.total, 1, 28);//ok
+		this.UpdateReplicant(unit, unit.spellVamp?.total, 1, 29);//ok
+		this.UpdateReplicant(unit, unit.tenacity?.total, 1, 30);//ok
 
-		this.UpdateReplicant(unit, unit.stats?.Armor?.PercentBonus, 2, 0);//not working?
-		this.UpdateReplicant(unit, unit.stats?.MagicPenetration?.PercentBonus2, 2, 1);//ok
-		this.UpdateReplicant(unit, unit.stats?.HealthRegeneration?.BaseValue, 2, 2);
-		this.UpdateReplicant(unit, unit.stats?.ManaRegeneration?.BaseValue, 2, 3);
+		this.UpdateReplicant(unit, unit.armor?.percentBonus, 2, 0);//not working?
+		this.UpdateReplicant(unit, unit.magicPenetration?.PercentBonus2, 2, 1);//ok
+		this.UpdateReplicant(unit, unit.healthRegen?.baseValue, 2, 2);
+		this.UpdateReplicant(unit, unit.manaRegen?.baseValue, 2, 3);
 
-		this.UpdateReplicant(unit, unit.stats?.CurrentHealth, 3, 0);//ok
-		this.UpdateReplicant(unit, unit.stats?.CurrentMana, 3, 1);//ok
-		this.UpdateReplicant(unit, unit.stats?.HealthPoints?.Total, 3, 2);//ok
-		this.UpdateReplicant(unit, unit.stats?.ManaPoints?.Total, 3, 3);//ok
-		this.UpdateReplicant(unit, unit.stats?.ExpTotal, 3, 4);//ok
-		this.UpdateReplicant(unit, unit.stats?.LifeTime, 3, 5);
-		this.UpdateReplicant(unit, unit.stats?.MaxLifeTime, 3, 6);
-		this.UpdateReplicant(unit, unit.stats?.LifeTimeTicks, 3, 7);
-		this.UpdateReplicant(unit, unit.stats?.PerceptionRange?.FlatMod, 3, 8);//ok
-		this.UpdateReplicant(unit, unit.stats?.PerceptionRange?.PercentMod, 3, 9);//ok
-		this.UpdateReplicant(unit, unit.stats?.MoveSpeed?.Total, 3, 10);//ok
-		this.UpdateReplicant(unit, unit.stats?.Size?.Total, 3, 11);//ok
-		this.UpdateReplicant(unit, unit.stats?.FlatPathfindingRadiusMod, 3, 12);//not working?
-		this.UpdateReplicant(unit, unit.stats?.Level, 3, 13);//ok
-		this.UpdateReplicant(unit, unit.stats?.Owner?.MinionCounter, 3, 14);//ok ? in Scoreboard
-		this.UpdateReplicant(unit, unit.stats?.IsTargetable, 3, 15);//ok
-		this.UpdateReplicant(unit, unit.stats?.IsTargetableToTeam, 3, 16);
+		this.UpdateReplicant(unit, unit.currentHealth, 3, 0);//ok
+		this.UpdateReplicant(unit, unit.currentMana, 3, 1);//ok
+		this.UpdateReplicant(unit, unit.health?.total, 3, 2);//ok
+		this.UpdateReplicant(unit, unit.mana?.total, 3, 3);//ok
+		this.UpdateReplicant(unit, unit.expTotal, 3, 4);//ok
+		this.UpdateReplicant(unit, unit.lifeTime, 3, 5);
+		this.UpdateReplicant(unit, unit.maxLifeTime, 3, 6);
+		this.UpdateReplicant(unit, unit.lifeTimeTicks, 3, 7);
+		this.UpdateReplicant(unit, unit.perceptionRange?.flatMod, 3, 8);//ok
+		this.UpdateReplicant(unit, unit.perceptionRange?.percentMod, 3, 9);//ok
+		this.UpdateReplicant(unit, unit.moveSpeed?.total, 3, 10);//ok
+		this.UpdateReplicant(unit, unit.size?.total, 3, 11);//ok
+		this.UpdateReplicant(unit, unit.flatPathfindingRadiusMod, 3, 12);//not working?
+		this.UpdateReplicant(unit, unit.level, 3, 13);//ok
+		this.UpdateReplicant(unit, unit.minionCounter, 3, 14);//ok ? in Scoreboard
+		this.UpdateReplicant(unit, unit.isTargetable, 3, 15);//ok
+		this.UpdateReplicant(unit, unit.isTargetableToTeam, 3, 16);
 	}
 	UpdateReplicant(unit, value, primaryId, secondaryId){
 		if(typeof value === 'undefined' || unit.replicant[primaryId][secondaryId] === value)

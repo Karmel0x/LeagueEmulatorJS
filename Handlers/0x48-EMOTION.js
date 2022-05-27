@@ -12,7 +12,7 @@ module.exports = (player, packet) => {
 		var EMOTION = createPacket('EMOTION');
 		EMOTION.netId = player.netId;
 		EMOTION.EmoteID = packet.EmoteID;
-		player.packetController.sendTo_vision(EMOTION);
+		player.sendTo_vision(EMOTION);
 	}
 
 };

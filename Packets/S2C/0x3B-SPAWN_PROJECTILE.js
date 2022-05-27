@@ -5,7 +5,7 @@ var CastInfo = require('../SharedStruct/CastInfo');
 
 module.exports = class extends BasePacket {//S2C.SPAWN_PROJECTILE
 	struct = {
-		Position: Vector3,
+		position: Vector3,
 		CasterPosition: Vector3,
 		Direction: Vector3,
 		Velocity: Vector3,

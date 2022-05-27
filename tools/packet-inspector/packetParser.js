@@ -13,6 +13,8 @@ function packetParser(packet1) {
 		buffer = Buffer.from(packet1.Bytes || packet1.BytesB64, 'base64');
 	else if(packet1.BytesHex)
 		buffer = Buffer.from(packet1.BytesHex.split(' ').join('').split('-').join(''), 'hex');
+	else if(packet1.BytesBuffer)
+		buffer = packet1.BytesBuffer;
 
 	if(!buffer)
 		return false;

@@ -7,6 +7,6 @@ module.exports = class extends BasePacket {//S2C.
 		RespawnPointUIID: 'uint8',
 		TeamID: 'uint32',
 		ClientID: 'int32',
-		Position: Vector3,
+		position: Vector3,
 	}
 };

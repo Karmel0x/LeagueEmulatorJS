@@ -180,7 +180,7 @@ Buffer.prototype.readobj = function(template){
 				}
 
 				let obj = [];
-				if(template[1] > 1000){
+				if(template[1] > (global.packetLengthWarning || 1000)){
 					console.log('packet is probably incorrect, got length > 1000');
 					console.trace();
 					return obj;

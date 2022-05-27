@@ -1,39 +1,39 @@
 {
-	"Gold": 102.0,
-	"MoveSpeed": {"Total": 1500.0},
-	"AttackDamage": {
+	"gold": 102.0,
+	"moveSpeed": {"Total": 1500.0},
+	"attackDamage": {
 		"BaseValue": 30.0,
 		"FlatBonus": 10.0,
-		"PercentBonus": 2.0
+		"percentBonus": 2.0
 	},
-	"CurrentHealth": 30.0,
-	"CurrentMana": 30.0,
-	"HealthRegeneration": {
+	"currentHealth": 30.0,
+	"currentMana": 30.0,
+	"healthRegen": {
 		"Total": 30.0,
 		"BaseValue": 20.0
 	},
-	"ManaRegeneration": {
+	"manaRegen": {
 		"Total": 30.0,
 		"BaseValue": 20.0
 	},
-	"LifeSteal": {"Total": 0.3},
-	"SpellVamp": {"Total": 0.4},
-	"Armor": {
+	"lifeSteal": {"Total": 0.3},
+	"spellVamp": {"Total": 0.4},
+	"armor": {
 		"Total": 15.0,
-		"PercentBonus": 2.0
+		"percentBonus": 2.0
 	},
-	"MagicPenetration": {
+	"magicPenetration": {
 		"FlatBonus": 1.0,
-		"PercentBonus": 0,
+		"percentBonus": 0,
 		"PercentBonus2": 2
 	},
-	"Range": {"Total": 750.0, "FlatBonus": 12.0},
+	"range": {"Total": 750.0, "FlatBonus": 12.0},
 	
-	"CooldownReduction": {"Total": -2.0},
+	"cooldownReduction": {"Total": -2.0},
 
-	"SpellsEnabled": 3,
-	"SummonerSpellsEnabled": [true, true],
-	"Level": 13,
-	"IsTargetable": true,
-	"Size": {"Total": 1}
+	"spellsEnabled": 3,
+	"summonerSpellsEnabled": [true, true],
+	"level": 13,
+	"isTargetable": true,
+	"size": {"Total": 1}
 }

@@ -2,7 +2,7 @@ var BasePacket = require('../BasePacket');
 const Vector2 = require('../SharedStruct/Vector2');
 
 var NavFlagCricle = {
-	Position: Vector2,
+	position: Vector2,
 	Radius: 'float',
 	Flags: 'uint32',
 };

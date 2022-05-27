@@ -4,6 +4,6 @@ var Vector3 = require('../SharedStruct/Vector3');
 
 module.exports = class extends BasePacket {//S2C.
 	struct = {
-		Position: Vector3,
+		position: Vector3,
 	}
 };

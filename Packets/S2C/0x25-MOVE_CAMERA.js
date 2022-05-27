@@ -9,7 +9,7 @@ module.exports = class extends BasePacket {//S2C.
 			UnlockCamera: 2,
 		}],
 		StartPosition: Vector3,
-		TargetPosition: Vector3,
+		targetPosition: Vector3,
 		TravelTime: 'float',
 	}
 };

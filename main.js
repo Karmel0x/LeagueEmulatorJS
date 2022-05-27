@@ -10,10 +10,9 @@ global.Logging.changeOptions({
 require('./Core/init_utilities')();
 
 require('./Game/Initializers/Team').initialize();
-
-require('./Game/Initializers/Players').initialize();
-require('./Core/init_network')();
 require('./Game/Initializers/Game').initialize();
+
+require('./Core/init_network')();
 
 
 //process.on('uncaughtException', (err) => {

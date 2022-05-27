@@ -2,7 +2,6 @@
 const Packets = require('../Core/Packets');
 const {createPacket, sendPacket} = require('../Core/PacketUtilities');
 
-const Minion = require("../Game/Units/Minion");
 const { Vector2 } = require('three');
 
 function chatBoxMessage(target, message){
@@ -61,6 +60,7 @@ module.exports = (player, packet) => {
 				.goto <netId> :: teleporting to unit with netId
 				. :: run last command again
 				.pathfinding [<1/0>] :: turning pathfinding on/off
+				.setCharacter <characterName>
 			`;
 				//.debugMode [<debugLevel(0/1)>] :: turning off/on debug mode (debug logs)
 			chatBoxMessage(player, message.split('\t\t').join(' '));
@@ -72,9 +72,14 @@ module.exports = (player, packet) => {
 				//await global.Utilities.wait(2);
 			}
 		}
+		else if(commandArgs[0] === 'spawnMinion'){
+			var teamName = (commandArgs[1] || player.getEnemyTeam()).toUpperCase();
+			player.chatBoxMessage('spawnMinion', teamName);
+			global.Barracks[teamName][0].spawnUnit('Basic', {spawnPosition: player.position});
+		}
 		else if(commandArgs[0] === 'qq'){
 			for(let i = parseInt(commandArgs[1] || 1); i > 0; i--){
-				global.Barracks['RED'][0].spawnUnit('Basic').Movement.teleport(new Vector2(1000 + (i * 150), 600));
+				global.Barracks['RED'][0].spawnUnit('Basic').teleport(new Vector2(1000 + (i * 150), 600));
 			}
 		}
 		else if(commandArgs[0] === 'start'){
@@ -85,11 +90,11 @@ module.exports = (player, packet) => {
 			var pos = new Vector2(10200, 13200);
 			var redMinionUnits = global.getUnitsF('RED', 'Minion');
 			for(let i in redMinionUnits)
-				redMinionUnits[i].Movement.move1(pos.clone());
+				redMinionUnits[i].move1(pos.clone());
 		}
 		//else if(commandArgs[0] === 'ee'){
-		//	player.battle.attack(global.units[1]);
-		//	global.units[1].battle.attack(player);
+		//	player.attack(global.units[1]);
+		//	global.units[1].attack(player);
 		//}
 		else if(commandArgs[0] === 'e'){
 			var CHAR_STATS = createPacket('CHAR_STATS', 'LOW_PRIORITY');
@@ -131,26 +136,26 @@ module.exports = (player, packet) => {
 		else if(commandArgs[0] == 'levelup'){
 			var levelCount = parseInt(commandArgs[1] || 1);
 			for(let i = levelCount; i > 0; i--)
-				player.stats.levelUp();
+				player.levelUp();
 
 			player.chatBoxMessage('levelup:', levelCount);
 		}
 		else if(commandArgs[0] == 'expup'){
 			var expCount = parseInt(commandArgs[1] || 1);
-			player.stats.expUp(expCount);
+			player.expUp(expCount);
 			player.chatBoxMessage('expup:', expCount);
 		}
 		else if(commandArgs[0] == 'hp'){
 			var hpPercent = parseInt(commandArgs[1] || 100);
-			player.stats.CurrentHealth = player.stats.HealthPoints.Total * hpPercent / 100;
+			player.currentHealth = player.health.total * hpPercent / 100;
 			player.SET_HEALTH();
 		}
 		else if(commandArgs[0] == 'test'){
 			for(let i = 22; i > 0; i--)
-				global.Barracks['RED'][0].spawnUnit('Basic').Movement.teleport(new Vector2(1000 + (i * 150), 600));
+				global.Barracks['RED'][0].spawnUnit('Basic').teleport(new Vector2(1000 + (i * 150), 600));
 
 			for(let i = 5; i > 0; i--)
-				player.stats.levelUp();
+				player.levelUp();
 		}
 		else if(commandArgs[0] == 'champion'){
 			var character = commandArgs[1] || 'Ezreal';
@@ -170,7 +175,7 @@ module.exports = (player, packet) => {
 			var netId = parseInt(commandArgs[1] || 0);
 			var unit = global.getUnitByNetId(netId);
 			if(unit){
-				player.Movement.teleport(unit.position);
+				player.teleport(unit.position);
 			}
 			player.chatBoxMessage('teleporting player to ', unit.constructor.name, netId, '-', unit.position.x, unit.position.y);
 		}
@@ -189,6 +194,9 @@ module.exports = (player, packet) => {
 				player.chatBoxMessage('global.useTerrainEscape:', !!global.useTerrainEscape);
 			}
 			player.chatBoxMessage('global.doNotUsePathfinding:', !!global.doNotUsePathfinding);
+		}
+		else if(commandArgs[0] == 'setCharacter'){
+			player.character = commandArgs[1] || 'Ezreal';
 		}
 
 	}

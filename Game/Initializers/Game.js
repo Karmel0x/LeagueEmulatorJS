@@ -8,11 +8,11 @@ var GameComponents = {
 var playersConfig = require('../../Constants/playersConfig');
 const { createPacket } = require('../../Core/PacketUtilities');
 
-const Inhibitor = require("../Units/Inhibitor");
-const Nexus = require("../Units/Nexus");
-const Turret = require("../Units/Turret");
-const Barrack = require("../Units/Barrack");
-const Player = require("../Units/Player");
+const Inhibitor = require("../../GameObjects/Units/Inhibitor");
+const Nexus = require("../../GameObjects/Units/Nexus");
+const Turret = require("../../GameObjects/Units/Turret");
+const Barrack = require("../../GameObjects/Others/Barrack");
+const Player = require("../../GameObjects/Units/Player");
 
 class Game {
 	// STAGE client opened ==========================================================
@@ -25,8 +25,8 @@ class Game {
 	 */
 	static PING_LOAD_INFO(player, packet){
 		var PING_LOAD_INFO = createPacket('PING_LOAD_INFO', 'LOW_PRIORITY');
-		PING_LOAD_INFO.ClientID = player._PlayerInfo.ClientID;
-		PING_LOAD_INFO.PlayerID = player._PlayerInfo.PlayerID;
+		PING_LOAD_INFO.ClientID = player.info.ClientID;
+		PING_LOAD_INFO.PlayerID = player.info.PlayerID;
 		PING_LOAD_INFO.Percentage = packet.Percentage;
 		PING_LOAD_INFO.ETA = packet.ETA;
 		PING_LOAD_INFO.Count = packet.Count;
@@ -52,12 +52,12 @@ class Game {
 		var bluePlayersUnits = global.getUnitsF('BLUE', 'Player');
 		for(let player_num in bluePlayersUnits){
 			var player = bluePlayersUnits[player_num];
-			LOAD_SCREEN_INFO.teamBlue_playerIds.push(player._PlayerInfo.PlayerID);
+			LOAD_SCREEN_INFO.teamBlue_playerIds.push(player.info.PlayerID);
 		}
 		var redPlayersUnits = global.getUnitsF('RED', 'Player');
 		for(let player_num in redPlayersUnits){
 			var player = redPlayersUnits[player_num];
-			LOAD_SCREEN_INFO.teamRed_playerIds.push(player._PlayerInfo.PlayerID);
+			LOAD_SCREEN_INFO.teamRed_playerIds.push(player.info.PlayerID);
 		}
 
 		LOAD_SCREEN_INFO.currentBlue = LOAD_SCREEN_INFO.teamBlue_playerIds.length;
@@ -71,7 +71,7 @@ class Game {
 	 */
 	static LOAD_NAME(player){
 		var LOAD_NAME = createPacket('LOAD_NAME', 'LOADING_SCREEN');
-		LOAD_NAME.PlayerId = player._PlayerInfo.PlayerID;
+		LOAD_NAME.PlayerId = player.info.PlayerID;
 		LOAD_NAME.SkinId = 0;
 		LOAD_NAME.playerName = 'Test';
 		global.Teams.ALL.sendPacket(LOAD_NAME, loadingStages.NOT_CONNECTED);
@@ -83,9 +83,9 @@ class Game {
 	 */
 	static LOAD_HERO(player){
 		var LOAD_HERO = createPacket('LOAD_HERO', 'LOADING_SCREEN');
-		LOAD_HERO.PlayerId = player._PlayerInfo.PlayerID;
+		LOAD_HERO.PlayerId = player.info.PlayerID;
 		LOAD_HERO.SkinId = 0;
-		LOAD_HERO.SkinName = global.getUnitsF('ALL', 'Player')[0].character.name;
+		LOAD_HERO.SkinName = player.character.model;
 		global.Teams.ALL.sendPacket(LOAD_HERO, loadingStages.NOT_CONNECTED);
 	}
 
@@ -152,6 +152,7 @@ class Game {
 
 	static initialize(){
 		Game.initGame();
+		Player.spawnAll(playersConfig);
 	}
 
 	static async run(){

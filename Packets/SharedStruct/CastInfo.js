@@ -8,16 +8,16 @@ var target = {
 };
 module.exports = {
 	size: 'uint16',
-	SpellHash: 'uint32',
-	SpellNetId: 'uint32',
-	SpellLevel: 'uint8',
+	spellHash: 'uint32',
+	spellCastNetId: 'uint32',
+	spellLevel: 'uint8',
 	AttackSpeedModifier: 'float',
 	CasterNetId: 'uint32',
 	SpellChainOwnerNetId: 'uint32',
 	PackageHash: 'uint32',
 	MissileNetId: 'uint32',
-	TargetPosition: Vector3,
-	TargetPositionEnd: Vector3,
+	targetPosition: Vector3,
+	targetPositionEnd: Vector3,
 
 	targetCount: 'uint8',
 	target: [target, 'targetCount'],
@@ -38,7 +38,7 @@ module.exports = {
 	}],
 
 	SpellSlot: 'uint8',
-	ManaCost: 'float',
+	manaCost: 'float',
 	SpellCastLaunchPosition: Vector3,
 	AmmoUsed: 'int32',
 	AmmoRechargeTime: 'float',

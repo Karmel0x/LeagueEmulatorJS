@@ -11,7 +11,7 @@ module.exports = (player, packet) => {
 
 	{
 		var ATTENTION_PING = createPacket('ATTENTION_PING');
-		ATTENTION_PING.Position = packet.Position;
+		ATTENTION_PING.position = packet.position;
 		ATTENTION_PING.TargetNetId = packet.TargetNetId;
 		ATTENTION_PING.SourceNetId = player.netId;
 		ATTENTION_PING.PingCategory = packet.PingCategory;
@@ -21,12 +21,12 @@ module.exports = (player, packet) => {
 			PingThrottled: false,
 			PlayVO: true,
 		};
-		player.packetController.sendTo_team(ATTENTION_PING);
+		player.sendTo_team(ATTENTION_PING);
 	}
 
 	//test
-	var pos = new Vector2(packet.Position.x, packet.Position.y);
+	var pos = new Vector2(packet.position.x, packet.position.y);
 	var redMinionUnits = global.getUnitsF('RED', 'Minion');
-	redMinionUnits[0]?.Movement.move1(pos);
+	redMinionUnits[0]?.move1(pos);
 
 };

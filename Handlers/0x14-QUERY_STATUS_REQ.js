@@ -11,6 +11,6 @@ module.exports = (player, packet) => {
 	{
 		var QUERY_STATUS_ANS = createPacket('QUERY_STATUS_ANS');
 		QUERY_STATUS_ANS.Response = true;
-		player.packetController.sendTo_self(QUERY_STATUS_ANS, loadingStages.NOT_CONNECTED);
+		player.sendTo_self(QUERY_STATUS_ANS, loadingStages.NOT_CONNECTED);
 	}
 };

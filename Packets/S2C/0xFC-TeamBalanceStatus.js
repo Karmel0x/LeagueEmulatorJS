@@ -7,7 +7,7 @@ module.exports = class extends BasePacket {//S2C.
 		AgainstVote: 'uint8',
 		TeamID: 'uint32',
 		GoldGranted: 'float',
-		ExperienceGranted: 'int32',
+		experienceGranted: 'int32',
 		TowersGranted: 'int32',
 	}
 };

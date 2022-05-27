@@ -4,7 +4,7 @@ module.exports = {//todo: config
 			playerId: 1,
 			rank: '',
 			name: '',
-			characterName: 'Yasuo',
+			character: 'Yasuo',
 			//team: 'BLUE',
 			skin: 0,
 			summoner1: '',
@@ -13,7 +13,7 @@ module.exports = {//todo: config
 			icon: 0,
 			//blowfishKey: '',
 			runes: [],
-			_PlayerInfo: {
+			info: {
 				PlayerID: 1,
 				SummonorLevel: 30,
 				SummonorSpell1: "HEAL",
@@ -37,7 +37,7 @@ module.exports = {//todo: config
 			playerId: 2,
 			rank: '',
 			name: '',
-			characterName: 'Yasuo',
+			character: 'Ezreal',
 			//team: 'BLUE',
 			skin: 0,
 			summoner1: '',
@@ -46,7 +46,7 @@ module.exports = {//todo: config
 			icon: 0,
 			//blowfishKey: '',
 			runes: [],
-			_PlayerInfo: {
+			info: {
 				PlayerID: 2,
 				SummonorLevel: 30,
 				SummonorSpell1: "HEAL",
