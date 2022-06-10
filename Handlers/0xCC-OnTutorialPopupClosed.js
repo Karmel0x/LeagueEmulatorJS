@@ -1,5 +1,4 @@
 
-const Packets = require('../Core/Packets');
 const {createPacket, sendPacket} = require('../Core/PacketUtilities');
 
 

@@ -9,7 +9,7 @@ module.exports = (I) => class IDefendable extends I {
 		if(this.currentHealth <= 0)
 			this.die(source);
 
-		this.SET_HEALTH();
+		this.OnEnterLocalVisibilityClient();
 	}
 	die(source){
 		this.currentHealth = 0;
@@ -32,7 +32,7 @@ module.exports = (I) => class IDefendable extends I {
 		if(this.currentHealth > this.health.total)
 			this.currentHealth = this.health.total;
 
-		this.SET_HEALTH();
+		this.OnEnterLocalVisibilityClient();
 	}
 	healPercent(hpPercent){
 		this.heal(this.health.total * hpPercent / 100);

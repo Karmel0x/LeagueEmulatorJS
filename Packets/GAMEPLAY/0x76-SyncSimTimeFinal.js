@@ -1,9 +1,9 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//GAMEPLAY.SyncSimTimeFinal
-	struct = {
-		TimeLastClient: 'float',
-		TimeRTTLastOverhead: 'float',
-		TimeConvergance: 'float',
+module.exports = class SyncSimTimeFinal extends BasePacket {
+	static struct = {
+		timeLastClient: 'float',
+		timeRTTLastOverhead: 'float',
+		timeConvergance: 'float',
 	}
 };

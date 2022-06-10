@@ -1,17 +1,17 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//HANDSHAKE.KEY_CHECK
-	struct_header = {
+module.exports = class KEY_CHECK extends BasePacket {
+	static struct_header = {
 		cmd: 'uint8',
 		//netId: 'uint32',
 	}
-	struct = {
+	static struct = {
 		partialKey: ['uint8', 3],
 
-		ClientID: 'uint32',
-		PlayerID: 'uint64',
-		VersionNumber: 'uint32',
-		CheckSum: 'uint64',
+		clientId: 'uint32',
+		playerId: 'uint64',
+		versionNumber: 'uint32',
+		checksum: 'uint64',
 		dummy1: 'uint32',
 	}
 };

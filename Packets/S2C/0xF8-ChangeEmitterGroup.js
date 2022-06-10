@@ -1,10 +1,10 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		GroupName: ['char', 256],
-		OperationData: 'int32',
-		GroupOperation: 'int32',
+module.exports = class ChangeEmitterGroup extends BasePacket {
+	static struct = {
+		groupName: ['char', 256],
+		operationData: 'int32',
+		groupOperation: 'int32',
 	}
 };

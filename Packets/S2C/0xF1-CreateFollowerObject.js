@@ -1,11 +1,11 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		NetId: 'uint32',
-		NetNodeID: 'uint8',
-		SkinID: 'int32',
-		InternalName: ['char', 64],
-		CharacterName: 'string0',
+module.exports = class CreateFollowerObject extends BasePacket {
+	static struct = {
+		netObjId: 'uint32',
+		netNodeId: 'uint8',
+		skinId: 'int32',
+		internalName: ['char', 64],
+		characterName: 'string0',//64
 	}
 };

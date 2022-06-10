@@ -1,10 +1,10 @@
 var ExtendedPacket = require('../ExtendedPacket');
 
 
-module.exports = class extends ExtendedPacket {//S2C.
-	struct = {
-		CostType: 'uint8',
-		SpellSlot: 'int32',
-		Amount: 'float',
+module.exports = class UnitSetSpellPARCost extends ExtendedPacket {
+	static struct = {
+		costType: 'uint8',
+		spellSlot: 'int32',
+		amount: 'float',
 	}
 };

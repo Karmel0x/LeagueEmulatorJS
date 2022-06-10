@@ -1,8 +1,8 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		ObjectID: 'int32',
-		Color: 'uint32',
+module.exports = class ModifyDebugObjectColor extends BasePacket {
+	static struct = {
+		objectId: 'int32',
+		color: 'uint32',
 	}
 };

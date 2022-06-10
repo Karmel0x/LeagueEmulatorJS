@@ -1,13 +1,13 @@
 var ExtendedPacket = require('../ExtendedPacket');
 
 
-module.exports = class extends ExtendedPacket {//S2C.
-	struct = {
-		IsSummonerSpell: 'uint8',
-		SpellSlot: 'int32',
-		CurrentAmmo: 'int32',
-		MaxAmmo: 'int32',
-		AmmoRecharge: 'float',
-		AmmoRechargeTotalTime: 'float',
+module.exports = class AmmoUpdate extends ExtendedPacket {
+	static struct = {
+		isSummonerSpell: 'bool',
+		spellSlot: 'int32',
+		currentAmmo: 'int32',
+		maxAmmo: 'int32',
+		ammoRecharge: 'float',
+		ammoRechargeTotalTime: 'float',
 	}
 };

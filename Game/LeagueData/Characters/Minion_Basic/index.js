@@ -32,7 +32,7 @@ module.exports = class Minion_Basic extends _Minion {
 	};
 
 	static spells = {
-		//[SpellSlot.BasicAttack]: require('./Spells/BasicAttack'),
+		//[spellSlot.BasicAttack]: require('./Spells/BasicAttack'),
 	};
 
 };

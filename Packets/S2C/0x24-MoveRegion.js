@@ -1,10 +1,10 @@
-var BasePacket = require('../BasePacket');
-var Vector2 = require('../SharedStruct/Vector2');
+const BasePacket = require('../BasePacket');
+var SVector2 = require('../SharedStruct/SVector2');
 
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		RegionNetId: 'uint32',
-		position: Vector2,
+module.exports = class MoveRegion extends BasePacket {
+	static struct = {
+		regionNetId: 'uint32',
+		position: SVector2,
 	}
 };

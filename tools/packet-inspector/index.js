@@ -64,8 +64,8 @@ wss.onMessage = (data) => {
 	else if(res.cmd == 'sendpacket_type'){
 		var KEY_CHECK = createPacket(res.name, res.channel);
 		KEY_CHECK.partialKey = [ 0x2A, 0x00, 0xFF ];
-		KEY_CHECK.ClientID = 0;
-		KEY_CHECK.PlayerID = 1;
+		KEY_CHECK.clientId = 0;
+		KEY_CHECK.playerId = 1;
 		sendPacket(0, KEY_CHECK);
 	}
 	else if(res.cmd == 'loadreplaylist'){

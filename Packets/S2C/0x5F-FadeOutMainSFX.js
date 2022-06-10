@@ -1,8 +1,8 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		FadeTime: 'float',
+module.exports = class FadeOutMainSFX extends BasePacket {
+	static struct = {
+		fadeTime: 'float',
 	}
 };

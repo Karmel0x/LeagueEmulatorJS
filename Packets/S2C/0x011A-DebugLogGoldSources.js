@@ -1,8 +1,8 @@
 var ExtendedPacket = require('../ExtendedPacket');
 
 
-module.exports = class extends ExtendedPacket {//S2C.
-	struct = {
-		Message: 'string0',//512
+module.exports = class DebugLogGoldSources extends ExtendedPacket {
+	static struct = {
+		message: 'string0',//512
 	}
 };

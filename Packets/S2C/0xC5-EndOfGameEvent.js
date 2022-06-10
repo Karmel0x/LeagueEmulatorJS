@@ -1,7 +1,7 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		TeamIsOrder: 'uint8',
+module.exports = class EndOfGameEvent extends BasePacket {
+	static struct = {
+		teamIsOrder: 'bool',
 	}
 };

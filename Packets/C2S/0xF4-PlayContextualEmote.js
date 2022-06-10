@@ -1,7 +1,5 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//C2S.
-	struct = {
-		//unknown
-	}
+module.exports = class PlayContextualEmote extends BasePacket {
+
 };

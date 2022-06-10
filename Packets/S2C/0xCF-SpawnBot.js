@@ -1,15 +1,15 @@
-var BasePacket = require('../BasePacket');
-const Vector3 = require('../SharedStruct/Vector3');
+const BasePacket = require('../BasePacket');
+const SVector3 = require('../SharedStruct/SVector3');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		NetId: 'uint32',
-		NetNodeID: 'uint8',
-		position: Vector3,
-		BotRank: 'uint8',
-		bitfield_TeamID: 'uint16',//(bitfield & 0x1FF)
-		SkinID: 'int32',
-		Name: ['char', 64],
-		SkinName: 'string0',//64
+module.exports = class SpawnBot extends BasePacket {
+	static struct = {
+		netObjId: 'uint32',
+		netNodeId: 'uint8',
+		position: SVector3,
+		botRank: 'uint8',
+		teamId: 'uint16',//(bitfield & 0x1FF)
+		skinId: 'int32',
+		objectName: ['char', 64],
+		skinName: 'string0',//64
 	}
 };

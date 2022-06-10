@@ -1,8 +1,8 @@
 var ExtendedPacket = require('../ExtendedPacket');
 
 
-module.exports = class extends ExtendedPacket {//S2C.
-	struct = {
-		AnimationName: 'string0',//64
+module.exports = class UnlockAnimation extends ExtendedPacket {
+	static struct = {
+		animationName: 'string0',//64
 	}
 };

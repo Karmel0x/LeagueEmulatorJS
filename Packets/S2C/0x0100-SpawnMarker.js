@@ -1,12 +1,12 @@
 var ExtendedPacket = require('../ExtendedPacket');
-const Vector3 = require('../SharedStruct/Vector3');
+const SVector3 = require('../SharedStruct/SVector3');
 
 
-module.exports = class extends ExtendedPacket {//S2C.
-	struct = {
-		NetId: 'uint32',
-		NetNodeID: 'uint8',
-		position: Vector3,
-		VisibilitySize: 'float',
+module.exports = class SpawnMarker extends ExtendedPacket {
+	static struct = {
+		netObjId: 'uint32',
+		netNodeId: 'uint8',
+		position: SVector3,
+		visibilitySize: 'float',
 	}
 };

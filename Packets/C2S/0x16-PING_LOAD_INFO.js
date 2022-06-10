@@ -1,6 +1,6 @@
-var BasePacket = require('../BasePacket');
-var ConnectionInfo = require('../SharedStruct/ConnectionInfo');
+const Ping_Load_InfoLOW_PRIORITY = require('../LOW_PRIORITY/0x95-Ping_Load_Info');
 
-module.exports = class extends BasePacket {//C2S.PING_LOAD_INFO
-	struct = ConnectionInfo
+
+module.exports = class Ping_Load_Info extends Ping_Load_InfoLOW_PRIORITY {
+
 };

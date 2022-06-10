@@ -1,19 +1,21 @@
-var BasePacket = require('../BasePacket');
-const Vector3 = require('../SharedStruct/Vector3');
+const BasePacket = require('../BasePacket');
+const SVector3 = require('../SharedStruct/SVector3');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		DebugID: 'int32',
-		Lifetime: 'float',
-		Type: 'uint8',
-		NetId1: 'uint32',
-		NetId2: 'uint32',
-		Radius: 'float',
-		Point1: Vector3,
-		Point2: Vector3,
-		Color: 'uint32',
-		MaxSize: 'uint32',
-		bitfield_Unknown: 'uint8',
-		StringBuffer: 'string0',//128
+module.exports = class AddDebugObject extends BasePacket {
+	static struct = {
+		debugId: 'int32',
+		lifetime: 'float',
+		type: 'uint8',
+		netId1: 'uint32',
+		netId2: 'uint32',
+		radius: 'float',
+		point1: SVector3,
+		point2: SVector3,
+		color: 'uint32',
+		maxSize: 'uint32',
+		bitfield: ['bitfield', {
+			Unknown: 1,
+		}],
+		stringBuffer: 'string0',//128
 	}
 };

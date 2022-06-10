@@ -11,17 +11,17 @@ const PositionHelper = require("../../../../../Functions/PositionHelper");
 
 
 module.exports = class YasuoQ3W extends _Spell {
-	PackageHash = package1.PackageHash;
+	packageHash = package1.packageHash;
 	spellSlot = slotId.Q;
 	windup = 0.133;
 	cooldown = 5;
 	manaCost = 0;
 	
 
-	CastInfo = {
+	castInfo = {
 		target: [],
-		DesignerCastTime: 0.33,
-		DesignerTotalTime: 1.45,
+		designerCastTime: 0.33,
+		designerTotalTime: 1.45,
 	};
 	constructor(options){
 		super(options);

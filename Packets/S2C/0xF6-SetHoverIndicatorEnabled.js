@@ -1,7 +1,9 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		bitfield_Enabled: 'uint8',
+module.exports = class SetHoverIndicatorEnabled extends BasePacket {
+	static struct = {
+		bitfield: ['bitfield', {
+			enabled: 1,
+		}],
 	}
 };

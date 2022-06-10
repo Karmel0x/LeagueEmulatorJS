@@ -1,7 +1,7 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		Delta: 'float',
+module.exports = class ServerTick extends BasePacket {
+	static struct = {
+		delta: 'float',
 	}
 };

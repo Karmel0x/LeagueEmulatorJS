@@ -1,13 +1,11 @@
 
-const Packets = require('../Core/Packets');
 const {createPacket, sendPacket} = require('../Core/PacketUtilities');
-const loadingStages = require("../Constants/loadingStages");
 const Game = require('../Game/Initializers/Game');
 
 
 module.exports = (player, packet) => {
-	console.log('handle: C2S.PING_LOAD_INFO');
+	console.log('handle: C2S.Ping_Load_Info');
 	//console.log(packet);
 
-	Game.PING_LOAD_INFO(player, packet);
+	Game.Ping_Load_Info(player, packet);
 };

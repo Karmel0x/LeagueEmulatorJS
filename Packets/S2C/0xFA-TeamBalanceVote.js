@@ -1,19 +1,19 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
+module.exports = class TeamBalanceVote extends BasePacket {
+	static struct = {
 		bitfield: ['bitfield', {
-			VoteYes: 1,
-			OpenVoteMenu: 2,
+			voteYes: 1,
+			openVoteMenu: 2,
 		}],
-		PlayerNetId: 'uint32',
-		ForVote: 'uint8',
-		AgainstVote: 'uint8',
-		NumPlayers: 'uint8',
-		TeamID: 'uint32',
-		TimeOut: 'float',
-		GoldGranted: 'float',
+		playerNetId: 'uint32',
+		forVote: 'uint8',
+		againstVote: 'uint8',
+		numPlayers: 'uint8',
+		teamId: 'uint32',
+		timeout: 'float',
+		goldGranted: 'float',
 		experienceGranted: 'int32',
-		TowersGranted: 'int32',
+		towersGranted: 'int32',
 	}
 };

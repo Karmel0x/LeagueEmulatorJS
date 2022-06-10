@@ -7,8 +7,8 @@ const slotId = require("../../../../../Constants/slotId");
 
 
 module.exports = class EzrealArcaneShift extends _Spell {
-	PackageHash = package1.PackageHash;
-	SpellSlot = slotId.E;
+	packageHash = package1.packageHash;
+	spellSlot = slotId.E;
 	movingSpell = true;
 	
 	constructor(options){

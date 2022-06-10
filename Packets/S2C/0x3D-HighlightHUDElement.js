@@ -1,11 +1,11 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
 
-module.exports = class extends BasePacket {//S2C.HighlightHUDElement
-	struct = {
-		ElementPart: 'uint8',
-		ElementType: 'uint8',
-		ElementNumber: 'uint8',
-		ElementSubCategory: 'uint8',
+module.exports = class HighlightHUDElement extends BasePacket {
+	static struct = {
+		elementPart: 'uint8',
+		elementType: 'uint8',
+		elementNumber: 'uint8',
+		elementSubCategory: 'uint8',
 	}
 };

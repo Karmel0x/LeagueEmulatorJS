@@ -33,8 +33,8 @@ module.exports = class _Basicattack extends _Spell {
 	}
 
 	beginAttackAns(options){
-		var BEGIN_AUTO_ATTACK = createPacket('BEGIN_AUTO_ATTACK', 'S2C');
-		BEGIN_AUTO_ATTACK.netId = this.owner.netId;
+		var Basic_Attack_Pos = createPacket('Basic_Attack_Pos', 'S2C');
+		Basic_Attack_Pos.netId = this.owner.netId;
 
 		let targetPosition = {
 			x: options.missile.target.position.x,
@@ -42,23 +42,23 @@ module.exports = class _Basicattack extends _Spell {
 			z: 10,
 		};
 
-		BEGIN_AUTO_ATTACK.Attack = {
-			TargetNetId: options.missile.target.netId,
+		Basic_Attack_Pos.attack = {
+			targetNetId: options.missile.target.netId,
 			targetPosition: targetPosition,
-			AttackSlot: options.AttackSlot,
-			MissileNextID: options.missile.netId,
-			ExtraTime: 127,
+			attackSlot: options.attackSlot,
+			missileNextId: options.missile.netId,
+			extraTime: 127,
 		};
-		BEGIN_AUTO_ATTACK.position = {
+		Basic_Attack_Pos.position = {
 			x: this.owner.position.x,
 			y: this.owner.position.y,
 		};
 		
-		this.owner.sendTo_vision(BEGIN_AUTO_ATTACK);
+		this.owner.sendTo_vision(Basic_Attack_Pos);
 	}
 	nextAttackAns(options){
-		var NEXT_AUTO_ATTACK = createPacket('NEXT_AUTO_ATTACK', 'S2C');
-		NEXT_AUTO_ATTACK.netId = this.owner.netId;
+		var Basic_Attack = createPacket('Basic_Attack', 'S2C');
+		Basic_Attack.netId = this.owner.netId;
 
 		let targetPosition = {
 			x: options.missile.target.position.x,
@@ -66,15 +66,15 @@ module.exports = class _Basicattack extends _Spell {
 			z: 10,
 		};
 
-		NEXT_AUTO_ATTACK.Attack = {
-			TargetNetId: options.missile.target.netId,
+		Basic_Attack.attack = {
+			targetNetId: options.missile.target.netId,
 			targetPosition: targetPosition,
-			AttackSlot: options.AttackSlot,
-			MissileNextID: options.missile.netId,
-			ExtraTime: 127,
+			attackSlot: options.attackSlot,
+			missileNextId: options.missile.netId,
+			extraTime: 127,
 		};
 		
-		this.owner.sendTo_vision(NEXT_AUTO_ATTACK);
+		this.owner.sendTo_vision(Basic_Attack);
 	}
 	attackAnsCurrentUnit = 0;
 	attackAns(options){
@@ -97,7 +97,7 @@ module.exports = class _Basicattack extends _Spell {
 		var missile = new Targetedshot({owner, target, options});
 		this.attackAns({
 			missile,
-			AttackSlot: options.AttackSlot ?? 1,
+			attackSlot: options.attackSlot ?? 1,
 		});
 		missile.doFire();
 		return missile;
@@ -112,6 +112,6 @@ module.exports = class _Basicattack extends _Spell {
 		this.owner.emit('spellCastingEnd', spellData);
 		
 		if(this.isProjectile)
-			this.spawnProjectileAns(spellData.spellCast.CastInfo);
+			this.spawnProjectileAns(spellData.spellCast.castInfo);
 	}
 };

@@ -9,15 +9,15 @@ const slotId = require("../../../../../Constants/slotId");
 
 
 module.exports = class EzrealTrueshotBarrage extends _Spell {
-	PackageHash = package1.PackageHash;
-	SpellSlot = slotId.R;
+	packageHash = package1.packageHash;
+	spellSlot = slotId.R;
 
 	castRange = 25000;
 
-	CastInfo = {
-		//SpellSlot: 45,
-		DesignerCastTime: 1,
-		DesignerTotalTime: 1,
+	castInfo = {
+		//spellSlot: 45,
+		designerCastTime: 1,
+		designerTotalTime: 1,
 	};
 
 	preCast(spellData){
@@ -32,7 +32,7 @@ module.exports = class EzrealTrueshotBarrage extends _Spell {
 	onCast(spellData){
 		super.onCast(spellData);
 
-		this.owner.AddParticleTarget(this.PackageHash, HashString('Ezreal_bow_huge.troy'), HashString('L_HAND'));
+		this.owner.AddParticleTarget(this.packageHash, HashString('Ezreal_bow_huge.troy'), HashString('L_HAND'));
 
 		this.fireMissile(spellData.missile);
 	}
@@ -40,9 +40,9 @@ module.exports = class EzrealTrueshotBarrage extends _Spell {
 	async fireMissile(missile){
 
 		var windup = 1;//?
-		await global.Utilities.wait(windup * 1000);
+		await Promise.wait(windup * 1000);
         missile.fire(missile.target);
 
-		await global.Utilities.wait(windup * 1000 / 2);
+		await Promise.wait(windup * 1000 / 2);
 	}
 };

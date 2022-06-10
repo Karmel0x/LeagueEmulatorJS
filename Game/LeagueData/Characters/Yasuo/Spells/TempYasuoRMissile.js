@@ -5,15 +5,15 @@ const _Spell = require("../../../../DataMethods/Spells/_Spell");
 module.exports = class TempYasuoRMissile extends _Spell {
 	isProjectile = true;
 
-	CastInfo = {
-		SpellSlot: 50,
+	castInfo = {
+		spellSlot: 50,
 		target: [{
 			unit: 0,
 			hitResult: 1,
 		}],
 		bitfield: {
-			IsForceCastingOrChannel: true,
-			IsOverrideCastPosition: true,
+			isForceCastingOrChannel: true,
+			isOverrideCastPosition: true,
 		},
 	};
 	

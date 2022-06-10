@@ -1,9 +1,9 @@
 var ExtendedPacket = require('../ExtendedPacket');
 
 
-module.exports = class extends ExtendedPacket {//S2C.
-	struct = {
-		Radius: 'float',
-		SecondaryRadius: 'float',
+module.exports = class UnitSetCursorReticle extends ExtendedPacket {
+	static struct = {
+		radius: 'float',
+		secondaryRadius: 'float',
 	}
 };

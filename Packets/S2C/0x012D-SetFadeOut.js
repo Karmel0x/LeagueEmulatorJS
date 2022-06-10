@@ -1,9 +1,9 @@
 var ExtendedPacket = require('../ExtendedPacket');
 
 
-module.exports = class extends ExtendedPacket {//S2C.
-	struct = {
-		FadeTime: 'float',
-		FadeTargetValue: 'float',
+module.exports = class SetFadeOut extends ExtendedPacket {
+	static struct = {
+		fadeTime: 'float',
+		fadeTargetValue: 'float',
 	}
 };

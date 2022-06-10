@@ -1,10 +1,10 @@
-var BasePacket = require('../BasePacket');
-const Vector3 = require('../SharedStruct/Vector3');
+const ExtendedPacket = require('../ExtendedPacket');
+const SVector3 = require('../SharedStruct/SVector3');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		TargetNetId: 'uint32',
-		DrawPathNodeType: 'uint8',
-		Point: Vector3,
+module.exports = class UnitSendDrawPath extends ExtendedPacket {
+	static struct = {
+		targetNetId: 'uint32',
+		drawPathNodeType: 'uint8',
+		point: SVector3,
 	}
 };

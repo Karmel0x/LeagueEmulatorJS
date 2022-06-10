@@ -1,56 +1,48 @@
+const BasePacket = require("../Packets/BasePacket");
+const ExtendedPacket = require("../Packets/ExtendedPacket");
 const Packets = require("./Packets");
 
 /**
- * Parse packet bytes to object
  * @param {Buffer} buffer 
  * @param {Number} channel Packets[channel]
  * @param {Number} cmd Packets[channel][cmd]
  * @returns {Object}
  */
 function parseBody(buffer, channel, cmd){
-	var obj1 = {};
-	if(typeof Packets[channel] == 'undefined' || typeof Packets[channel][cmd] == 'undefined' || typeof Packets[channel][cmd].packet == 'undefined'){
-		obj1.error = ['packet not defined', (Packets[channel]?.name || channel), (Packets[channel]?.[cmd]?.name || cmd?.toString(16) || cmd)];
-        console.log(obj1.error, buffer);
-        return obj1;
-    }
+	var pkt = {};
+	if(typeof Packets[channel] == 'undefined' || typeof Packets[channel][cmd] == 'undefined'){
+		pkt.error = ['packet not defined', [channel, cmd], Packets[channel]?.name, Packets[channel]?.[cmd]?.name, (cmd && cmd.toString ? cmd.toString(16) : cmd)];
+		console.log(pkt.error, buffer);
+		return pkt;
+	}
 
-	obj1 = new Packets[channel][cmd].packet();
-	obj1.reader(buffer);
-
-	if(buffer.off != buffer.length)
-		console.log('packet structure is incorrect : buffer.off != buffer.length :', buffer.off, buffer.length, (Packets[channel]?.name || channel), ':', (Packets[channel][cmd]?.name || cmd), buffer);
-
-	//console.log(obj1);
-	return obj1;
+	pkt = new Packets[channel][cmd](buffer);
+	pkt.cmd = cmd;
+	return pkt.content;
 }
 
 /**
- * Parse packet to object
  * @param {Object} packet {buffer, channel}
  * @returns {Object}
  */
 function parsePacket(packet){
-	var obj1 = packet.buffer.readobj(Packets.Header);
-    if(packet.buffer.off == packet.buffer.length){
-        packet.buffer.off = 0;
-        return obj1;
-    }
-	if(obj1.cmd == 0xFE){
-		obj1.cmd1 = obj1.cmd;
-		obj1.cmd = packet.buffer.read1('uint16');
+	packet.buffer.off = 0;
+	var pkt = packet.buffer.readobj(BasePacket.struct_header);
+
+	if(pkt.cmd == 0xFE){
+		packet.buffer.off = 0;
+		pkt = packet.buffer.readobj(ExtendedPacket.struct_header);
 	}
-	if(obj1.cmd == 0xFF){
-		return obj1;
+	if(pkt.cmd == 0xFF){
+		packet.buffer.off = 0;
+		return pkt;
 	}
 
-    packet.buffer.off = 0;
-    Object.assign(obj1, parseBody(packet.buffer, packet.channel || 0, obj1.cmd));
-    packet.buffer.off = 0;
-
-	//obj1.cmd = obj1.cmd2 ?? obj1.cmd;
-
-	return obj1;
+	packet.buffer.off = 0;
+	pkt = parseBody(packet.buffer, packet.channel, pkt.cmd);
+	
+	packet.buffer.off = 0;
+	return pkt;
 }
 
 module.exports = {parseBody, parsePacket};

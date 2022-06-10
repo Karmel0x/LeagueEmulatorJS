@@ -15,7 +15,7 @@ async function wait_spawnMinions(){
 
 	for(;;){
 		while(spawnMinions_next > Date.now() / 1000)
-			await global.Utilities.wait(100);
+			await Promise.wait(100);
 
 		spawnMinions_next = Date.now() / 1000 + 30;
 		spawnMinions(++spawnMinions_count);
@@ -32,7 +32,7 @@ async function wait_spawnMinions(){
 //	var spawnMonsters_count = 0;
 //
 //	for(;;){
-//		await global.Utilities.wait(10);
+//		await Promise.wait(10);
 //
 //		while(spawnMonsters_next > Date.now() / 1000)
 //			continue;

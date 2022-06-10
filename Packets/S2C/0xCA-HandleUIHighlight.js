@@ -1,7 +1,7 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
+module.exports = class HandleUIHighlight extends BasePacket {
+	static struct = {
 		UIHighlightCommand: 'uint8',
 		UIElement: 'uint8',
 	}

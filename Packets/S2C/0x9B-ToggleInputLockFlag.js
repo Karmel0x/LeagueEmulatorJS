@@ -1,7 +1,7 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		InputLockFlags: 'uint32',
+module.exports = class ToggleInputLockFlag extends BasePacket {
+	static struct = {
+		inputLockFlags: 'uint32',
 	}
 };

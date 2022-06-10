@@ -1,10 +1,12 @@
 var BasePacket = require('./BasePacket');
 
 
-module.exports = class extends BasePacket {//S2C.EXTENDED
-	struct_header = {
-		cmd: 'uint8',
+module.exports = class ExtendedPacket extends BasePacket {
+	static struct_header = {
+		cmd2: 'uint8',
 		netId: 'uint32',
-		cmd2: 'uint16',
+		cmd: 'uint16',
 	}
+	
+	cmd2 = 0xFE;
 };

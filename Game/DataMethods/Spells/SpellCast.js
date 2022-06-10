@@ -17,46 +17,46 @@ module.exports = class SpellCast {
 	}
 
 	_CastInfo = {};
-	get CastInfo(){
-		var CastInfo = {};
-		CastInfo.targetPosition = this.missile?.target?.position || this.spellData.position || this.owner?.position;
-		CastInfo.targetPositionEnd = this.missile?.target?.position || this.spellData.position || this.owner?.position;
+	get castInfo(){
+		var castInfo = {};
+		castInfo.targetPosition = this.missile?.target?.position || this.spellData.position || this.owner?.position;
+		castInfo.targetPositionEnd = this.missile?.target?.position || this.spellData.position || this.owner?.position;
 
-		CastInfo.spellHash = this.spell.spellHash;
-		CastInfo.spellCastNetId = this.netId;
-		CastInfo.spellLevel = this.spell.spellLevel || 0;
-		CastInfo.AttackSpeedModifier = 1;
-		CastInfo.CasterNetId = this.owner?.netId || 0;
-		CastInfo.SpellChainOwnerNetId = this.owner.netId || 0;
-		CastInfo.PackageHash = this.spell.PackageHash;
-		CastInfo.MissileNetId = this.missile?.netId || 0;
-		CastInfo.target = [{
+		castInfo.spellHash = this.spell.spellHash;
+		castInfo.spellCastNetId = this.netId;
+		castInfo.spellLevel = this.spell.spellLevel || 0;
+		castInfo.attackSpeedModifier = 1;
+		castInfo.casterNetId = this.owner?.netId || 0;
+		castInfo.spellChainOwnerNetId = this.owner.netId || 0;
+		castInfo.packageHash = this.spell.packageHash;
+		castInfo.missileNetId = this.missile?.netId || 0;
+		castInfo.target = [{
 			unit: this.missile?.target?.netId ?? this.target?.netId ?? this.owner.netId,
 			hitResult: this.missile?.target?.netId ? 1 : 0,//todo
 		}];
 		
-		CastInfo.DesignerCastTime = -1;
-		CastInfo.ExtraCastTime = 0;
-		CastInfo.DesignerTotalTime = 0.70;
-		CastInfo.Cooldown = this.spell.cooldown || 0;
-		CastInfo.StartCastTime = 0;
+		castInfo.designerCastTime = -1;
+		castInfo.extraCastTime = 0;
+		castInfo.designerTotalTime = 0.70;
+		castInfo.cooldown = this.spell.cooldown || 0;
+		castInfo.startCastTime = 0;
 		
-		CastInfo.bitfield = {
-			IsAutoAttack: false,
-			IsSecondAutoAttack: false,
-			IsForceCastingOrChannel: false,
-			IsOverrideCastPosition: false,
-			IsClickCasted: false,
+		castInfo.bitfield = {
+			isAutoAttack: false,
+			isSecondAutoAttack: false,
+			isForceCastingOrChannel: false,
+			isOverrideCastPosition: false,
+			isClickCasted: false,
 		};
 
-		CastInfo.SpellSlot = this.spell.spellSlot;
-		CastInfo.manaCost = this.spell.manaCost;
-		CastInfo.SpellCastLaunchPosition = this.owner?.position;
-		CastInfo.AmmoUsed = 1;
-		CastInfo.AmmoRechargeTime = 0;
+		castInfo.spellSlot = this.spell.spellSlot;
+		castInfo.manaCost = this.spell.manaCost;
+		castInfo.spellCastLaunchPosition = this.owner?.position;
+		castInfo.ammoUsed = 1;
+		castInfo.ammoRechargeTime = 0;
 
-		Object.assign(CastInfo, this.spell.CastInfo, this._CastInfo);
-		return CastInfo;
+		Object.assign(castInfo, this.spell.castInfo, this._CastInfo);
+		return castInfo;
 	}
 
 	/**

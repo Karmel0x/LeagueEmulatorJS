@@ -1,7 +1,7 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		Command: 'string0',//128
+module.exports = class AI_Command extends BasePacket {
+	static struct = {
+		command: 'string0',//128
 	}
 };

@@ -1,87 +1,94 @@
 
-/**
- * @deprecated
- * @param {Object} element 
- * @param {String} address 
- * @returns {Object}
- */
-function childByAddressPlusMath(element, address){
-    var addressSplitted = address.split('.');
-    if(addressSplitted.length > 1)
-        return childByAddressPlusMath(element[addressSplitted.shift()] || 0, addressSplitted.join('.'));
-
-	var addressMath = address.split('|');
-	address = addressMath[0] || '';
-	addressMath = addressMath[1] || '';
-	if(typeof element[address] == 'undefined')
-		return 0;
-
-	if(addressMath.length){
-		if(addressMath[0] == '+')
-			element[address] += parseInt(addressMath[1]);
-		else if(addressMath[0] == '-')
-			element[address] -= parseInt(addressMath[1]);
-		else if(addressMath[0] == '*')
-			element[address] *= parseInt(addressMath[1]);
-		else if(addressMath[0] == '/')
-			element[address] /= parseInt(addressMath[1]);
-		else if(addressMath[0] == '!'){
-			element[address] = !element[address];
-			if(addressMath[1] == '!')
-				element[address] = !element[address];
-		}
-	}
-
-    return element[address];
-}
-
-/**
- * @deprecated
- * @param {Object} struct 
- * @param {Object} source 
- */
-function fill_struct_length(struct, source){
-    for(let i in struct)
-        if(typeof struct[i] == 'object' && typeof struct[i][1] == 'string'){
-            struct[i][1] = childByAddressPlusMath(source, struct[i][1]);
-			if(isNaN(struct[i][1]))
-				struct[i][1] = 0;
-			if(typeof struct[i][0] == 'object')
-				fill_struct_length(struct[i][0], source[i][0] || 0);
-		}
-
-}
-
 module.exports = class BasePacket {
-	static offDEBUG = {};
 
-	baseSize = 10240
-	struct_header = {
+	static baseSize = 10240;
+	static struct_header = {
 		cmd: 'uint8',
 		netId: 'uint32',
+	};
+	static struct = {};
+
+
+	constructor(buffer = null){
+		if(buffer)
+			this._buffer = buffer;
 	}
-	struct = {}
-    constructor(){
-        //Object.assign(this, JSON.parse(JSON.stringify(this.struct_header || {})), JSON.parse(JSON.stringify(this.struct || {})));
-    }
-	deleteN(){
-		delete this.baseSize;
-		delete this.struct_header;
-		delete this.struct;
+
+	get id(){
+		return this.constructor.id;
 	}
+	get name(){
+		return this.constructor.name;
+	}
+
+	get channel(){
+		return this.constructor.channel;
+	}
+	get channelName(){
+		return this.constructor.channelName;
+	}
+
+	get baseSize(){
+		return this.constructor.baseSize;
+	}
+	get struct_header(){
+		return this.constructor.struct_header;
+	}
+	get struct(){
+		return this.constructor.struct;
+	}
+
+	//_buffer = null;
+
 	reader(buffer){
 		Object.assign(this, buffer.readobj(this.struct_header));
 		Object.assign(this, buffer.readobj(this.struct));
-		BasePacket.offDEBUG = buffer.offDEBUG;
-
-		this.deleteN();
 	}
+
+	get content(){
+
+		if(this._buffer){
+			this.reader(this._buffer);
+	
+			if(this._buffer.off != this._buffer.length)
+				console.log('packet structure is incorrect',
+					':', `buffer.off(${this._buffer.off}) != buffer.length(${this._buffer.length})`,
+					':', `${this.constructor.channelName}.${this.constructor.name}`,
+					this._buffer);
+
+			//this._buffer = null;
+			delete this._buffer;
+		}
+
+		return this;
+	}
+
+	set content(value){
+		Object.assign(this, value);
+	}
+
 	writer(buffer){
 		buffer.writeobj(this.struct_header, this);
-
-		fill_struct_length(this.struct, this);
 		buffer.writeobj(this.struct, this);
-
-		this.deleteN();
 	}
+	
+	get buffer(){
+		
+		if(!this._buffer){
+			this._buffer = Buffer.allocUnsafe(this.baseSize);
+			this.writer(this._buffer);
+	
+			if(this._buffer.off != this._buffer.length){
+				this._buffer = Buffer.concat([this._buffer], this._buffer.off);
+				this._buffer.off = this._buffer.length;
+			}
+		}
+
+		return this._buffer;
+	}
+
+	set buffer(value){
+		this._buffer = value;
+	}
+
 };

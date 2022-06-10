@@ -1,11 +1,13 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		ElementID: 'uint8',
-		ElementType: 'uint8',
-		ElementNumber: 'uint8',
-		ElementSubCategory: 'uint8',
-		bitfield_Enabled: 'uint8',
+module.exports = class ToggleUIHighlight extends BasePacket {
+	static struct = {
+		elementId: 'uint8',
+		elementType: 'uint8',
+		elementNumber: 'uint8',
+		elementSubCategory: 'uint8',
+		bitfield: ['bitfield', {
+			enabled: 1,
+		}],
 	}
 };

@@ -20,7 +20,7 @@ class Skillshot extends Missile {
 			
 					this.owner.attack(target);
 					delete this.callbacks.collision._;
-					//this.Waypoints = [this.Waypoints[0]];
+					//this.waypoints = [this.waypoints[0]];
 					this.destructor();
 				}
 			}

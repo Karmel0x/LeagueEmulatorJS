@@ -1,8 +1,8 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		TargetNetId: 'uint32',
+module.exports = class SetHoverIndicatorTarget extends BasePacket {
+	static struct = {
+		targetNetId: 'uint32',
 	}
 };

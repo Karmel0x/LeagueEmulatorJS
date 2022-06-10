@@ -1,10 +1,12 @@
-var BasePacket = require('../BasePacket');
-var Vector3 = require('../SharedStruct/Vector3');
+const BasePacket = require('../BasePacket');
+var SVector3 = require('../SharedStruct/SVector3');
 
-module.exports = class extends BasePacket {//S2C.SetCircularMovementRestriction
-	struct = {
-		Center: Vector3,
-		Radius: 'float',
-		bitfield_RestrictCamera: 'uint8',
+module.exports = class SetCircularMovementRestriction extends BasePacket {
+	static struct = {
+		center: SVector3,
+		radius: 'float',
+		bitfield: ['bitfield', {
+			restrictCamera: 1,
+		}],
 	}
 };

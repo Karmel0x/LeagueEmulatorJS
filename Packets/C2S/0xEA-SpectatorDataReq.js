@@ -1,10 +1,10 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//C2S.
-	struct = {
-		SendMetaData: 'uint8',
-		JumpToLatest: 'uint8',
-		StartChunkID: 'int32',
-		StartKeyFrameID: 'int32',
+module.exports = class SpectatorDataReq extends BasePacket {
+	static struct = {
+		sendMetaData: 'uint8',
+		jumpToLatest: 'uint8',
+		startChunkId: 'int32',
+		startKeyFrameId: 'int32',
 	}
 };

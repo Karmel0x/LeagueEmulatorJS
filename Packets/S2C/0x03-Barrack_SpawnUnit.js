@@ -1,14 +1,14 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//S2C.Barrack_SpawnUnit
-	struct = {
-		ObjectID: 'uint32',
-		ObjectNodeID: 'uint8',
-		BarracksNetId: 'uint32',
-		WaveCount: 'uint8',
-		MinionType: 'uint8',
-		DamageBonus: 'int16',
-		HealthBonus: 'int16',
-		MinionLevel: 'uint8',
+module.exports = class Barrack_SpawnUnit extends BasePacket {
+	static struct = {
+		objectId: 'uint32',
+		objectNodeId: 'uint8',
+		barracksNetId: 'uint32',
+		waveCount: 'uint8',
+		minionType: 'uint8',
+		damageBonus: 'int16',
+		healthBonus: 'int16',
+		minionLevel: 'uint8',
 	}
 };

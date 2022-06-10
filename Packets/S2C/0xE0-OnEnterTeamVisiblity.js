@@ -1,7 +1,7 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		VisibilityTeam: 'uint8',
+module.exports = class OnEnterTeamVisiblity extends BasePacket {
+	static struct = {
+		visibilityTeam: 'uint8',
 	}
 };

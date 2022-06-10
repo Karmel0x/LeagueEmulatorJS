@@ -1,10 +1,10 @@
-var BasePacket = require('../BasePacket');
-var Vector3 = require('../SharedStruct/Vector3');
+const BasePacket = require('../BasePacket');
+var SVector3 = require('../SharedStruct/SVector3');
 
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		NetId: 'uint32',
-		VisibilityTeam: 'uint8',
+module.exports = class FX_OnEnterTeamVisibility extends BasePacket {
+	static struct = {
+		netObjId: 'uint32',
+		visibilityTeam: 'uint8',
 	}
 };

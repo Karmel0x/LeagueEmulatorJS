@@ -25,46 +25,46 @@ module.exports = (I) => class IMovable extends I {
 		var stats = args[0].stats || {};
 		this.moveSpeed = this.moveSpeed || new IStat(stats.moveSpeed || 325);
 
-		this.Waypoints = [this.position];
+		this.waypoints = [this.position];
 	}
 
-	PositionSyncID = 0;
-	_Waypoints = [];
-	set Waypoints(val){
-		this.PositionSyncID = parseInt(performance.now());
-		this._Waypoints = val.map(v => new Vector2(v.x, v.y));
+	positionSyncID = 0;
+	_waypoints = [];
+	set waypoints(val){
+		this.positionSyncID = parseInt(performance.now());
+		this._waypoints = val.map(v => new Vector2(v.x, v.y));
 		this.emit('setWaypoints');
 	}
-	get Waypoints(){
-		return this._Waypoints;
+	get waypoints(){
+		return this._waypoints;
 	}
-	SpeedParams = null;
+	speedParams = null;
 
 	/**
 	 * @param {Vector2|Object} pos {x, y}
 	 */
 	set position(pos){
-		this.Waypoints = [new Vector2(pos.x, pos.y)];
+		this.waypoints = [new Vector2(pos.x, pos.y)];
 	}
 	get position(){
-		return this.Waypoints[0] || new Vector2(this.spawnPosition.x, this.spawnPosition.y);
+		return this.waypoints[0] || new Vector2(this.spawnPosition.x, this.spawnPosition.y);
 	}
 
 
 	/**
 	 * Set waypoint for movement, 0 is current position and it will be overwritten
-	 * @param {Array.<Vector2>} Waypoints
+	 * @param {Array.<Vector2>} waypoints
 	 * @param {Boolean} send - send packet to client
 	 */
-	setWaypoints(Waypoints, send = true){//todo: repath if needed
-		console.log('setWaypoints', Waypoints, this.Waypoints, this.WaypointsPending);
-		if(this.SpeedParams){
-			this.WaypointsPending = Waypoints;
+	setWaypoints(waypoints, send = true){//todo: repath if needed
+		//console.log('setWaypoints', waypoints, this.waypoints, this.waypointsPending);
+		if(this.speedParams){
+			this.waypointsPending = waypoints;
 			return;
 		}
-		var Waypoints0 = this.Waypoints[0];
-		this.Waypoints = Waypoints;
-		this.Waypoints[0] = Waypoints0;
+		var waypoints0 = this.waypoints[0];
+		this.waypoints = waypoints;
+		this.waypoints[0] = waypoints0;
 		if(send)
 			this.moveAns();
 	}
@@ -74,22 +74,22 @@ module.exports = (I) => class IMovable extends I {
 	 * @param {Boolean} send - send packet to client
 	 */
 	teleport(position, send = true){
-		this.Waypoints = [position];
+		this.waypoints = [position];
 
 		if(send)
 			this.moveAns(true);
 	}
 	dashAns(){
-		var DASH = createPacket('DASH');
+		var WaypointGroupWithSpeed = createPacket('WaypointGroupWithSpeed');
 
-		DASH.netId = 0;
-		DASH.TeleportNetId = this.netId;
+		WaypointGroupWithSpeed.netId = 0;
+		WaypointGroupWithSpeed.teleportNetId = this.netId;
 
-		DASH.Waypoints = this.Waypoints;
-		DASH.SpeedParams = this.SpeedParams;
+		WaypointGroupWithSpeed.waypoints = this.waypoints;
+		WaypointGroupWithSpeed.speedParams = this.speedParams;
 		
-		this.sendTo_vision(DASH);
-		//console.log(DASH);
+		this.sendTo_vision(WaypointGroupWithSpeed);
+		//console.log(WaypointGroupWithSpeed);
 	}
 	/**
 	 * Dash to position, but you should use dashTo probably
@@ -99,20 +99,20 @@ module.exports = (I) => class IMovable extends I {
 	dash(position, options){
 		//this.ACTION = ACTIONS.DASHING;
 
-		this.SpeedParams = {//todo: names? then just Object.assign
-			PathSpeedOverride: options.speed || 1000,
-			ParabolicGravity: options.ParabolicGravity || 0,
-			ParabolicStartPoint: options.ParabolicStartPoint || {x: 0, y: 0},
-			Facing: options.Facing || 0,
-			FollowNetId: options.FollowNetId || 0,
-			FollowDistance: options.FollowDistance || 0,
-			FollowBackDistance: options.FollowBackDistance || 0,
-			FollowTravelTime: options.FollowTravelTime || 0,
+		this.speedParams = {//todo: names? then just Object.assign
+			pathSpeedOverride: options.speed || 1000,
+			parabolicGravity: options.parabolicGravity || 0,
+			parabolicStartPoint: options.parabolicStartPoint || {x: 0, y: 0},
+			facing: options.facing || 0,
+			followNetId: options.followNetId || 0,
+			followDistance: options.followDistance || 0,
+			followBackDistance: options.followBackDistance || 0,
+			followTravelTime: options.followTravelTime || 0,
 		};
 
-		let Waypoints0 = this.Waypoints[0];
-		this.WaypointsPending = this.WaypointsPending || this.Waypoints;
-		this.Waypoints = [Waypoints0, position];
+		let waypoints0 = this.waypoints[0];
+		this.waypointsPending = this.waypointsPending || this.waypoints;
+		this.waypoints = [waypoints0, position];
 		
 		this.callbacks.move.dash = {
 			options: {
@@ -121,10 +121,10 @@ module.exports = (I) => class IMovable extends I {
 			function: () => {
 				//this.ACTION = ACTIONS.FREE;
 				delete this.callbacks.move.dash;
-				this.SpeedParams = null;
-				if(this.WaypointsPending && this.WaypointsPending.length > 1)
-					this.setWaypoints(this.WaypointsPending);
-				this.WaypointsPending = null;
+				this.speedParams = null;
+				if(this.waypointsPending && this.waypointsPending.length > 1)
+					this.setWaypoints(this.waypointsPending);
+				this.waypointsPending = null;
 				if(options.callback)
 					options.callback();
 			}
@@ -152,10 +152,10 @@ module.exports = (I) => class IMovable extends I {
 	knockAside(position, distance = 100, minDistance = null, options = {}){
 		minDistance = minDistance ?? distance;
 		options.speed = options.speed || (Math.abs(distance) / (options.duration || 1));
-		options.ParabolicGravity = options.ParabolicGravity || 0;
-		options.Facing = options.Facing ?? 1;
+		options.parabolicGravity = options.parabolicGravity || 0;
+		options.facing = options.facing ?? 1;
 
-		var pos = PositionHelper.getPositionBetweenRange(this.Waypoints[0], position, distance, minDistance);
+		var pos = PositionHelper.getPositionBetweenRange(this.waypoints[0], position, distance, minDistance);
 		this.dash(pos, options);
 	}
 	/**
@@ -175,59 +175,59 @@ module.exports = (I) => class IMovable extends I {
 	 */
 	knockUp(options = {}){
 		options.speed = options.speed || (10 / (options.duration || 1));
-		options.ParabolicGravity = options.ParabolicGravity || 16.5;
-		options.Facing = options.Facing ?? 1;
+		options.parabolicGravity = options.parabolicGravity || 16.5;
+		options.facing = options.facing ?? 1;
 
 		var position = PositionHelper.getRandomPositionClamped(10);
-		position.add(this.Waypoints[0]);
+		position.add(this.waypoints[0]);
 		this.dash(position, options);
 	}
 	move1(position){
-		this.setWaypoints([this.Waypoints[0], position]);
+		this.setWaypoints([this.waypoints[0], position]);
 	}
-	sendDebugData(trace, MovementData){
+	sendDebugData(trace, movementData){
 		//if(!this.chatBoxMessage)
 			return;
 
 		var message = trace + ' ' + performance.now();
 
-		let dist = this.Waypoints[0].distanceTo(MovementData.Waypoints[0]);
-		let dist2 = this.Waypoints[1] ? this.Waypoints[0].distanceTo(this.Waypoints[1]) : '';
-		let dist3 = this.Waypoints[1] ? MovementData.Waypoints[0].distanceTo(this.Waypoints[1]) : '';
+		let dist = this.waypoints[0].distanceTo(movementData.waypoints[0]);
+		let dist2 = this.waypoints[1] ? this.waypoints[0].distanceTo(this.waypoints[1]) : '';
+		let dist3 = this.waypoints[1] ? movementData.waypoints[0].distanceTo(this.waypoints[1]) : '';
 
 		message += "\n";
 		message += dist + ' / ' + dist2 + ' / ' + dist3;
 
 		message += "\n";
-		message += JSON.stringify(this.Waypoints);
+		message += JSON.stringify(this.waypoints);
 
 		message += "\n";
-		message += JSON.stringify(MovementData.Waypoints);
+		message += JSON.stringify(movementData.waypoints);
 
 		this.chatBoxMessage(message);
 	}
 	move0(packet){
 		
-		var MovementData = packet.MovementData;
-		this.sendDebugData('move0', MovementData);
+		var movementData = packet.movementData;
+		this.sendDebugData('move0', movementData);
 		//if(this.ACTION != ACTIONS.DASHING)
 		//    this.moveCallback = null;
 		if(this.callbacks.move.pending)
 			delete this.callbacks.move.pending;
 		
-		var newWaipoints = MovementData.Waypoints;
+		var newWaipoints = movementData.waypoints;
 		if(!global.doNotUsePathfinding){
-			// idk if it's even necessary here but MoveData.Waypoints are wrong when character is dashing
+			// idk if it's even necessary here but MoveData.waypoints are wrong when character is dashing
 			newWaipoints = Pathfinding.getPath(this.position, packet.position);
-			//console.log({Waypoints: MovementData.Waypoints, newWaipoints});
+			//console.log({waypoints: movementData.waypoints, newWaipoints});
 		}
 
 		if(newWaipoints && newWaipoints.length){
 			this.setWaypoints(newWaipoints);
 		}
 	}
-	halt0(send = false, MovementData = {}){
-		this.sendDebugData('halt0', MovementData);
+	halt0(send = false, movementData = {}){
+		this.sendDebugData('halt0', movementData);
 		this.moveClear();
 
 		if(send)
@@ -247,44 +247,44 @@ module.exports = (I) => class IMovable extends I {
 			this.moveAns();
 	}
 	moveClear(){
-		this.Waypoints = [this.Waypoints[0]];
+		this.waypoints = [this.waypoints[0]];
 	}
-	get MovementData(){
+	get movementData(){
 		let movementData = {
-			TeleportNetId: this.netId,
-			//SyncID: performance.now(),
+			teleportNetId: this.netId,
+			//syncId: performance.now(),
 		};
 
-		if(this.Waypoints.length > 1){
-			movementData.Waypoints = this.Waypoints;
-			if(this.SpeedParams)
-				movementData.SpeedParams = this.SpeedParams;
+		if(this.waypoints.length > 1){
+			movementData.waypoints = this.waypoints;
+			if(this.speedParams)
+				movementData.speedParams = this.speedParams;
 		}else{
 			movementData.position = this.position;
-			movementData.Forward = {x: 0, y: 0};
+			movementData.forward = {x: 0, y: 0};
 		};
 
 		return movementData;
 	}
-	TeleportID = 0;
+	teleportID = 0;
 	getNextTeleportID(){
-		return (this.TeleportID++ % 255) + 1;
+		return (this.teleportID++ % 255) + 1;
 	}
 	moveAns(teleport = false){
 		// this should be in Movement_Simulation so we can resend if destination will change (following moveable unit)
-		// or following should be made with dash.SpeedParams.FollowNetId ?
-		var MOVE_ANS = createPacket('MOVE_ANS', 'LOW_PRIORITY');
-		MOVE_ANS.SyncID = this.PositionSyncID;
+		// or following should be made with dash.speedParams.followNetId ?
+		var WaypointGroup = createPacket('WaypointGroup', 'LOW_PRIORITY');
+		WaypointGroup.syncId = this.positionSyncID;
 
-		MOVE_ANS.netId = 0;
-		MOVE_ANS.TeleportNetId = this.netId;
+		WaypointGroup.netId = 0;
+		WaypointGroup.teleportNetId = this.netId;
 
-		MOVE_ANS.TeleportID = teleport ? this.getNextTeleportID() : 0;
-		MOVE_ANS.Waypoints = this.WaypointsHalt ? [this.Waypoints[0]] : this.Waypoints;
+		WaypointGroup.teleportID = teleport ? this.getNextTeleportID() : 0;
+		WaypointGroup.waypoints = this.WaypointsHalt ? [this.waypoints[0]] : this.waypoints;
 		
-		this.sendTo_vision(MOVE_ANS);
-		//console.log('MOVE_ANS', MOVE_ANS);
-		//console.log('MOVE_ANS.Waypoints', MOVE_ANS.Waypoints);
+		this.sendTo_vision(WaypointGroup);
+		//console.log('WaypointGroup', WaypointGroup);
+		//console.log('WaypointGroup.waypoints', WaypointGroup.waypoints);
 		//console.trace();
 	}
 

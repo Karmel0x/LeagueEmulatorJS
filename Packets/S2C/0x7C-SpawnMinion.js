@@ -1,27 +1,27 @@
-var BasePacket = require('../BasePacket');
-const Vector3 = require('../SharedStruct/Vector3');
+const BasePacket = require('../BasePacket');
+const SVector3 = require('../SharedStruct/SVector3');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		NetId: 'uint32',
-		OwnerNetId: 'uint32',
-		NetNodeID: 'uint8',
-		position: Vector3,
-		SkinID: 'int32',
-		CloneNetId: 'uint32',
-		TeamID: 'uint16',
+module.exports = class SpawnMinion extends BasePacket {
+	static struct = {
+		netObjId: 'uint32',
+		ownerNetId: 'uint32',
+		netNodeId: 'uint8',
+		position: SVector3,
+		skinId: 'int32',
+		cloneNetId: 'uint32',
+		teamId: 'uint16',
 		bitfield: ['bitfield', {
-			IgnoreCollision: 1,
-			IsWard: 2,
-			IsLaneMinion: 4,
-			IsBot: 8,
-			isTargetable: 10,
+			ignoreCollision: 1,
+			isWard: 2,
+			isLaneMinion: 4,
+			isBot: 8,
+			isTargetable: 16,
 		}],
-		IsTargetableToTeamSpellFlags: 'uint32',
-		VisibilitySize: 'float',
-		Name: ['char', 64],
-		SkinName: ['char', 64],
-		InitialLevel: 'uint16',
-		OnlyVisibleToNetId: 'uint32',
+		isTargetableToTeamSpellFlags: 'uint32',
+		visibilitySize: 'float',
+		objectName: ['char', 64],
+		skinName: ['char', 64],
+		initialLevel: 'uint16',
+		onlyVisibleToNetId: 'uint32',
 	}
 };

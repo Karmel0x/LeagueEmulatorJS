@@ -1,8 +1,8 @@
 var ExtendedPacket = require('../ExtendedPacket');
 
 
-module.exports = class extends ExtendedPacket {//S2C.
-	struct = {
-		OriginalItemID: 'uint32',
+module.exports = class ShopItemSubstitutionClear extends ExtendedPacket {
+	static struct = {
+		originalItemId: 'uint32',
 	}
 };

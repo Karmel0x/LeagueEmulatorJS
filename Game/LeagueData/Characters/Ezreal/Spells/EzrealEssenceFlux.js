@@ -17,30 +17,30 @@ class _Particle {
 class ezreal_bow_yellow extends _Particle {
 	// todo
 
-	PackageHash = package1.PackageHash;
+	packageHash = package1.packageHash;
 	particleHash = HashString(this.constructor.name + '.troy');
 	boneHash = HashString('L_HAND');
 
 	onCast(spellData){
 		
-		this.owner.AddParticleTarget(this.PackageHash, this.particleHash, this.boneHash);
+		this.owner.AddParticleTarget(this.packageHash, this.particleHash, this.boneHash);
 	}
 	static tempOnCast(spellData, owner){
 		var particleHash = HashString(this.constructor.name + '.troy');
 		var boneHash = HashString('L_HAND');
 		
-		owner.AddParticleTarget(package1.PackageHash, particleHash, boneHash);
+		owner.AddParticleTarget(package1.packageHash, particleHash, boneHash);
 	}
 }
 
 module.exports = class EzrealEssenceFlux extends _Spell {
-	PackageHash = package1.PackageHash;
-	SpellSlot = slotId.W;
+	packageHash = package1.packageHash;
+	spellSlot = slotId.W;
 
-	CastInfo = {
+	castInfo = {
 		target: [],
-		DesignerCastTime: 0.25,
-		DesignerTotalTime: 1,
+		designerCastTime: 0.25,
+		designerTotalTime: 1,
 	};
 
 	constructor(options){

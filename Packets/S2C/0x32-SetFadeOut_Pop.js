@@ -1,8 +1,8 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		StackID: 'uint16',
+module.exports = class SetFadeOut_Pop extends BasePacket {
+	static struct = {
+		stackId: 'int16',
 	}
 };

@@ -49,7 +49,7 @@ module.exports = (I) => class IRespawnable extends I {
 
 		this.totalRespawnTime += this.lastRespawnTime;
 		while(this.died + this.lastRespawnTime < Date.now() / 1000){
-			await global.Utilities.wait(100);
+			await Promise.wait(100);
 			continue;
 		}
 

@@ -1,35 +1,37 @@
-var BasePacket = require('../BasePacket');
-const Vector3 = require('../SharedStruct/Vector3');
+const BasePacket = require('../BasePacket');
+const SVector3 = require('../SharedStruct/SVector3');
 
 var MovementDriverHomingData = {
-	TargetNetId: 'uint32',
+	targetNetId: 'uint32',
 	TargetHeightModifier: 'float',
-	targetPosition: Vector3,
-	Speed: 'float',
+	targetPosition: SVector3,
+	speed: 'float',
 	Gravity: 'float',
 	RateOfTurn: 'float',
-	Duration: 'float',
+	duration: 'float',
 	MovementPropertyFlags: 'uint32',
 };
 
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		MovementTypeID: 'uint8',
-		position: Vector3,
-		Velocity: Vector3,
+module.exports = class MovementDriverReplication extends BasePacket {
+	static struct = {
+		movementTypeId: 'uint8',
+		position: SVector3,
+		velocity: SVector3,
 		movementDriverParamType: 'int32',
 	}
 	reader(buffer){
 		super.reader(buffer);
 
 		if(this.movementDriverParamType == 1)
-			this.MovementDriverHomingData = buffer.readobj(MovementDriverHomingData);
+			this.movementDriverHomingData = buffer.readobj(MovementDriverHomingData);
 	}
 	writer(buffer){
+		this.movementDriverParamType = !!this.movementDriverHomingData;
+		
 		super.writer(buffer);
 
 		if(this.movementDriverParamType == 1)
-			buffer.writeobj(MovementDriverHomingData, this.MovementDriverHomingData);
+			buffer.writeobj(MovementDriverHomingData, this.movementDriverHomingData);
 	}
 };

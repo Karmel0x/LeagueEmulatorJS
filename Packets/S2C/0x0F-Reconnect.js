@@ -1,7 +1,7 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		ClientID: 'int32',
+module.exports = class Reconnect extends BasePacket {
+	static struct = {
+		clientId: 'int32',
 	}
 };

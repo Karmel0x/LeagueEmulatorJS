@@ -70,27 +70,27 @@ class MovementSimulation {
 	move(unit, diff){
 		if(unit.followUnit){
 			if(PositionHelper.distanceBetween(unit, unit.followUnit) > (unit.followRange || 1))
-				unit.Waypoints = [unit.position, unit.followUnit.position.clone()];
+				unit.waypoints = [unit.position, unit.followUnit.position.clone()];
 			else
 				unit.followUnit = false;
 		}
-		if(!unit.Waypoints || unit.Waypoints.length < 2 || unit.WaypointsHalt)
+		if(!unit.waypoints || unit.waypoints.length < 2 || unit.WaypointsHalt)
 			return false;
-		//console.log('move', unit.netId, unit.Waypoints[0]);
+		//console.log('move', unit.netId, unit.waypoints[0]);
 
-		let dest = unit.Waypoints[1].clone();
-		dest.sub(unit.Waypoints[0]);
+		let dest = unit.waypoints[1].clone();
+		dest.sub(unit.waypoints[0]);
 		
-		let ms = (unit.SpeedParams?.PathSpeedOverride || unit.moveSpeed.total) / 1000;
+		let ms = (unit.speedParams?.pathSpeedOverride || unit.moveSpeed.total) / 1000;
 		dest.normalize().multiplyScalar(ms * diff);
 
-		let dist = unit.Waypoints[0].distanceTo(unit.Waypoints[1]);
+		let dist = unit.waypoints[0].distanceTo(unit.waypoints[1]);
 		if(dest.length() > dist)
-			unit.Waypoints.shift();//not 100% correct but leave it for now
+			unit.waypoints.shift();//not 100% correct but leave it for now
 		else
-			unit.Waypoints[0].add(dest);
+			unit.waypoints[0].add(dest);
 
-		//console.log(unit.Waypoints[0], unit.Waypoints[1], dest, dist, diff);
+		//console.log(unit.waypoints[0], unit.waypoints[1], dest, dist, diff);
 		return true;
 	}
 
@@ -101,7 +101,7 @@ class MovementSimulation {
 	 */
 	callbacks(unit, diff){
 
-		if(unit.Waypoints.length < 2){
+		if(unit.waypoints.length < 2){
 			unit.emit('reachDestination');
 		}
 
@@ -109,7 +109,7 @@ class MovementSimulation {
 			return false;
 
 		for(let i in unit.callbacks.move){
-			if(unit.Waypoints.length < 2 || unit.Waypoints[0].distanceTo(unit.Waypoints[1]) <= unit.callbacks.move[i].options.range)
+			if(unit.waypoints.length < 2 || unit.waypoints[0].distanceTo(unit.waypoints[1]) <= unit.callbacks.move[i].options.range)
 				unit.callbacks.move[i].function();
 		}
 
@@ -153,7 +153,7 @@ class MovementSimulation {
 	 */
 	async update(){
 		for(;;){
-			await global.Utilities.wait(20);//lower this?
+			await Promise.wait(20);//lower this?
 			this.moved = {};
 			
 			var units = global.getUnits();

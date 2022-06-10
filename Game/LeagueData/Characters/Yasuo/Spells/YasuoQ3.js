@@ -7,21 +7,21 @@ const YasuoQ3Mis = require("./YasuoQ3Mis");
 
 
 module.exports = class YasuoQ3 extends _Spell {
-	PackageHash = package1.PackageHash;
+	packageHash = package1.packageHash;
 	spellSlot = slotId.Qq;
 	windup = 0.166;
 
-	CastInfo = {
-		DesignerCastTime: 0.35,
-		DesignerTotalTime: 0.5,
+	castInfo = {
+		designerCastTime: 0.35,
+		designerTotalTime: 0.5,
 		bitfield: {
-			IsOverrideCastPosition: true,
+			isOverrideCastPosition: true,
 		},
 
 		// facing is not working without these two ??
-		SpellSlot: 0,
+		spellSlot: 0,
 		target: [],
-		//SpellSlot: 46,// <- original packet
+		//spellSlot: 46,// <- original packet
 		//target: [{ unit: this.owner.netId, hitResult: 0 }],// <- original packet
 
 	};
@@ -54,8 +54,8 @@ module.exports = class YasuoQ3 extends _Spell {
 				if(target.knockUp)
 					target.knockUp({
 						duration: 0.75,
-						ParabolicGravity: 16.5,
-						Facing: 1,
+						parabolicGravity: 16.5,
+						facing: 1,
 					});
 			},
 		};

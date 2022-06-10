@@ -32,20 +32,4 @@ module.exports = {
 		}
 		return ret;
 	},
-	/**
-	 * @deprecated
-	 * @param {Object} element 
-	 * @param {String} address 
-	 * @returns {Object}
-	 */
-	childByAddress: (element, address) => {
-		if(typeof element !== 'object')
-			return element;
-
-		var addressSplitted = address.split('.');
-		if(addressSplitted.length > 1)
-			return childByAddressPlusMath(element[addressSplitted.shift()] || null, addressSplitted.join('.'));
-
-		return element[address] || null;
-	}
 };

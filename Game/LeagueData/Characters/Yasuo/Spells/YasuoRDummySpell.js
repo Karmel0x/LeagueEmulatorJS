@@ -9,9 +9,9 @@ module.exports = class YasuoRDummySpell extends _Spell {
 
 	spellSlot = slotId.Qm;
 
-	CastInfo = {
-		DesignerCastTime: -1,
-		DesignerTotalTime: 0.7,
+	castInfo = {
+		designerCastTime: -1,
+		designerTotalTime: 0.7,
 	};
 
 	constructor(options){
@@ -47,8 +47,8 @@ module.exports = class YasuoRDummySpell extends _Spell {
 				//if(target.knockUp)
 				//	target.knockUp({
 				//		duration: 0.75,
-				//		ParabolicGravity: 16.5,
-				//		Facing: 1,
+				//		parabolicGravity: 16.5,
+				//		facing: 1,
 				//	});
 			},
 		};

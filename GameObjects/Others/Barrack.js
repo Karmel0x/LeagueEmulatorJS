@@ -38,27 +38,27 @@ module.exports = class Barrack extends BaseInterface(GameObject, IHasTeam) {
 		global.Barracks[this.teamName][this.num] = this;
 	}
 
-	WaveCount = 1;
-	DamageBonus = 10;
-	HealthBonus = 7;
-	MinionLevel = 1;
+	waveCount = 1;
+	damageBonus = 10;
+	healthBonus = 7;
+	minionLevel = 1;
 
 	/**
 	 * Send packet to client to spawn unit
-	 * @param {Number} UnitNetId 
+	 * @param {Number} unitNetId 
 	 * @param {Number} minionType 
 	 */
-	spawnUnitAns(UnitNetId, minionType){
+	spawnUnitAns(unitNetId, minionType){
 		var Barrack_SpawnUnit = createPacket('Barrack_SpawnUnit');
-		Barrack_SpawnUnit.netId = UnitNetId;
-		Barrack_SpawnUnit.ObjectID = UnitNetId;
-		Barrack_SpawnUnit.ObjectNodeID = 0x40;
-		Barrack_SpawnUnit.BarracksNetId = this.netId;
-		Barrack_SpawnUnit.WaveCount = this.WaveCount;
-		Barrack_SpawnUnit.MinionType = minionType;
-		Barrack_SpawnUnit.DamageBonus = this.DamageBonus;
-		Barrack_SpawnUnit.HealthBonus = this.HealthBonus;
-		Barrack_SpawnUnit.MinionLevel = this.MinionLevel;
+		Barrack_SpawnUnit.netId = unitNetId;
+		Barrack_SpawnUnit.objectId = unitNetId;
+		Barrack_SpawnUnit.objectNodeId = 0x40;
+		Barrack_SpawnUnit.barracksNetId = this.netId;
+		Barrack_SpawnUnit.waveCount = this.waveCount;
+		Barrack_SpawnUnit.minionType = minionType;
+		Barrack_SpawnUnit.damageBonus = this.damageBonus;
+		Barrack_SpawnUnit.healthBonus = this.healthBonus;
+		Barrack_SpawnUnit.minionLevel = this.minionLevel;
 		global.Teams.ALL.sendPacket(Barrack_SpawnUnit);
 		//console.debug(Barrack_SpawnUnit);
 	}
@@ -75,7 +75,7 @@ module.exports = class Barrack extends BaseInterface(GameObject, IHasTeam) {
 	 * Spawn next minion wave at position of this barrack
 	 */
 	async spawnWave(){
-		++this.WaveCount;
+		++this.waveCount;
 
 		// 1. Super minions
 		let superMinionsSpawn = false;
@@ -86,21 +86,21 @@ module.exports = class Barrack extends BaseInterface(GameObject, IHasTeam) {
 		// 2. Melee minions
 		for(let i = 0; i < 3; i++){
 			this.spawnUnit('Basic');
-			await global.Utilities.wait(800);
+			await Promise.wait(800);
 		}
 
 		// 3. Siege minions
 		//One Siege minion spawns in every third wave, in each lane.
 		//Do not spawns on lanes on which super minions are spawning.
-		if(this.WaveCount % 3 == 2 && !superMinionsSpawn){
+		if(this.waveCount % 3 == 2 && !superMinionsSpawn){
 			this.spawnUnit('MechCannon');
-			await global.Utilities.wait(800);
+			await Promise.wait(800);
 		}
 
 		// 4. Caster minions
 		for(let i = 0; i < 3; i++){
 			this.spawnUnit('Wizard');
-			await global.Utilities.wait(800);
+			await Promise.wait(800);
 		}
 	}
 	

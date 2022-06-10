@@ -1,10 +1,10 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		TeamID: 'uint8',
-		FadeAmount: 'float',
-		FadeTime: 'float',
+module.exports = class FadeMinions extends BasePacket {
+	static struct = {
+		teamId: 'uint8',
+		fadeAmount: 'float',
+		fadeTime: 'float',
 	}
 };

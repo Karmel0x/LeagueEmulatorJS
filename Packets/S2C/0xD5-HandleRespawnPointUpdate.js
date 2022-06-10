@@ -1,12 +1,12 @@
-var BasePacket = require('../BasePacket');
-const Vector3 = require('../SharedStruct/Vector3');
+const BasePacket = require('../BasePacket');
+const SVector3 = require('../SharedStruct/SVector3');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		RespawnPointCommand: 'uint8',
-		RespawnPointUIID: 'uint8',
-		TeamID: 'uint32',
-		ClientID: 'int32',
-		position: Vector3,
+module.exports = class HandleRespawnPointUpdate extends BasePacket {
+	static struct = {
+		tespawnPointCommand: 'uint8',
+		respawnPointUiId: 'uint8',
+		teamId: 'uint32',
+		clientId: 'int32',
+		position: SVector3,
 	}
 };

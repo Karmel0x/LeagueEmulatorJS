@@ -1,13 +1,13 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		CommandID: 'uint32',
-		TargetID: 'uint32',
+module.exports = class PlayVOCommand extends BasePacket {
+	static struct = {
+		commandId: 'uint32',
+		targetId: 'uint32',
 		bitfield: ['bitfield', {
-			HighlightPlayerIcon: 1,
-			FromPing: 2,
+			highlightPlayerIcon: 1,
+			fromPing: 2,
 		}],
 	}
 };

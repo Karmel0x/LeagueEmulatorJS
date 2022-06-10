@@ -6,15 +6,15 @@ const package1 = require('../package');
 
 
 module.exports = class EzrealMysticShotMissile extends _Spell {
-	PackageHash = package1.PackageHash;
+	packageHash = package1.packageHash;
 	isProjectile = true;
-	SpellSlot = slotId.Qm;
+	spellSlot = slotId.Qm;
 
-	CastInfo = {
+	castInfo = {
 		target: [],
-		DesignerTotalTime: 1,
-		//Cooldown: 2.1903247880352632e-39,
-		AmmoUsed: 0,
+		designerTotalTime: 1,
+		//cooldown: 2.1903247880352632e-39,
+		ammoUsed: 0,
 	};
 	projectileData = {
 		speed: 2000,

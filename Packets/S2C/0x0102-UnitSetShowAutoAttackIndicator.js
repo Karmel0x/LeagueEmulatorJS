@@ -1,12 +1,12 @@
 var ExtendedPacket = require('../ExtendedPacket');
 
 
-module.exports = class extends ExtendedPacket {//S2C.
-	struct = {
-		NetId: 'uint32',
+module.exports = class UnitSetShowAutoAttackIndicator extends ExtendedPacket {
+	static struct = {
+		netObjId: 'uint32',
 		bitfield: ['bitfield', {
-			ShowIndicator: 1,
-			ShowMinimapIndicator: 2,
+			showIndicator: 1,
+			showMinimapIndicator: 2,
 		}],
 	}
 };

@@ -1,9 +1,9 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		ObjectNetId: 'uint32',
-		HashedSpellName: 'uint32',
-		SpellSlot: 'uint8',
+module.exports = class SetSpellData extends BasePacket {
+	static struct = {
+		objectNetId: 'uint32',
+		hashedSpellName: 'uint32',
+		spellSlot: 'uint8',
 	}
 };

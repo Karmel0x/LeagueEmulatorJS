@@ -1,9 +1,9 @@
 var ExtendedPacket = require('../ExtendedPacket');
 
 
-module.exports = class extends ExtendedPacket {//S2C.
-	struct = {
-		Speed: 'float',
-		Delay: 'float',
+module.exports = class ChangeMissileSpeed extends ExtendedPacket {
+	static struct = {
+		speed: 'float',
+		delay: 'float',
 	}
 };

@@ -1,22 +1,22 @@
 var ExtendedPacket = require('../ExtendedPacket');
-const Vector3 = require('../SharedStruct/Vector3');
+const SVector3 = require('../SharedStruct/SVector3');
 
 
-module.exports = class extends ExtendedPacket {//S2C.
-	struct = {
-		NetId: 'uint32',
-		OwnerNetId: 'uint32',
-		NetNodeID: 'uint8',
-		Name: ['char', 64],
-		SkinName: ['char', 64],
-		SkinID: 'int32',
-		position: Vector3,
-		ModelDisappearOnDeathTime: 'float',
+module.exports = class SpawnTurret extends ExtendedPacket {
+	static struct = {
+		netObjId: 'uint32',
+		ownerNetId: 'uint32',
+		netNodeId: 'uint8',
+		objectName: ['char', 64],
+		skinName: ['char', 64],
+		skinId: 'int32',
+		position: SVector3,
+		modelDisappearOnDeathTime: 'float',
 		bitfield: ['bitfield', {
 			isInvulnerable: 1,
 			isTargetable: 2,
 		}],
-		TeamID: 'uint16',
-		IsTargetableToTeamSpellFlags: 'uint32',
+		teamId: 'uint16',
+		isTargetableToTeamSpellFlags: 'uint32',
 	}
 };

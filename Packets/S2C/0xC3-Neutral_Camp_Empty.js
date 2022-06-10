@@ -1,12 +1,14 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		KillerNetId: 'uint32',
-		CampIndex: 'int32',
-		TimerType: 'int32',
-		TimerExpire: 'float',
-		bitfield_DoPlayVO: 'uint8',
+module.exports = class Neutral_Camp_Empty extends BasePacket {
+	static struct = {
+		killerNetId: 'uint32',
+		campIndex: 'int32',
+		timerType: 'int32',
+		timerExpire: 'float',
+		bitfield: ['bitfield', {
+			doPlayVO: 1,
+		}],
 	}
 };

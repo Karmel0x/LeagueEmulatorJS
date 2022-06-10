@@ -1,7 +1,7 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
+module.exports = class AI_State extends BasePacket {
+	static struct = {
 		AIState: 'uint32',
 	}
 };

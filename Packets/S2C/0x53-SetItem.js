@@ -1,9 +1,9 @@
-var BasePacket = require('../BasePacket');
-var ItemPacket = require('../SharedStruct/ItemPacket');
+const BasePacket = require('../BasePacket');
+var SItemPacket = require('../SharedStruct/SItemPacket');
 
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		Item: ItemPacket,
+module.exports = class SetItem extends BasePacket {
+	static struct = {
+		item: SItemPacket,
 	}
 };

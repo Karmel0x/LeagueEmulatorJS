@@ -1,11 +1,11 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
+module.exports = class SetShopEnabled extends BasePacket {
+	static struct = {
 		bitfield: ['bitfield', {
-			Enabled: 1,
-			ForceEnabled: 2,
+			enabled: 1,
+			forceEnabled: 2,
 		}],
 	}
 };

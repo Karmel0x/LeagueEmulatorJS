@@ -1,13 +1,13 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		SurrenderReason: 'uint8',
-		ForVote: 'uint8',
-		AgainstVote: 'uint8',
-		TeamID: 'uint32',
-		GoldGranted: 'float',
+module.exports = class TeamBalanceStatus extends BasePacket {
+	static struct = {
+		surrenderReason: 'uint8',
+		forVote: 'uint8',
+		againstVote: 'uint8',
+		teamId: 'uint32',
+		goldGranted: 'float',
 		experienceGranted: 'int32',
-		TowersGranted: 'int32',
+		towersGranted: 'int32',
 	}
 };

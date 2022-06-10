@@ -25,8 +25,8 @@ module.exports = (I) => class INetwork extends I {
 
 	sendReconnectPackets(){
 		global.Players.forEach(player => {
-			player.HERO_SPAWN(this);
-			player.AVATAR_INFO(this);
+			player.CreateHero(this);
+			player.AvatarInfo_Server(this);
 		});
 	}
 	

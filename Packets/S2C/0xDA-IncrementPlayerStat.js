@@ -1,8 +1,8 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		PlayerNetId: 'uint32',
-		StatEvent: 'uint8',
+module.exports = class IncrementPlayerStat extends BasePacket {
+	static struct = {
+		playerNetId: 'uint32',
+		statEvent: 'uint8',
 	}
 };

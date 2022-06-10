@@ -1,8 +1,8 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		OwnerID: 'uint32',
-		Amount: 'float',
+module.exports = class ReplayOnly_GoldEarned extends BasePacket {
+	static struct = {
+		ownerId: 'uint32',
+		amount: 'float',
 	}
 };

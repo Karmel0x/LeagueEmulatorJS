@@ -46,13 +46,13 @@ class Player extends BaseInterface(Unit, INetwork, IDefendable, IAttackable, IMo
 	 * @param source - The source of the damage.
 	 */
 	announceDie(source){
-		var ANNOUNCE2 = createPacket('ANNOUNCE2');
-		ANNOUNCE2.netId = this.netId;
-		ANNOUNCE2.id = EVENT.OnChampionDie;
-		ANNOUNCE2.EventData = {
-			OtherNetId: source.netId
+		var OnEvent = createPacket('OnEvent');
+		OnEvent.netId = this.netId;
+		OnEvent.eventId = EVENT.OnChampionDie;
+		OnEvent.eventData = {
+			otherNetId: source.netId
 		};
-		this.sendTo_everyone(ANNOUNCE2);
+		this.sendTo_everyone(OnEvent);
 	}
 	async onDie(source){
 		this.announceDie(source);
@@ -66,29 +66,29 @@ class Player extends BaseInterface(Unit, INetwork, IDefendable, IAttackable, IMo
 	/**
 	 * Kill death counter to calculate bounties
 	 */
-	KillDeathCounter = 0;
+	killDeathCounter = 0;
 
 	/**
 	 * gold amount to give to enemy player
 	 */
-	get gold(){
-		if(this.KillDeathCounter >= 5)
+	get rewardGold(){
+		if(this.killDeathCounter >= 5)
 			return 500;
    
 		let gold = 300;
-		if(this.KillDeathCounter >= 0){
-			for (var i = this.KillDeathCounter; i > 1; --i)
+		if(this.killDeathCounter >= 0){
+			for (var i = this.killDeathCounter; i > 1; --i)
 				gold += gold * 0.165;
 			return gold;
 		}
-		for (var i = this.KillDeathCounter; i < -1; ++i)
+		for (var i = this.killDeathCounter; i < -1; ++i)
 			gold -= gold * (0.085 + !!i * 0.115);
    
 		return gold < 50 ? 50 : gold;
 	}
 
 
-	KillDeathCounter = 0;
+	killDeathCounter = 0;
 	loadingStage = loadingStages.NOT_CONNECTED;
 
 	constructor(...args){
@@ -100,30 +100,24 @@ class Player extends BaseInterface(Unit, INetwork, IDefendable, IAttackable, IMo
 		global.Players.push(this);
 		this.initialized();
 	}
-	get PlayerInfo(){
+	get playerInfo(){
 		return Object.assign({}, this.info, {
-			SummonorSpell1: this.spellSlots[slotId.D].spellHash,
-			SummonorSpell2: this.spellSlots[slotId.F].spellHash,
-			TeamId: this.team,
+			summonorSpell1: this.spellSlots[slotId.D].spellHash,
+			summonorSpell2: this.spellSlots[slotId.F].spellHash,
+			teamId: this.team,
 		});
 	}
 	useSlot(packet){
-		this.emit('useSlot', packet.Slot, packet);
-		//if(packet.Slot >= 0 && packet.Slot <= 3)
+		this.emit('useSlot', packet.slot, packet);
+		//if(packet.slot >= 0 && packet.slot <= 3)
 		//	this.character.castSpell(packet);
-		//else if(packet.Slot >= 4 && packet.Slot <= 5)
+		//else if(packet.slot >= 4 && packet.slot <= 5)
 		//	this.summonerSpells.castSpell(packet);
-		//else if(packet.Slot >= 6 && packet.Slot <= 12)
+		//else if(packet.slot >= 6 && packet.slot <= 12)
 		//	this.inventory.castSpell(packet);
 	}
 	castSpell(packet){
 		this.useSlot(packet);
-		//if(packet.Slot >= 0 && packet.Slot <= 3)
-		//	this.character.castSpell(packet);
-		//else if(packet.Slot >= 4 && packet.Slot <= 5)
-		//	this.summonerSpells.castSpell(packet);
-		//else if(packet.Slot >= 6 && packet.Slot <= 12)
-		//	this.inventory.castSpell(packet);
 	}
 
 	/**

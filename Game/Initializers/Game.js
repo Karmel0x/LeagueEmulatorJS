@@ -19,80 +19,79 @@ class Game {
 
 	/**
 	 * Send packet to client about loding state and ping
-	 * it's just answer to C2S.PING_LOAD_INFO
+	 * it's just answer to C2S.Ping_Load_Info
 	 * @param {Player} player 
 	 * @param {Object} packet request packet
 	 */
-	static PING_LOAD_INFO(player, packet){
-		var PING_LOAD_INFO = createPacket('PING_LOAD_INFO', 'LOW_PRIORITY');
-		PING_LOAD_INFO.ClientID = player.info.ClientID;
-		PING_LOAD_INFO.PlayerID = player.info.PlayerID;
-		PING_LOAD_INFO.Percentage = packet.Percentage;
-		PING_LOAD_INFO.ETA = packet.ETA;
-		PING_LOAD_INFO.Count = packet.Count;
-		PING_LOAD_INFO.Ping = packet.Ping;
-		PING_LOAD_INFO.bitfield_Ready = packet.bitfield_Ready;
-		//PING_LOAD_INFO.bitfield = {
-		//	Ready: packet.bitfield.Ready,
-		//};
-		global.Teams.ALL.sendPacket(PING_LOAD_INFO, loadingStages.NOT_CONNECTED);
+	static Ping_Load_Info(player, packet){
+		var Ping_Load_Info = createPacket('Ping_Load_Info', 'LOW_PRIORITY');
+		Ping_Load_Info.clientId = player.info.clientId;
+		Ping_Load_Info.playerId = player.info.playerId;
+		Ping_Load_Info.percentage = packet.percentage;
+		Ping_Load_Info.ETA = packet.ETA;
+		Ping_Load_Info.count = packet.count;
+		Ping_Load_Info.ping = packet.ping;
+		Ping_Load_Info.bitfield = {
+			ready: packet.bitfield.ready,
+		};
+		global.Teams.ALL.sendPacket(Ping_Load_Info, loadingStages.NOT_CONNECTED);
 	}
 
 	/**
 	 * Send packet to client to load screen info with info about game
 	 * @param {Player} player 
 	 */
-	static LOAD_SCREEN_INFO(player){
-		var LOAD_SCREEN_INFO = createPacket('LOAD_SCREEN_INFO', 'LOADING_SCREEN');
-		LOAD_SCREEN_INFO.blueMax = 6;
-		LOAD_SCREEN_INFO.redMax = 6;
-		LOAD_SCREEN_INFO.teamBlue_playerIds = [];
-		LOAD_SCREEN_INFO.teamRed_playerIds = [];
+	static TeamRosterUpdate(player){
+		var TeamRosterUpdate = createPacket('TeamRosterUpdate', 'LOADING_SCREEN');
+		TeamRosterUpdate.blueMax = 6;
+		TeamRosterUpdate.redMax = 6;
+		TeamRosterUpdate.teamBlue_playerIds = [];
+		TeamRosterUpdate.teamRed_playerIds = [];
 		
 		var bluePlayersUnits = global.getUnitsF('BLUE', 'Player');
 		for(let player_num in bluePlayersUnits){
 			var player = bluePlayersUnits[player_num];
-			LOAD_SCREEN_INFO.teamBlue_playerIds.push(player.info.PlayerID);
+			TeamRosterUpdate.teamBlue_playerIds.push(player.info.playerId);
 		}
 		var redPlayersUnits = global.getUnitsF('RED', 'Player');
 		for(let player_num in redPlayersUnits){
 			var player = redPlayersUnits[player_num];
-			LOAD_SCREEN_INFO.teamRed_playerIds.push(player.info.PlayerID);
+			TeamRosterUpdate.teamRed_playerIds.push(player.info.playerId);
 		}
 
-		LOAD_SCREEN_INFO.currentBlue = LOAD_SCREEN_INFO.teamBlue_playerIds.length;
-		LOAD_SCREEN_INFO.currentRed = LOAD_SCREEN_INFO.teamRed_playerIds.length;
-		global.Teams.ALL.sendPacket(LOAD_SCREEN_INFO, loadingStages.NOT_CONNECTED);
+		TeamRosterUpdate.currentBlue = TeamRosterUpdate.teamBlue_playerIds.length;
+		TeamRosterUpdate.currentRed = TeamRosterUpdate.teamRed_playerIds.length;
+		global.Teams.ALL.sendPacket(TeamRosterUpdate, loadingStages.NOT_CONNECTED);
 	}
 
 	/**
 	 * Send packet to client to show name of player
 	 * @param {Player} player 
 	 */
-	static LOAD_NAME(player){
-		var LOAD_NAME = createPacket('LOAD_NAME', 'LOADING_SCREEN');
-		LOAD_NAME.PlayerId = player.info.PlayerID;
-		LOAD_NAME.SkinId = 0;
-		LOAD_NAME.playerName = 'Test';
-		global.Teams.ALL.sendPacket(LOAD_NAME, loadingStages.NOT_CONNECTED);
+	static RequestRename(player){
+		var RequestRename = createPacket('RequestRename', 'LOADING_SCREEN');
+		RequestRename.playerId = player.info.playerId;
+		RequestRename.skinId = 0;
+		RequestRename.playerName = 'Test';
+		global.Teams.ALL.sendPacket(RequestRename, loadingStages.NOT_CONNECTED);
 	}
 
 	/**
 	 * Send packet to client to show player champion and skin
 	 * @param {Player} player 
 	 */
-	static LOAD_HERO(player){
-		var LOAD_HERO = createPacket('LOAD_HERO', 'LOADING_SCREEN');
-		LOAD_HERO.PlayerId = player.info.PlayerID;
-		LOAD_HERO.SkinId = 0;
-		LOAD_HERO.SkinName = player.character.model;
-		global.Teams.ALL.sendPacket(LOAD_HERO, loadingStages.NOT_CONNECTED);
+	static RequestResking(player){
+		var RequestResking = createPacket('RequestResking', 'LOADING_SCREEN');
+		RequestResking.playerId = player.info.playerId;
+		RequestResking.skinId = 0;
+		RequestResking.skinName = player.character.model;
+		global.Teams.ALL.sendPacket(RequestResking, loadingStages.NOT_CONNECTED);
 	}
 
 	static connected(player){
-		Game.LOAD_SCREEN_INFO(player);
-		Game.LOAD_NAME(player);
-		Game.LOAD_HERO(player);
+		Game.TeamRosterUpdate(player);
+		Game.RequestRename(player);
+		Game.RequestResking(player);
 	}
 
 	// STAGE client loaded ==========================================================
@@ -100,25 +99,27 @@ class Game {
 	/**
 	 * Send packet to client to start game (switch from loading screen to game)
 	 */
-	static START_GAME(){
-		var START_GAME = createPacket('START_GAME');
-		START_GAME.bitfield_EnablePause = true;
-		global.Teams.ALL.sendPacket(START_GAME, loadingStages.NOT_CONNECTED);
+	static StartGame(){
+		var StartGame = createPacket('StartGame');
+		StartGame.bitfield = {
+			enablePause: true,
+		};
+		global.Teams.ALL.sendPacket(StartGame, loadingStages.NOT_CONNECTED);
 	}
 
 	/**
 	 * Send packet to client to synchronize game time
 	 * @param {Number} time 
 	 */
-	static GAME_TIMER(time = 0){
-		var GAME_TIMER = createPacket('GAME_TIMER');
-		GAME_TIMER.SynchTime = time;
-		global.Teams.ALL.sendPacket(GAME_TIMER, loadingStages.NOT_CONNECTED);
+	static SynchSimTime(time = 0){
+		var SynchSimTime = createPacket('SynchSimTime');
+		SynchSimTime.synchTime = time;
+		global.Teams.ALL.sendPacket(SynchSimTime, loadingStages.NOT_CONNECTED);
 	}
-	static GAME_TIMER_UPDATE(time = 0){
-		var GAME_TIMER_UPDATE = createPacket('GAME_TIMER_UPDATE');
-		GAME_TIMER_UPDATE.StartTime = time;
-		global.Teams.ALL.sendPacket(GAME_TIMER_UPDATE, loadingStages.NOT_CONNECTED);
+	static SyncMissionStartTime(time = 0){
+		var SyncMissionStartTime = createPacket('SyncMissionStartTime');
+		SyncMissionStartTime.startTime = time;
+		global.Teams.ALL.sendPacket(SyncMissionStartTime, loadingStages.NOT_CONNECTED);
 	}
 
 	/**
@@ -129,9 +130,9 @@ class Game {
 		
 		var time = 0;
 		for(let i = 0; i < 3; i++){//for(;;){
-			Game.GAME_TIMER(time);
+			Game.SynchSimTime(time);
 	
-			await global.Utilities.wait(10 * 1000);
+			await Promise.wait(10 * 1000);
 			time += 10;
 		}
 	}
@@ -143,9 +144,9 @@ class Game {
 	 */
 	static async playerLoaded(player){
 		global.Game.loaded = Date.now() / 1000;// this shouldn't be here
-		Game.START_GAME();
+		Game.StartGame();
 		Game.GameTimeHeartBeat();
-		Game.GAME_TIMER_UPDATE();
+		Game.SyncMissionStartTime();
 	}
 
 	// STAGE start game flow ==========================================================
@@ -183,7 +184,7 @@ class Game {
 		global.Movement.start();
 
 		while(!global.Game.started){
-			await global.Utilities.wait(100);
+			await Promise.wait(100);
 
 			var playerUnits = global.getUnitsF('ALL', 'Player');
 			if(!playerUnits || !playerUnits.length){

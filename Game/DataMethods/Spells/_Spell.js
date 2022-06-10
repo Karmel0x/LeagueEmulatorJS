@@ -11,7 +11,7 @@ module.exports = class _Spell {
 	manaCost = 0;
 
 	windup = 0.05;//?
-	CastInfo = {};
+	castInfo = {};
 	childSpells = [];
 	isProjectile = false;
 	castRange = 25000;
@@ -49,9 +49,9 @@ module.exports = class _Spell {
 	 */
 	afterCast(spellData){
 		if(this.isProjectile)
-			this.spawnProjectileAns(spellData.spellCast.CastInfo, 0, this.projectileData);
+			this.spawnProjectileAns(spellData.spellCast.castInfo, 0, this.projectileData);
 		else
-			this.castSpellAns(spellData.spellCast.CastInfo);
+			this.castSpellAns(spellData.spellCast.castInfo);
 
 		//console.log('afterCast', spellData);
 		if(this.childSpells.length > 0){
@@ -82,91 +82,91 @@ module.exports = class _Spell {
 	}
 	
 
-	castSpellAns(CastInfo, PackageHash){
+	castSpellAns(castInfo, packageHash){
 		var owner = this.owner;
 
-		var CAST_SPELL_ANS = createPacket('CAST_SPELL_ANS', 'S2C');
-		CAST_SPELL_ANS.netId = owner.netId;
-		CAST_SPELL_ANS.CasterPositionSyncID = owner.PositionSyncID;
-		CAST_SPELL_ANS.CastInfo = {
+		var CastSpellAns = createPacket('CastSpellAns', 'S2C');
+		CastSpellAns.netId = owner.netId;
+		CastSpellAns.casterPositionSyncID = owner.positionSyncID;
+		CastSpellAns.castInfo = {
 			spellHash: 0,
 			spellCastNetId: 1073743439,
 			spellLevel: 1,
-			AttackSpeedModifier: 1,
-			CasterNetId: owner.netId,
-			SpellChainOwnerNetId: owner.netId,
-			PackageHash: PackageHash,
-			MissileNetId: 1073743440,
+			attackSpeedModifier: 1,
+			casterNetId: owner.netId,
+			spellChainOwnerNetId: owner.netId,
+			packageHash: packageHash,
+			missileNetId: 1073743440,
 			targetPosition: {},
 			targetPositionEnd: {},
-			DesignerCastTime: 0.25,
-			DesignerTotalTime: 0.25,
+			designerCastTime: 0.25,
+			designerTotalTime: 0.25,
 			manaCost: 28,
-			SpellCastLaunchPosition: {
+			spellCastLaunchPosition: {
 				x: owner.position.x,
 				y: owner.position.y,
 				z: 0,
 			},
-			AmmoUsed: 1,
+			ammoUsed: 1,
 			target: [{
 				unit: 0,
 				hitResult: 0,
 			}],
 		};
-		Object.assign(CAST_SPELL_ANS.CastInfo, CastInfo);
+		Object.assign(CastSpellAns.castInfo, castInfo);
 
-		owner.sendTo_vision(CAST_SPELL_ANS);
-		console.log(CAST_SPELL_ANS);
+		owner.sendTo_vision(CastSpellAns);
+		//console.log(CastSpellAns);
 	}
-	spawnProjectileAns(CastInfo, PackageHash = 0, projectile = {speed: 1200}){//todo
+	spawnProjectileAns(castInfo, packageHash = 0, projectile = {speed: 1200}){//todo
 		var owner = this.owner;
 
-		var SPAWN_PROJECTILE = createPacket('SPAWN_PROJECTILE', 'S2C');
-		SPAWN_PROJECTILE.CastInfo = {
+		var MissileReplication = createPacket('MissileReplication', 'S2C');
+		MissileReplication.castInfo = {
 			spellHash: 0,
 			spellCastNetId: 1073743439,
 			spellLevel: 1,
-			AttackSpeedModifier: 1,
-			CasterNetId: owner.netId,
-			SpellChainOwnerNetId: owner.netId,
-			PackageHash: PackageHash,
-			MissileNetId: 1073743440,
+			attackSpeedModifier: 1,
+			casterNetId: owner.netId,
+			spellChainOwnerNetId: owner.netId,
+			packageHash: packageHash,
+			missileNetId: 1073743440,
 			targetPosition: {},
 			targetPositionEnd: {},
-			DesignerCastTime: 0.25,
-			DesignerTotalTime: 0.25,
+			designerCastTime: 0.25,
+			designerTotalTime: 0.25,
 			manaCost: 28,
-			SpellCastLaunchPosition: {
+			spellCastLaunchPosition: {
 				x: owner.position.x,
 				y: owner.position.y,
 				z: 0,
 			},
-			AmmoUsed: 1,
+			ammoUsed: 1,
 			target: [{
 				unit: 0,
 				hitResult: 0,
 			}],
 		};
-		Object.assign(SPAWN_PROJECTILE.CastInfo, CastInfo);
-		SPAWN_PROJECTILE.netId = SPAWN_PROJECTILE.CastInfo._netId ?? SPAWN_PROJECTILE.CastInfo.MissileNetId;// ??
-		SPAWN_PROJECTILE.position = SPAWN_PROJECTILE.position || SPAWN_PROJECTILE.CastInfo.SpellCastLaunchPosition;
-		SPAWN_PROJECTILE.CasterPosition = SPAWN_PROJECTILE.CasterPosition || SPAWN_PROJECTILE.CastInfo.SpellCastLaunchPosition;
-		//SPAWN_PROJECTILE.Direction = {
+		Object.assign(MissileReplication.castInfo, castInfo);
+		MissileReplication.netId = MissileReplication.castInfo._netId ?? MissileReplication.castInfo.missileNetId;// ??
+		MissileReplication.position = MissileReplication.position || MissileReplication.castInfo.spellCastLaunchPosition;
+		MissileReplication.casterPosition = MissileReplication.casterPosition || MissileReplication.castInfo.spellCastLaunchPosition;
+		//MissileReplication.direction = {
 		//    "x": 0.36772018671035767,
 		//    "z": 0,
 		//    "y": 0.9299365282058716
 		//}
-		//SPAWN_PROJECTILE.Velocity = {
+		//MissileReplication.velocity = {
 		//    "x": 441.2642517089844,
 		//    "z": -109.0909194946289,
 		//    "y": 1115.9239501953125
 		//};
-		SPAWN_PROJECTILE.StartPoint = SPAWN_PROJECTILE.StartPoint || SPAWN_PROJECTILE.CastInfo.SpellCastLaunchPosition;
-		SPAWN_PROJECTILE.EndPoint = SPAWN_PROJECTILE.EndPoint || SPAWN_PROJECTILE.CastInfo.targetPosition;
-		SPAWN_PROJECTILE.UnitPosition = SPAWN_PROJECTILE.UnitPosition || SPAWN_PROJECTILE.CastInfo.SpellCastLaunchPosition;
-		SPAWN_PROJECTILE.Speed = projectile.speed;
+		MissileReplication.startPoint = MissileReplication.startPoint || MissileReplication.castInfo.spellCastLaunchPosition;
+		MissileReplication.endPoint = MissileReplication.endPoint || MissileReplication.castInfo.targetPosition;
+		MissileReplication.unitPosition = MissileReplication.unitPosition || MissileReplication.castInfo.spellCastLaunchPosition;
+		MissileReplication.speed = projectile.speed;
 
-		owner.sendTo_vision(SPAWN_PROJECTILE);
-		//console.log(SPAWN_PROJECTILE);
+		owner.sendTo_vision(MissileReplication);
+		//console.log(MissileReplication);
 	}
 };

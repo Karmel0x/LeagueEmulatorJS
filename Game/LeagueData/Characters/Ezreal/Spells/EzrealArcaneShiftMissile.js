@@ -6,8 +6,8 @@ const package1 = require('../package');
 
 
 module.exports = class EzrealArcaneShiftMissile extends _Spell {
-	PackageHash = package1.PackageHash;
-	SpellSlot = slotId.Qq;
+	packageHash = package1.packageHash;
+	spellSlot = slotId.Qq;
 
 	isProjectile = true;
 

@@ -4,7 +4,7 @@ const {createPacket, sendPacket, sendPacketS} = require("../../../Core/PacketUti
 const loadingStages = require('../../../Constants/loadingStages');
 const TranslateCenteredCoordinates = require('../../../Functions/TranslateCenteredCoordinates');
 const teamIds = require('../../../Constants/teamIds');
-const CreateHeroDeath = {
+const createHeroDeath = {
 	Alive: 0,
 	Zombie: 1,
 	Dead: 2
@@ -13,92 +13,89 @@ const CreateHeroDeath = {
 
 module.exports = (I) => class IPPlayer extends I {
 	
-	SET_HEALTH(){
+	OnEnterLocalVisibilityClient(){
 		this.charStats_send();
 	}
-	HERO_SPAWN(dest = global.Teams['ALL']){
+	CreateHero(dest = global.Teams['ALL']){
 		//todo
 		
-		var HERO_SPAWN = createPacket('HERO_SPAWN');
-		//HERO_SPAWN.netId = this.netId;
-		HERO_SPAWN.NetId = this.netId;
-		HERO_SPAWN.ClientID = this.info.ClientID;
-		HERO_SPAWN.NetNodeID = 0;//0x40;
-		HERO_SPAWN.SkinID = 0;
-		HERO_SPAWN.Name = 'Test';//playerName
-		HERO_SPAWN.Skin = this.character.model;
+		var CreateHero = createPacket('CreateHero');
+		//CreateHero.netId = this.netId;
+		CreateHero.netObjId = this.netId;
+		CreateHero.clientId = this.info.clientId;
+		CreateHero.netNodeId = 0;//0x40;
+		CreateHero.skinId = 0;
+		CreateHero.objectName = 'Test';
+		CreateHero.skinName = this.character.model;
 
-		HERO_SPAWN.bitfield = {
-			TeamIsOrder: this.team == teamIds.BLUE,
-			IsBot: false
+		CreateHero.bitfield = {
+			teamIsOrder: this.team == teamIds.BLUE,
+			isBot: false
 		};
-		HERO_SPAWN.CreateHeroDeath = CreateHeroDeath.Alive;
-		HERO_SPAWN.SpawnPositionIndex = this.num;//2;
+		CreateHero.createHeroDeath = createHeroDeath.Alive;
+		CreateHero.spawnPosIndex = this.num;//2;
 
-		dest.sendPacket(HERO_SPAWN, loadingStages.NOT_CONNECTED);
+		dest.sendPacket(CreateHero, loadingStages.NOT_CONNECTED);
 	}
-	AVATAR_INFO(dest = global.Teams['ALL']){
+	AvatarInfo_Server(dest = global.Teams['ALL']){
 		//todo
-		var AVATAR_INFO = createPacket('AVATAR_INFO');
-		AVATAR_INFO.netId = this.netId;
-		AVATAR_INFO.ItemIDs = [
+		var AvatarInfo_Server = createPacket('AvatarInfo_Server');
+		AvatarInfo_Server.netId = this.netId;
+		AvatarInfo_Server.itemIds = [
 			0,
 			0x147d, 0x147d, 0x147d, 0x147d, 0x147d, 0x147d, 0x147d, 0x147d, 0x147d,
 			0x14c5, 0x14c5, 0x14c5, 0x14c5, 0x14c5, 0x14c5, 0x14c5, 0x14c5, 0x14c5,
 			0x14a9, 0x14a9, 0x14a9, 0x14a9, 0x14a9, 0x14a9, 0x14a9, 0x14a9, 0x14a9,
 			0x14d7, 0x14d7
 		];
-		AVATAR_INFO.SummonerIDs = [0x0364af1c, 0x06496ea8];
-		AVATAR_INFO.SummonerIDs2 = AVATAR_INFO.SummonerIDs;
+		AvatarInfo_Server.summonerIds = [0x0364af1c, 0x06496ea8];
+		AvatarInfo_Server.summonerIds2 = AvatarInfo_Server.summonerIds;
 		
-		dest.sendPacket(AVATAR_INFO, loadingStages.NOT_CONNECTED);
+		dest.sendPacket(AvatarInfo_Server, loadingStages.NOT_CONNECTED);
 	}
 	chatBoxMessage(){
 		var message = Array.prototype.slice.call(arguments).join(' ');
 		
-		var CHAT_BOX_MESSAGE = createPacket('CHAT_BOX_MESSAGE', 'COMMUNICATION');
-		
-		CHAT_BOX_MESSAGE.msg = message;
-		CHAT_BOX_MESSAGE.messageSize = message.length;
-
-		CHAT_BOX_MESSAGE.netId = this.netId;
-		this.sendTo_self(CHAT_BOX_MESSAGE);
-		console.debug(CHAT_BOX_MESSAGE);
+		var Chat = createPacket('Chat', 'COMMUNICATION');
+		Chat.netId = this.netId;
+		Chat.msg = message;
+		this.sendTo_self(Chat);
+		console.debug(Chat);
 	}
-	SET_COOLDOWN(slot, cooldown = 0){//return;
-		var SET_COOLDOWN = createPacket('SET_COOLDOWN', 'S2C');
-		SET_COOLDOWN.netId = this.netId;
-		SET_COOLDOWN.Slot = slot;
-		SET_COOLDOWN.bitfield = {
-			PlayVOWhenCooldownReady: false,
-			IsSummonerSpell: false,
+	SetCooldown(slot, cooldown = 0){//return;
+		var SetCooldown = createPacket('SetCooldown', 'S2C');
+		SetCooldown.netId = this.netId;
+		SetCooldown.slot = slot;
+		SetCooldown.bitfield = {
+			playVOWhenCooldownReady: false,
+			isSummonerSpell: false,
 		};
-		SET_COOLDOWN.Cooldown = cooldown;
-		SET_COOLDOWN.MaxCooldownForDisplay = cooldown;
-		this.sendTo_self(SET_COOLDOWN);
-		//console.log(SET_COOLDOWN);
+		SetCooldown.cooldown = cooldown;
+		SetCooldown.maxCooldownForDisplay = cooldown;
+		this.sendTo_self(SetCooldown);
+		//console.log(SetCooldown);
 	}
 	// 497252 = root
-	AddParticleTarget(PackageHash, EffectNameHash, BoneNameHash = 497252, target = undefined){
-		var SPAWN_PARTICLE = createPacket('SPAWN_PARTICLE', 'S2C');
-		SPAWN_PARTICLE.netId = 0;//this.netId;
-		SPAWN_PARTICLE.FXCreateGroupData = [];
-		SPAWN_PARTICLE.FXCreateGroupData[0] = {
-			PackageHash: PackageHash,
-			EffectNameHash: EffectNameHash,
-			Flags: 32,
-			TargetBoneNameHash: 0,
-			BoneNameHash: BoneNameHash,
+	AddParticleTarget(packageHash, effectNameHash, boneNameHash = 497252, target = undefined){
+		var FX_Create_Group = createPacket('FX_Create_Group', 'S2C');
+		FX_Create_Group.netId = 0;//this.netId;
+		FX_Create_Group.FXCreateGroupData = [];
+		FX_Create_Group.FXCreateGroupData[0] = {
+			packageHash: packageHash,
+			effectNameHash: effectNameHash,
+			flags: 32,
+			targetBoneNameHash: 0,
+			boneNameHash: boneNameHash,
 		};
-		SPAWN_PARTICLE.FXCreateGroupData[0].FXCreateData = [];
-		SPAWN_PARTICLE.FXCreateGroupData[0].FXCreateData[0] = {
-			TargetNetId: target?.netId || 0,//this.netId,
-			NetAssignedNetId: ++global.lastNetId,//?
-			CasterNetId: 0,//this.netId,
-			BindNetId: this.netId,
-			KeywordNetId: 0,//this.netId,
-			TimeSpent: 0,
-			ScriptScale: 1,
+		FX_Create_Group.FXCreateGroupData[0].FXCreateData = [];
+		FX_Create_Group.FXCreateGroupData[0].FXCreateData[0] = {
+			targetNetId: target?.netId || 0,//this.netId,
+			netAssignedNetId: ++global.lastNetId,//?
+			casterNetId: 0,//this.netId,
+			bindNetId: this.netId,
+			keywordNetId: 0,//this.netId,
+			timeSpent: 0,
+			scriptScale: 1,
 		};
 
 		var ownerPositionCC = TranslateCenteredCoordinates.to([this.position])[0];
@@ -106,21 +103,21 @@ module.exports = (I) => class IPPlayer extends I {
 		targetPositionCC.z = 0;// don't know if it's necessary to set z
 		ownerPositionCC.z = 50;
 
-		SPAWN_PARTICLE.FXCreateGroupData[0].FXCreateData[0].position = ownerPositionCC;
-		SPAWN_PARTICLE.FXCreateGroupData[0].FXCreateData[0].OwnerPosition = ownerPositionCC;
-		SPAWN_PARTICLE.FXCreateGroupData[0].FXCreateData[0].targetPosition = targetPositionCC;
+		FX_Create_Group.FXCreateGroupData[0].FXCreateData[0].position = ownerPositionCC;
+		FX_Create_Group.FXCreateGroupData[0].FXCreateData[0].ownerPosition = ownerPositionCC;
+		FX_Create_Group.FXCreateGroupData[0].FXCreateData[0].targetPosition = targetPositionCC;
 
-		SPAWN_PARTICLE.FXCreateGroupData[0].FXCreateData[0].OrientationVector = {
+		FX_Create_Group.FXCreateGroupData[0].FXCreateData[0].orientationVector = {
 			x: 0,
 			y: 0,
 			z: 0,
 		};
 
-		SPAWN_PARTICLE.FXCreateGroupData[0].count = SPAWN_PARTICLE.FXCreateGroupData[0].FXCreateData.length;
-		SPAWN_PARTICLE.count = SPAWN_PARTICLE.FXCreateGroupData.length;
+		FX_Create_Group.FXCreateGroupData[0].count = FX_Create_Group.FXCreateGroupData[0].FXCreateData.length;
+		FX_Create_Group.count = FX_Create_Group.FXCreateGroupData.length;
 		
-		this.sendTo_vision(SPAWN_PARTICLE);
-		//console.log(SPAWN_PARTICLE);
-		//console.log(SPAWN_PARTICLE.FXCreateGroupData[0].FXCreateData);
+		this.sendTo_vision(FX_Create_Group);
+		//console.log(FX_Create_Group);
+		//console.log(FX_Create_Group.FXCreateGroupData[0].FXCreateData);
 	}
 };

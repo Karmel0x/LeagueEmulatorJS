@@ -17,7 +17,7 @@
 //	//while(true){
 //	//	q = enet.netLoop();
 //	//	if(typeof q.type === 'undefined'){//no packets atm
-//	//		await global.Utilities.wait(1);//don't overload cpu
+//	//		await Promise.wait(1);//don't overload cpu
 //	//		continue;
 //	//	}
 //	//
@@ -32,7 +32,7 @@
 //	if(!_init_network_handler){
 //		_init_network_handler = true;
 //		await init_client_nn();
-//		await global.Utilities.wait(100);
+//		await Promise.wait(100);
 //	}
 //	console.log(q.peer_num, q.channel || 0, q.peer_num == 0 ? '(client)' : '(server)', q.buffer);
 //
@@ -50,11 +50,11 @@
 ////	var buffer = Buffer.from(keyExchangePacket, 'hex');
 ////	console.log(buffer);
 ////	enet.sendPacket(0, buffer, 0);
-////	await global.Utilities.wait(1000);
+////	await Promise.wait(1000);
 ////}
 ////async function t(){
 ////	init_client_nn();
-////	await global.Utilities.wait(100);
+////	await Promise.wait(100);
 ////	await t1();
 ////}
 ////

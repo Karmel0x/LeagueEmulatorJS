@@ -14,18 +14,18 @@ const { createPacket } = require("../../Core/PacketUtilities");
 	 * @param {_Spell} spellObject 
 	 */
 	addBuffAns(spellObject){
-        var ADD_BUFF = createPacket('ADD_BUFF', 'S2C');
-        ADD_BUFF.netId = this.netId;
-        ADD_BUFF.BuffSlot = spellObject.BuffSlot;
-        ADD_BUFF.BuffType = spellObject.buff.BuffType;
-        ADD_BUFF.Count = 1;
-        ADD_BUFF.IsHidden = 0;
-        ADD_BUFF.BuffNameHash = spellObject.spellHash;
-        ADD_BUFF.PackageHash = spellObject.PackageHash;
-        ADD_BUFF.RunningTime = 0;
-        ADD_BUFF.Duration = spellObject.buff.Duration;
-        ADD_BUFF.CasterNetId = this.netId;
-		this.sendTo_vision(ADD_BUFF);
+        var BuffAdd2 = createPacket('BuffAdd2', 'S2C');
+        BuffAdd2.netId = this.netId;
+        BuffAdd2.buffSlot = spellObject.buffSlot;
+        BuffAdd2.buffType = spellObject.buff.buffType;
+        BuffAdd2.count = 1;
+        BuffAdd2.isHidden = 0;
+        BuffAdd2.buffNameHash = spellObject.spellHash;
+        BuffAdd2.packageHash = spellObject.packageHash;
+        BuffAdd2.runningTime = 0;
+        BuffAdd2.duration = spellObject.buff.duration;
+        BuffAdd2.casterNetId = this.netId;
+		this.sendTo_vision(BuffAdd2);
 	}
 	/**
 	 * Sending packet to client to remove buff
@@ -33,12 +33,12 @@ const { createPacket } = require("../../Core/PacketUtilities");
 	 * @param {_Spell} spellObject 
 	 */
 	removeBuffAns(spellObject){
-        var REMOVE_BUFF = createPacket('REMOVE_BUFF', 'S2C');
-        REMOVE_BUFF.netId = this.netId;
-        REMOVE_BUFF.BuffSlot = spellObject.BuffSlot;
-        REMOVE_BUFF.BuffNameHash = spellObject.spellHash;
-        REMOVE_BUFF.RunTimeRemove = 0;
-		this.sendTo_vision(REMOVE_BUFF);
+        var BuffRemove2 = createPacket('BuffRemove2', 'S2C');
+        BuffRemove2.netId = this.netId;
+        BuffRemove2.buffSlot = spellObject.buffSlot;
+        BuffRemove2.buffNameHash = spellObject.spellHash;
+        BuffRemove2.runTimeRemove = 0;
+		this.sendTo_vision(BuffRemove2);
 	}
 	buffs = {};
 	BuffSlots = 0;
@@ -56,7 +56,7 @@ const { createPacket } = require("../../Core/PacketUtilities");
 			return;
 
 		while(performance.now() < buff.EndTime)
-			await global.Utilities.wait(50);
+			await Promise.wait(50);
 
 		this.removeBuffC(buff);
 	}
@@ -67,12 +67,12 @@ const { createPacket } = require("../../Core/PacketUtilities");
 	addBuffC(spellObject){
 		if(!this.buffs[spellObject.constructor.name]){
 			this.buffs[spellObject.constructor.name] = spellObject;
-			spellObject.BuffSlot = this.BuffSlots++;
+			spellObject.buffSlot = this.BuffSlots++;
 			spellObject.buffActivate();
-			this.buffs[spellObject.constructor.name].EndTime = performance.now() + spellObject.buff.Duration * 1000;
+			this.buffs[spellObject.constructor.name].EndTime = performance.now() + spellObject.buff.duration * 1000;
 			this.buffEnd(spellObject);
 		}else{//todo
-			this.buffs[spellObject.constructor.name].EndTime = performance.now() + spellObject.buff.Duration * 1000;
+			this.buffs[spellObject.constructor.name].EndTime = performance.now() + spellObject.buff.duration * 1000;
 		}
 
 		this.addBuffAns(this.buffs[spellObject.constructor.name]);

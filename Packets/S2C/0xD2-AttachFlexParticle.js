@@ -1,10 +1,10 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		NetId: 'uint32',
-		ParticleFlexID: 'uint8',
-		CpIndex: 'uint8',
-		ParticleAttachType: 'uint32',
+module.exports = class AttachFlexParticle extends BasePacket {
+	static struct = {
+		netObjId: 'uint32',
+		particleFlexId: 'uint8',
+		cpIndex: 'uint8',
+		particleAttachType: 'uint32',
 	}
 };

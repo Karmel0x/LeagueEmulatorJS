@@ -55,27 +55,27 @@ class Team {
 	}
 
 	showUnit(unit){
-		var OBJECT_SPAWN = createPacket('OBJECT_SPAWN');
-		OBJECT_SPAWN.netId = unit.netId;
-		OBJECT_SPAWN.ShieldValues = {
-			Magical: 0,
-			Physical: 0,
-			MagicalAndPhysical: 0,
+		var OnEnterVisibilityClient = createPacket('OnEnterVisibilityClient');
+		OnEnterVisibilityClient.netId = unit.netId;
+		OnEnterVisibilityClient.shieldValues = {
+			magical: 0,
+			physical: 0,
+			magicalAndPhysical: 0,
 		};
-		OBJECT_SPAWN.LookAtPosition = {x: 1, y: 0, z: 0};
-		OBJECT_SPAWN.CharacterStackData = [
+		OnEnterVisibilityClient.lookAtPosition = {x: 1, y: 0, z: 0};
+		OnEnterVisibilityClient.characterStackData = [
 			{
-				SkinName: unit.character.model
+				skinName: unit.character.model
 			}
 		];
-		OBJECT_SPAWN.MovementData = unit.MovementData;
-		var isSent = this.sendPacket(OBJECT_SPAWN);
-		//console.log(OBJECT_SPAWN);
+		OnEnterVisibilityClient.movementData = unit.movementData;
+		this.sendPacket(OnEnterVisibilityClient);
+		//console.log(OnEnterVisibilityClient);
 	}
 	hideUnit(unit){
-		var LEAVE_VISION = createPacket('LEAVE_VISION');
-		LEAVE_VISION.netId = unit.netId;
-		var isSent = this.sendPacket(LEAVE_VISION);
+		var OnLeaveVisibilityClient = createPacket('OnLeaveVisibilityClient');
+		OnLeaveVisibilityClient.netId = unit.netId;
+		this.sendPacket(OnLeaveVisibilityClient);
 	}
 	vision(target, enters = true){
 		if(target.type == 'Nexus' || target.type == 'Inhibitor' || target.type == 'Turret')

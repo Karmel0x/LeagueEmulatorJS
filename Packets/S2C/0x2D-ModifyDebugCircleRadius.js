@@ -1,8 +1,8 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		ObjectID: 'int32',
-		Radius: 'float',
+module.exports = class ModifyDebugCircleRadius extends BasePacket {
+	static struct = {
+		objectId: 'int32',
+		radius: 'float',
 	}
 };

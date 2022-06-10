@@ -1,9 +1,9 @@
-var BasePacket = require('../BasePacket');
-const Vector3 = require('../SharedStruct/Vector3');
+const BasePacket = require('../BasePacket');
+const SVector3 = require('../SharedStruct/SVector3');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		TargetNetId: 'uint32',
-		targetPosition: Vector3,
+module.exports = class ChangeMissileTarget extends BasePacket {
+	static struct = {
+		targetNetId: 'uint32',
+		targetPosition: SVector3,
 	}
 };

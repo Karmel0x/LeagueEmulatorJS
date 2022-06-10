@@ -4,38 +4,38 @@ const {createPacket, sendPacket, sendPacketS} = require("../../../Core/PacketUti
 
 module.exports = (I) => class IPUnit extends I {
 
-	SET_HEALTH(){
-		var SET_HEALTH = createPacket('SET_HEALTH');
-		SET_HEALTH.netId = this.netId;
-		SET_HEALTH.count = 0;
-		SET_HEALTH.health = this.health.total;
-		SET_HEALTH.currentHealth = this.currentHealth;
-		this.sendTo_everyone(SET_HEALTH, loadingStages.NOT_CONNECTED);
-		//console.log(SET_HEALTH);
+	OnEnterLocalVisibilityClient(){
+		var OnEnterLocalVisibilityClient = createPacket('OnEnterLocalVisibilityClient');
+		OnEnterLocalVisibilityClient.netId = this.netId;
+		OnEnterLocalVisibilityClient.count = 0;
+		OnEnterLocalVisibilityClient.health = this.health.total;
+		OnEnterLocalVisibilityClient.currentHealth = this.currentHealth;
+		this.sendTo_everyone(OnEnterLocalVisibilityClient, loadingStages.NOT_CONNECTED);
+		//console.log(OnEnterLocalVisibilityClient);
 	}
-	UPDATE_MODEL(character){
-		var UPDATE_MODEL = createPacket('UPDATE_MODEL');
-		UPDATE_MODEL.netId = this.netId;
-		UPDATE_MODEL.bitfield = {
-			OverrideSpells: true,
-			ModelOnly: false,
-			ReplaceCharacterPackage: true,
+	ChangeCharacterData(character){
+		var ChangeCharacterData = createPacket('ChangeCharacterData');
+		ChangeCharacterData.netId = this.netId;
+		ChangeCharacterData.bitfield = {
+			overrideSpells: true,
+			modelOnly: false,
+			replaceCharacterPackage: true,
 		};
-		UPDATE_MODEL.ID = 0;
-		UPDATE_MODEL.SkinID = 0;
-		UPDATE_MODEL.SkinName = character;
-		this.sendTo_vision(UPDATE_MODEL);
+		ChangeCharacterData.id = 0;
+		ChangeCharacterData.skinId = 0;
+		ChangeCharacterData.skinName = character;
+		this.sendTo_vision(ChangeCharacterData);
 	}
-	SET_ANIMATION(animPairs){
-		var SET_ANIMATION = createPacket('SET_ANIMATION');
-		SET_ANIMATION.netId = this.netId;
-		SET_ANIMATION.AnimationOverrides = [];
+	SetAnimStates(animPairs){
+		var SetAnimStates = createPacket('SetAnimStates');
+		SetAnimStates.netId = this.netId;
+		SetAnimStates.animationOverrides = [];
 		for(let i in animPairs)
-			SET_ANIMATION.AnimationOverrides.push({
+			SetAnimStates.animationOverrides.push({
 				fromAnim: animPairs[i][0],
 				toAnim: animPairs[i][1],
 			});
-		this.sendTo_vision(SET_ANIMATION);
+		this.sendTo_vision(SetAnimStates);
 	}
 
 	/**
@@ -44,18 +44,18 @@ module.exports = (I) => class IPUnit extends I {
 	 * for example SummonerHeal will not send two packets (for heal and for buff)
 	 */
 	 charStats_send(){
-		var CHAR_STATS = createPacket('CHAR_STATS', 'LOW_PRIORITY');
-		CHAR_STATS.units = [this];
-		this.sendTo_everyone(CHAR_STATS);
+		var OnReplication = createPacket('OnReplication', 'LOW_PRIORITY');
+		OnReplication.units = [this];
+		this.sendTo_everyone(OnReplication);
 	}
-	skillUpgrade_send(Slot){
-		var SKILL_UP = createPacket('SKILL_UP', 'S2C');
-		SKILL_UP.netId = this.netId;
-		SKILL_UP.Slot = Slot;
-		SKILL_UP.spellLevel = this.spellLevel[Slot];
-		SKILL_UP.skillPoints = this.skillPoints;
-		this.sendTo_self(SKILL_UP);
-		//console.debug(SKILL_UP);
+	skillUpgrade_send(slot){
+		var UpgradeSpellAns = createPacket('UpgradeSpellAns', 'S2C');
+		UpgradeSpellAns.netId = this.netId;
+		UpgradeSpellAns.slot = slot;
+		UpgradeSpellAns.spellLevel = this.spellLevel[slot];
+		UpgradeSpellAns.skillPoints = this.skillPoints;
+		this.sendTo_self(UpgradeSpellAns);
+		//console.debug(UpgradeSpellAns);
 	}
 
 };

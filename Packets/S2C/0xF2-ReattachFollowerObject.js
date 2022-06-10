@@ -1,7 +1,7 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		NewOwnerId: 'uint32',
+module.exports = class ReattachFollowerObject extends BasePacket {
+	static struct = {
+		newOwnerId: 'uint32',
 	}
 };

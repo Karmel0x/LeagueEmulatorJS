@@ -1,7 +1,9 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//C2S.
-	struct = {
-		bitfield_VoteYes: 'uint8',
+module.exports = class TeamBalanceVote extends BasePacket {
+	static struct = {
+		bitfield: ['bitfield', {
+			voteYes: 1,
+		}],
 	}
 };

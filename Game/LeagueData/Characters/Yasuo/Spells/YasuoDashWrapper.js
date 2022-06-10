@@ -10,14 +10,14 @@ module.exports = class YasuoDashWrapper extends _Spell {
 	movingSpell = true;
 
 	/**
-	 * @todo probably need to create missile cause MissileNetId differs from spellNetId
+	 * @todo probably need to create missile cause missileNetId differs from spellNetId
 	 */
 	onCast(spellData){
 		//spellData.maxRangePosition = PositionHelper.getMaxRangePosition(this.owner, spellData.packet, this.castRange);
 
-		this.CastInfo.MissileNetId = 1073743444;
+		this.castInfo.missileNetId = 1073743444;
 
-		this.owner.SET_ANIMATION([
+		this.owner.SetAnimStates([
 			['RUN', 'Spell3']
 		]);
 		this.owner.callbacks.collision[spellData.spellCast.netId] = {
@@ -25,7 +25,7 @@ module.exports = class YasuoDashWrapper extends _Spell {
 				range: this.owner.collisionRadius,
 			},
 			function: (target) => {
-				if(target.netId != spellData.packet.TargetNetId)
+				if(target.netId != spellData.packet.targetNetId)
 					return;
 
 				delete this.owner.callbacks.collision[spellData.spellCast.netId];
@@ -40,9 +40,9 @@ module.exports = class YasuoDashWrapper extends _Spell {
 				if(this.owner.callbacks.collision[spellData.spellCast.netId])
 					delete owner.callbacks.collision[spellData.spellCast.netId];
 				//else
-				//	this.hit_TargetNetId(packet.TargetNetId);
+				//	this.hit_TargetNetId(packet.targetNetId);
 
-				this.owner.SET_ANIMATION([
+				this.owner.SetAnimStates([
 					['Spell3', 'RUN']
 				]);
 			}

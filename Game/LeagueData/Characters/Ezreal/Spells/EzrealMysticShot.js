@@ -10,14 +10,14 @@ const slotId = require("../../../../../Constants/slotId");
 
 
 module.exports = class EzrealMysticShot extends _Spell {
-	PackageHash = package1.PackageHash;
-	SpellSlot = slotId.Q;
+	packageHash = package1.packageHash;
+	spellSlot = slotId.Q;
 
-	CastInfo = {
+	castInfo = {
 		target: [],
-		DesignerCastTime: 0.25,
-		DesignerTotalTime: 1,
-		//Cooldown: 6,
+		designerCastTime: 0.25,
+		designerTotalTime: 1,
+		//cooldown: 6,
 		//manaCost: 28,
 	};
 
@@ -41,7 +41,7 @@ module.exports = class EzrealMysticShot extends _Spell {
 	onCast(spellData){
 		super.onCast(spellData);
 
-		this.owner.AddParticleTarget(this.PackageHash, HashString('ezreal_bow.troy'), HashString('L_HAND'));
+		this.owner.AddParticleTarget(this.packageHash, HashString('ezreal_bow.troy'), HashString('L_HAND'));
 
 	}
 };

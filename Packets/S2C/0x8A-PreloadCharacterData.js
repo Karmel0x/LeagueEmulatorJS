@@ -1,8 +1,8 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		SkinID: 'int32',
-		SkinName: 'string0',//64
+module.exports = class PreloadCharacterData extends BasePacket {
+	static struct = {
+		skinId: 'int32',
+		skinName: 'string0',//64
 	}
 };

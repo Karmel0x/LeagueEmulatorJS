@@ -1,28 +1,28 @@
-var BasePacket = require('../BasePacket');
-const Vector3 = require('../SharedStruct/Vector3');
+const BasePacket = require('../BasePacket');
+const SVector3 = require('../SharedStruct/SVector3');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		NetId: 'uint32',
-		NetNodeID: 'uint8',
-		position: Vector3,
-		GroupPosition: Vector3,
-		FaceDirectionPosition: Vector3,
-		Name: ['char', 64],
-		SkinName: ['char', 64],
-		UniqueName: ['char', 64],
-		SpawnAnimationName: ['char', 64],
-		TeamID: 'uint32',
-		DamageBonus: 'int32',
-		HealthBonus: 'int32',
-		MinionRoamState: 'uint32',
-		GroupNumber: 'int32',
-		BuffSideTeamID: 'uint32',
-		RevealEvent: 'int32',
-		InitialLevel: 'int32',
-		SpawnDuration: 'float',
-		SpawnTime: 'float',
-		BehaviorTree: 'uint8',
-		AIscript: 'string0',//32
+module.exports = class CreateNeutral extends BasePacket {
+	static struct = {
+		netObjId: 'uint32',
+		netNodeId: 'uint8',
+		position: SVector3,
+		groupPosition: SVector3,
+		faceDirectionPosition: SVector3,
+		objectName: ['char', 64],
+		skinName: ['char', 64],
+		uniqueName: ['char', 64],
+		spawnAnimationName: ['char', 64],
+		teamId: 'uint32',
+		damageBonus: 'int32',
+		healthBonus: 'int32',
+		minionRoamState: 'uint32',
+		groupNumber: 'int32',
+		buffSideTeamId: 'uint32',
+		revealEvent: 'int32',
+		initialLevel: 'int32',
+		spawnDuration: 'float',
+		spawnTime: 'float',
+		behaviorTree: 'uint8',
+		AIScript: 'string0',//32
 	}
 };

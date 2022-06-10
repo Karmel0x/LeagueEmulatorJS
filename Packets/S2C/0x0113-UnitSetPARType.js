@@ -1,8 +1,8 @@
 var ExtendedPacket = require('../ExtendedPacket');
 
 
-module.exports = class extends ExtendedPacket {//S2C.
-	struct = {
+module.exports = class UnitSetPARType extends ExtendedPacket {
+	static struct = {
 		PARType: 'uint8',
 	}
 };

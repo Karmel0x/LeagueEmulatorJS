@@ -18,7 +18,7 @@ var replayUnpacked = _replayreaders(process.argv[2] || '../../LeagueEmulatorJS_r
 
 const enet = require('../Core/enet');
 //const Handlers = require('../Core/Handlers');
-const Packets = require('../Core/Packets');
+const BasePacket = require('../Packets/BasePacket');
 require("../Core/BufferExtend");
 
 async function start_spectator(){
@@ -30,10 +30,10 @@ async function start_spectator(){
 			continue;// skip key exchange
 		
 		while(performance.now() - time < (replayUnpacked[i].Time || (replayUnpacked[i].TimeS * 1000).toFixed(3))){
-			await global.Utilities.wait(1);
+			await Promise.wait(1);
 		};
 
-		// todo: ignore some packets: S2C.VIEW_ANS ?
+		// todo: ignore some packets: S2C.World_SendCamera_Server_Acknologment ?
 
 		var buffer = null;
 		if(replayUnpacked[i].Bytes || replayUnpacked[i].BytesB64)
@@ -53,7 +53,7 @@ async function start_spectator(){
 
 var _init_network_handler = false;
 function init_network_handler(q){
-	var obj1 = q.buffer.readobj(Packets.Header);
+	var obj1 = q.buffer.readobj(BasePacket.struct_header);
 	q.buffer.off = 0;
 	if(obj1.cmd == 0x00){
 		var keyExchangePacket = '00 2a 00 ff 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00';

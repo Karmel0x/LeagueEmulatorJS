@@ -1,9 +1,9 @@
 var ExtendedPacket = require('../ExtendedPacket');
 
 
-module.exports = class extends ExtendedPacket {//S2C.
-	struct = {
-		TypeHash: 'int32',
-		Expire: 'float',
+module.exports = class NeutralMinionTimerUpdate extends ExtendedPacket {
+	static struct = {
+		typeHash: 'int32',
+		expire: 'float',
 	}
 };

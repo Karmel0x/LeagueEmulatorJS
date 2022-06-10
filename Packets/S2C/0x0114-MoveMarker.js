@@ -1,12 +1,14 @@
 var ExtendedPacket = require('../ExtendedPacket');
-const Vector2 = require('../SharedStruct/Vector2');
+const SVector2 = require('../SharedStruct/SVector2');
 
 
-module.exports = class extends ExtendedPacket {//S2C.
-	struct = {
-		position: Vector2,
-		Goal: Vector2,
-		Speed: 'float',
-		bitfield_FaceGoalPosition: 'uint8',
+module.exports = class MoveMarker extends ExtendedPacket {
+	static struct = {
+		position: SVector2,
+		goal: SVector2,
+		speed: 'float',
+		bitfield: ['bitfield', {
+			faceGoalPosition: 1,
+		}],
 	}
 };

@@ -6,6 +6,14 @@ const Packets = require('../../Core/Packets');
 
 
 var packetId = 0;
+
+function findChannelIdByPacketId(packetId){
+	for(var channelId in Packets){
+		if(Packets[channelId][packetId])
+			return channelId;
+	}
+	return null;
+}
 function packetParser(packet1) {
 
 	var buffer;
@@ -19,62 +27,25 @@ function packetParser(packet1) {
 	if(!buffer)
 		return false;
 
+	packet1.Id = packet1.Id ?? ++packetId;
+	packet1.Time = (packet1.Time ?? ((packet1.TimeS ?? 0) * 1000)).toFixed(3);
+	packet1.Channel = packet1.Channel || findChannelIdByPacketId(buffer.readUInt8(0));
+
 	var bytes = buffer.toString('hex').match(/../g)?.join(' ') || '';
 	var parsed = HandlersParse.parsePacket({
 		channel: packet1.Channel,
 		buffer: buffer,
 	});
 
-	if(parsed.cmd == 0x95)//PING_LOAD_INFO
+	if(parsed.cmd == 0x95)//Ping_Load_Info
 		return false;
 
 	if(parsed.cmd == 0xFF){
 		buffer.off = 0;
 		let batchPackets = new BatchPacket();
 		batchPackets.reader(buffer);//console.log(batchPackets);
-		for(let i = 0; i < batchPackets.packets.length; i++){
-			var packet = batchPackets.packets[i];
-
-			// some batched packets are different..
-			if(packet.cmd == 0x72) // MOVE_REQ
-				continue;
-			
-			packet.channel = 3;
-			if(typeof Packets[0][packet.cmd] !== 'undefined')
-				packet.channel = 0;
-			else if(typeof Packets[1][packet.cmd] !== 'undefined')
-				packet.channel = 1;
-			else if(typeof Packets[2][packet.cmd] !== 'undefined')
-				packet.channel = 2;
-			else if(typeof Packets[4][packet.cmd] !== 'undefined')
-				packet.channel = 4;
-			else if(typeof Packets[5][packet.cmd] !== 'undefined')
-				packet.channel = 5;
-			else if(typeof Packets[7][packet.cmd] !== 'undefined')
-				packet.channel = 1;
-
-			packet.cmdName = Packets[packet.channel]?.[packet.cmd]?.name || '';
-
-			if(packet.cmd == 0xFE){
-				packet.cmd1 = packet.cmd;
-				packet.buffer.off = 9;
-				packet.cmd = packet.buffer.read1('uint16');
-			}
-
-			packet.buffer.off = 0;
-			//console.log(packet);
-			Object.assign(packet, HandlersParse.parseBody(packet.buffer, packet.channel || 0, packet.cmd));
-			delete packet.struct_header;
-			delete packet.struct;
-			delete packet.info;
-			delete packet.buffer;
-		}
 		parsed = batchPackets;
 	}
-
-	delete parsed.struct_header;
-	delete parsed.struct;
-	delete parsed.info;
 
 	var parsedStr = '';
 	try{
@@ -83,14 +54,14 @@ function packetParser(packet1) {
 	}catch(e){}
 
 	var packetData = {
-		Id: packet1.Id ?? ++packetId,
-		Time: (packet1.Time ?? (packet1.TimeS ?? 0 * 1000)).toFixed(3),
-		Channel: packet1.Channel,
+		Id: packet1.Id,
+		Time: packet1.Time,
+		Channel: parsed.channel,
 		Bytes: bytes,
 		Parsed: parsedStr,
-		channelName: Packets[packet1.Channel || 0]?.name || packet1.Channel,
-		cmdName: Packets[packet1.Channel || 0]?.[parsed.cmd2 || parsed.cmd]?.name || parsed.cmd2 || parsed.cmd,
-		offDEBUG: JSON.stringify(BasePacket.offDEBUG),
+		channelName: parsed.channelName,
+		cmdName: parsed.name,
+		offDEBUG: JSON.stringify(Buffer.offDEBUG),
 	}
 
 	return packetData;

@@ -27,17 +27,17 @@ class Inhibitor extends BaseInterface(Unit, IDefendable) {
 	 * @param source - The source of the damage.
 	 */
 	announceDie(source){
-		var ANNOUNCE2 = createPacket('ANNOUNCE2');
-		ANNOUNCE2.netId = this.netId;
-		ANNOUNCE2.id = EVENT.OnDampenerDie;
-		ANNOUNCE2.EventData = {
-			OtherNetId: source.netId
+		var OnEvent = createPacket('OnEvent');
+		OnEvent.netId = this.netId;
+		OnEvent.eventId = EVENT.OnDampenerDie;
+		OnEvent.eventData = {
+			otherNetId: source.netId
 		};
-		this.sendTo_everyone(ANNOUNCE2);
+		this.sendTo_everyone(OnEvent);
 
 		var Building_Die = createPacket('Building_Die');
 		Building_Die.netId = this.netId;
-		Building_Die.AttackerNetId = source.netId;
+		Building_Die.attackerNetId = source.netId;
 		this.sendTo_everyone(Building_Die);
 	}
 	async onDie(source){
@@ -57,10 +57,10 @@ class Inhibitor extends BaseInterface(Unit, IDefendable) {
 		this.initialized();
 	}
 	spawn(){
-		var OBJECT_SPAWN = createPacket('OBJECT_SPAWN');
-		OBJECT_SPAWN.netId = this.netId;
-		OBJECT_SPAWN.isTurret = true;
-		this.sendTo_everyone(OBJECT_SPAWN, loadingStages.NOT_CONNECTED);
+		var OnEnterVisibilityClient = createPacket('OnEnterVisibilityClient');
+		OnEnterVisibilityClient.netId = this.netId;
+		OnEnterVisibilityClient.isTurret = true;
+		this.sendTo_everyone(OnEnterVisibilityClient, loadingStages.NOT_CONNECTED);
 
 		super.spawn();
 	}

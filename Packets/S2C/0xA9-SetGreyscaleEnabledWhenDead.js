@@ -1,8 +1,10 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		bitfield_Enabled: 'uint8',
+module.exports = class SetGreyscaleEnabledWhenDead extends BasePacket {
+	static struct = {
+		bitfield: ['bitfield', {
+			enabled: 1,
+		}],
 	}
 };

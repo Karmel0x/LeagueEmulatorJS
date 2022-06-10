@@ -1,7 +1,9 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		Unknown1: 'uint32',
+module.exports = class MarkOrSweepForSoftReconnect extends BasePacket {
+	static struct = {
+		bitfield: ['bitfield', {
+			Unknown: 1,
+		}],
 	}
 };

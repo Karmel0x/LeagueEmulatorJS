@@ -1,19 +1,19 @@
-var BasePacket = require('../BasePacket');
-const Vector2 = require('../SharedStruct/Vector2');
+const BasePacket = require('../BasePacket');
+const SVector2 = require('../SharedStruct/SVector2');
 
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		SyncID: 'int32',
+module.exports = class WaypointList extends BasePacket {
+	static struct = {
+		syncId: 'int32',
 	}
 	reader(buffer){
 		super.reader(buffer);
 
-		this.Waypoints = buffer.readobj([Vector2, ((buffer.length - buffer.off) / 8)]);
+		this.waypoints = buffer.readobj([SVector2, ((buffer.length - buffer.off) / 8)]);
 	}
 	writer(buffer){
 		super.writer(buffer);
 
-		buffer.writeobj([Vector2, ((buffer.length - buffer.off) / 8)], this.Waypoints);
+		buffer.writeobj([SVector2, this.waypoints.length], this.waypoints);
 	}
 };

@@ -1,7 +1,7 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		PopID: 'uint32',
+module.exports = class PopCharacterData extends BasePacket {
+	static struct = {
+		popId: 'uint32',
 	}
 };

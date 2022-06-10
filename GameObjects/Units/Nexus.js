@@ -25,7 +25,7 @@ class Nexus extends BaseInterface(Unit, IDefendable) {
 	accounceDie(source){
 		var Building_Die = createPacket('Building_Die');
 		Building_Die.netId = this.netId;
-		Building_Die.AttackerNetId = source.netId;
+		Building_Die.attackerNetId = source.netId;
 		this.sendTo_everyone(Building_Die);
 	}
 	async onDie(source){
@@ -46,10 +46,10 @@ class Nexus extends BaseInterface(Unit, IDefendable) {
 	//    //end game?
 	//}
 	spawn(){
-		var OBJECT_SPAWN = createPacket('OBJECT_SPAWN');
-		OBJECT_SPAWN.netId = this.netId;
-		OBJECT_SPAWN.isTurret = true;
-		this.sendTo_everyone(OBJECT_SPAWN, loadingStages.NOT_CONNECTED);
+		var OnEnterVisibilityClient = createPacket('OnEnterVisibilityClient');
+		OnEnterVisibilityClient.netId = this.netId;
+		OnEnterVisibilityClient.isTurret = true;
+		this.sendTo_everyone(OnEnterVisibilityClient, loadingStages.NOT_CONNECTED);
 
 		super.spawn();
 	}

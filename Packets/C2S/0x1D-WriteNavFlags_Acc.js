@@ -1,8 +1,8 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
 
-module.exports = class extends BasePacket {//C2S.
-	struct = {
-		SyncID: 'int32',
+module.exports = class WriteNavFlags_Acc extends BasePacket {
+	static struct = {
+		syncId: 'int32',
 	}
 };

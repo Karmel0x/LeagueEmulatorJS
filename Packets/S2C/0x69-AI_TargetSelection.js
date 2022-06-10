@@ -1,7 +1,7 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		TargetNetIds: ['uint32', 5],
+module.exports = class AI_TargetSelection extends BasePacket {
+	static struct = {
+		targetNetIds: ['uint32', 5],
 	}
 };

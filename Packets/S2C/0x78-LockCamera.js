@@ -1,7 +1,9 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		bitfield_Lock: 'uint8',
+module.exports = class LockCamera extends BasePacket {
+	static struct = {
+		bitfield: ['bitfield', {
+			lock: 1,
+		}],
 	}
 };

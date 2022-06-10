@@ -13,7 +13,7 @@ async function init_network(handlers = null){
 	while(true){
 		q = enet.netLoop();
 		if(typeof q.type === 'undefined'){//no packets atm
-			await global.Utilities.wait(1);//don't overload cpu
+			await Promise.wait(1);//don't overload cpu
 			continue;
 		}
 

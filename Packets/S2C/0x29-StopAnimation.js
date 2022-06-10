@@ -1,13 +1,13 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
+module.exports = class StopAnimation extends BasePacket {
+	static struct = {
 		bitfield: ['bitfield', {
-			Fade: 1,
-			IgnoreLock: 2,
-			StopAll: 4,
+			fade: 1,
+			ignoreLock: 2,
+			stopAll: 4,
 		}],
-		AnimationName: 'string0',//64
+		animationName: 'string0',//64
 	}
 };

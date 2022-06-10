@@ -1,9 +1,9 @@
 var ExtendedPacket = require('../ExtendedPacket');
 
 
-module.exports = class extends ExtendedPacket {//S2C.
-	struct = {
-		NetId: 'uint32',
-		CanAutoAttackGroundState: 'uint8',
+module.exports = class UnitSetAutoAttackGroundAllowed extends ExtendedPacket {
+	static struct = {
+		netObjId: 'uint32',
+		canAutoAttackGroundState: 'uint8',
 	}
 };

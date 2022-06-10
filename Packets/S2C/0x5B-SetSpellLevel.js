@@ -1,8 +1,8 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		SpellSlot: 'int32',
+module.exports = class SetSpellLevel extends BasePacket {
+	static struct = {
+		spellSlot: 'int32',
 		spellLevel: 'int32',
 	}
 };

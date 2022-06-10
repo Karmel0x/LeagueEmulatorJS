@@ -358,7 +358,7 @@ class Unit extends BaseInterface(GameObject, IHasTeam, ISpellable, ICharacter, I
 	}
 	async update(){
 		for(;;){
-			await global.Utilities.wait(1000);
+			await Promise.wait(1000);
 
 			if(!global.Game.started)
 				continue;
@@ -376,10 +376,10 @@ class Unit extends BaseInterface(GameObject, IHasTeam, ISpellable, ICharacter, I
 		this.currentHealth = this.health.total;
 		this.currentMana = this.mana.total;
 		
-		if(this.Waypoints)
-			this.Waypoints = [this.spawnPosition];
+		if(this.waypoints)
+			this.waypoints = [this.spawnPosition];
 		
-		this.SET_HEALTH();
+		this.OnEnterLocalVisibilityClient();
 		
 		global.Teams[this.teamName].vision(this, true);
 	}

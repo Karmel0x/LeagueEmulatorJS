@@ -89,7 +89,7 @@ class Missile extends BaseInterface(GameObject, IMovable) {
 			let windup = bWindupTime + ((cAttackTime * windupP) - bWindupTime) * windupModifier;
 
 			console.debug('windup', windup, this.owner.attackSpeed);
-			await global.Utilities.wait(windup * 1000);
+			await Promise.wait(windup * 1000);
 		}
 		this.fly(target);
 	}
@@ -114,7 +114,7 @@ class Missile extends BaseInterface(GameObject, IMovable) {
 	}
 
 	move1(position){
-		this.Waypoints = [this.Waypoints[0], position];
+		this.waypoints = [this.waypoints[0], position];
 	}
 }
 

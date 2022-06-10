@@ -1,7 +1,7 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		AudioEventNetId: 'uint32',
+module.exports = class TutorialAudioEventFinished extends BasePacket {
+	static struct = {
+		audioEventNetId: 'uint32',
 	}
 };

@@ -1,12 +1,12 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		IsFadingIn: 'uint8',
-		FadeTime: 'float',
-		TeamID: 'uint32',
-		Color: 'uint32',
-		MaxWeight: 'float',
+module.exports = class ColorRemapFX extends BasePacket {
+	static struct = {
+		isFadingIn: 'uint8',
+		fadeTime: 'float',
+		teamId: 'uint32',
+		color: 'uint32',
+		maxWeight: 'float',
 	}
 };

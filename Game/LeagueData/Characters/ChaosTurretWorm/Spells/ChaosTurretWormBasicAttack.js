@@ -10,56 +10,56 @@ module.exports = class ChaosTurretWormBasicAttack extends _Basicattack {
 	isProjectile = true;
 	missileSpeed = 1200;
 
-	CastInfo = {
+	castInfo = {
 		spellHash: this.spellHash,
 		bitfield: {
-			IsAutoAttack: true,
-			IsClickCasted: true,
+			isAutoAttack: true,
+			isClickCasted: true,
 		},
-		AmmoUsed: 0,
-		DesignerCastTime: 0.06,
-		DesignerTotalTime: 0.06,
+		ammoUsed: 0,
+		designerCastTime: 0.06,
+		designerTotalTime: 0.06,
 	};
 	constructor(options){
 		super(options);
 
-		this.CastInfo._netId = this.owner.netId;
+		this.castInfo._netId = this.owner.netId;
 	}
 	//turretAttackProjectile(){
-	//	var CastInfo = {
+	//	var castInfo = {
 	//		spellHash: 163135275,
 	//		spellCastNetId: 1073743439,
 	//		spellLevel: 0,
-	//		AttackSpeedModifier: 1,
-	//		CasterNetId: this.netId,
-	//		SpellChainOwnerNetId: this.netId,
-	//		PackageHash: 465603924,
-	//		MissileNetId: this.missile.netId,
+	//		attackSpeedModifier: 1,
+	//		casterNetId: this.netId,
+	//		spellChainOwnerNetId: this.netId,
+	//		packageHash: 465603924,
+	//		missileNetId: this.missile.netId,
 	//		targetPosition: this.missile.target.position,
 	//		targetPositionEnd: this.missile.target.position,
-	//		DesignerCastTime: 0.25,
-	//		DesignerTotalTime: 0.25,
+	//		designerCastTime: 0.25,
+	//		designerTotalTime: 0.25,
 	//		manaCost: 0,
-	//		SpellCastLaunchPosition: {
+	//		spellCastLaunchPosition: {
 	//			x: this.owner.position.x,
 	//			y: this.owner.position.y,
 	//			z: 0,
 	//		},
-	//		AmmoUsed: 0,
+	//		ammoUsed: 0,
 	//		target: [{
 	//			unit: this.missile.target.netId,
 	//			hitResult: 0,
 	//		}],
-	//		SpellSlot: 64,
+	//		spellSlot: 64,
 	//		bitfield: {
-	//			IsAutoAttack: true,
-	//			IsClickCasted: true,
+	//			isAutoAttack: true,
+	//			isClickCasted: true,
 	//		},
 	//	};
-	//	CastInfo._netId = CastInfo.CasterNetId;
-	//	this.spawnProjectileAns(CastInfo, 465603924, {speed: 1200, TimedSpeedDeltaTime: 2139095040});
-	//	//console.log(1, [CastInfo]);
-	//	//console.log(1, CastInfo.target);
+	//	castInfo._netId = castInfo.casterNetId;
+	//	this.spawnProjectileAns(castInfo, 465603924, {speed: 1200, timedSpeedDeltaTime: 2139095040});
+	//	//console.log(1, [castInfo]);
+	//	//console.log(1, castInfo.target);
 	//}
 
 };

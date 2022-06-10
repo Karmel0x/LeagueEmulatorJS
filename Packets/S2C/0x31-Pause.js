@@ -1,10 +1,10 @@
-var BasePacket = require('../BasePacket');
-const Vector3 = require('../SharedStruct/Vector3');
+const BasePacket = require('../BasePacket');
+const SVector3 = require('../SharedStruct/SVector3');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		position: Vector3,
-		Forward: Vector3,
-		SyncID: 'int32',
+module.exports = class Pause extends BasePacket {
+	static struct = {
+		position: SVector3,
+		forward: SVector3,
+		syncId: 'int32',
 	}
 };

@@ -1,8 +1,8 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		TeamID: 'uint8',
-		SkinID: 'uint32',
+module.exports = class AnimatedBuildingSetCurrentSkin extends BasePacket {
+	static struct = {
+		teamId: 'uint8',
+		skinId: 'uint32',
 	}
 };

@@ -1,8 +1,10 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		SpellSlot: 'uint8',
-		bitfield_ResetSpecified: 'uint8',
+module.exports = class CancelTargetingReticle extends BasePacket {
+	static struct = {
+		spellSlot: 'uint8',
+		bitfield: ['bitfield', {
+			resetSpecified: 1,
+		}],
 	}
 };

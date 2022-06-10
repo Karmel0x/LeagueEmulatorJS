@@ -1,27 +1,31 @@
-var BasePacket = require('../BasePacket');
-const Vector2 = require('../SharedStruct/Vector2');
+const BasePacket = require('../BasePacket');
+const SVector2 = require('../SharedStruct/SVector2');
 
 var NavFlagCricle = {
-	position: Vector2,
-	Radius: 'float',
-	Flags: 'uint32',
+	position: SVector2,
+	radius: 'float',
+	flags: 'uint32',
 };
 
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		SyncID: 'int32',
+module.exports = class WriteNavFlags extends BasePacket {
+	static struct = {
+		syncId: 'int32',
 		size: 'int16',
 	}
 	reader(buffer){
 		super.reader(buffer);
 
-		this.NavFlagCricles = buffer.readobj([NavFlagCricle, (this.size / 16)]);
+		this.navFlagCricles = buffer.readobj([NavFlagCricle, (this.size / 16)]);
 	}
 	writer(buffer){
-		this.size = this.size ?? (this.NavFlagCricles.length * 16);
+		if(!this.navFlagCricles || !this.navFlagCricles.length)
+			return;
+
+		this.size = this.navFlagCricles.length * 16;
+
 		super.writer(buffer);
 
-        buffer.writeobj([NavFlagCricle, (this.size / 16)], this.NavFlagCricles);
+        buffer.writeobj([NavFlagCricle, (this.size / 16)], this.navFlagCricles);
 	}
 };

@@ -1,8 +1,8 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
-module.exports = class extends BasePacket {//C2S.
-	struct = {
-		RespawnPointEvent: 'uint8',
-		RespawnPointUIID: 'uint8',
+module.exports = class OnRespawnPointEvent extends BasePacket {
+	static struct = {
+		respawnPointEvent: 'uint8',
+		respawnPointUiId: 'uint8',
 	}
 };

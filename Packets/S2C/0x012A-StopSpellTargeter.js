@@ -1,8 +1,8 @@
 var ExtendedPacket = require('../ExtendedPacket');
 
 
-module.exports = class extends ExtendedPacket {//S2C.
-	struct = {
-		Slot: 'uint32',
+module.exports = class StopSpellTargeter extends ExtendedPacket {
+	static struct = {
+		slot: 'uint32',
 	}
 };

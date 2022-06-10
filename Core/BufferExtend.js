@@ -1,5 +1,6 @@
 
 Buffer.typeSize = {
+	'bool': 1,
 	'uint8': 1,
 	'uint16': 2,
 	'uint32': 4,
@@ -28,6 +29,7 @@ Buffer.prototype.read1 = function(type) {
 	var variable;
 	try{
 		switch(type){
+			case 'bool':variable = !!this.readUInt8(this.off);break;
 			case 'uint8':variable = this.readUInt8(this.off);break;
 			case 'uint16':variable = this.readUInt16LE(this.off);break;
 			case 'uint32':variable = this.readUInt32LE(this.off);break;
@@ -102,6 +104,7 @@ Buffer.prototype.write1 = function(type, value) {
 	//console.log(type, value, this.off);
 	var variable;
 	switch(type){
+		case 'bool':variable = this.writeUInt8(!!value, this.off);break;
 		case 'uint8':variable = this.writeUInt8(value, this.off);break;
 		case 'uint16':variable = this.writeInt16LE(value, this.off);break;
 		case 'uint32':variable = this.writeUInt32LE(value, this.off);break;
@@ -152,7 +155,7 @@ Buffer.prototype.write1 = function(type, value) {
 };
 Buffer.prototype.readobj = function(template){
 	this.off = this.off || 0;
-	this.offDEBUG = this.offDEBUG || {};
+	Buffer.offDEBUG = Buffer.offDEBUG || {};
 
 	try{
 		if(typeof template == 'string')
@@ -180,8 +183,13 @@ Buffer.prototype.readobj = function(template){
 				}
 
 				let obj = [];
+				if(template[1] > (this.length - this.off)){
+					console.log('packet is definitely incorrect, got length > left length', template);
+					console.trace();
+					return obj;
+				}
 				if(template[1] > (global.packetLengthWarning || 1000)){
-					console.log('packet is probably incorrect, got length > 1000');
+					console.log('packet is probably incorrect, got length > 1000', template);
 					console.trace();
 					return obj;
 				}
@@ -199,7 +207,7 @@ Buffer.prototype.readobj = function(template){
 				if(typeof template[i]?.[1] == 'string')
 					template[i][1] = obj[template[i][1]];
 
-				this.offDEBUG[i] = this.off;
+				Buffer.offDEBUG[i] = this.off;
 				obj[i] = this.readobj(template[i]);
 				//console.log(template[i], this.off);
 			}
@@ -257,4 +265,14 @@ Buffer.prototype.writeobj = function(template, source){
 	catch(e){
 		console.log(e.stack);
 	}
+};
+
+Buffer.prototype.toArrayInteger = function(){
+	if(this.length <= 0)
+		return [];
+
+	const data = new Array(this.length);
+	for (let i = 0; i < this.length; ++i)
+		data[i] = this[i];
+	return data;
 };

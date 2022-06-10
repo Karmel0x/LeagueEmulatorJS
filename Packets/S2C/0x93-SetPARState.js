@@ -1,9 +1,9 @@
-var BasePacket = require('../BasePacket');
+const BasePacket = require('../BasePacket');
 
 
-module.exports = class extends BasePacket {//S2C.
-	struct = {
-		UnitNetId: 'uint32',
+module.exports = class SetPARState extends BasePacket {
+	static struct = {
+		unitNetId: 'uint32',
 		PARState: 'uint32',
 	}
 };

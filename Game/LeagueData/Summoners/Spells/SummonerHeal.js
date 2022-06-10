@@ -16,8 +16,8 @@ module.exports = class SummonerHeal extends _Spell {
 		healPerLevel: 15,
 	};
 	buff = {
-		BuffType: BuffTypes.Haste,
-		Duration: 5,
+		buffType: BuffTypes.Haste,
+		duration: 5,
 	};
 	onCast(spellData){
 		super.onCast(spellData);

@@ -5,17 +5,17 @@ const package1 = require('../package');
 
 
 module.exports = class YasuoQ3Mis extends _Spell {
-	PackageHash = package1.PackageHash;
+	packageHash = package1.packageHash;
 	spellSlot = slotId.Qm;
 	windup = 0.3;
 	isProjectile = true;
 
-	CastInfo = {
-		DesignerTotalTime: 1,
+	castInfo = {
+		designerTotalTime: 1,
 		bitfield: {
-			IsForceCastingOrChannel: true,
+			isForceCastingOrChannel: true,
 		},
-		AmmoUsed: 0,
+		ammoUsed: 0,
 		target: [],
 	};
 

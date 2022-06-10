@@ -54,13 +54,13 @@ class Turret extends BaseInterface(Unit, IDefendable, IAttackable) {
 	 * @param source - The source of the damage.
 	 */
 	announceDie(source){
-		var ANNOUNCE2 = createPacket('ANNOUNCE2');
-		ANNOUNCE2.netId = this.netId;
-		ANNOUNCE2.id = EVENT.OnTurretDie;
-		ANNOUNCE2.EventData = {
-			OtherNetId: source.netId
+		var OnEvent = createPacket('OnEvent');
+		OnEvent.netId = this.netId;
+		OnEvent.eventId = EVENT.OnTurretDie;
+		OnEvent.eventData = {
+			otherNetId: source.netId
 		};
-		this.sendTo_everyone(ANNOUNCE2);
+		this.sendTo_everyone(OnEvent);
 	}
 	async onDie(source){
 		this.announceDie(source);
@@ -72,16 +72,16 @@ class Turret extends BaseInterface(Unit, IDefendable, IAttackable) {
 		this.initialized();
 	}
 	spawn(){
-		var TURRET_SPAWN = createPacket('TURRET_SPAWN', 'S2C');
-		TURRET_SPAWN.netId = this.netId;
-		TURRET_SPAWN.NetId = this.netId;
-		TURRET_SPAWN.NetNodeID = 0x40;
-		TURRET_SPAWN.Name = this.info.name;
-		TURRET_SPAWN.bitfield = {
+		var CreateTurret = createPacket('CreateTurret', 'S2C');
+		CreateTurret.netId = this.netId;
+		CreateTurret.netObjId = this.netId;
+		CreateTurret.netNodeId = 0x40;
+		CreateTurret.objectName = this.info.name;
+		CreateTurret.bitfield = {
 			isTargetable: true,
 		};
-		TURRET_SPAWN.IsTargetableToTeamSpellFlags = 0x01800000;
-		this.sendTo_everyone(TURRET_SPAWN, loadingStages.NOT_CONNECTED);
+		CreateTurret.isTargetableToTeamSpellFlags = 0x01800000;
+		this.sendTo_everyone(CreateTurret, loadingStages.NOT_CONNECTED);
 
 		super.spawn();
 	}
@@ -148,29 +148,29 @@ class Turret extends BaseInterface(Unit, IDefendable, IAttackable) {
 			return;
 
 		this.target = target;
-		var SET_TARGET = createPacket('SET_TARGET', 'S2C');
-		SET_TARGET.netId = this.netId;
-		SET_TARGET.targetNetId = target.netId;
-		this.sendTo_everyone(SET_TARGET);
+		var AI_Target = createPacket('AI_Target', 'S2C');
+		AI_Target.netId = this.netId;
+		AI_Target.targetNetId = target.netId;
+		this.sendTo_everyone(AI_Target);
 	}
-	//FACE_DIRECTION(){
-	//	var FACE_DIRECTION = createPacket('FACE_DIRECTION');
-	//	FACE_DIRECTION.netId = this.netId;
-	//	FACE_DIRECTION.flags_DoLerpTime = 1;
-	//	FACE_DIRECTION.Direction = new Vector3b(-0.93, 0, -0.35);
-	//	FACE_DIRECTION.LerpTime = 0.08;
-	//	this.sendTo_everyone(FACE_DIRECTION, loadingStages.NOT_CONNECTED);
+	//FaceDirection(){
+	//	var FaceDirection = createPacket('FaceDirection');
+	//	FaceDirection.netId = this.netId;
+	//	FaceDirection.flags = { doLerpTime: true };
+	//	FaceDirection.direction = new Vector3(-0.93, 0, -0.35);
+	//	FaceDirection.lerpTime = 0.08;
+	//	this.sendTo_everyone(FaceDirection, loadingStages.NOT_CONNECTED);
 	//}
-	//DAMAGE_DONE(target, damage){
-	//	var DAMAGE_DONE = createPacket('DAMAGE_DONE');
-	//	DAMAGE_DONE.netId = this.netId;
-	//	DAMAGE_DONE.DamageResultType = 4;
-	//	DAMAGE_DONE.dummy = 0;
-	//	DAMAGE_DONE.DamageType = 0;
-	//	DAMAGE_DONE.Damage = damage;
-	//	DAMAGE_DONE.TargetNetId = target.netId;
-	//	DAMAGE_DONE.SourceNetId = this.netId;
-	//	this.sendTo_everyone(DAMAGE_DONE, loadingStages.NOT_CONNECTED);
+	//UnitApplyDamage(target, damage){
+	//	var UnitApplyDamage = createPacket('UnitApplyDamage');
+	//	UnitApplyDamage.netId = this.netId;
+	//	UnitApplyDamage.damageResultType = 4;
+	//	UnitApplyDamage.dummy = 0;
+	//	UnitApplyDamage.damageType = 0;
+	//	UnitApplyDamage.damage = damage;
+	//	UnitApplyDamage.targetNetId = target.netId;
+	//	UnitApplyDamage.sourceNetId = this.netId;
+	//	this.sendTo_everyone(UnitApplyDamage, loadingStages.NOT_CONNECTED);
 	//}
 	/**
 	 * Scan for enemy units in range and attack nearest one
@@ -182,15 +182,15 @@ class Turret extends BaseInterface(Unit, IDefendable, IAttackable) {
 
 		this.setTarget(target);
 		this.spellSlots[slotId.A].cast({target});
-		//this.FACE_DIRECTION();
-		//this.DAMAGE_DONE(target, 100);
+		//this.FaceDirection();
+		//this.UnitApplyDamage(target, 100);
 		//attackSlot.turretAttackProjectile(basicattack);
 	}
 
 	
 	async loop(){
 		while(true){
-			await global.Utilities.wait(1000);
+			await Promise.wait(1000);
 
 			//if(!global.Game.loaded)
 			//	continue;
