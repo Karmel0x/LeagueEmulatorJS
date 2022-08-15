@@ -2,7 +2,6 @@
 const slotId = require('../../../Constants/slotId');
 const _Spell = require("./_Spell");
 const Targetedshot = require("../../../GameObjects/Missiles/Targetedshot");
-const { createPacket } = require("../../../Core/PacketUtilities");
 
 
 module.exports = class _Basicattack extends _Spell {
@@ -11,12 +10,14 @@ module.exports = class _Basicattack extends _Spell {
 	castRange = 0;
 	missileSpeed = 2000;
 
+
 	constructor(options){
 		super(options);
 
 		this.owner.on('changeStats', () => {
 			this.castRange = this.owner.attackRange.total;
-		})
+			this.cooldown = 1 / this.owner.attackSpeed.total;
+		});
 	}
 
 	// attacking
@@ -33,7 +34,7 @@ module.exports = class _Basicattack extends _Spell {
 	}
 
 	beginAttackAns(options){
-		var Basic_Attack_Pos = createPacket('Basic_Attack_Pos', 'S2C');
+		var Basic_Attack_Pos = global.Network.createPacket('Basic_Attack_Pos', 'S2C');
 		Basic_Attack_Pos.netId = this.owner.netId;
 
 		let targetPosition = {
@@ -57,7 +58,7 @@ module.exports = class _Basicattack extends _Spell {
 		this.owner.sendTo_vision(Basic_Attack_Pos);
 	}
 	nextAttackAns(options){
-		var Basic_Attack = createPacket('Basic_Attack', 'S2C');
+		var Basic_Attack = global.Network.createPacket('Basic_Attack', 'S2C');
 		Basic_Attack.netId = this.owner.netId;
 
 		let targetPosition = {

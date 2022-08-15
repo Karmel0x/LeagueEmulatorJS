@@ -1,10 +1,8 @@
 const Minion = require("../Units/Minion");
-const {createPacket, sendPacket} = require("../../Core/PacketUtilities");
-const { Vector2 } = require("three");
 
-const BaseInterface = require("../../Core/BaseInterface");
+const ExtendWTraits = require("../../Core/ExtendWTraits");
 const GameObject = require("../GameObject");
-const IHasTeam = require("../Interfaces/IHasTeam");
+const IHasTeam = require("../Traits/IHasTeam");
 
 
 const Barracks = {//0xFF000000 | Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(m.BarracksName));//{x: 1533.0, y: 1321.0}
@@ -25,7 +23,7 @@ global.Barracks['BLUE'] = global.Barracks['BLUE'] || {};
 global.Barracks['RED'] = global.Barracks['RED'] || {};
 
 
-module.exports = class Barrack extends BaseInterface(GameObject, IHasTeam) {
+module.exports = class Barrack extends ExtendWTraits(GameObject, IHasTeam) {
 
 	/**
 	 * 
@@ -49,7 +47,7 @@ module.exports = class Barrack extends BaseInterface(GameObject, IHasTeam) {
 	 * @param {Number} minionType 
 	 */
 	spawnUnitAns(unitNetId, minionType){
-		var Barrack_SpawnUnit = createPacket('Barrack_SpawnUnit');
+		var Barrack_SpawnUnit = global.Network.createPacket('Barrack_SpawnUnit');
 		Barrack_SpawnUnit.netId = unitNetId;
 		Barrack_SpawnUnit.objectId = unitNetId;
 		Barrack_SpawnUnit.objectNodeId = 0x40;

@@ -69,4 +69,4 @@ function init_network_handler(q){
 }
 
 require('../Core/init_utilities')();
-require('../Core/init_network')(undefined, init_network_handler);
+require('../Core/Network/libs/enet')(undefined, init_network_handler);

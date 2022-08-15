@@ -20,8 +20,8 @@ module.exports = {
 	byteArrayToBinary: (array) => {
 		let ret = [];
 		for(let i in array){
-			if(typeof array[i] === 'undefined'){
-				console.log("[weird] typeof array[i] === 'undefined'");
+			if(typeof array[i] == 'undefined'){
+				console.log("[weird] typeof array[i] == 'undefined'");
 				console.trace();
 				throw true;
 			}

@@ -9,11 +9,15 @@ global.Logging.changeOptions({
 
 require('./Core/init_utilities')();
 
+
+global.Network = require('./Core/Network/libs/enet').start({
+	port: 5119,
+	host: "127.0.0.1",
+	blowfishKey: "17BLOhi6KZsTtldTsizvHg==",
+});
+
 require('./Game/Initializers/Team').initialize();
 require('./Game/Initializers/Game').initialize();
-
-require('./Core/init_network')();
-
 
 //process.on('uncaughtException', (err) => {
 //	console.log(err);

@@ -1,6 +1,5 @@
 
 const loadingStages = require('../../Constants/loadingStages');
-const {createPacket, sendPacket} = require('../../Core/PacketUtilities');
 
 
 module.exports = (I) => class INetwork extends I {
@@ -19,7 +18,7 @@ module.exports = (I) => class INetwork extends I {
 		//if(this.packetBatching)
 		//    this.batchPackets.push(packet);
 		//else
-			sendPacket([this.peer_num], packet);
+			global.Network.sendPacket([this.peer_num], packet);
 	}
 
 

@@ -1,6 +1,4 @@
 
-const {createPacket, sendPacket, sendPacketS} = require("../../../Core/PacketUtilities");
-
 const loadingStages = require('../../../Constants/loadingStages');
 const TranslateCenteredCoordinates = require('../../../Functions/TranslateCenteredCoordinates');
 const teamIds = require('../../../Constants/teamIds');
@@ -19,7 +17,7 @@ module.exports = (I) => class IPPlayer extends I {
 	CreateHero(dest = global.Teams['ALL']){
 		//todo
 		
-		var CreateHero = createPacket('CreateHero');
+		var CreateHero = global.Network.createPacket('CreateHero');
 		//CreateHero.netId = this.netId;
 		CreateHero.netObjId = this.netId;
 		CreateHero.clientId = this.info.clientId;
@@ -39,7 +37,7 @@ module.exports = (I) => class IPPlayer extends I {
 	}
 	AvatarInfo_Server(dest = global.Teams['ALL']){
 		//todo
-		var AvatarInfo_Server = createPacket('AvatarInfo_Server');
+		var AvatarInfo_Server = global.Network.createPacket('AvatarInfo_Server');
 		AvatarInfo_Server.netId = this.netId;
 		AvatarInfo_Server.itemIds = [
 			0,
@@ -56,14 +54,14 @@ module.exports = (I) => class IPPlayer extends I {
 	chatBoxMessage(){
 		var message = Array.prototype.slice.call(arguments).join(' ');
 		
-		var Chat = createPacket('Chat', 'COMMUNICATION');
+		var Chat = global.Network.createPacket('Chat', 'COMMUNICATION');
 		Chat.netId = this.netId;
 		Chat.msg = message;
 		this.sendTo_self(Chat);
 		console.debug(Chat);
 	}
 	SetCooldown(slot, cooldown = 0){//return;
-		var SetCooldown = createPacket('SetCooldown', 'S2C');
+		var SetCooldown = global.Network.createPacket('SetCooldown', 'S2C');
 		SetCooldown.netId = this.netId;
 		SetCooldown.slot = slot;
 		SetCooldown.bitfield = {
@@ -77,7 +75,7 @@ module.exports = (I) => class IPPlayer extends I {
 	}
 	// 497252 = root
 	AddParticleTarget(packageHash, effectNameHash, boneNameHash = 497252, target = undefined){
-		var FX_Create_Group = createPacket('FX_Create_Group', 'S2C');
+		var FX_Create_Group = global.Network.createPacket('FX_Create_Group', 'S2C');
 		FX_Create_Group.netId = 0;//this.netId;
 		FX_Create_Group.FXCreateGroupData = [];
 		FX_Create_Group.FXCreateGroupData[0] = {

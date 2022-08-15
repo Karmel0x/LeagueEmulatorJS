@@ -1,5 +1,4 @@
 
-const {createPacket, sendPacket} = require('../Core/PacketUtilities');
 const loadingStages = require("../Constants/loadingStages");
 
 
@@ -15,7 +14,7 @@ module.exports = (peer_num, packet) => {
 	player.peer_num = peer_num;
 	
 	{
-		var KEY_CHECK = createPacket('KEY_CHECK', 'HANDSHAKE');
+		var KEY_CHECK = global.Network.createPacket('KEY_CHECK', 'HANDSHAKE');
 		KEY_CHECK.content = {
 			partialKey: [ 0x2A, 0x00, 0xFF ],
 			clientId: player.info.clientId,
@@ -24,7 +23,7 @@ module.exports = (peer_num, packet) => {
 		player.sendPacket(KEY_CHECK, loadingStages.NOT_CONNECTED);
 	}
 	//{
-	//	var World_SendGameNumber = createPacket('World_SendGameNumber');
+	//	var World_SendGameNumber = global.Network.createPacket('World_SendGameNumber');
 	//	//World_SendGameNumber.netId = ;
 	//	World_SendGameNumber.gameId = 1;
 	//	World_SendGameNumber.summonerName = 'Coquinounet';

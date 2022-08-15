@@ -1,11 +1,10 @@
 
-const {createPacket, sendPacket} = require('../Core/PacketUtilities');
 const { Vector2 } = require('three');
 
 
 function chatBoxMessage(target, message){
 	
-    var Chat = createPacket('Chat', 'COMMUNICATION');
+    var Chat = global.Network.createPacket('Chat', 'COMMUNICATION');
 	
 	Chat.msg = message;
 	Chat.messageSize = message.length;
@@ -23,13 +22,13 @@ module.exports = (player, packet) => {
 	//console.log(packet);
 
 
-    var Chat = createPacket('Chat', 'COMMUNICATION');
+    var Chat = global.Network.createPacket('Chat', 'COMMUNICATION');
 	Object.assign(Chat, packet);
 	Chat.netId = player.netId;
     player.sendPacket(Chat);
 	console.debug(Chat);
 
-    //var DEBUG_MESSAGE = createPacket('DEBUG_MESSAGE');
+    //var DEBUG_MESSAGE = global.Network.createPacket('DEBUG_MESSAGE');
 	//DEBUG_MESSAGE.netId = player.netId;
 	//DEBUG_MESSAGE.msg = packet.msg;
     //player.sendPacket(DEBUG_MESSAGE);
@@ -61,6 +60,8 @@ module.exports = (player, packet) => {
 				. :: run last command again
 				.pathfinding [<1/0>] :: turning pathfinding on/off
 				.setCharacter <characterName>
+				.stats :: prints unit stats
+				.gold :: sets unit gold
 			`;
 				//.debugMode [<debugLevel(0/1)>] :: turning off/on debug mode (debug logs)
 			chatBoxMessage(player, message.split('\t\t').join(' '));
@@ -97,12 +98,12 @@ module.exports = (player, packet) => {
 		//	global.units[1].attack(player);
 		//}
 		else if(commandArgs[0] === 'e'){
-			var OnReplication = createPacket('OnReplication', 'LOW_PRIORITY');
+			var OnReplication = global.Network.createPacket('OnReplication', 'LOW_PRIORITY');
 			OnReplication.units = [player];
 			player.sendPacket(OnReplication);
 			//console.log(OnReplication);
 			
-			//var OnReplication = createPacket('OnReplication', 'LOW_PRIORITY');
+			//var OnReplication = global.Network.createPacket('OnReplication', 'LOW_PRIORITY');
 			//OnReplication.syncId = performance.now();
 			//OnReplication.units = [global.units[0]];
 			//player.sendPacket(OnReplication);
@@ -199,9 +200,21 @@ module.exports = (player, packet) => {
 			player.character = commandArgs[1] || 'Ezreal';
 		}
 		else if(commandArgs[0] == 'SystemMessage'){
-			var SystemMessage = createPacket('SystemMessage');
+			var SystemMessage = global.Network.createPacket('SystemMessage');
 			SystemMessage.message = commandArgs.join(' ');
 			player.sendPacket(SystemMessage);
+		}
+		else if(commandArgs[0] == 'stats'){
+			var message = '';
+			for(var i in player.baseStats)
+				if(player[i])
+					message += ` | ${i}: ${player[i].total}`;
+
+			player.chatBoxMessage(message);
+		}
+		else if(commandArgs[0] == 'gold'){
+			player.gold = parseInt(commandArgs[1] || 10000);
+			player.chatBoxMessage(...commandArgs);
 		}
 
 	}

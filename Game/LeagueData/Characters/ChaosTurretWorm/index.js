@@ -28,6 +28,8 @@ module.exports = class ChaosTurretWorm extends Turret3 {
 		attackSpeedOffset: -0.05,
 		attackSpeed: 1,
 		attackSpeedPerLevel: 3.2,
+
+		acquisitionRange: 750,
 	};
 
 	static spells = {

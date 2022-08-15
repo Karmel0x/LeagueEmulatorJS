@@ -1,5 +1,4 @@
 var Unit = require('./Unit');
-const {createPacket, sendPacket} = require("../../Core/PacketUtilities");
 const loadingStages = require("../../Constants/loadingStages");
 const EVENT = require('../../Packets/EVENT');
 
@@ -17,17 +16,17 @@ const Inhibitors = {
 	},
 };
 
-const BaseInterface = require('../../Core/BaseInterface');
-const IDefendable = require('../Interfaces/IDefendable');
+const ExtendWTraits = require('../../Core/ExtendWTraits');
+const IDefendable = require('../Traits/IDefendable');
 
 
-class Inhibitor extends BaseInterface(Unit, IDefendable) {
+class Inhibitor extends ExtendWTraits(Unit, IDefendable) {
 	/**
 	 * It sends a packet to everyone that the inhibitor has died
 	 * @param source - The source of the damage.
 	 */
 	announceDie(source){
-		var OnEvent = createPacket('OnEvent');
+		var OnEvent = global.Network.createPacket('OnEvent');
 		OnEvent.netId = this.netId;
 		OnEvent.eventId = EVENT.OnDampenerDie;
 		OnEvent.eventData = {
@@ -35,7 +34,7 @@ class Inhibitor extends BaseInterface(Unit, IDefendable) {
 		};
 		this.sendTo_everyone(OnEvent);
 
-		var Building_Die = createPacket('Building_Die');
+		var Building_Die = global.Network.createPacket('Building_Die');
 		Building_Die.netId = this.netId;
 		Building_Die.attackerNetId = source.netId;
 		this.sendTo_everyone(Building_Die);
@@ -57,7 +56,7 @@ class Inhibitor extends BaseInterface(Unit, IDefendable) {
 		this.initialized();
 	}
 	spawn(){
-		var OnEnterVisibilityClient = createPacket('OnEnterVisibilityClient');
+		var OnEnterVisibilityClient = global.Network.createPacket('OnEnterVisibilityClient');
 		OnEnterVisibilityClient.netId = this.netId;
 		OnEnterVisibilityClient.isTurret = true;
 		this.sendTo_everyone(OnEnterVisibilityClient, loadingStages.NOT_CONNECTED);

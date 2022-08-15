@@ -204,8 +204,8 @@ Buffer.prototype.readobj = function(template){
 			
 			let obj = {};
 			for(var i in template){
-				if(typeof template[i]?.[1] == 'string')
-					template[i][1] = obj[template[i][1]];
+				//if(typeof template[i]?.[1] == 'string')
+				//	template[i][1] = obj[template[i][1]];
 
 				Buffer.offDEBUG[i] = this.off;
 				obj[i] = this.readobj(template[i]);

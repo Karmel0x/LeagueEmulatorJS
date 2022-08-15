@@ -1,11 +1,10 @@
 
 const loadingStages = require("../../../Constants/loadingStages");
-const {createPacket, sendPacket, sendPacketS} = require("../../../Core/PacketUtilities");
 
 module.exports = (I) => class IPUnit extends I {
 
 	OnEnterLocalVisibilityClient(){
-		var OnEnterLocalVisibilityClient = createPacket('OnEnterLocalVisibilityClient');
+		var OnEnterLocalVisibilityClient = global.Network.createPacket('OnEnterLocalVisibilityClient');
 		OnEnterLocalVisibilityClient.netId = this.netId;
 		OnEnterLocalVisibilityClient.count = 0;
 		OnEnterLocalVisibilityClient.health = this.health.total;
@@ -14,7 +13,7 @@ module.exports = (I) => class IPUnit extends I {
 		//console.log(OnEnterLocalVisibilityClient);
 	}
 	ChangeCharacterData(character){
-		var ChangeCharacterData = createPacket('ChangeCharacterData');
+		var ChangeCharacterData = global.Network.createPacket('ChangeCharacterData');
 		ChangeCharacterData.netId = this.netId;
 		ChangeCharacterData.bitfield = {
 			overrideSpells: true,
@@ -27,7 +26,7 @@ module.exports = (I) => class IPUnit extends I {
 		this.sendTo_vision(ChangeCharacterData);
 	}
 	SetAnimStates(animPairs){
-		var SetAnimStates = createPacket('SetAnimStates');
+		var SetAnimStates = global.Network.createPacket('SetAnimStates');
 		SetAnimStates.netId = this.netId;
 		SetAnimStates.animationOverrides = [];
 		for(let i in animPairs)
@@ -43,13 +42,13 @@ module.exports = (I) => class IPUnit extends I {
 	 * @todo delay for few ms so it will not send multiple packets on same action
 	 * for example SummonerHeal will not send two packets (for heal and for buff)
 	 */
-	 charStats_send(){
-		var OnReplication = createPacket('OnReplication', 'LOW_PRIORITY');
+	charStats_send(){
+		var OnReplication = global.Network.createPacket('OnReplication', 'LOW_PRIORITY');
 		OnReplication.units = [this];
 		this.sendTo_everyone(OnReplication);
 	}
 	skillUpgrade_send(slot){
-		var UpgradeSpellAns = createPacket('UpgradeSpellAns', 'S2C');
+		var UpgradeSpellAns = global.Network.createPacket('UpgradeSpellAns', 'S2C');
 		UpgradeSpellAns.netId = this.netId;
 		UpgradeSpellAns.slot = slot;
 		UpgradeSpellAns.spellLevel = this.spellLevel[slot];

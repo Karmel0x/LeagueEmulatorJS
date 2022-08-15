@@ -1,9 +1,9 @@
 
 const { Vector2 } = require('three');
 
-const BaseInterface = require('../../Core/BaseInterface');
+const ExtendWTraits = require('../../Core/ExtendWTraits');
 const GameObject = require('../GameObject');
-const IMovable = require('../Interfaces/IMovable');
+const IMovable = require('../Traits/IMovable');
 const PositionHelper = require("../../Functions/PositionHelper");
 
 //global.baseMissileNetId = 0x60000000;
@@ -11,7 +11,7 @@ global.Missiles = global.Missiles || {};
 global.MissilesCount = global.MissilesCount || {count: 0};
 
 
-class Missile extends BaseInterface(GameObject, IMovable) {
+class Missile extends ExtendWTraits(GameObject, IMovable) {
 
 	/**
 	 * @todo events instead of callbacks?
@@ -70,7 +70,7 @@ class Missile extends BaseInterface(GameObject, IMovable) {
 	 * @todo move windup somewhere else?
 	 */
 	async fire(target, windupPercent = 0){
-		target = typeof target === 'number' ? global.unitsNetId[target] : target;
+		target = typeof target == 'number' ? global.unitsNetId[target] : target;
 		if(!target)
 			return console.log('Missile.fire target is not a unit', target);
 

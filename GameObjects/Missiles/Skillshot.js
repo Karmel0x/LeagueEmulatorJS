@@ -40,7 +40,7 @@ class Skillshot extends Missile {
 		
 		missile.target = new Dummytarget({
 			// idk if `options.range - (options.radius / 2)` is correct here, corners on max range will not hit
-			position: PositionHelper.getMaxRangePosition(owner.position, targetPosition, options.range - (options.radius / 2))
+			position: PositionHelper.getPositionBetweenRange(owner.position, targetPosition, options.range - (options.radius / 2))
 		});
 		
 		return missile;

@@ -1,7 +1,4 @@
 
-const { createPacket } = require("../../Core/PacketUtilities");
-
-
 /**
  * Interface for units that can be buffed.
  * @param {GameObject} I 
@@ -14,7 +11,7 @@ const { createPacket } = require("../../Core/PacketUtilities");
 	 * @param {_Spell} spellObject 
 	 */
 	addBuffAns(spellObject){
-        var BuffAdd2 = createPacket('BuffAdd2', 'S2C');
+        var BuffAdd2 = global.Network.createPacket('BuffAdd2', 'S2C');
         BuffAdd2.netId = this.netId;
         BuffAdd2.buffSlot = spellObject.buffSlot;
         BuffAdd2.buffType = spellObject.buff.buffType;
@@ -33,7 +30,7 @@ const { createPacket } = require("../../Core/PacketUtilities");
 	 * @param {_Spell} spellObject 
 	 */
 	removeBuffAns(spellObject){
-        var BuffRemove2 = createPacket('BuffRemove2', 'S2C');
+        var BuffRemove2 = global.Network.createPacket('BuffRemove2', 'S2C');
         BuffRemove2.netId = this.netId;
         BuffRemove2.buffSlot = spellObject.buffSlot;
         BuffRemove2.buffNameHash = spellObject.spellHash;

@@ -16,7 +16,7 @@
 //	//var q = {};
 //	//while(true){
 //	//	q = enet.netLoop();
-//	//	if(typeof q.type === 'undefined'){//no packets atm
+//	//	if(typeof q.type == 'undefined'){//no packets atm
 //	//		await Promise.wait(1);//don't overload cpu
 //	//		continue;
 //	//	}
@@ -40,7 +40,7 @@
 //}
 //
 //require('../Core/init_utilities')();
-//require('../Core/init_network')({port: 5118, host: "127.0.0.1", blowfishKey: "17BLOhi6KZsTtldTsizvHg=="}, init_network_handler);
+//require('../Core/Network/libs/enet')({port: 5118, host: "127.0.0.1", blowfishKey: "17BLOhi6KZsTtldTsizvHg=="}, init_network_handler);
 //
 //
 ////async function t1(){

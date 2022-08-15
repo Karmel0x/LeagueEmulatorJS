@@ -26,7 +26,7 @@ class am_popup {
 	}
 
 	static show(element){
-		if(typeof element === 'string')
+		if(typeof element == 'string')
 			element = document.getElementById(element);
 
 		if(element.am_popup == null)
@@ -34,7 +34,7 @@ class am_popup {
 		element.am_popup.show();
 	}
 	static hide(element){
-		if(typeof element === 'string')
+		if(typeof element == 'string')
 			element = document.getElementById(element);
 		element.am_popup.show(false);
 	}

@@ -91,18 +91,24 @@ const OrderTypes = {
 };
 
 module.exports = (player, packet) => {
-    console.log('handle: C2S.IssueOrderReq');
+    //console.log('handle: C2S.IssueOrderReq');
 	//console.log(packet);
     //console.log('position', packet.position, 'waypoints', packet.movementData.waypoints);
+
+	player.attackTarget = null;
+	player.acquisitionManual = null;
+	player.autoAttackSoftToggle = false;
 
 	if(packet.orderType == OrderTypes.rightClickMove){
 		waypointsDrawer?.drawWaypoints(packet.movementData.waypoints);
 		player.move0(packet);
+		player.once('reachDestination', () => {
+			player.autoAttackSoftToggle = true;
+		});
 	}
 	else if(packet.orderType == OrderTypes.rightClickAttack){
-		if(packet.targetNetId){
-			player.spellSlots[slotId.A]?.cast({target: packet.targetNetId, packet});
-		}
+		player.acquisitionManual = packet.targetNetId;
+		player.autoAttackSoftToggle = true;
 	}
 	else if(packet.orderType == OrderTypes.sKeyStop){
 		var movementData = {

@@ -69,7 +69,7 @@ class MovementSimulation {
 	 */
 	move(unit, diff){
 		if(unit.followUnit){
-			if(PositionHelper.distanceBetween(unit, unit.followUnit) > (unit.followRange || 1))
+			if(unit.distanceTo(unit.followUnit) > (unit.followRange || 1))
 				unit.waypoints = [unit.position, unit.followUnit.position.clone()];
 			else
 				unit.followUnit = false;

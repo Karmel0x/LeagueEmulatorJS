@@ -1,5 +1,4 @@
 
-const {createPacket, sendPacket} = require('../Core/PacketUtilities');
 const { Vector2 } = require("three");
 
 
@@ -9,7 +8,7 @@ module.exports = (player, packet) => {
 
 
 	{
-		var MapPing = createPacket('MapPing');
+		var MapPing = global.Network.createPacket('MapPing');
 		MapPing.position = packet.position;
 		MapPing.targetNetId = packet.targetNetId;
 		MapPing.sourceNetId = player.netId;

@@ -19,7 +19,7 @@ module.exports = {
 			0x09: require('./C2S/0x09-RemoveItemReq'),
 			0x0A: require('./C2S/0x0A-ResumePacket'),
 			0x14: require('./C2S/0x14-QueryStatusReq'),
-			0x16: require('./C2S/0x16-Ping_Load_Info'),
+			0x16: require('./C2S/0x16-Ping_Load_Info_'),
 			0x1D: require('./C2S/0x1D-WriteNavFlags_Acc'),
 			0x20: require('./C2S/0x20-SwapItemReq'),
 			0x2E: require('./C2S/0x2E-World_SendCamera_Server'),
@@ -312,7 +312,7 @@ module.exports = {
 	4: {
 			name: 'LOW_PRIORITY',
 			0x61: require('./LOW_PRIORITY/0x61-WaypointGroup'),
-			0x95: require('./LOW_PRIORITY/0x95-Ping_Load_Info'),
+			0x95: require('./LOW_PRIORITY/0x95-Ping_Load_Info_'),
 			0xC4: require('./LOW_PRIORITY/0xC4-OnReplication'),
 	},
 	5: {

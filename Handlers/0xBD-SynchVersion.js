@@ -1,5 +1,4 @@
 
-const {createPacket, sendPacket} = require('../Core/PacketUtilities');
 const loadingStages = require("../Constants/loadingStages");
 
 const TEAM = require("../Constants/TEAM");
@@ -47,7 +46,7 @@ module.exports = (player, packet) => {
 	//if(!packet.version.startsWith(VersionString))
 	//	return console.log('wrong client version', packet.version);
 
-	var SynchVersion = createPacket('SynchVersion');
+	var SynchVersion = global.Network.createPacket('SynchVersion');
 	
 	SynchVersion.bitfield = {
 		versionMatches: true,

@@ -296,7 +296,7 @@ module.exports = class OnReplication extends BasePacket {
 		this.UpdateReplicant(unit, unit.isTargetableToTeam, 3, 16);
 	}
 	UpdateReplicant(unit, value, primaryId, secondaryId){
-		if(typeof value === 'undefined' || unit.replicant[primaryId][secondaryId] === value)
+		if(typeof value == 'undefined' || unit.replicant[primaryId][secondaryId] === value)
 			return;
 
 		unit.primaryIdArray |= 1 << primaryId;

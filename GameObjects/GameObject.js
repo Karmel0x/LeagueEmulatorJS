@@ -1,9 +1,14 @@
 
 const { EventEmitter } = require('node:events');
 const { Vector2 } = require("three");
-const PositionHelper = require('../Functions/PositionHelper');
+const Filters = require('./Filters');
 
 
+/**
+ * This is the basic game object of the game
+ * can be extended to units or missiles or anything else that needs to be able to take actions
+ * this class should contain only the most basic values
+ */
 module.exports = class GameObject extends EventEmitter {
 
 	netId = 0;
@@ -46,24 +51,28 @@ module.exports = class GameObject extends EventEmitter {
 
 	}
 
-	
-	/**
-	 * Get distance from this unit to target unit
-	 * @param {Unit|IMovable} target 
-	 * @returns {Number}
-	 */
-	distanceTo(target){
-		return this.position.distanceTo(target.position);
+	_Filters = {};
+	Filters(distanceCalcPoint = 'CENTER_TO_CENTER'){
+		if(!this._Filters[distanceCalcPoint])
+			this._Filters[distanceCalcPoint] = new (Filters(distanceCalcPoint))(this);
+
+		return this._Filters[distanceCalcPoint];
 	}
 	
 	/**
+	 * Get distance from this unit to target unit
+	 * @param {Unit|IMovable|Vector2} target 
+	 * @returns {Number}
+	 */
+	distanceTo(target){
+		return this.position.distanceTo(target.position || target);
+	}
+
+	/**
+	 * for compatibility
 	 * @abstract
 	 */
-	inRangeOrMove(range, target, reachDestinationCallback){
-		var rangeSum = range + this.collisionRadius + target.collisionRadius;
-		if(PositionHelper.distanceBetween(this, target) > rangeSum)
-			return false;
+	moveWithCallback(target, reachDestinationCallback, range = 0){
 
-		return true;
 	}
 };

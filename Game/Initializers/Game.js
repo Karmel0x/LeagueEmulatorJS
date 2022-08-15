@@ -6,7 +6,6 @@ var GameComponents = {
 	MovementSimulation: require('../Components/MovementSimulation'),
 };
 var playersConfig = require('../../Constants/playersConfig');
-const { createPacket } = require('../../Core/PacketUtilities');
 
 const Inhibitor = require("../../GameObjects/Units/Inhibitor");
 const Nexus = require("../../GameObjects/Units/Nexus");
@@ -24,7 +23,7 @@ class Game {
 	 * @param {Object} packet request packet
 	 */
 	static Ping_Load_Info(player, packet){
-		var Ping_Load_Info = createPacket('Ping_Load_Info', 'LOW_PRIORITY');
+		var Ping_Load_Info = global.Network.createPacket('Ping_Load_Info', 'LOW_PRIORITY');
 		Ping_Load_Info.clientId = player.info.clientId;
 		Ping_Load_Info.playerId = player.info.playerId;
 		Ping_Load_Info.percentage = packet.percentage;
@@ -42,7 +41,7 @@ class Game {
 	 * @param {Player} player 
 	 */
 	static TeamRosterUpdate(player){
-		var TeamRosterUpdate = createPacket('TeamRosterUpdate', 'LOADING_SCREEN');
+		var TeamRosterUpdate = global.Network.createPacket('TeamRosterUpdate', 'LOADING_SCREEN');
 		TeamRosterUpdate.blueMax = 6;
 		TeamRosterUpdate.redMax = 6;
 		TeamRosterUpdate.teamBlue_playerIds = [];
@@ -69,7 +68,7 @@ class Game {
 	 * @param {Player} player 
 	 */
 	static RequestRename(player){
-		var RequestRename = createPacket('RequestRename', 'LOADING_SCREEN');
+		var RequestRename = global.Network.createPacket('RequestRename', 'LOADING_SCREEN');
 		RequestRename.playerId = player.info.playerId;
 		RequestRename.skinId = 0;
 		RequestRename.playerName = 'Test';
@@ -81,7 +80,7 @@ class Game {
 	 * @param {Player} player 
 	 */
 	static RequestResking(player){
-		var RequestResking = createPacket('RequestResking', 'LOADING_SCREEN');
+		var RequestResking = global.Network.createPacket('RequestResking', 'LOADING_SCREEN');
 		RequestResking.playerId = player.info.playerId;
 		RequestResking.skinId = 0;
 		RequestResking.skinName = player.character.model;
@@ -100,7 +99,7 @@ class Game {
 	 * Send packet to client to start game (switch from loading screen to game)
 	 */
 	static StartGame(){
-		var StartGame = createPacket('StartGame');
+		var StartGame = global.Network.createPacket('StartGame');
 		StartGame.bitfield = {
 			enablePause: true,
 		};
@@ -112,12 +111,12 @@ class Game {
 	 * @param {Number} time 
 	 */
 	static SynchSimTime(time = 0){
-		var SynchSimTime = createPacket('SynchSimTime');
+		var SynchSimTime = global.Network.createPacket('SynchSimTime');
 		SynchSimTime.synchTime = time;
 		global.Teams.ALL.sendPacket(SynchSimTime, loadingStages.NOT_CONNECTED);
 	}
 	static SyncMissionStartTime(time = 0){
-		var SyncMissionStartTime = createPacket('SyncMissionStartTime');
+		var SyncMissionStartTime = global.Network.createPacket('SyncMissionStartTime');
 		SyncMissionStartTime.startTime = time;
 		global.Teams.ALL.sendPacket(SyncMissionStartTime, loadingStages.NOT_CONNECTED);
 	}

@@ -1,8 +1,8 @@
 
-const Packets = require('../Core/Packets');
+const Packets = require('../Core/Network/Packets');
 var Types = require('../Constants/Types');
 const { getIntBytes_r } = require("../Core/Utilities");
-const { parsePacket } = require('../Core/HandlersParse');
+const { parsePacket } = require('../Core/Network/Parse');
 
 
 module.exports = class BatchPacket {

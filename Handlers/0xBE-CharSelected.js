@@ -1,5 +1,4 @@
 
-const {createPacket, sendPacket} = require('../Core/PacketUtilities');
 const loadingStages = require("../Constants/loadingStages");
 
 const Game = require('../Game/Initializers/Game');
@@ -11,7 +10,7 @@ module.exports = (player, packet) => {
 	//console.log(packet);
 
 	
-	var StartSpawn = createPacket('StartSpawn');
+	var StartSpawn = global.Network.createPacket('StartSpawn');
 	player.sendPacket(StartSpawn, loadingStages.NOT_CONNECTED);
 	
 	if(!spawned){//temporary here
@@ -21,7 +20,7 @@ module.exports = (player, packet) => {
 	player.sendReconnectPackets();
 
 
-	var EndSpawn = createPacket('EndSpawn');
+	var EndSpawn = global.Network.createPacket('EndSpawn');
 	player.sendPacket(EndSpawn, loadingStages.NOT_CONNECTED);
 	
 };

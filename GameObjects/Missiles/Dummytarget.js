@@ -1,11 +1,11 @@
 const { Vector2 } = require("three");
 
-const BaseInterface = require('../../Core/BaseInterface');
+const ExtendWTraits = require('../../Core/ExtendWTraits');
 const GameObject = require("../GameObject");
-const IMovable = require('../Interfaces/IMovable');
+const IMovable = require('../Traits/IMovable');
 
 
-class Dummytarget extends BaseInterface(GameObject, IMovable)  {
+class Dummytarget extends ExtendWTraits(GameObject, IMovable)  {
 
 	constructor(...args){
 		super(...args);

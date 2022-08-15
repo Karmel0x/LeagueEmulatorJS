@@ -7,7 +7,7 @@ module.exports = class SummonerHeal extends _Spell {
 	summonerSpellName = 'Heal';
 	spellHash = 56930076;
 
-	cooldown = 300;
+	cooldown = 0;//300;
 	cost = 0;
 	range = 850;
 

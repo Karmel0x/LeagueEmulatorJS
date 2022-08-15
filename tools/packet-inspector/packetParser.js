@@ -1,8 +1,8 @@
 
-const HandlersParse = require('../../Core/HandlersParse');
+const HandlersParse = require('../../Core/Network/Parse');
 var BatchPacket = require('../../Packets/BatchPacket');
 const BasePacket = require('../../Packets/BasePacket');
-const Packets = require('../../Core/Packets');
+const Packets = require('../../Core/Network/Packets');
 
 
 var packetId = 0;
@@ -50,7 +50,7 @@ function packetParser(packet1) {
 	var parsedStr = '';
 	try{
 		parsedStr = JSON.stringify(parsed, (key, value) =>
-			typeof value === "bigint" ? value.toString() + "n" : value, 2);
+			typeof value == "bigint" ? value.toString() + "n" : value, 2);
 	}catch(e){}
 
 	var packetData = {

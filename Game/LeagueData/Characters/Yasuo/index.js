@@ -24,9 +24,12 @@ module.exports = class Yasuo extends _Champion {
 		critPerLevel: 0,
 		attackDamage: 55.376,
 		attackDamagePerLevel: 3.2,
+		attackSpeed: 0.697,
 		attackSpeedOffset: -0.05,
-		attackSpeed: 1,
 		attackSpeedPerLevel: 3.2,
+		
+		baseAttackSpeed: 0.65,
+		acquisitionRange: 400,
 	};
 	
 	static spells = {

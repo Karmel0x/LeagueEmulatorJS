@@ -16,7 +16,10 @@ module.exports = (I) => class IStatOwner extends I {
 		this.manaRegen.baseValue = stats.manaRegen + (stats.manaRegenPerLevel * currentLevel);
 		this.crit.baseValue = stats.crit + (stats.critPerLevel * currentLevel);
 		this.attackDamage.baseValue = stats.attackDamage + (stats.attackDamagePerLevel * currentLevel);
-		this.attackSpeed.baseValue = stats.attackSpeed + (stats.attackSpeedPerLevel * currentLevel);
+
+		this.attackSpeed.baseValue = stats.attackSpeed / (1 + stats.attackSpeedOffset);
+		this.attackSpeed.percentBonus2 = (stats.attackSpeedPerLevel * (currentLevel - 1));
+
 		this.emit('changeStats');
 	}
 	constructor(...args){
@@ -66,12 +69,13 @@ module.exports = (I) => class IStatOwner extends I {
 	 */
 	increaseStats(stats){
 		Object.keys(stats).forEach(stat => {
-			if(stats[stat].Flat)
-				this[stat].flatBonus += stats[stat].Flat;
+			if(stats[stat].flatBonus)
+				this[stat].flatBonus += stats[stat].flatBonus;
 
-			if(stats[stat].Percent)
-				this[stat].percentBonus += stats[stat].Percent;
+			if(stats[stat].percentBonus)
+				this[stat].percentBonus += stats[stat].percentBonus;
 		});
+		this.emit('changeStats');
 	}
 
 	/**
@@ -80,12 +84,13 @@ module.exports = (I) => class IStatOwner extends I {
 	 */
 	decreaseStats(stats){
 		Object.keys(stats).forEach(stat => {
-			if(stats[stat].Flat)
-				this[stat].flatBonus -= stats[stat].Flat;
+			if(stats[stat].flatBonus)
+				this[stat].flatBonus -= stats[stat].flatBonus;
 
-			if(stats[stat].Percent)
-				this[stat].percentBonus -= stats[stat].Percent;
+			if(stats[stat].percentBonus)
+				this[stat].percentBonus -= stats[stat].percentBonus;
 		});
+		this.emit('changeStats');
 	}
 
 	/**

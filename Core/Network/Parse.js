@@ -1,5 +1,5 @@
-const BasePacket = require("../Packets/BasePacket");
-const ExtendedPacket = require("../Packets/ExtendedPacket");
+const BasePacket = require("../../Packets/BasePacket");
+const ExtendedPacket = require("../../Packets/ExtendedPacket");
 const Packets = require("./Packets");
 
 /**

@@ -1,7 +1,5 @@
 var Unit = require('./Unit');
-const {createPacket, sendPacket} = require("../../Core/PacketUtilities");
 const loadingStages = require("../../Constants/loadingStages");
-const { Vector2 } = require('three');
 
 
 const Nexuses = {
@@ -13,17 +11,17 @@ const Nexuses = {
 	},
 };
 
-const BaseInterface = require('../../Core/BaseInterface');
-const IDefendable = require('../Interfaces/IDefendable');
+const ExtendWTraits = require('../../Core/ExtendWTraits');
+const IDefendable = require('../Traits/IDefendable');
 
 
-class Nexus extends BaseInterface(Unit, IDefendable) {
+class Nexus extends ExtendWTraits(Unit, IDefendable) {
 	/**
 	 * It sends a packet to everyone says that this building has died
 	 * @param source - The source of the damage.
 	 */
 	accounceDie(source){
-		var Building_Die = createPacket('Building_Die');
+		var Building_Die = global.Network.createPacket('Building_Die');
 		Building_Die.netId = this.netId;
 		Building_Die.attackerNetId = source.netId;
 		this.sendTo_everyone(Building_Die);
@@ -46,7 +44,7 @@ class Nexus extends BaseInterface(Unit, IDefendable) {
 	//    //end game?
 	//}
 	spawn(){
-		var OnEnterVisibilityClient = createPacket('OnEnterVisibilityClient');
+		var OnEnterVisibilityClient = global.Network.createPacket('OnEnterVisibilityClient');
 		OnEnterVisibilityClient.netId = this.netId;
 		OnEnterVisibilityClient.isTurret = true;
 		this.sendTo_everyone(OnEnterVisibilityClient, loadingStages.NOT_CONNECTED);

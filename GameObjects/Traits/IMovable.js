@@ -1,4 +1,4 @@
-const {createPacket, sendPacket} = require("../../Core/PacketUtilities");
+
 const { Vector2 } = require('three');
 const Pathfinding = require("../../Game/Components/Pathfinding");
 const IStat = require("./IStat");
@@ -80,7 +80,7 @@ module.exports = (I) => class IMovable extends I {
 			this.moveAns(true);
 	}
 	dashAns(){
-		var WaypointGroupWithSpeed = createPacket('WaypointGroupWithSpeed');
+		var WaypointGroupWithSpeed = global.Network.createPacket('WaypointGroupWithSpeed');
 
 		WaypointGroupWithSpeed.netId = 0;
 		WaypointGroupWithSpeed.teleportNetId = this.netId;
@@ -138,7 +138,7 @@ module.exports = (I) => class IMovable extends I {
 	 * @param {Object} options {speed, range, minRange, callback}
 	 */
 	dashTo(position, options){
-		var pos = PositionHelper.getPositionBetweenRange(this.position, position, options.range, options.minRange || options.range);
+		var pos = PositionHelper.getPositionBetweenRange(this, position, {maximum: options.range, minimum: options.minRange || options.range});
 		this.dash(pos, options);
 	}
 	/**
@@ -155,7 +155,7 @@ module.exports = (I) => class IMovable extends I {
 		options.parabolicGravity = options.parabolicGravity || 0;
 		options.facing = options.facing ?? 1;
 
-		var pos = PositionHelper.getPositionBetweenRange(this.waypoints[0], position, distance, minDistance);
+		var pos = PositionHelper.getPositionBetweenRange(this, position, {maximum: distance, minimum: minDistance});
 		this.dash(pos, options);
 	}
 	/**
@@ -178,8 +178,7 @@ module.exports = (I) => class IMovable extends I {
 		options.parabolicGravity = options.parabolicGravity || 16.5;
 		options.facing = options.facing ?? 1;
 
-		var position = PositionHelper.getRandomPositionClamped(10);
-		position.add(this.waypoints[0]);
+		var position = this.Filters().getRandomPositionClamped(10);
 		this.dash(position, options);
 	}
 	move1(position){
@@ -273,7 +272,7 @@ module.exports = (I) => class IMovable extends I {
 	moveAns(teleport = false){
 		// this should be in Movement_Simulation so we can resend if destination will change (following moveable unit)
 		// or following should be made with dash.speedParams.followNetId ?
-		var WaypointGroup = createPacket('WaypointGroup', 'LOW_PRIORITY');
+		var WaypointGroup = global.Network.createPacket('WaypointGroup', 'LOW_PRIORITY');
 		WaypointGroup.syncId = this.positionSyncID;
 
 		WaypointGroup.netId = 0;
@@ -288,27 +287,18 @@ module.exports = (I) => class IMovable extends I {
 		//console.trace();
 	}
 
+
 	/**
-	 * Move to range of target
-	 * call callback if in range, cancel on cancelSpell
-	 * @param {Number} range 
-	 * @param {Unit|IMovable} target
+	 * @todo remove cancelSpell, make clearing reachDestination for this type of actions ?
+	 * @param {(Vector2|GameObject)} target or target.position
 	 * @param {Function} reachDestinationCallback 
-	 * @returns {Boolean} inRange
+	 * @param {Number} range 
 	 */
-	inRangeOrMove(range, target, reachDestinationCallback){
-		var rangeSum = range + this.collisionRadius + target.collisionRadius;
-		if(PositionHelper.distanceBetween(this, target) > rangeSum){
-
-			var movePosition = PositionHelper.getPositionToTargetMinusRange(this, target, rangeSum - 0.1);
-			this.move1(movePosition);
-			this.once('reachDestination', reachDestinationCallback);
-			this.once('cancelSpell', () => this.removeListener('reachDestination', reachDestinationCallback));
-
-			return false;
-		}
-		
-		return true;
+	moveWithCallback(target, reachDestinationCallback, range = 0){
+		var movePosition = PositionHelper.getPositionToTargetMinusRange(this, target, Math.max(range - 0.1, 0));
+		this.move1(movePosition);
+		this.once('reachDestination', reachDestinationCallback);
+		this.once('cancelSpell', () => this.removeListener('reachDestination', reachDestinationCallback));
 	}
 
 	stopFollowing(){
@@ -316,7 +306,7 @@ module.exports = (I) => class IMovable extends I {
 	}
 	inRangeOrFollow(range, target, reachDestinationCallback){
 		var rangeSum = range + this.collisionRadius + target.collisionRadius;
-		if(PositionHelper.distanceBetween(this, target) > rangeSum){
+		if(this.distanceTo(target) > rangeSum){
 
 			this.followUnit = target;
 			this.once('reachDestination', reachDestinationCallback);

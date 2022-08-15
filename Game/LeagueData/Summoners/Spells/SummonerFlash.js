@@ -7,7 +7,7 @@ module.exports = class SummonerFlash extends _Spell {
 	summonerSpellName = 'Flash';
 	spellHash = 105475752;
 
-	cooldown = 300;
+	cooldown = 0;//300;
 	cost = 0;
 	range = 425;
 

@@ -7,19 +7,20 @@ const { appendGlobal, removeGlobal } = require('./global.Units');
 const slotId = require('../../Constants/slotId');
 const loadingStages = require('../../Constants/loadingStages');
 
-const BaseInterface = require('../../Core/BaseInterface');
+const ExtendWTraits = require('../../Core/ExtendWTraits');
 const GameObject = require('../GameObject');
-const IDieReward = require('../Interfaces/IDieReward');
-const IExpOwner = require('../Interfaces/IExpOwner');
-const IStatOwner = require('../Interfaces/IStatOwner');
-const IHasTeam = require('../Interfaces/IHasTeam');
-const IPUnit = require('./PacketInterfaces/IPUnit');
-const IBuffable = require('../Interfaces/IBuffable');
-const ISpellable = require('../Interfaces/ISpellable');
-const ICharacter = require('../Interfaces/ICharacter');
+const IDieReward = require('../Traits/IDieReward');
+const IExpOwner = require('../Traits/IExpOwner');
+const IStatOwner = require('../Traits/IStatOwner');
+const IHasTeam = require('../Traits/IHasTeam');
+const IPUnit = require('./PacketTraits/IPUnit');
+const IBuffable = require('../Traits/IBuffable');
+const ISpellable = require('../Traits/ISpellable');
+const ICharacter = require('../Traits/ICharacter');
+const Filters = require('../Filters');
 
 
-class Unit extends BaseInterface(GameObject, IHasTeam, ISpellable, ICharacter, IDieReward, IExpOwner, IStatOwner, IPUnit, IBuffable) {
+class Unit extends ExtendWTraits(GameObject, IHasTeam, ISpellable, ICharacter, IDieReward, IExpOwner, IStatOwner, IPUnit, IBuffable) {
 	visibleForEnemy = false;
 	visibleForEnemy2 = false;
 	visibleForTeam = false;
@@ -130,91 +131,49 @@ class Unit extends BaseInterface(GameObject, IHasTeam, ISpellable, ICharacter, I
 
 		return true;
 	}
-	// some static position functions ==========================
+
+
+	async update(){
+		for(;;){
+			await Promise.wait(1000);
+
+			if(!global.Game.started)
+				continue;
+
+		}
+	}
+
+	respawn(){
+		this.emit('respawn');
+		this.died = false;
+
+		this.currentHealth = this.health.total;
+		this.currentMana = this.mana.total;
+		
+		if(this.waypoints)
+			this.waypoints = [this.spawnPosition];
+		
+		this.OnEnterLocalVisibilityClient();
+		
+		global.Teams[this.teamName].vision(this, true);
+	}
+
+	// ==================================================
 
 	/**
 	 * Filter units by team
-	 * @param {Array.<Unit>} units
-	 * @param {String} team (RED/BLUE/NEUTRAL/ALL)
+	 * @param {Array.<Unit>} targets
+	 * @param {Array.<String>|String} teams (RED/BLUE/NEUTRAL/ALL)
 	 * @returns {Array.<Unit>}
 	 */
-	static filterUnitsInTeam(units, team = 'ALL'){
-		if(team === 'ALL')
-			return units;
+	static filterByTeam(targets, teams = 'ALL'){
+		teams = typeof teams == 'string' ? [teams] : teams;
 
-		return units.filter(unit => unit.teamName === team);
-	}
-	/**
-	 * Filter units by range
-	 * @param {Array.<Unit>} units
-	 * @param {Vector2} position
-	 * @param {Number} range
-	 * @returns {Array.<Unit>}
-	 */
-	static filterUnitsInRange(units, position, range){
-		return units.filter(unit => unit.position.distanceTo(position) <= range);
-	}
-	/**
-	 * Filter units by Unit type
-	 * @param {Array.<Unit>} units
-	 * @param {*} types (Minion/Player/Turret/Inhibitor/Nexus)
-	 * @returns {Array.<Unit>}
-	 */
-	static filterUnitsByType(units, types){
-		return units.filter(unit => types.includes(unit.type));
-	}
-	/**
-	 * Sort units by type
-	 * @param {Array.<Unit>} units
-	 * @param {*} types (Minion/Player/Turret/Inhibitor/Nexus)
-	 */
-	static sortUnitsByType(units, types){
-		units.sort((a, b) => {
-			return types.indexOf(a.type) - types.indexOf(b.type);
-		});
-	}
-	/**
-	 * Sort units by distance to position from closest to farthest
-	 * @param {Array.<Unit>} units
-	 * @param {Vector2} position
-	 */
-	static sortUnitsByDistance(units, position){
-		units.sort((a, b) => {
-			return a.position.distanceTo(position) - b.position.distanceTo(position);
-		});
-	}
-	/**
-	 * Get nearest unit to position
-	 * @param {Array.<Unit>} units 
-	 * @param {Vector2} position 
-	 * @returns {Unit}
-	 */
-	static filterNearestUnit(units, position){
-		this.sortUnitsByDistance(units, position);
-		return units[0] || null;
-	}
-	//static filterNearestUnitInRange(units, position, range){
-	//	var nearestUnit = this.filterNearestUnit(units, position);
-	//	if(!nearestUnit || nearestUnit.position.distanceTo(position) > range)
-	//		return null;
-	//	return nearestUnit;
-	//}
-	//static getUnitsInRange(position, range, team = 'ALL'){
-	//	var units = global.getUnitsF(team);
-	//	var unitsInRange = this.filterUnitsInRange(units, position, range);
-	//	return unitsInRange;
-	//}
-	//static getUnitsInRangeSortedByDistance(position, range, team = 'ALL'){
-	//	var unitsInRange = this.getUnitsInRange(position, range, team);
-	//	sortUnitsByDistance(unitsInRange, position);
-	//	return unitsInRange;
-	//}
-	//static getNearestUnit(position, maxRange = 25000, team = 'ALL'){
-	//	var unitsInRange = this.getUnitsInRange(position, maxRange, team);
-	//	return this.filterNearestUnit(unitsInRange, position);
-	//}
+		if(teams.includes('ALL'))
+			return targets;
 
-	// ==========================================================
+		return targets.filter(target => teams.includes(target.teamName));
+	}
 
 
 	/**
@@ -248,7 +207,7 @@ class Unit extends BaseInterface(GameObject, IHasTeam, ISpellable, ICharacter, I
 	 * @returns {Array.<Unit>}
 	 */
 	getEnemyUnits(){
-		return this.getUnits(this.getOppositeTeam());
+		return this.getUnits(this.getEnemyTeam());
 	}
 
 	/**
@@ -272,28 +231,19 @@ class Unit extends BaseInterface(GameObject, IHasTeam, ISpellable, ICharacter, I
 	 * @returns {Array.<Unit>}
 	 */
 	getOtherEnemyUnits(){
-		return this.getOtherUnits(this.getOppositeTeam());
+		return this.getOtherUnits(this.getEnemyTeam());
 	}
 
-	/**
-	 * Get units in range of this unit
-	 * @param {Number} range 
-	 * @param {String} team (RED/BLUE/NEUTRAL/ALL)
-	 * @returns 
-	 */
-	getUnitsInRange(range = this.range.total, team = 'ALL'){
-		var units = this.getOtherUnits(team);
-		return this.constructor.filterUnitsInRange(units, this.position, range);
-	}
 	/**
 	 * Get ally units in range of this unit
 	 * @param {Number} range 
 	 * @param {String} team (RED/BLUE/NEUTRAL/ALL)
 	 * @returns 
 	 */
-	getAllyUnitsInRange(range = this.range.total){
-		return this.getUnitsInRange(range, this.getAllyTeam());
+	getAllyUnitsInRange(range = this.range.total, distanceCalcPoint = 'CENTER_TO_CENTER'){
+		return this.Filters(distanceCalcPoint).filterByRange(this.getAllyTeamUnits(), range);
 	}
+
 	/**
 	 * Get enemy units in range of this unit
 	 * @param {Number} range 
@@ -301,87 +251,7 @@ class Unit extends BaseInterface(GameObject, IHasTeam, ISpellable, ICharacter, I
 	 * @returns 
 	 */
 	getEnemyUnitsInRange(range = this.range.total){
-		return this.getUnitsInRange(range, this.getEnemyTeam());
-	}
-
-	/**
-	 * Get nearest unit to this unit
-	 * @param {Number} range 
-	 * @param {String} team (RED/BLUE/NEUTRAL/ALL)
-	 * @returns 
-	 */
-	getNearestUnit(maxRange = 25000, team = 'ALL'){
-		var unitsInRange = this.getUnitsInRange(maxRange, team);
-		return this.constructor.filterNearestUnit(unitsInRange, this.position);
-	}
-	/**
-	 * Get nearest ally unit to this unit
-	 * @param {Number} range 
-	 * @param {String} team (RED/BLUE/NEUTRAL/ALL)
-	 * @returns 
-	 */
-	getNearestAllyUnit(maxRange = 25000){
-		return this.getNearestUnit(maxRange, this.getAllyTeam());
-	}
-	/**
-	 * Get nearest enemy unit to this unit
-	 * @param {Number} range 
-	 * @param {String} team (RED/BLUE/NEUTRAL/ALL)
-	 * @returns 
-	 */
-	getNearestEnemyUnit(maxRange = 25000){
-		return this.getNearestUnit(maxRange, this.getEnemyTeam());
-	}
-
-	inRange(unit, range = this.range.total){
-		return unit.position.distanceTo(this.position) <= range;
-	}
-
-	// ==================================================
-
-
-	autoAttackToggle = true;
-	acquisitionRange = 400;
-	/**
-	 * 
-	 * @todo move it to attack controller ?
-	 */
-	autoAttack(){
-		var target = this.getNearestEnemyUnit(this.position, this.acquisitionRange)
-		if(this.constructor.name == 'Player')//
-			console.log('autoAttack target', target);//
-		if(!target)
-			return;
-
-		console.log('autoAttack s', this.netId, target.netId);
-		this.spellSlots[slotId.A]?.cast({target});
-	}
-	async update(){
-		for(;;){
-			await Promise.wait(1000);
-
-			if(!global.Game.started)
-				continue;
-
-			//if(!this.died){
-			//	if(this.attackable && this.autoAttackToggle)
-			//		this.autoAttack();
-			//}
-		}
-	}
-
-	respawn(){
-		this.died = false;
-
-		this.currentHealth = this.health.total;
-		this.currentMana = this.mana.total;
-		
-		if(this.waypoints)
-			this.waypoints = [this.spawnPosition];
-		
-		this.OnEnterLocalVisibilityClient();
-		
-		global.Teams[this.teamName].vision(this, true);
+		return this.Filters().filterByRange(this.getOtherEnemyUnits(), range);
 	}
 
 }

@@ -1,6 +1,5 @@
 
 const slotId = require('../../Constants/slotId');
-const {createPacket, sendPacket, sendPacketS} = require("../../Core/PacketUtilities");
 const loadingStages = require('../../Constants/loadingStages');
 const Summoners = require("../../Game/LeagueData/Summoners");
 
@@ -10,15 +9,15 @@ global.Players = global.Players || [];
 
 
 const EVENT = require("../../Packets/EVENT");
-const BaseInterface = require('../../Core/BaseInterface');
+const ExtendWTraits = require('../../Core/ExtendWTraits');
 const Unit = require('./Unit');
-const INetwork = require('../Interfaces/INetwork');
-const IDefendable = require('../Interfaces/IDefendable');
-const IAttackable = require('../Interfaces/IAttackable');
-const IMovable = require('../Interfaces/IMovable');
-const IInventory = require('../Interfaces/IInventory');
-const IPPlayer = require("./PacketInterfaces/IPPlayer");
-const IRespawnable = require("../Interfaces/IRespawnable");
+const INetwork = require('../Traits/INetwork');
+const IDefendable = require('../Traits/IDefendable');
+const IAttackable = require('../Traits/IAttackable');
+const IMovable = require('../Traits/IMovable');
+const IInventory = require('../Traits/IInventory');
+const IPPlayer = require("./PacketTraits/IPPlayer");
+const IRespawnable = require("../Traits/IRespawnable");
 
 
 const Players = {
@@ -40,13 +39,13 @@ const Players = {
 	},
 };
 
-class Player extends BaseInterface(Unit, INetwork, IDefendable, IAttackable, IMovable, IInventory, IPPlayer, IRespawnable) {
+class Player extends ExtendWTraits(Unit, INetwork, IDefendable, IAttackable, IMovable, IInventory, IPPlayer, IRespawnable) {
 	/**
 	 * It sends a packet to everyone in the game that the player has died
 	 * @param source - The source of the damage.
 	 */
 	announceDie(source){
-		var OnEvent = createPacket('OnEvent');
+		var OnEvent = global.Network.createPacket('OnEvent');
 		OnEvent.netId = this.netId;
 		OnEvent.eventId = EVENT.OnChampionDie;
 		OnEvent.eventData = {

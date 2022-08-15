@@ -73,14 +73,14 @@ var lanePaths = {
 	],
 };
 
-const BaseInterface = require('../../Core/BaseInterface');
+const ExtendWTraits = require('../../Core/ExtendWTraits');
 const Unit = require('./Unit');
-const IDefendable = require('../Interfaces/IDefendable');
-const IAttackable = require('../Interfaces/IAttackable');
-const IMovable = require('../Interfaces/IMovable');
+const IDefendable = require('../Traits/IDefendable');
+const IAttackable = require('../Traits/IAttackable');
+const IMovable = require('../Traits/IMovable');
 
 
-class Minion extends BaseInterface(Unit, IDefendable, IAttackable, IMovable) {
+class Minion extends ExtendWTraits(Unit, IDefendable, IAttackable, IMovable) {
 	get rewardExp(){
 		return this.character.exp;
 	}

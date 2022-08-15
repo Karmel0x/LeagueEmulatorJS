@@ -1,6 +1,6 @@
 
 const { HashString } = require("../../../../../Functions/HashString");
-const _Basicattack = require("../../../../DataMethods/Spells/_Basicattack");
+const _Basicattack = require("../../../../DataMethods/Spells/_Basicattack_");
 
 
 module.exports = class ChaosTurretWormBasicAttack extends _Basicattack {

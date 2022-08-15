@@ -1,5 +1,5 @@
 
-const { createPacket } = require("../../../Core/PacketUtilities");
+const { Vector2 } = require("three");
 const { HashString } = require("../../../Functions/HashString");
 const PositionHelper = require("../../../Functions/PositionHelper");
 const SpellCast = require("./SpellCast");
@@ -17,6 +17,9 @@ module.exports = class _Spell {
 	castRange = 25000;
 	movingSpell = false;
 
+	_lastCastTime = 0;
+	_cooldownTime = 0;
+
 	
 	constructor(options){
 		this.owner = options.owner || null;
@@ -31,7 +34,14 @@ module.exports = class _Spell {
 	 * @param {Object} spellData
 	 */
 	preCast(spellData){
-		return this.owner.inRangeOrMove(this.castRange, spellData.target || spellData.packet, () => this.cast(spellData));
+		var target = spellData.target || spellData.packet;
+
+		var rangeSum = this.castRange;
+		var isInRange = this.owner.Filters().isInRange(target, rangeSum);
+		if(!isInRange)
+			this.owner.moveWithCallback(target, () => this.cast(spellData), rangeSum);
+
+		return isInRange;
 	}
 	
 	/**
@@ -70,11 +80,17 @@ module.exports = class _Spell {
 	cast(spellData){
 		spellData.spell = this;
 		spellData.target = spellData.target || null;
-		spellData.target = typeof spellData.target === 'number' ? global.getUnitByNetId(spellData.target) : spellData.target;
+		spellData.target = typeof spellData.target == 'number' ? global.getUnitByNetId(spellData.target) : spellData.target;
 		spellData.movingSpell = this.movingSpell;
 
 		if(!this.preCast(spellData))
 			return;
+
+		if(this.waitingCooldown())
+			return false;
+
+		this._lastCastTime = performance.now();
+		this._cooldownTime = this._lastCastTime + (this.cooldown * 1000);
 
 		spellData.spellCast = new SpellCast({spellData});
 		this.onCast(spellData);
@@ -85,7 +101,7 @@ module.exports = class _Spell {
 	castSpellAns(castInfo, packageHash){
 		var owner = this.owner;
 
-		var CastSpellAns = createPacket('CastSpellAns', 'S2C');
+		var CastSpellAns = global.Network.createPacket('CastSpellAns', 'S2C');
 		CastSpellAns.netId = owner.netId;
 		CastSpellAns.casterPositionSyncID = owner.positionSyncID;
 		CastSpellAns.castInfo = {
@@ -121,7 +137,7 @@ module.exports = class _Spell {
 	spawnProjectileAns(castInfo, packageHash = 0, projectile = {speed: 1200}){//todo
 		var owner = this.owner;
 
-		var MissileReplication = createPacket('MissileReplication', 'S2C');
+		var MissileReplication = global.Network.createPacket('MissileReplication', 'S2C');
 		MissileReplication.castInfo = {
 			spellHash: 0,
 			spellCastNetId: 1073743439,
@@ -168,5 +184,12 @@ module.exports = class _Spell {
 
 		owner.sendTo_vision(MissileReplication);
 		//console.log(MissileReplication);
+	}
+
+	waitingCooldown(){
+		if(this._cooldownTime > performance.now())
+			return true;
+
+		return false;
 	}
 };

@@ -1,4 +1,4 @@
-const { createPacket } = require("../../Core/PacketUtilities");
+
 const ItemList = require("../../Game/LeagueData/Items/ItemList");
 const ItemSpells = require("../../Game/LeagueData/Items/ItemSpells")
 
@@ -25,7 +25,7 @@ class UndoHistory {
 	}
 	alternateUndoEnable(){
 		var player = this.owner;
-		var SetUndoEnabled = createPacket('SetUndoEnabled');
+		var SetUndoEnabled = global.Network.createPacket('SetUndoEnabled');
 		SetUndoEnabled.netId = player.netId;
 		SetUndoEnabled.undoStackSize = this.history.length;
 		player.sendPacket(SetUndoEnabled);
@@ -50,28 +50,27 @@ class UndoHistory {
 
 		var item = ItemList[itemId];
 
-		switch(actionToUndo)
-		{
+		switch(actionToUndo){
 			case(ItemActionList.SELL): // Undo a sell item
 			{
-				player.gold -= item.GoldCost * 0.7;
+				player.gold -= item.goldCost * 0.7;
 				player.addItem(slot, itemId);
 				break;
 			}
 			case(ItemActionList.BUY): // Undo a buy item
 			{
-				player.gold += item.GoldCost;
+				player.gold += item.goldCost;
 				player.removeItem(slot);
 				break;
 			}
 			case(ItemActionList.BUILD_ITEM): // Undo a builded item
 			{
 				var buildedItem = player.items[slot];
-				var goldsToRepay = item.GoldCost;
+				var goldsToRepay = item.goldCost;
 
 				buildedItem.itemsRemoved.forEach(item => {
 					player.addItem(item[0], item[1].id);
-					goldsToRepay -= ItemList[item[1].id].GoldCost;
+					goldsToRepay -= ItemList[item[1].id].goldCost;
 				})
 
 				player.gold += goldsToRepay;
@@ -124,7 +123,7 @@ module.exports = (I) => class IInventory extends I {
 		return false;
 	}
 	buyItemAns(slot){
-		var BuyItemAns = createPacket('BuyItemAns');
+		var BuyItemAns = global.Network.createPacket('BuyItemAns');
 		BuyItemAns.netId = this.netId;
 		BuyItemAns.item = {
 			itemId: this.items[slot]?.id || 0,
@@ -145,7 +144,7 @@ module.exports = (I) => class IInventory extends I {
 
 		var item = ItemList[itemId];
 		var slot = false;
-		var effectiveGoldCost = item.GoldCost;
+		var effectiveGoldCost = item.goldCost;
 		this.itemsToRemove = [];
 
 		// If an item can be build from another items
@@ -182,8 +181,7 @@ module.exports = (I) => class IInventory extends I {
 
 		this.charStats_send();
 
-		if(this.itemsToRemove.length)
-		{
+		if(this.itemsToRemove.length){
 			this.items[slot].itemsRemoved = this.itemsToRemove;
 			this.UndoHistory.addUndoHistory(itemId, slot, 2);
 		}
@@ -192,13 +190,12 @@ module.exports = (I) => class IInventory extends I {
 	}
 	getEffectiveGoldCost(item){
 
-		var goldCost = item.GoldCost;
+		var goldCost = item.goldCost;
 		
 		item.from.forEach( childItemId =>{
 			for(var slot = 0; slot < ItemSlots; slot++)
-				if(this.items[slot] && this.items[slot].id == childItemId)
-				{
-					goldCost -= ItemList[childItemId].GoldCost;
+				if(this.items[slot] && this.items[slot].id == childItemId){
+					goldCost -= ItemList[childItemId].goldCost;
 					this.itemsToRemove.push([slot, this.items[slot]]);
 					break;
 				}
@@ -209,7 +206,7 @@ module.exports = (I) => class IInventory extends I {
 		this.itemsToRemove.forEach(item => this.removeItem(item[0]));
 	}
 	swapItemsAns(slot1, slot2){
-		var SwapItemAns = createPacket('SwapItemAns');
+		var SwapItemAns = global.Network.createPacket('SwapItemAns');
 		SwapItemAns.netId = this.netId;
 		SwapItemAns.sourceSlot = slot1;
 		SwapItemAns.destinationSlot = slot2;
@@ -228,7 +225,7 @@ module.exports = (I) => class IInventory extends I {
 		this.swapItemsAns(slot1, slot2);
 	}
 	removeItemAns(slot){
-		var RemoveItemAns = createPacket('RemoveItemAns');
+		var RemoveItemAns = global.Network.createPacket('RemoveItemAns');
 		RemoveItemAns.netId = this.netId;
 		RemoveItemAns.slot = slot;
 		RemoveItemAns.itemsInSlot = this.items[slot].count;
@@ -253,7 +250,7 @@ module.exports = (I) => class IInventory extends I {
 
 		var item = ItemList[this.items[slot].id];
 		var itemId = this.items[slot].id;
-		this.gold += item.GoldSell ?? (item.GoldCost * 0.7);
+		this.gold += item.GoldSell ?? (item.goldCost * 0.7);
 		
 		this.removeItem(slot);
 

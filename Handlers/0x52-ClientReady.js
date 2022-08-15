@@ -1,5 +1,4 @@
 
-const {createPacket, sendPacket} = require('../Core/PacketUtilities');
 const loadingStages = require('../Constants/loadingStages');
 const Game = require('../Game/Initializers/Game');
 

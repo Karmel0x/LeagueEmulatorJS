@@ -16,9 +16,7 @@ require('../../Core/init_utilities')();
 var {server, wss} = require('./init_client-server');
 const fs = require('fs');
 
-const enet = require('../../Core/enet');
 require("../../Core/BufferExtend");
-const {createPacket, sendPacket} = require('../../Core/PacketUtilities');
 
 const packetParser = require('./packetParser');
 const _replayreaders = require('../_replayreaders');
@@ -52,22 +50,22 @@ wss.onMessage = (data) => {
 
 		}
 	}
-	else if(res.cmd == 'initialize_client'){
-		require('./init_client-network')();
-	}
-	else if(res.cmd == 'sendpacket'){
-		let i = res.Id;
-		var buffer = replayUnpacked[i].Bytes ? Buffer.from(replayUnpacked[i].Bytes, 'base64') : Buffer.from(replayUnpacked[i].BytesHex.split(' ').join(''), 'hex');
-		
-        enet.sendPacket(0, buffer, replayUnpacked[i].Channel);
-	}
-	else if(res.cmd == 'sendpacket_type'){
-		var KEY_CHECK = createPacket(res.name, res.channel);
-		KEY_CHECK.partialKey = [ 0x2A, 0x00, 0xFF ];
-		KEY_CHECK.clientId = 0;
-		KEY_CHECK.playerId = 1;
-		sendPacket(0, KEY_CHECK);
-	}
+	//else if(res.cmd == 'initialize_client'){
+	//	require('./init_client-network')();
+	//}
+	//else if(res.cmd == 'sendpacket'){
+	//	let i = res.Id;
+	//	var buffer = replayUnpacked[i].Bytes ? Buffer.from(replayUnpacked[i].Bytes, 'base64') : Buffer.from(replayUnpacked[i].BytesHex.split(' ').join(''), 'hex');
+	//	
+    //    enet.sendPacket(0, buffer, replayUnpacked[i].Channel);
+	//}
+	//else if(res.cmd == 'sendpacket_type'){
+	//	var KEY_CHECK = createPacket(res.name, res.channel);
+	//	KEY_CHECK.partialKey = [ 0x2A, 0x00, 0xFF ];
+	//	KEY_CHECK.clientId = 0;
+	//	KEY_CHECK.playerId = 1;
+	//	sendPacket(0, KEY_CHECK);
+	//}
 	else if(res.cmd == 'loadreplaylist'){
 		var replayList = fs.readdirSync(replayDir).filter((value) => {
 			return value.endsWith('.json') || value.endsWith('.lrpkt');

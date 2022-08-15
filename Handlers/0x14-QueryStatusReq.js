@@ -1,5 +1,4 @@
 
-const {createPacket, sendPacket} = require('../Core/PacketUtilities');
 const loadingStages = require("../Constants/loadingStages");
 
 
@@ -8,7 +7,7 @@ module.exports = (player, packet) => {
 	//console.log(packet);
     
 	{
-		var QueryStatusAns = createPacket('QueryStatusAns');
+		var QueryStatusAns = global.Network.createPacket('QueryStatusAns');
 		QueryStatusAns.response = true;
 		player.sendTo_self(QueryStatusAns, loadingStages.NOT_CONNECTED);
 	}

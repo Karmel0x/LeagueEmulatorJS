@@ -1,5 +1,4 @@
 var ConstantsUnit = require('../../Constants/Unit');
-const {createPacket, sendPacket, sendPacketP} = require("../../Core/PacketUtilities");
 const TEAM = require('../../Constants/TEAM');
 const loadingStages = require('../../Constants/loadingStages');
 
@@ -51,11 +50,11 @@ class Team {
 		//if(peer_nums.length > 0)
 		//	sendPacket(peer_nums, packet);
 		if(players.length > 0)
-			sendPacketP(players, packet);
+			global.Network.sendPacketP(players, packet);
 	}
 
 	showUnit(unit){
-		var OnEnterVisibilityClient = createPacket('OnEnterVisibilityClient');
+		var OnEnterVisibilityClient = global.Network.createPacket('OnEnterVisibilityClient');
 		OnEnterVisibilityClient.netId = unit.netId;
 		OnEnterVisibilityClient.shieldValues = {
 			magical: 0,
@@ -73,7 +72,7 @@ class Team {
 		//console.log(OnEnterVisibilityClient);
 	}
 	hideUnit(unit){
-		var OnLeaveVisibilityClient = createPacket('OnLeaveVisibilityClient');
+		var OnLeaveVisibilityClient = global.Network.createPacket('OnLeaveVisibilityClient');
 		OnLeaveVisibilityClient.netId = unit.netId;
 		this.sendPacket(OnLeaveVisibilityClient);
 	}

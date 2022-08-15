@@ -14,7 +14,7 @@ module.exports = class YasuoQ3W extends _Spell {
 	packageHash = package1.packageHash;
 	spellSlot = slotId.Q;
 	windup = 0.133;
-	cooldown = 5;
+	cooldown = 0;//5;
 	manaCost = 0;
 	
 
@@ -39,7 +39,7 @@ module.exports = class YasuoQ3W extends _Spell {
 	}
 
 	onCast(spellData){
-		//spellData.position = PositionHelper.getMaxRangePosition(this.owner, spellData.packet, this.castRange);
+		//spellData.position = PositionHelper.getPositionBetweenRange(this.owner, spellData.packet, this.castRange);
 		spellData.anglePosition = PositionHelper.anglePosition(spellData.packet, this.owner);
 		//spellData.target = Dummytarget({position: spellData.packet.position});
 

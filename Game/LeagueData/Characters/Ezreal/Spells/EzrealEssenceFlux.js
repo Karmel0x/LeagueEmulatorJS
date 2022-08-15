@@ -50,7 +50,7 @@ module.exports = class EzrealEssenceFlux extends _Spell {
 	}
 
 	preCast(spellData){
-		spellData.maxRangePosition = PositionHelper.getMaxRangePosition(this.owner, spellData.packet, this.castRange);
+		spellData.maxRangePosition = PositionHelper.getPositionBetweenRange(this.owner, spellData.packet, this.castRange);
 
 		var skillshot = Skillshot.create(this.owner, spellData.maxRangePosition, {
 			speed: 1550, range: 1000, radius: 80
