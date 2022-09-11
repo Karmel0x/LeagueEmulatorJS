@@ -26,6 +26,22 @@ module.exports = class EzrealTrueshotBarrage extends _Spell {
 		var skillshot = Skillshot.create(this.owner, spellData.maxRangePosition, {
 			speed: 2000, range: 25000, radius: 160
 		});
+		
+		var collidedWith = [];
+		skillshot.callbacks.collision._ = {
+			options: {
+				range: skillshot.options.radius,
+			},
+			function: (target) => {
+				if(skillshot.owner == target || collidedWith.includes(target.netId))
+					return;
+				
+				collidedWith.push(target.netId);
+				
+				skillshot.owner.attack(target);
+			},
+		};
+
 		spellData.missile = skillshot;
 		return super.preCast(spellData);
 	}

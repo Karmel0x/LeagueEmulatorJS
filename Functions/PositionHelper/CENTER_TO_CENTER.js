@@ -38,8 +38,8 @@ class PositionHelper__CENTER_TO_CENTER extends _PositionHelper {
 	static sortByDistance(source, targets){
 		var sourcePosition = source.position || source;
 		targets.sort((a, b) => {
-			return (sourcePosition.distanceTo(a) - this.getRangeSum(source, a))
-				- (sourcePosition.distanceTo(b) - this.getRangeSum(source, b));
+			return (sourcePosition.distanceTo(a.position) - this.getRangeSum(source, a))
+				- (sourcePosition.distanceTo(b.position) - this.getRangeSum(source, b));
 		});
 	}
 
@@ -50,7 +50,17 @@ class PositionHelper__CENTER_TO_CENTER extends _PositionHelper {
 	 */
 	static getNearest(source, targets){
 		this.sortByDistance(source, targets);
-		return units[0] || null;
+		return targets[0] || null;
+	}
+
+	/**
+	 * @param {GameObject|Vector2} source
+	 * @param {GameObject} target
+	 */
+	static isInRangeFlat(source, target, range){
+		var sourcePosition = source.position || source;
+		var targetPosition = target.position || target;
+		return sourcePosition.distanceTo(targetPosition) <= range;
 	}
 
 	/**
@@ -58,9 +68,7 @@ class PositionHelper__CENTER_TO_CENTER extends _PositionHelper {
 	 * @param {GameObject} target
 	 */
 	static isInRange(source, target, range){
-		var sourcePosition = source.position || source;
-		var targetPosition = target.position || target;
-		return sourcePosition.distanceTo(targetPosition) <= this.getRangeSum(source, target, range);
+		return this.isInRangeFlat(source, target, this.getRangeSum(source, target, range));
 	}
 
 	/**
@@ -117,16 +125,19 @@ class PositionHelper__CENTER_TO_CENTER extends _PositionHelper {
 	// ===================
 
 	getRangeSum(target, range = 0){
-		this.constructor.getRangeSum(this.gameObject, target, range);
+		return this.constructor.getRangeSum(this.gameObject, target, range);
 	}
 	distanceBetween(target){
-		this.constructor.distanceBetween(this.gameObject, target);
+		return this.constructor.distanceBetween(this.gameObject, target);
 	}
 	sortByDistance(targets){
-		this.constructor.sortByDistance(this.gameObject, targets);
+		return this.constructor.sortByDistance(this.gameObject, targets);
 	}
 	getNearest(objects){
 		return this.constructor.getNearest(this.gameObject, objects);
+	}
+	isInRangeFlat(target, range){
+		return this.constructor.isInRangeFlat(this.gameObject, target, range);
 	}
 	isInRange(target, range){
 		return this.constructor.isInRange(this.gameObject, target, range);

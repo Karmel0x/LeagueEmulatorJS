@@ -43,12 +43,13 @@ module.exports = (I) => class IAttackable extends I {
 
 		this._acquisitionManual = target;
 	}
+
 	/**
 	 * Get current target if in attackRange
 	 * @returns {?Unit}
 	 */
 	getCurrentAttackTargetIfInAcquisitionRange(){
-		if(!this.attackTarget)
+		if(!this.attackTarget || !this.attackTarget.canBeAttacked())
 			return null;
 
 		if(!this.Filters('EDGE_TO_EDGE').isInRange(this.attackTarget, this.attackRange.total || 400))
@@ -62,7 +63,7 @@ module.exports = (I) => class IAttackable extends I {
 	 * @returns {Unit}
 	 */
 	getNewAttackTarget(){
-		var unitsInRange = this.getEnemyUnitsInRange(this.attackRange.total || 400);
+		var unitsInRange = this.Filters('EDGE_TO_EDGE').filterByRange(this.getOtherEnemyUnits(), this.attackRange.total || 400);
 		if(!unitsInRange.length)
 			return null;
 
@@ -73,14 +74,22 @@ module.exports = (I) => class IAttackable extends I {
 		return unitsInRange[0];
 	}
 
+	shouldAutoAttackNow(){
+		if(!this.autoAttackToggle)
+			return false;
+		if(!this.autoAttackSoftToggle)
+			return false;
+		if(this.callbacks.move?.dash)//@todo
+			return false;
+		return true;
+	}
+
 	/**
 	 * Find target to attack or get previous target if still in range
 	 * @returns {?Unit}
 	 */
 	findTargetInAcquisitionRange(){
-		if(!this.autoAttackToggle)
-			return null;
-		if(!this.autoAttackSoftToggle)
+		if(!this.shouldAutoAttackNow())
 			return null;
 
 		var target = this.getCurrentAttackTargetIfInAcquisitionRange();
@@ -104,6 +113,7 @@ module.exports = (I) => class IAttackable extends I {
 
 		this.attackTarget = target;
 	}
+
 	//FaceDirection(){
 	//	var FaceDirection = global.Network.createPacket('FaceDirection');
 	//	FaceDirection.netId = this.netId;
@@ -123,7 +133,6 @@ module.exports = (I) => class IAttackable extends I {
 	//	UnitApplyDamage.sourceNetId = this.netId;
 	//	this.sendTo_everyone(UnitApplyDamage, loadingStages.NOT_CONNECTED);
 	//}
-
 
 	canFollowTarget(target){
 		// todo: checks if target is visible, didn't died, ...
@@ -154,7 +163,6 @@ module.exports = (I) => class IAttackable extends I {
 		//this.UnitApplyDamage(target, 100);
 		//attackSlot.turretAttackProjectile(basicattack);
 	}
-
 	
 	async autoAttackLoop(){
 		if(!this.spellSlots[slotId.A])

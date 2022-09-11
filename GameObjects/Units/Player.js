@@ -87,7 +87,6 @@ class Player extends ExtendWTraits(Unit, INetwork, IDefendable, IAttackable, IMo
 	}
 
 
-	killDeathCounter = 0;
 	loadingStage = loadingStages.NOT_CONNECTED;
 
 	constructor(...args){

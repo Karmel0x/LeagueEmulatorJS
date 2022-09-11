@@ -7,27 +7,40 @@ module.exports = class Ezreal extends _Champion {
 	static package = require('./package');
 	
 	static stats = {
-		moveSpeed: 340,
-		attackRange: 175,
-		health: 517.76,
-		healthPerLevel: 82,
-		mana: 60,
-		manaPerLevel: 0,
-		armor: 24.712,
-		armorPerLevel: 3.4,
-		resist: 30,
-		resistPerLevel: 0,
-		healthRegen: 6.51,
-		healthRegenPerLevel: 0.9,
-		manaRegen: 0,
-		manaRegenPerLevel: 0,
+		health: {
+			baseValue: 350,
+			perLevel: 80,
+		},
+		healthRegen: {
+			baseValue: 5.5,
+			perLevel: 0.55,
+		},
+		mana: {
+			baseValue: 235,
+			perLevel: 45,
+		},
+		manaRegen: {
+			baseValue: 7,
+			perLevel: 0.65,
+		},
+		attackDamage: {
+			baseValue: 47.2,
+			perLevel: 3,
+		},
+		abilityPower: 0,
+		attackSpeed: {
+			baseValue: 0.625,
+			perLevel: 0,//2.8%
+		},
+		attackSpeedOffset: 0,
 		crit: 0,
-		critPerLevel: 0,
-		attackDamage: 55.376,
-		attackDamagePerLevel: 3.2,
-		attackSpeedOffset: -0.05,
-		attackSpeed: 1,
-		attackSpeedPerLevel: 3.2,
+		attackRange: 550,
+		armor: {
+			baseValue: 16,
+			perLevel: 3.5,
+		},
+		resist: 30,
+		moveSpeed: 325,
 	};
 	
 	static spells = {

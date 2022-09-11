@@ -8,7 +8,7 @@ module.exports = (I) => class IPUnit extends I {
 		OnEnterLocalVisibilityClient.netId = this.netId;
 		OnEnterLocalVisibilityClient.count = 0;
 		OnEnterLocalVisibilityClient.health = this.health.total;
-		OnEnterLocalVisibilityClient.currentHealth = this.currentHealth;
+		OnEnterLocalVisibilityClient.currentHealth = this.health.current;
 		this.sendTo_everyone(OnEnterLocalVisibilityClient, loadingStages.NOT_CONNECTED);
 		//console.log(OnEnterLocalVisibilityClient);
 	}

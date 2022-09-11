@@ -105,6 +105,11 @@ class Unit extends ExtendWTraits(GameObject, IHasTeam, ISpellable, ICharacter, I
 	isDead(){
 		return this.died;
 	}
+
+	canBeAttacked(){
+		return false;
+	}
+
 	/**
 	 * Returns if unit is able to move
 	 * @returns {Boolean}
@@ -147,8 +152,8 @@ class Unit extends ExtendWTraits(GameObject, IHasTeam, ISpellable, ICharacter, I
 		this.emit('respawn');
 		this.died = false;
 
-		this.currentHealth = this.health.total;
-		this.currentMana = this.mana.total;
+		this.health.current = this.health.total;
+		this.mana.current = this.mana.total;
 		
 		if(this.waypoints)
 			this.waypoints = [this.spawnPosition];

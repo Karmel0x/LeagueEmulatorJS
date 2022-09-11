@@ -25,6 +25,12 @@ global.Barracks['RED'] = global.Barracks['RED'] || {};
 
 module.exports = class Barrack extends ExtendWTraits(GameObject, IHasTeam) {
 
+	waveCount = 1;
+	damageBonus = 10;
+	healthBonus = 7;
+	minionLevel = 1;
+	unitNamePrefix = '';
+
 	/**
 	 * 
 	 * @param {String} team {BLUE/RED}
@@ -34,12 +40,8 @@ module.exports = class Barrack extends ExtendWTraits(GameObject, IHasTeam) {
 		super(...args);
 
 		global.Barracks[this.teamName][this.num] = this;
+		this.unitNamePrefix = (this.teamName == 'BLUE' ? 'Blue' : 'Red') + '_Minion_';
 	}
-
-	waveCount = 1;
-	damageBonus = 10;
-	healthBonus = 7;
-	minionLevel = 1;
 
 	/**
 	 * Send packet to client to spawn unit
@@ -60,15 +62,17 @@ module.exports = class Barrack extends ExtendWTraits(GameObject, IHasTeam) {
 		global.Teams.ALL.sendPacket(Barrack_SpawnUnit);
 		//console.debug(Barrack_SpawnUnit);
 	}
+
 	/**
 	 * Spawn minion at position of this barrack
 	 * @param {String} character (Basic/MechCannon/MechMelee/Wizard)
 	 * @returns {Minion}
 	 */
 	spawnUnit(character, options = {}){
-		character = 'Blue_Minion_Basic';
+		character = (options.unitNamePrefix || this.unitNamePrefix) + character;
 		return new Minion({barrack: this, character, ...options});
 	}
+	
 	/**
 	 * Spawn next minion wave at position of this barrack
 	 */
@@ -106,7 +110,7 @@ module.exports = class Barrack extends ExtendWTraits(GameObject, IHasTeam) {
 	 * 
 	 * @param {Object} spawnList {TEAM: [{netId, position}]}
 	 */
-	 static spawnAll(spawnList = Barracks){
+	static spawnAll(spawnList = Barracks){
 		for(let team in spawnList)
 			for(let num in spawnList[team])
 				new Barrack({

@@ -83,6 +83,15 @@ module.exports = (player, packet) => {
 				global.Barracks['RED'][0].spawnUnit('Basic').teleport(new Vector2(1000 + (i * 150), 600));
 			}
 		}
+		else if(commandArgs[0] === 'qqq'){
+			var characters = [
+				'Basic', 'MechCannon', 'Wizard', 'MechMelee', //'MechRange',
+			];
+			var j = parseInt(commandArgs[2] || 0);
+			for(let i = parseInt(commandArgs[1] || 1); i > 0; i--){
+				global.Barracks['RED'][0].spawnUnit(characters[j]).teleport(new Vector2(1000 + (i * 150), 600));
+			}
+		}
 		else if(commandArgs[0] === 'start'){
 			global.command_START_GAME = true;
 			player.chatBoxMessage('starting game');
@@ -148,7 +157,7 @@ module.exports = (player, packet) => {
 		}
 		else if(commandArgs[0] == 'hp'){
 			var hpPercent = parseInt(commandArgs[1] || 100);
-			player.currentHealth = player.health.total * hpPercent / 100;
+			player.health.current = player.health.total * hpPercent / 100;
 			player.OnEnterLocalVisibilityClient();
 		}
 		else if(commandArgs[0] == 'test'){
@@ -160,15 +169,26 @@ module.exports = (player, packet) => {
 		}
 		else if(commandArgs[0] == 'champion'){
 			var character = commandArgs[1] || 'Ezreal';
-			const Champion_ = require('../Game/League/Characters/Champions/' + character);
+			const Champion_ = require('../Game/LeagueData/Characters/' + character);
 			player.character = new Champion_(player);
 			player.ChangeCharacterData(character);
 			player.chatBoxMessage('switching champion to:', character);
 		}
 		else if(commandArgs[0] == 'info'){
-			if(commandArgs[1] == 'position'){
+			if(!commandArgs[1]){
+				player.chatBoxMessage('possible info types: position, stats');
+			}
+			else if(commandArgs[1] == 'position'){
 				console.log(commandArgs, player.position);
 				player.chatBoxMessage(...commandArgs, player.position.x, player.position.y);
+			}
+			else if(commandArgs[1] == 'stats'){
+				var message = '';
+				for(var i in player.baseStats)
+					if(player[i])
+						message += ` | ${i}: ${player[i].total}`;
+	
+				player.chatBoxMessage(message);
 			}
 		}
 		else if(commandArgs[0] == 'goto'){
@@ -203,14 +223,6 @@ module.exports = (player, packet) => {
 			var SystemMessage = global.Network.createPacket('SystemMessage');
 			SystemMessage.message = commandArgs.join(' ');
 			player.sendPacket(SystemMessage);
-		}
-		else if(commandArgs[0] == 'stats'){
-			var message = '';
-			for(var i in player.baseStats)
-				if(player[i])
-					message += ` | ${i}: ${player[i].total}`;
-
-			player.chatBoxMessage(message);
 		}
 		else if(commandArgs[0] == 'gold'){
 			player.gold = parseInt(commandArgs[1] || 10000);

@@ -1,6 +1,5 @@
 var Unit = require('./Unit');
 const loadingStages = require("../../Constants/loadingStages");
-const slotId = require('../../Constants/slotId');
 
 const Turrets = {
 	BLUE: {

@@ -26,7 +26,7 @@ const replicantList = {
 			'armor_percentBonus', 'magicPenetration_percentBonus',
 			'healthRegen', 'manaRegen',
 		],[
-			'currentHealth', 'currentMana', 'health', 'mana',
+			'health.current', 'mana.current', 'health', 'mana',
 			'experience', 'lifeTime', 'maxLifeTime', 'lifeTimeTicks',
 			'perceptionRange_flatMod', 'perceptionRange_percentMod',
 			'moveSpeed', 'size', 'flatPathfindingRadiusMod',
@@ -47,7 +47,7 @@ const replicantList = {
 			'manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16',
 			'manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16',
 		],[
-			'mana', 'currentMana', 'actionState', 'isMagicImmune', 'isInvulnerable',
+			'mana', 'mana.current', 'actionState', 'isMagicImmune', 'isInvulnerable',
 			'attackDamage.baseValue', 'armor.total',
 			'resist.total', 'attackSpeedMultiplier.total', 'attackDamage.flatBonus', 'attackDamage.percentBonus', 
 			'abilityPower.total', 'healthRegen.total',
@@ -55,7 +55,7 @@ const replicantList = {
 			'armor_percentBonus', 'magicPenetration_percentBonus',
 			'healthRegen', 'manaRegen',
 		],[
-			'currentHealth', 'health.total', 'perceptionRange.flatBonus', 'perceptionRange.percentBonus',
+			'health.current', 'health.total', 'perceptionRange.flatBonus', 'perceptionRange.percentBonus',
 			'moveSpeed.total', 'size.total',
 		],[
 
@@ -73,12 +73,12 @@ const replicantList = {
 			'manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16',
 			'manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16',
 		],[
-			'currentHealth', 'isInvulnerable', 'isTargetable', 'isTargetableToTeam',
+			'health.current', 'isInvulnerable', 'isTargetable', 'isTargetableToTeam',
 		],[
 			'armor_percentBonus', 'magicPenetration_percentBonus',
 			'healthRegen', 'manaRegen',
 		],[
-			'currentHealth', 'health.total', 'perceptionRange.flatBonus', 'perceptionRange.percentBonus',
+			'health.current', 'health.total', 'perceptionRange.flatBonus', 'perceptionRange.percentBonus',
 			'moveSpeed.total', 'size.total',
 		],[
 
@@ -96,8 +96,8 @@ const replicantList = {
 			'manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16',
 			'manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16','manaCost16',
 		],[
-			'currentHealth', 'health.total',
-			'lifeTime', 'maxLifeTime','lifeTimeTicks', 'mana.total', 'currentMana',
+			'health.current', 'health.total',
+			'lifeTime', 'maxLifeTime','lifeTimeTicks', 'mana.total', 'mana.current',
 			'actionState',
 			'isMagicImmune', 'isInvulnerable', 'isPhysicalImmune', 'isLifestealImmune',
 			'attackDamage.baseValue', 'armor.total', 'resist.total', 'attackSpeedMultiplier.total',
@@ -277,8 +277,8 @@ module.exports = class OnReplication extends BasePacket {
 		this.UpdateReplicant(unit, unit.healthRegen?.baseValue, 2, 2);
 		this.UpdateReplicant(unit, unit.manaRegen?.baseValue, 2, 3);
 
-		this.UpdateReplicant(unit, unit.currentHealth, 3, 0);//ok
-		this.UpdateReplicant(unit, unit.currentMana, 3, 1);//ok
+		this.UpdateReplicant(unit, unit.health?.current, 3, 0);//ok
+		this.UpdateReplicant(unit, unit.mana?.current, 3, 1);//ok
 		this.UpdateReplicant(unit, unit.health?.total, 3, 2);//ok
 		this.UpdateReplicant(unit, unit.mana?.total, 3, 3);//ok
 		this.UpdateReplicant(unit, unit.expTotal, 3, 4);//ok

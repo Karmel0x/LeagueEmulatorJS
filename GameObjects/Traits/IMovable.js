@@ -1,7 +1,7 @@
 
 const { Vector2 } = require('three');
 const Pathfinding = require("../../Game/Components/Pathfinding");
-const IStat = require("./IStat");
+const {IStat} = require("./IStat");
 const PositionHelper = require("../../Functions/PositionHelper");
 
 

@@ -49,13 +49,13 @@ class Game {
 		
 		var bluePlayersUnits = global.getUnitsF('BLUE', 'Player');
 		for(let player_num in bluePlayersUnits){
-			var player = bluePlayersUnits[player_num];
-			TeamRosterUpdate.teamBlue_playerIds.push(player.info.playerId);
+			var player2 = bluePlayersUnits[player_num];
+			TeamRosterUpdate.teamBlue_playerIds.push(player2.info.playerId);
 		}
 		var redPlayersUnits = global.getUnitsF('RED', 'Player');
 		for(let player_num in redPlayersUnits){
-			var player = redPlayersUnits[player_num];
-			TeamRosterUpdate.teamRed_playerIds.push(player.info.playerId);
+			var player2 = redPlayersUnits[player_num];
+			TeamRosterUpdate.teamRed_playerIds.push(player2.info.playerId);
 		}
 
 		TeamRosterUpdate.currentBlue = TeamRosterUpdate.teamBlue_playerIds.length;

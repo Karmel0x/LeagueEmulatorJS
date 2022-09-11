@@ -81,13 +81,6 @@ const IMovable = require('../Traits/IMovable');
 
 
 class Minion extends ExtendWTraits(Unit, IDefendable, IAttackable, IMovable) {
-	get rewardExp(){
-		return this.character.exp;
-	}
-	get rewardGold(){
-		return this.character.gold + this.character.goldPer90 * parseInt(global.Game.Timer / 90);
-	}
-	
 	/**
 	 * 
 	 * @param {Object} options
@@ -140,6 +133,70 @@ class Minion extends ExtendWTraits(Unit, IDefendable, IAttackable, IMovable) {
 
 		this.setWaypoints(lanePath);
 	}
+
+
+
+	// on die / death functions ===========================================================
+	
+	/**
+	 * @todo shall return barrack level
+	 */
+	get level(){
+		return 1;
+	}
+	get rewardExp(){
+		var character = this.character.constructor;
+		return character.reward.exp;
+	}
+	get rewardGold(){
+		var character = this.character.constructor;
+		return character.reward.gold + (character.rewardPerLevel.gold * this.level);
+	}
+
+	killRewarded = false;
+	onDieRewards(source){
+		console.log('onDieRewards', source.team, this.team, source.type);
+		// make sure once again if we should reward killer
+		if(source.team == this.team || this.killRewarded)
+			return;
+
+		this.killRewarded = true;
+
+		// Experience from minion deaths is split between all champions within 1400 range.
+		var range = 1400;
+		var enemyUnitsInRange = this.getEnemyUnitsInRange(range);
+		var enemyPlayersInRange = this.Filters().filterByType(enemyUnitsInRange, 'Player');
+		enemyPlayersInRange = enemyPlayersInRange.filter(v => v != source);
+
+		var numberOfPlayersToSplitExp = enemyPlayersInRange.length;
+		if(source.type == 'Player')
+			numberOfPlayersToSplitExp += 1;
+
+		var rewardExp = this.rewardExp;
+		if(numberOfPlayersToSplitExp <= 1)
+			rewardExp *= 0.92;
+		else
+			rewardExp *= 1.2;
+
+		rewardExp /= numberOfPlayersToSplitExp;
+
+		// give gold and exp to killer no matter if in range
+		if(source.type == 'Player'){
+			source.expUp(rewardExp);
+			source.goldUp(this.rewardGold);
+		}
+
+		// give exp to nearby enemies
+		enemyPlayersInRange.forEach(enemyUnit => {
+			enemyUnit.expUp(rewardExp);
+		});
+	}
+
+	onDie(source){
+		this.onDieRewards(source);
+	}
+	
+	// =================================================================================
 }
 
 

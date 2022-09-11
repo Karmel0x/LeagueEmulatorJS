@@ -106,7 +106,7 @@ Buffer.prototype.write1 = function(type, value) {
 	switch(type){
 		case 'bool':variable = this.writeUInt8(!!value, this.off);break;
 		case 'uint8':variable = this.writeUInt8(value, this.off);break;
-		case 'uint16':variable = this.writeInt16LE(value, this.off);break;
+		case 'uint16':variable = this.writeUInt16LE(value, this.off);break;
 		case 'uint32':variable = this.writeUInt32LE(value, this.off);break;
 		case 'uint64':variable = this.writeBigUInt64LE(BigInt(value), this.off);break;
 

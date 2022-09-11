@@ -1,18 +1,30 @@
 
 module.exports = (I) => class IDefendable extends I {
 
+	damageReductionFromArmor(){
+		return 100 / (100 + this.armor.total);
+	}
 	damage(source, dmg){
-		//console.log('damage', dmg, this.currentHealth, this.health.total);
-		dmg.ad -= this.armor.total;
-		this.currentHealth -= dmg.ad;
+		//console.log('damage', dmg, this.health.current, this.health.total);
+		dmg.ad = dmg.ad * this.damageReductionFromArmor();
 
-		if(this.currentHealth <= 0)
+		if(dmg.ad <= 0)
+			return;
+
+		// do not die while testing @todo remove it
+		if(this.type == 'Player')
+			this.health.minimum = 1;
+
+		this.health.current -= dmg.ad;
+
+		if(this.health.current <= 0)
 			this.die(source);
 
 		this.OnEnterLocalVisibilityClient();
 	}
+
 	die(source){
-		this.currentHealth = 0;
+		this.health.current = 0;
 		this.died = Date.now() / 1000;
 		this.onDie(source);
 		global.Teams['ALL'].vision(this, false);
@@ -26,12 +38,13 @@ module.exports = (I) => class IDefendable extends I {
 	onDie(source){
 		// override
 	}
+	
+	canBeAttacked(){
+		return !this.died;
+	}
 
 	heal(hp){
-		this.currentHealth += hp;
-		if(this.currentHealth > this.health.total)
-			this.currentHealth = this.health.total;
-
+		this.health.current += hp;
 		this.OnEnterLocalVisibilityClient();
 	}
 	healPercent(hpPercent){

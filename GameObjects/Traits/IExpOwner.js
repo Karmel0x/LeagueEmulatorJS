@@ -1,26 +1,13 @@
 
 const spellLevelMax = [5, 5, 5, 3];
 const ExpCurve = [
-	0,
-	280.0, 660.0, 1140.0, 1720.0, 2400.0, 3180.0,
-	4060.0, 5040.0, 6120.0, 7300.0, 8580.0, 9960.0,
-	11440.0,
-	13020.0,
-	14700.0,
-	16480.0,
-	18360.0,
-	19060.0,
-	19760.0,
-	20460.0,
-	21160.0,
-	21860.0,
-	22560.0,
-	23260.0,
-	23960.0,
-	24660.0,
-	25360.0,
-	26060.0,
-	26760.0
+	0, 280, 660, 1140, 1720, 2400,
+	3180, 4060, 5040, 6120, 7300, 8580,
+	9960, 11440, 13020, 14700, 16480, 18360,
+
+	19060, 19760, 20460, 21160,
+	21860, 22560, 23260, 23960,
+	24660, 25360, 26060, 26760,
 ];
 
 module.exports = (I) => class IExpOwner extends I {
@@ -37,14 +24,25 @@ module.exports = (I) => class IExpOwner extends I {
 	summonerSpellsEnabled = [true, true];
 
 	/**
+	 * Increase gold
+	 * @param {Number} amount 
+	 */
+	goldUp(amount){
+		this.gold += amount;
+
+		this.charStats_send();
+		console.log('goldUp', amount);
+	}
+	
+	/**
 	 * Increase exp and level up if needed
 	 * @param {Number} amount 
 	 */
 	expUp(amount){
 		this.exp += amount;
 		this.expTotal += amount;
-		while(this.exp >= ExpCurve[this.level]){
-			this.exp -= ExpCurve[this.level];
+		while(this.expTotal >= ExpCurve[this.level]){
+			//this.exp -= ExpCurve[this.level];
 			this.levelUp(false);
 		}
 

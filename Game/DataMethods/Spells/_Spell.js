@@ -20,6 +20,8 @@ module.exports = class _Spell {
 	_lastCastTime = 0;
 	_cooldownTime = 0;
 
+	distanceCalc = 'CENTER_TO_EDGE';
+	
 	
 	constructor(options){
 		this.owner = options.owner || null;
@@ -36,8 +38,11 @@ module.exports = class _Spell {
 	preCast(spellData){
 		var target = spellData.target || spellData.packet;
 
-		var rangeSum = this.castRange;
-		var isInRange = this.owner.Filters().isInRange(target, rangeSum);
+		var range = this.castRange;
+		var filters = this.owner.Filters(this.distanceCalc);
+		var rangeSum = filters.getRangeSum(target, range);
+		var isInRange = filters.isInRangeFlat(target, rangeSum);
+		
 		if(!isInRange)
 			this.owner.moveWithCallback(target, () => this.cast(spellData), rangeSum);
 

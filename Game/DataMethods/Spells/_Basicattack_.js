@@ -10,6 +10,7 @@ module.exports = class _Basicattack extends _Spell {
 	castRange = 0;
 	missileSpeed = 2000;
 
+	distanceCalc = 'EDGE_TO_EDGE';
 
 	constructor(options){
 		super(options);
@@ -77,7 +78,8 @@ module.exports = class _Basicattack extends _Spell {
 		
 		this.owner.sendTo_vision(Basic_Attack);
 	}
-	attackAnsCurrentUnit = 0;
+	
+	attackAnsCurrentUnit = 0;//@todo reset in on move?
 	attackAns(options){
 		if(this.attackAnsCurrentUnit != options.missile.target.netId){
 			this.attackAnsCurrentUnit = options.missile.target.netId;
@@ -86,6 +88,7 @@ module.exports = class _Basicattack extends _Spell {
 		else
 			this.nextAttackAns(options);
 	}
+
 	/**
 	 * 
 	 * @param {Unit} owner

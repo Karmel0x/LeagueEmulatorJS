@@ -6,7 +6,7 @@
  */
 module.exports = (I) => class IDieReward extends I {
 
-	rewardExp = 0;
-	rewardGold = 0;
+	get rewardExp(){}
+	get rewardGold(){}
 	
 };
