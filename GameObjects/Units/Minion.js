@@ -86,50 +86,44 @@ class Minion extends ExtendWTraits(Unit, IDefendable, IAttackable, IMovable) {
 	 * @param {Object} options
 	 * @param {Barrack} options.barrack
 	 */
-	constructor(...args){
-		args[0].spawnPosition = args[0].spawnPosition || args[0].barrack.position;
-		args[0].team = args[0].team || args[0].barrack.team;
-		super(...args);
-		this.barrack = args[0].barrack;
+	constructor(options){
+		options.spawnPosition = options.spawnPosition || options.barrack.position;
+		options.team = options.team || options.barrack.team;
+		super(options);
+		
+		this.barrack = options.barrack;
 
 		//console.log(this);
 		this.initialized();
+
+		this.on('noTargetsInRange', () => {
+			this.moveLane();
+		});
 	}
 	destructor(){
 		removeGlobal(this);
 	}
 	spawn(){
-		this.barrack.spawnUnitAns(this.netId, this.character.id);
+		this.barrack?.spawnUnitAns(this.netId, this.character.id);
 
 		super.spawn();
-		this.moveLane(this.barrack.teamName, this.barrack.num);
 	}
-	/**
-	 * Get the nearest point to the end of the path
-	 * @param {Vector2} position 
-	 * @param {Array.<Vector2>} arrayVector2 
-	 * @returns {Vector2}
-	 */
-	static getFromNearestToEnd(position, arrayVector2){
-		var nearest = 0;
-		arrayVector2.reduce((previousValue, currentValue, index) => {
-			let dist = position.distanceTo(currentValue);
-			if(dist < previousValue){
-				nearest = index;
-				return dist;
-			}
-			return previousValue;
-		}, 25000);
-		return arrayVector2.slice(nearest);
-	}
+
 	/**
 	 * Set waypoints for the unit to pathing
-	 * @param {String} team (BLUE/RED)
-	 * @param {Number} lane (0/1/2 TOP/MID/BOT)
+	 * @param {String} [team=this.barrack.teamName] (BLUE/RED)
+	 * @param {Number} [lane=this.barrack.num] (0/1/2 TOP/MID/BOT)
 	 */
-	moveLane(team, lane){
+	moveLane(team = null, lane = null){
+		console.log('moveLane', this.constructor.name, this.netId);
+		team = team || this.barrack?.teamName;
+		lane = lane || this.barrack?.num;
+
+		if(!lanePaths[team]?.[lane])
+			return;
+
 		var lanePath = lanePaths[team][lane].map(a => a.clone());
-		lanePath = Minion.getFromNearestToEnd(this.position, lanePath);
+		lanePath = this.Filters().getFromNearestToEnd(lanePath);
 
 		this.setWaypoints(lanePath);
 	}
@@ -154,6 +148,11 @@ class Minion extends ExtendWTraits(Unit, IDefendable, IAttackable, IMovable) {
 	}
 
 	killRewarded = false;
+
+	/**
+	 * 
+	 * @param {Unit} source killer
+	 */
 	onDieRewards(source){
 		console.log('onDieRewards', source.team, this.team, source.type);
 		// make sure once again if we should reward killer

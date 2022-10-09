@@ -23,6 +23,9 @@ global.Barracks['BLUE'] = global.Barracks['BLUE'] || {};
 global.Barracks['RED'] = global.Barracks['RED'] || {};
 
 
+/**
+ * @todo rename to `Spawner` ?
+ */
 module.exports = class Barrack extends ExtendWTraits(GameObject, IHasTeam) {
 
 	waveCount = 1;
@@ -32,12 +35,12 @@ module.exports = class Barrack extends ExtendWTraits(GameObject, IHasTeam) {
 	unitNamePrefix = '';
 
 	/**
-	 * 
-	 * @param {String} team {BLUE/RED}
-	 * @param {Number} num {0=TOP/1=MID/2=BOT}
+	 * @param {Object} options
+	 * @param {String} options.team {BLUE/RED}
+	 * @param {Number} options.num {0=TOP/1=MID/2=BOT}
 	 */
-	constructor(...args){
-		super(...args);
+	constructor(options){
+		super(options);
 
 		global.Barracks[this.teamName][this.num] = this;
 		this.unitNamePrefix = (this.teamName == 'BLUE' ? 'Blue' : 'Red') + '_Minion_';

@@ -143,6 +143,11 @@ module.exports = (player, packet) => {
 		//		console.debug = console.debug_mp || console.debug;
 		//	}
 		//}
+		else if(commandArgs[0] == 'packetInspector'){
+			global.Logging.changeOptions({
+				packet: Logging.output.websocket,
+			});
+		}
 		else if(commandArgs[0] == 'levelup'){
 			var levelCount = parseInt(commandArgs[1] || 1);
 			for(let i = levelCount; i > 0; i--)

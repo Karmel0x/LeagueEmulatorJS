@@ -10,6 +10,11 @@ const ExpCurve = [
 	24660, 25360, 26060, 26760,
 ];
 
+/**
+ * Trait for units that can be leveled up
+ * @class
+ * @param {GameObject} I
+ */
 module.exports = (I) => class IExpOwner extends I {
 
 	exp = 0;

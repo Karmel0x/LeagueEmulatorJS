@@ -1,4 +1,11 @@
 
+const IStatOwner = require("./IStatOwner");
+
+/**
+ * Trait for units that can be attacked
+ * @class
+ * @param {GameObject.<IStatOwner>} I
+ */
 module.exports = (I) => class IDefendable extends I {
 
 	damageReductionFromArmor(){

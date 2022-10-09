@@ -94,10 +94,15 @@ class UndoHistory {
 }
 
 
+/**
+ * Trait for units that has inventory (can hold items)
+ * @class
+ * @param {GameObject} I
+ */
 module.exports = (I) => class IInventory extends I {
 
-    constructor(...args){
-		super(...args);
+    constructor(options){
+		super(options);
 
 		this.UndoHistory = new UndoHistory(this);
     }

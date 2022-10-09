@@ -3,38 +3,38 @@ const loadingStages = require("../../Constants/loadingStages");
 
 const Turrets = {
 	BLUE: {
-		0: {position: {x: 10097.618, y:   808.733}, info: {name: 'Turret_T1_R_03_A'}, character: 'ChaosTurretWorm'},
-		1: {position: {x:  6512.527, y:  1262.615}, info: {name: 'Turret_T1_R_02_A'}, character: 'ChaosTurretWorm'},
-		2: {position: {x:  3747.255, y:  1041.044}, info: {name: 'Turret_T1_C_07_A'}, character: 'ChaosTurretWorm'},
+		0: {position: {x: 10097.618, y:   808.733}, info: {name: 'Turret_T1_R_03_A'}, character: 'OrderTurretNormal2'},//outer
+		1: {position: {x:  6512.527, y:  1262.615}, info: {name: 'Turret_T1_R_02_A'}, character: 'OrderTurretNormal'},//inner
+		2: {position: {x:  3747.255, y:  1041.044}, info: {name: 'Turret_T1_C_07_A'}, character: 'OrderTurretDragon'},//inhib
 
-		3: {position: {x:  5448.357, y:  6169.100}, info: {name: 'Turret_T1_C_05_A'}, character: 'ChaosTurretWorm'},
-		4: {position: {x:  4656.998, y:  4591.909}, info: {name: 'Turret_T1_C_04_A'}, character: 'ChaosTurretWorm'},
-		5: {position: {x:  3233.994, y:  3447.242}, info: {name: 'Turret_T1_C_03_A'}, character: 'ChaosTurretWorm'},
-		6: {position: {x:  1341.633, y:  2029.984}, info: {name: 'Turret_T1_C_01_A'}, character: 'ChaosTurretWorm'},
-		7: {position: {x:  1768.192, y:  1589.465}, info: {name: 'Turret_T1_C_02_A'}, character: 'ChaosTurretWorm'},
+		3: {position: {x:  5448.357, y:  6169.100}, info: {name: 'Turret_T1_C_05_A'}, character: 'OrderTurretNormal2'},//outer
+		4: {position: {x:  4656.998, y:  4591.909}, info: {name: 'Turret_T1_C_04_A'}, character: 'OrderTurretNormal'},//inner
+		5: {position: {x:  3233.994, y:  3447.242}, info: {name: 'Turret_T1_C_03_A'}, character: 'OrderTurretDragon'},//inhib
+		6: {position: {x:  1341.633, y:  2029.984}, info: {name: 'Turret_T1_C_01_A'}, character: 'OrderTurretAngel'},//nexus
+		7: {position: {x:  1768.192, y:  1589.465}, info: {name: 'Turret_T1_C_02_A'}, character: 'OrderTurretAngel'},//nexus
 
-		8: {position: {x:  -236.047, y:   -53.322}, info: {name: 'Turret_OrderTurretShrine_A'}, character: 'ChaosTurretWorm'},
+		8: {position: {x:  -236.047, y:   -53.322}, info: {name: 'Turret_OrderTurretShrine_A'}, character: 'OrderTurretShrine'},
 			
-		9: {position: {x:   574.655, y: 10220.471}, info: {name: 'Turret_T1_L_03_A'}, character: 'ChaosTurretWorm'},
-		10:{position: {x:  1106.263, y:  6465.252}, info: {name: 'Turret_T1_L_02_A'}, character: 'ChaosTurretWorm'},
-		11:{position: {x:   802.810, y:  4052.360}, info: {name: 'Turret_T1_C_06_A'}, character: 'ChaosTurretWorm'},
+		9: {position: {x:   574.655, y: 10220.471}, info: {name: 'Turret_T1_L_03_A'}, character: 'OrderTurretNormal2'},//outer
+		10:{position: {x:  1106.263, y:  6465.252}, info: {name: 'Turret_T1_L_02_A'}, character: 'OrderTurretNormal'},//inner
+		11:{position: {x:   802.810, y:  4052.360}, info: {name: 'Turret_T1_C_06_A'}, character: 'OrderTurretDragon'},//inhib
 	},
 	RED: {
-		0: {position: {x: 13459.614, y:  4284.239}, info: {name: 'Turret_T2_R_03_A'}, character: 'ChaosTurretWorm'},
-		1: {position: {x: 12920.789, y:  8005.292}, info: {name: 'Turret_T2_R_02_A'}, character: 'ChaosTurretWorm'},
-		2: {position: {x: 13205.825, y: 10474.619}, info: {name: 'Turret_T2_R_01_A'}, character: 'ChaosTurretWorm'},
+		0: {position: {x: 13459.614, y:  4284.239}, info: {name: 'Turret_T2_R_03_A'}, character: 'ChaosTurretWorm2'},//outer
+		1: {position: {x: 12920.789, y:  8005.292}, info: {name: 'Turret_T2_R_02_A'}, character: 'ChaosTurretWorm'},//inner
+		2: {position: {x: 13205.825, y: 10474.619}, info: {name: 'Turret_T2_R_01_A'}, character: 'ChaosTurretGiant'},//inhib
 
-		3: {position: {x:  8548.805, y:  8289.496}, info: {name: 'Turret_T2_C_05_A'}, character: 'ChaosTurretWorm'},
-		4: {position: {x:  9361.072, y:  9892.624}, info: {name: 'Turret_T2_C_04_A'}, character: 'ChaosTurretWorm'},
-		5: {position: {x: 10743.581, y: 11010.062}, info: {name: 'Turret_T2_C_03_A'}, character: 'ChaosTurretWorm'},
-		6: {position: {x: 12662.488, y: 12442.701}, info: {name: 'Turret_T2_C_01_A'}, character: 'ChaosTurretWorm'},
-		7: {position: {x: 12118.147, y: 12876.629}, info: {name: 'Turret_T2_C_02_A'}, character: 'ChaosTurretWorm'},
+		3: {position: {x:  8548.805, y:  8289.496}, info: {name: 'Turret_T2_C_05_A'}, character: 'ChaosTurretWorm2'},//outer
+		4: {position: {x:  9361.072, y:  9892.624}, info: {name: 'Turret_T2_C_04_A'}, character: 'ChaosTurretWorm'},//inner
+		5: {position: {x: 10743.581, y: 11010.062}, info: {name: 'Turret_T2_C_03_A'}, character: 'ChaosTurretGiant'},//inhib
+		6: {position: {x: 12662.488, y: 12442.701}, info: {name: 'Turret_T2_C_01_A'}, character: 'ChaosTurretNormal'},//nexus
+		7: {position: {x: 12118.147, y: 12876.629}, info: {name: 'Turret_T2_C_02_A'}, character: 'ChaosTurretNormal'},//nexus
 
-		8: {position: {x: 14157.025, y: 14456.353}, info: {name: 'Turret_ChaosTurretShrine_A'}, character: 'ChaosTurretWorm'},
+		8: {position: {x: 14157.025, y: 14456.353}, info: {name: 'Turret_ChaosTurretShrine_A'}, character: 'ChaosTurretShrine'},
 
-		9: {position: {x:  3911.675, y: 13654.815}, info: {name: 'Turret_T2_L_03_A'}, character: 'ChaosTurretWorm'},
-		10:{position: {x:  7536.523, y: 13190.815}, info: {name: 'Turret_T2_L_02_A'}, character: 'ChaosTurretWorm'},
-		11:{position: {x: 10261.900, y: 13465.911}, info: {name: 'Turret_T2_L_01_A'}, character: 'ChaosTurretWorm'},
+		9: {position: {x:  3911.675, y: 13654.815}, info: {name: 'Turret_T2_L_03_A'}, character: 'ChaosTurretWorm2'},//outer
+		10:{position: {x:  7536.523, y: 13190.815}, info: {name: 'Turret_T2_L_02_A'}, character: 'ChaosTurretWorm'},//inner
+		11:{position: {x: 10261.900, y: 13465.911}, info: {name: 'Turret_T2_L_01_A'}, character: 'ChaosTurretGiant'},//inhib
 	}
 };
 
@@ -63,8 +63,8 @@ class Turret extends ExtendWTraits(Unit, IDefendable, IAttackable) {
 		this.announceDie(source);
 	}
 
-	constructor(...args){
-		super(...args);
+	constructor(options){
+		super(options);
 		
 		this.initialized();
 	}

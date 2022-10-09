@@ -3,11 +3,16 @@ const _Turret = require('../../../DataMethods/Characters/_Turret');
 /**
  * @abstract
  */
-module.exports = class _OuterTurret extends _Turret {
+module.exports = class _Turret_Nexus extends _Turret {
 	static package = require('./package');
 
+	static reward = {
+		globalGold: 150,
+		globalExp: 120,
+	};
+
 	static stats = {
-		health: 2550,
+		health: 1300,
 		healthRegen: 0,
 		mana: 0,
 		manaRegen: 0,
@@ -19,7 +24,7 @@ module.exports = class _OuterTurret extends _Turret {
 		attackSpeed: 1,
 		attackSpeedOffset: 0,
 		crit: 0,
-		attackRange: 775,
+		attackRange: 775,//750,
 		armor: {
 			baseValue: 65,
 			perLevel: 1,
@@ -31,4 +36,5 @@ module.exports = class _OuterTurret extends _Turret {
 		moveSpeed: 0,
 	};
 
+	//static maxLevel = 30;
 };

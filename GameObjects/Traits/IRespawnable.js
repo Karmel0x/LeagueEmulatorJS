@@ -1,14 +1,17 @@
 
+const IDefendable = require("./IDefendable");
+
 /**
- * Interface for units that can respawn.
- * @param {GameObject} I 
+ * Trait for units that can respawn
+ * @class
+ * @param {GameObject.<IDefendable>} I
  */
 module.exports = (I) => class IRespawnable extends I {
 
 	totalRespawnTime = 0;
 
-	constructor(...args){
-		super(...args);
+	constructor(options){
+		super(options);
 
 		this.on('die', () => {
 			this.onDie();

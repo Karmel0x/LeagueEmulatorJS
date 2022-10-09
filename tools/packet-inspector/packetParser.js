@@ -28,7 +28,7 @@ function packetParser(packet1) {
 		return false;
 
 	packet1.Id = packet1.Id ?? ++packetId;
-	packet1.Time = (packet1.Time ?? ((packet1.TimeS ?? 0) * 1000)).toFixed(3);
+	packet1.Time = Math.round((packet1.Time ?? ((packet1.TimeS ?? 0) * 1000)) * 1000) / 1000;
 	packet1.Channel = packet1.Channel || findChannelIdByPacketId(buffer.readUInt8(0));
 
 	var bytes = buffer.toString('hex').match(/../g)?.join(' ') || '';

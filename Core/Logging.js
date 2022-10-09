@@ -57,7 +57,7 @@ class Logging {
 				return;
 
 			Logging.ws.sendMsg({
-				cmd: 'addpacket',
+				cmd: 'addpacketforall',
 				data: {
 					channel: arguments[0].channel || '',
 					bytes: arguments[0].bytes || '',
@@ -66,6 +66,8 @@ class Logging {
 			});
 		}
 	}
+
+	static options = {};
 
 	/**
 	 * Set where log should output (none/console/websocket/file)

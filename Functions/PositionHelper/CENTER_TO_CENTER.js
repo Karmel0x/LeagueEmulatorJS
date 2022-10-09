@@ -19,8 +19,8 @@ class PositionHelper__CENTER_TO_CENTER extends _PositionHelper {
 	/**
 	 * Get the distance between source and target
 	 * use distanceTo on Vector2 if possible
-	 * @param {(Vector2|GameObject)} source or source.position
-	 * @param {(Vector2|GameObject)} target or target.position
+	 * @param {Vector2|GameObject} source|source.position
+	 * @param {Vector2|GameObject} target|target.position
 	 * @return {Vector2}
 	*/
 	static distanceBetween(source, target){
@@ -82,9 +82,9 @@ class PositionHelper__CENTER_TO_CENTER extends _PositionHelper {
 	}
 
 	/**
-	 * @param {(Vector2|GameObject)} source or source.position
-	 * @param {(Vector2|GameObject)} target or target.position
-	 * @param {Number|Object} range or {minimum, maximum}
+	 * @param {Vector2|GameObject} source|source.position
+	 * @param {Vector2|GameObject} target|target.position
+	 * @param {Number|Object} range|{minimum, maximum}
 	 * @returns {Vector2}
 	 */
 	static getPositionBetweenRange(source, target, range){
@@ -106,8 +106,8 @@ class PositionHelper__CENTER_TO_CENTER extends _PositionHelper {
 
 	/**
 	 * may be used, for example, to move a unit to distance where it can attack a target
-	 * @param {(Vector2|GameObject)} source or source.position
-	 * @param {(Vector2|GameObject)} target or target.position
+	 * @param {Vector2|GameObject} source|source.position
+	 * @param {Vector2|GameObject} target|target.position
 	 * @param {Number} range
 	 * @returns 
 	 */

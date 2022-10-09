@@ -25,7 +25,7 @@ const _replayreaders = require('../_replayreaders');
 var replayUnpacked;
 var pId = 0;
 
-wss.onMessage = (data) => {
+wss.onMessage = (ws, data) => {
 
 	var res = JSON.parse(data);
 	console.log(res);
@@ -33,22 +33,37 @@ wss.onMessage = (data) => {
 	if(res.cmd == 'loadpackets'){
 		
 		let offset = res.offset || 0;
-		let limit = (res.limit || 5000) + offset;
-		let packetnames = res.packetnames || [];
-		for(let i = offset; i < replayUnpacked.length && i < limit; i++){
+		let limit = (res.limit || 2000) + offset;
+		let packetsearch = res.packetsearch || [];
+		for(let i = offset, l = replayUnpacked.length, ll = 0; i < l && ll < limit;i++){
 			var packetData = packetParser(replayUnpacked[i], i);
 
 			if(!packetData)
 				continue;
-			if(packetnames && packetnames.length && !packetnames.includes(packetData.cmdName))
-				continue;
+			if(packetsearch && packetsearch.length){
+				
+				packetsearch = packetsearch.map(v => v.toLowerCase());
+				var found = packetsearch.some(v => 
+					(packetData.cmdName && packetData.cmdName.toLowerCase().includes(v))
+					|| (packetData.channelName && packetData.channelName.toLowerCase().includes(v))
+					|| (packetData.Parsed && packetData.Parsed.toLowerCase().includes(v))
+					|| (packetData.Bytes && packetData.Bytes.toLowerCase().includes(v))
+				);
 
-			wss.clients.sendToAll(JSON.stringify({
+				if(!found)
+					continue;
+			}
+
+			ws.sendJson({
 				cmd: 'newpacket',
 				packet: packetData,
-			}));
-
+			});
+			ll++;
 		}
+
+		ws.sendJson({
+			cmd: 'endloading',
+		});
 	}
 	//else if(res.cmd == 'initialize_client'){
 	//	require('./init_client-network')();
@@ -70,15 +85,15 @@ wss.onMessage = (data) => {
 		var replayList = fs.readdirSync(replayDir).filter((value) => {
 			return value.endsWith('.json') || value.endsWith('.lrpkt');
 		});
-		wss.clients.sendToAll(JSON.stringify({
+		ws.sendJson({
 			cmd: 'loadreplaylist',
 			list: replayList,
-		}));
+		});
 	}
 	else if(res.cmd == 'loadreplayfile'){
 		replayUnpacked = _replayreaders(replayDir + res.name);
 	}
-	else if(res.cmd == 'addpacket'){
+	else if(res.cmd == 'addpacket' || res.cmd == 'addpacketforall'){
 		var bytesHexList = res.data.bytes.split("\n");
 
 		for(var i = 0; i < bytesHexList.length; i++){
@@ -106,10 +121,10 @@ wss.onMessage = (data) => {
 			if(!packetData)
 				return;
 
-			wss.clients.sendToAll(JSON.stringify({
+			(res.cmd == 'addpacketforall' ? wss.sendJsonToAll : ws.sendJson)({
 				cmd: 'newpacket',
 				packet: packetData,
-			}));
+			});
 		}
 	}
 

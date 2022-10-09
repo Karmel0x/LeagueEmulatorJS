@@ -9,6 +9,11 @@ const teamIdsR = {
 	400: 'MAX',
 };
 
+/**
+ * Trait for units which has team
+ * @class
+ * @param {GameObject} I
+ */
 module.exports = (I) => class IHasTeam extends I {
 
 	_team = teamIds.NEUTRAL;
@@ -29,11 +34,11 @@ module.exports = (I) => class IHasTeam extends I {
 	num = 0;
 
 
-	constructor(...args){
-		super(...args);
+	constructor(options){
+		super(options);
 
-		this.team = args[0].team || teamIds.NEUTRAL;
-		this.num = args[0].num || 0;
+		this.team = options.team || teamIds.NEUTRAL;
+		this.num = options.num || 0;
 	}
 
 	getTeam(){

@@ -1,4 +1,9 @@
 
+/**
+ * Trait for units which holds character (model, spells, ..)
+ * @class
+ * @param {GameObject} I
+ */
 module.exports = (I) => class ICharacter extends I {
 
 	_character = {};
@@ -15,10 +20,10 @@ module.exports = (I) => class ICharacter extends I {
 		this._character = char;
 	}
 
-	constructor(...args){
-		super(...args);
+	constructor(options){
+		super(options);
 
-		this.character = args[0].character;
+		this.character = options.character;
 	}
 	
 };

@@ -4,8 +4,8 @@ module.exports = class _PositionHelper {
 
 	/**
 	 * Get the angle as normalized Vector2 from source to target
-	 * @param {(Vector2|GameObject)} source or source.position
-	 * @param {(Vector2|GameObject)} target or target.position
+	 * @param {Vector2|GameObject} source|source.position
+	 * @param {Vector2|GameObject} target|target.position
 	 * @return {Vector2}
 	*/
 	static anglePosition(source, target){
@@ -20,8 +20,8 @@ module.exports = class _PositionHelper {
 
 	/**
 	 * Get random position in range
-	 * @param {?(Vector2|GameObject)} source
-	 * @param {Number} length
+	 * @param {Vector2|GameObject} [source]
+	 * @param {Number} [length]
 	 * @returns {Vector2}
 	 */
 	static getRandomPositionClamped(source = null, length = 10){
@@ -35,6 +35,26 @@ module.exports = class _PositionHelper {
 
 		return randomPositionClamped;
 	}
+	
+	/**
+	 * Get the nearest point to the end of the array
+	 * @param {Vector2} position 
+	 * @param {Array.<Vector2>} arrayVector2 
+	 * @returns {Vector2}
+	 */
+	 static getFromNearestToEnd(source, arrayVector2){
+		var sourcePosition = source.position || source;
+		var nearest = 0;
+		arrayVector2.reduce((previousValue, currentValue, index) => {
+			let dist = sourcePosition.distanceTo(currentValue);
+			if(dist < previousValue){
+				nearest = index;
+				return dist;
+			}
+			return previousValue;
+		}, 25000);
+		return arrayVector2.slice(nearest);
+	}
 
 	constructor(gameObject){
 		this.gameObject = gameObject;
@@ -44,5 +64,8 @@ module.exports = class _PositionHelper {
 	}
 	getRandomPositionClamped(length = 10){
 		return this.constructor.getRandomPositionClamped(this.gameObject, length);
+	}
+	getFromNearestToEnd(arrayVector2){
+		return this.constructor.getFromNearestToEnd(this.gameObject, arrayVector2);
 	}
 };

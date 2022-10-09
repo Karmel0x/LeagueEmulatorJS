@@ -7,8 +7,8 @@ const IMovable = require('../Traits/IMovable');
 
 class Dummytarget extends ExtendWTraits(GameObject, IMovable)  {
 
-	constructor(...args){
-		super(...args);
+	constructor(options){
+		super(options);
 		
 	}
 }

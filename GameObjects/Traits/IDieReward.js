@@ -1,8 +1,9 @@
 
 
 /**
- * Interface for units that can die.
- * @param {GameObject} I 
+ * Trait for units that will reward on die
+ * @class
+ * @param {GameObject} I
  */
 module.exports = (I) => class IDieReward extends I {
 

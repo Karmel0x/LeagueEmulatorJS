@@ -2,15 +2,16 @@
 const slotId = require('../../Constants/slotId');
 
 /**
- * Interface for units that can use spells.
- * @param {GameObject} I 
+ * Trait for units that can use spells
+ * @class
+ * @param {GameObject} I
  */
 module.exports = (I) => class ISpellable extends I {
 
 
 	spellSlots = {};
-	constructor(...args){
-		super(...args);
+	constructor(options){
+		super(options);
 
 		this.on('useSlot', (slot, packet) => {
 			if(slot >= slotId.Q && slot <= slotId.F)

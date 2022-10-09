@@ -1,9 +1,10 @@
 
 /**
- * Interface for units that can be buffed.
- * @param {GameObject} I 
+ * Trait for units that can be buffed
+ * @class
+ * @param {GameObject} I
  */
- module.exports = (I) => class IBuffable extends I {
+module.exports = (I) => class IBuffable extends I {
 
 	/**
 	 * Sending packet to client to add buff

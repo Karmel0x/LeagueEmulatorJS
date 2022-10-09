@@ -38,15 +38,15 @@ module.exports = class GameObject extends EventEmitter {
 	/**
 	 * 
 	 * @param {Object} options
-	 * @param {Number} options.netId optional
-	 * @param {Vector2} options.spawnPosition or options.position
+	 * @param {Number} [options.netId]
+	 * @param {Vector2} options.spawnPosition|options.position
 	 */
-	constructor(...args){
-		super(...args);
+	constructor(options){
+		super(options);
 
-		this.netId = args[0].netId || ++global.lastNetId;
+		this.netId = options.netId || ++global.lastNetId;
 
-		this.spawnPosition = args[0].spawnPosition || args[0].position;
+		this.spawnPosition = options.spawnPosition || options.position;
 		this.position = this.spawnPosition;
 
 	}

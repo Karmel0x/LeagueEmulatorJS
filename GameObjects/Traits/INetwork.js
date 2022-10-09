@@ -1,15 +1,14 @@
 
 const loadingStages = require('../../Constants/loadingStages');
 
-
+/**
+ * 
+ * @class
+ * @param {Player} I
+ */
 module.exports = (I) => class INetwork extends I {
 
 	peer_num = -1;
-
-	constructor(...args){
-		super(...args);
-
-	}
 
 	sendPacket(packet, minStage = loadingStages.IN_GAME){
 		if(this.loadingStage < minStage)

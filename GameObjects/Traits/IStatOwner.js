@@ -1,13 +1,17 @@
 
 var {IStat, IStatLevelable, IStatStateable} = require('./IStat');
 
-
+/**
+ * 
+ * @class
+ * @param {GameObject} I
+ */
 module.exports = (I) => class IStatOwner extends I {
 
-	constructor(...args){
-		super(...args);
+	constructor(options){
+		super(options);
 
-		this.baseStats = args[0].stats || this.character?.constructor.stats || {};
+		this.baseStats = options.stats || this.character?.constructor.stats || {};
 		//console.log(this.baseStats);
 		var stats = this.baseStats;
 

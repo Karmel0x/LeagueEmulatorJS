@@ -6,7 +6,7 @@ const _Minion = require("../../../DataMethods/Characters/_Minion");
 /**
  * @abstract
  */
-module.exports = class Minion_Basic extends _Minion {
+module.exports = class _Minion_MechCannon extends _Minion {
 	static package = require('./package');
 
 	static reward = {

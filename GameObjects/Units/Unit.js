@@ -17,7 +17,6 @@ const IPUnit = require('./PacketTraits/IPUnit');
 const IBuffable = require('../Traits/IBuffable');
 const ISpellable = require('../Traits/ISpellable');
 const ICharacter = require('../Traits/ICharacter');
-const Filters = require('../Filters');
 
 
 class Unit extends ExtendWTraits(GameObject, IHasTeam, ISpellable, ICharacter, IDieReward, IExpOwner, IStatOwner, IPUnit, IBuffable) {
@@ -51,24 +50,24 @@ class Unit extends ExtendWTraits(GameObject, IHasTeam, ISpellable, ICharacter, I
 	/**
 	 * @param {Object} options
 	 * // GameObject
-	 * @param {Number} options.netId optional
-	 * @param {Vector2} options.spawnPosition or options.position
+	 * @param {Number} [options.netId]
+	 * @param {Vector2} options.spawnPosition|options.position
 	 * // ICharacter
 	 * @param {String|_Character} options.character
 	 * // IHasTeam
 	 * @param {Number|String} options.team
-	 * @param {Number} options.num optional
+	 * @param {Number} [options.num]
 	 * // IStatOwner
 	 * @param {Object} options.stats
 	 * // IMovable
 	 * @param {Number} options.stats.moveSpeed
 	 * // this.constructor
-	 * @param {Object} options.info optional
+	 * @param {Object} [options.info]
 	 */
-	constructor(...args){
-		super(...args);
+	constructor(options){
+		super(options);
 
-		this.info = args[0].info || {};
+		this.info = options.info || {};
 
 		appendGlobal(this);
 		console.debug(Date.now(), 'Created Unit', this.constructor.name, this.netId);

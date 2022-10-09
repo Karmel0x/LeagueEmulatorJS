@@ -13,12 +13,6 @@ class MovementSimulation {
 
 	Map = new Vector2(14000, 14000);
 
-	visibleForTeam = {
-		BLUE: {},
-		RED: {},
-		//NEUTRAL: {},
-	}
-	
 	/**
 	 * Broadcast vision for enemy
 	 */
@@ -30,11 +24,11 @@ class MovementSimulation {
 				global.Teams[unit.getEnemyTeam()].vision(unit, visibleForEnemy);
 			}
 
-			let visibleForTeam = !unit.died && unit.visibleForTeam2;
-			if(unit.visibleForTeam != visibleForTeam){
-				unit.visibleForTeam = visibleForTeam;
-				global.Teams[unit.getAllyTeam()].vision(unit, visibleForTeam);
-			}
+			//let visibleForTeam = !unit.died && unit.visibleForTeam2;
+			//if(unit.visibleForTeam != visibleForTeam){
+			//	unit.visibleForTeam = visibleForTeam;
+			//	global.Teams[unit.getAllyTeam()].vision(unit, visibleForTeam);
+			//}
 		});
 	}
 

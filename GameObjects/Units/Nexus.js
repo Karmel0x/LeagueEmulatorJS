@@ -4,10 +4,10 @@ const loadingStages = require("../../Constants/loadingStages");
 
 const Nexuses = {
 	BLUE: {
-		0: {netId: 0xFFF97DB5, position: {x:  1131.728, y:  1426.288}, character: 'OrderNexus'}//4294540725
+		0: {netId: 0xFFF97DB5, position: {x:  1131.728, y:  1426.288}, info: {name: 'HQ_T1'}, character: 'OrderNexus'}//4294540725
 	},
 	RED: {
-		0: {netId: 0xFFF02C0F, position: {x: 12760.906, y: 13026.066}, character: 'ChaosNexus'},//4293929999
+		0: {netId: 0xFFF02C0F, position: {x: 12760.906, y: 13026.066}, info: {name: 'HQ_T2'}, character: 'ChaosNexus'},//4293929999
 	},
 };
 
@@ -35,8 +35,8 @@ class Nexus extends ExtendWTraits(Unit, IDefendable) {
 	 * @param {Object} options
 	 * @param {String} options.team
 	 */
-	constructor(...args){
-		super(...args);
+	constructor(options){
+		super(options);
 
 		this.initialized();
 	}

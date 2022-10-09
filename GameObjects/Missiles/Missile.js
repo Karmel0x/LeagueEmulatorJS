@@ -38,25 +38,25 @@ class Missile extends ExtendWTraits(GameObject, IMovable) {
 	/**
 	 * @param {Object} options
 	 * // GameObject
-	 * @param {Number} options.netId optional
-	 * @param {Vector2} options.spawnPosition or options.position optional
+	 * @param {Number} [options.netId]
+	 * @param {Vector2} [options.spawnPosition|options.position]
 	 * // IMovable
-	 * @param {Number} options.stats.moveSpeed or options.speed
+	 * @param {Number} options.stats.moveSpeed|options.speed
 	 * // this.constructor
-	 * @param {Number} options.stats.attackRange or options.range
+	 * @param {Number} options.stats.attackRange|options.range
 	 * @param {Unit} options.owner
-	 * @param {Unit} options.target optional
+	 * @param {Unit} [options.target]
 	 */
-	constructor(...args){
-		args[0].spawnPosition = args[0].spawnPosition || args[0].owner.position;
-		args[0].stats = args[0].stats || {};
-		args[0].stats.moveSpeed = args[0].stats.moveSpeed || args[0].options.speed;
-		args[0].stats.attackRange = args[0].stats.attackRange || args[0].options.range;
-		super(...args);
+	constructor(options){
+		options.spawnPosition = options.spawnPosition || options.owner.position;
+		options.stats = options.stats || {};
+		options.stats.moveSpeed = options.stats.moveSpeed || options.options.speed;
+		options.stats.attackRange = options.stats.attackRange || options.options.range;
+		super(options);
 
-		this.owner = args[0].owner;
-		this.options = args[0].options || {};
-		this.target = args[0].target || null;
+		this.owner = options.owner;
+		this.options = options.options || {};
+		this.target = options.target || null;
 		this.initialize();
 
 		this.appendGlobal();
@@ -72,12 +72,22 @@ class Missile extends ExtendWTraits(GameObject, IMovable) {
 	async fire(target, windupPercent = 0){
 		target = typeof target == 'number' ? global.unitsNetId[target] : target;
 		if(!target)
-			return console.log('Missile.fire target is not a unit', target);
+			return console.log('Missile.fire:target is not a unit', target);
 
-		console.debug('Missile.fire',
-			'this.owner.netId', this.owner.netId, 'this.owner.position', this.owner.position,
-			'this.netId', this.netId, 'this.position', this.position,
-			'target.netId', target.netId, 'target.position', target.position);
+		//console.debug('Missile.fire', {
+		//	owner: {
+		//		netId: this.owner.netId,
+		//		position: this.owner.position,
+		//	},
+		//	this: {
+		//		netId: this.netId,
+		//		position: this.position,
+		//	},
+		//	target: {
+		//		netId: target.netId,
+		//		position: target.position,
+		//	},
+		//});
 
 		if(windupPercent){
 			// https://leagueoflegends.fandom.com/wiki/Basic_attack#Windup
@@ -88,7 +98,10 @@ class Missile extends ExtendWTraits(GameObject, IMovable) {
 			let cAttackTime = 1 / this.owner.attackSpeed.total;
 			let windup = bWindupTime + ((cAttackTime * windupP) - bWindupTime) * windupModifier;
 
-			console.debug('windup', windup, this.owner.attackSpeed);
+			//console.debug('Missile.fire:windupCalc', {
+			//	windup,
+			//	attackSpeed: this.owner.attackSpeed.total,
+			//});
 			await Promise.wait(windup * 1000);
 		}
 		this.fly(target);

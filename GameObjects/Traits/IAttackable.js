@@ -1,5 +1,13 @@
-const slotId = require("../../Constants/slotId");
 
+const slotId = require("../../Constants/slotId");
+const IStatOwner = require("./IStatOwner");
+const ISpellable = require("./ISpellable");
+
+/**
+ * Trait for units that can attack
+ * @class
+ * @param {GameObject.<IStatOwner, ISpellable>} I
+ */
 module.exports = (I) => class IAttackable extends I {
 
 
@@ -145,6 +153,7 @@ module.exports = (I) => class IAttackable extends I {
 		return this.acquisitionManual;
 	}
 
+	emitted_noTargetsInRange = false;
 	/**
 	 * Scan for enemy units in range and attack nearest one
 	 */
@@ -153,9 +162,14 @@ module.exports = (I) => class IAttackable extends I {
 		if(!target){
 			target = this.findTargetInAcquisitionRange();
 			if(!target){
+				if(!this.emitted_noTargetsInRange){
+					this.emitted_noTargetsInRange = true;
+					this.emit('noTargetsInRange');
+				}
 				return;
 			}
 		}
+		this.emitted_noTargetsInRange = false;
 
 		this.setAttackTarget(target);
 		this.spellSlots[slotId.A].cast({target});
@@ -180,8 +194,8 @@ module.exports = (I) => class IAttackable extends I {
 		});
 	}
 
-	constructor(...args){
-		super(...args);
+	constructor(options){
+		super(options);
 
 		this.on('respawn', () => {
 			this.autoAttackLoop();

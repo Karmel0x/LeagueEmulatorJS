@@ -89,8 +89,8 @@ class Player extends ExtendWTraits(Unit, INetwork, IDefendable, IAttackable, IMo
 
 	loadingStage = loadingStages.NOT_CONNECTED;
 
-	constructor(...args){
-		super(...args);
+	constructor(options){
+		super(options);
 
 		this.summonerSpells = new Summoners(this, ['SummonerHeal', 'SummonerFlash']);
 

@@ -14,15 +14,15 @@ const PositionHelper = require("../../Functions/PositionHelper");
 //};
 
 /**
- * Interface for units that can move.
- * @param {GameObject} I 
- * @returns 
+ * Trait for units that can move
+ * @class
+ * @param {GameObject} I
  */
 module.exports = (I) => class IMovable extends I {
-	constructor(...args){
-		super(...args);
+	constructor(options){
+		super(options);
 		
-		var stats = args[0].stats || {};
+		var stats = options.stats || {};
 		this.moveSpeed = this.moveSpeed || new IStat(stats.moveSpeed || 325);
 
 		this.waypoints = [this.position];
@@ -236,13 +236,13 @@ module.exports = (I) => class IMovable extends I {
 	halt_start(send = false){
 		this.WaypointsHalt = true;
 
-		if(send)
+		if(send && this.waypoints.length > 1)
 			this.moveAns();
 	}
 	halt_stop(send = true){
 		this.WaypointsHalt = false;
 
-		if(send)
+		if(send && this.waypoints.length > 1)
 			this.moveAns();
 	}
 	moveClear(){
@@ -282,15 +282,15 @@ module.exports = (I) => class IMovable extends I {
 		WaypointGroup.waypoints = this.WaypointsHalt ? [this.waypoints[0]] : this.waypoints;
 		
 		this.sendTo_vision(WaypointGroup);
-		//console.log('WaypointGroup', WaypointGroup);
-		//console.log('WaypointGroup.waypoints', WaypointGroup.waypoints);
+		console.log('WaypointGroup', WaypointGroup);
+		console.log('WaypointGroup.waypoints', WaypointGroup.waypoints);
 		//console.trace();
 	}
 
 
 	/**
 	 * @todo remove cancelSpell, make clearing reachDestination for this type of actions ?
-	 * @param {(Vector2|GameObject)} target or target.position
+	 * @param {Vector2|GameObject} target|target.position
 	 * @param {Function} reachDestinationCallback 
 	 * @param {Number} range 
 	 */

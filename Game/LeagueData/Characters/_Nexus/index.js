@@ -2,8 +2,15 @@
 const _Character = require('../../../DataMethods/Characters/_Character');
 
 
+/**
+ * @abstract
+ */
 module.exports = class _Nexus extends _Character {
 	//static package = require('./package');
+
+	static reward = {
+		gold: 50,
+	};
 
 	static stats = {
 		health: 550,//5500
