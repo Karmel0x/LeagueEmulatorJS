@@ -100,12 +100,38 @@ wss.onMessage = (ws, data) => {
 			var channel = res.data.channel;
 			var bytesHex = bytesHexList[i];
 
-			if(bytesHex.includes('sent:'))
-				channel = 3;
-			else if(bytesHex.includes('recv:'))
-				channel = 1;
+			bytesHex = bytesHex.replace('sent:', 'S2C:').replace('recv:', 'C2S:');
 
-			bytesHex = bytesHex.replace('sent:', '').replace('recv:', '').trim();
+			if(bytesHex.includes('HANDSHAKE:')){
+				channel = 0;
+				bytesHex = bytesHex.replace('HANDSHAKE:', '');
+			}
+			else if(bytesHex.includes('C2S:')){
+				channel = 1;
+				bytesHex = bytesHex.replace('C2S:', '');
+			}
+			else if(bytesHex.includes('GAMEPLAY:')){
+				channel = 2;
+				bytesHex = bytesHex.replace('GAMEPLAY:', '');
+			}
+			else if(bytesHex.includes('S2C:')){
+				channel = 3;
+				bytesHex = bytesHex.replace('S2C:', '');
+			}
+			else if(bytesHex.includes('LOW_PRIORITY:')){
+				channel = 4;
+				bytesHex = bytesHex.replace('LOW_PRIORITY:', '');
+			}
+			else if(bytesHex.includes('COMMUNICATION:')){
+				channel = 5;
+				bytesHex = bytesHex.replace('COMMUNICATION:', '');
+			}
+			else if(bytesHex.includes('LOADING_SCREEN:')){
+				channel = 7;
+				bytesHex = bytesHex.replace('LOADING_SCREEN:', '');
+			}
+
+			bytesHex = bytesHex.trim();
 
 			if(!bytesHex)
 				continue;
@@ -121,10 +147,16 @@ wss.onMessage = (ws, data) => {
 			if(!packetData)
 				return;
 
-			(res.cmd == 'addpacketforall' ? wss.sendJsonToAll : ws.sendJson)({
-				cmd: 'newpacket',
-				packet: packetData,
-			});
+			if(res.cmd == 'addpacketforall')
+				wss.sendJsonToAll({
+					cmd: 'newpacket',
+					packet: packetData,
+				});
+			else
+				ws.sendJson({
+					cmd: 'newpacket',
+					packet: packetData,
+				});
 		}
 	}
 

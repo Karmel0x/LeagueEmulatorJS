@@ -11,7 +11,7 @@ var SPlayerInfo = {
 	botName: ['char', 64],
 	botSkinName: ['char', 64],
 	eloRanking: ['char', 16],
-	botSkinID: 'int32',
+	botSkinId: 'int32',
 	botDifficulty: 'int32',
 	profileIconId: 'int32',
 	allyBadgeId: 'uint8',

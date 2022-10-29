@@ -8,7 +8,7 @@ module.exports = class StatsUpdateReq extends BasePacket {
 		detectedHackModuleHash: 'uint32',
 		detectedHackModuleSize: 'uint32',
 		detectedHackModuleTimeStamp: 'uint32',
-		clientReportedSkinID: 'uint32',
+		clientReportedSkinId: 'uint32',
 		skinAssetHash: 'uint32',
 	}
 };

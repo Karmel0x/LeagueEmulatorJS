@@ -73,7 +73,7 @@ module.exports = class Barrack extends ExtendWTraits(GameObject, IHasTeam) {
 	 */
 	spawnUnit(character, options = {}){
 		character = (options.unitNamePrefix || this.unitNamePrefix) + character;
-		return new Minion({barrack: this, character, ...options});
+		return new Minion({spawner: this, character, ...options});
 	}
 	
 	/**

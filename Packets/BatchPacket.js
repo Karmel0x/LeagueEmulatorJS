@@ -62,6 +62,7 @@ module.exports = class BatchPacket {
 			//	continue;
 
 			var parsed = parsePacket({channel: this.constructor.channel, buffer: packets[i]});
+			parsed.cmdName = this.constructor.findPacketById(parsed.cmd).name;//dev
 			this.parsedPackets.push(parsed);
 		}
 		//console.log(packets, this.parsedPackets);

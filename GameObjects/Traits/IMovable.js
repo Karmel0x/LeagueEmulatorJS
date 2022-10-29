@@ -28,10 +28,10 @@ module.exports = (I) => class IMovable extends I {
 		this.waypoints = [this.position];
 	}
 
-	positionSyncID = 0;
+	positionSyncId = 0;
 	_waypoints = [];
 	set waypoints(val){
-		this.positionSyncID = parseInt(performance.now());
+		this.positionSyncId = parseInt(performance.now());
 		this._waypoints = val.map(v => new Vector2(v.x, v.y));
 		this.emit('setWaypoints');
 	}
@@ -265,20 +265,20 @@ module.exports = (I) => class IMovable extends I {
 
 		return movementData;
 	}
-	teleportID = 0;
-	getNextTeleportID(){
-		return (this.teleportID++ % 255) + 1;
+	teleportId = 0;
+	getNextTeleportId(){
+		return (this.teleportId++ % 255) + 1;
 	}
 	moveAns(teleport = false){
 		// this should be in Movement_Simulation so we can resend if destination will change (following moveable unit)
 		// or following should be made with dash.speedParams.followNetId ?
 		var WaypointGroup = global.Network.createPacket('WaypointGroup', 'LOW_PRIORITY');
-		WaypointGroup.syncId = this.positionSyncID;
+		WaypointGroup.syncId = this.positionSyncId;
 
 		WaypointGroup.netId = 0;
 		WaypointGroup.teleportNetId = this.netId;
 
-		WaypointGroup.teleportID = teleport ? this.getNextTeleportID() : 0;
+		WaypointGroup.teleportId = teleport ? this.getNextTeleportId() : 0;
 		WaypointGroup.waypoints = this.WaypointsHalt ? [this.waypoints[0]] : this.waypoints;
 		
 		this.sendTo_vision(WaypointGroup);

@@ -1,5 +1,9 @@
 const BasePacket = require('../BasePacket');
 
+
+/**
+ * necessary packet to spawn minion
+ */
 module.exports = class Barrack_SpawnUnit extends BasePacket {
 	static struct = {
 		objectId: 'uint32',

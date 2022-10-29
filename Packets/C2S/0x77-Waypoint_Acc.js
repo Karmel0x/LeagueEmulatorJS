@@ -2,7 +2,7 @@ const BasePacket = require('../BasePacket');
 
 const TeleportData = {
 	teleportNetId: 'uint32',
-	teleportID: 'uint8',
+	teleportId: 'uint8',
 };
 
 module.exports = class Waypoint_Acc extends BasePacket {

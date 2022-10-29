@@ -12,12 +12,12 @@ module.exports = {//CMovementDataWithSpeed
 		var obj = {};
 		obj.bitfield = buffer.read1('uint8');
 		obj.waypointsSize = obj.bitfield >> 1;
-		obj.hasTeleportID = (obj.bitfield & 1) != 0;
+		obj.hasTeleportId = (obj.bitfield & 1) != 0;
 
 		if(obj.waypointsSize){
 			obj.teleportNetId = buffer.read1('uint32');
-			if(obj.hasTeleportID){
-				obj.teleportID = buffer.read1('uint8');
+			if(obj.hasTeleportId){
+				obj.teleportId = buffer.read1('uint8');
 			}
 			obj.speedParams = buffer.readobj(SSpeedParams);
 
@@ -32,14 +32,14 @@ module.exports = {//CMovementDataWithSpeed
 
 		source.bitfield = 0;
 		source.bitfield |= source.waypointsCC.length << 1;
-		if(source.teleportID)
+		if(source.teleportId)
 			source.bitfield |= 1;
 	
 		buffer.write1('uint8', source.bitfield);
 		if(source.waypointsCC.length){
 			buffer.write1('uint32', source.teleportNetId);
-			if(source.teleportID)
-				buffer.write1('uint8', source.teleportID);
+			if(source.teleportId)
+				buffer.write1('uint8', source.teleportId);
 			buffer.writeobj(SSpeedParams, source.speedParams);
 	
 			CCompressedWaypoint.writer(buffer, source.waypointsCC);

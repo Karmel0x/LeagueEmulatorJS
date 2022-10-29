@@ -108,7 +108,7 @@ module.exports = class _Spell {
 
 		var CastSpellAns = global.Network.createPacket('CastSpellAns', 'S2C');
 		CastSpellAns.netId = owner.netId;
-		CastSpellAns.casterPositionSyncID = owner.positionSyncID;
+		CastSpellAns.casterPositionSyncId = owner.positionSyncId;
 		CastSpellAns.castInfo = {
 			spellHash: 0,
 			spellCastNetId: 1073743439,

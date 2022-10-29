@@ -204,14 +204,16 @@ class Unit extends ExtendWTraits(GameObject, IHasTeam, ISpellable, ICharacter, I
 	 * @returns {Array.<Unit>}
 	 */
 	getAllyUnits(){
-		return this.getUnits(this.getAllyTeam());
+		return global.units.filter(unit => unit.team == this.team);
+		//return this.getUnits(this.getAllyTeam());
 	}
 	/**
 	 * Get enemy units to this unit
 	 * @returns {Array.<Unit>}
 	 */
 	getEnemyUnits(){
-		return this.getUnits(this.getEnemyTeam());
+		return global.units.filter(unit => unit.team != this.team);
+		//return this.getUnits(this.getEnemyTeam());
 	}
 
 	/**
@@ -229,13 +231,6 @@ class Unit extends ExtendWTraits(GameObject, IHasTeam, ISpellable, ICharacter, I
 	 */
 	getOtherAllyUnits(){
 		return this.getOtherUnits(this.getAllyTeam());
-	}
-	/**
-	 * Get enemy units except this
-	 * @returns {Array.<Unit>}
-	 */
-	getOtherEnemyUnits(){
-		return this.getOtherUnits(this.getEnemyTeam());
 	}
 
 	/**
@@ -255,7 +250,7 @@ class Unit extends ExtendWTraits(GameObject, IHasTeam, ISpellable, ICharacter, I
 	 * @returns 
 	 */
 	getEnemyUnitsInRange(range = this.range.total){
-		return this.Filters().filterByRange(this.getOtherEnemyUnits(), range);
+		return this.Filters().filterByRange(this.getEnemyUnits(), range);
 	}
 
 }

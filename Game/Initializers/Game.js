@@ -12,6 +12,7 @@ const Nexus = require("../../GameObjects/Units/Nexus");
 const Turret = require("../../GameObjects/Units/Turret");
 const Barrack = require("../../GameObjects/Others/Barrack");
 const Player = require("../../GameObjects/Units/Player");
+const JungleCamp = require('../../GameObjects/Others/JungleCamp');
 
 class Game {
 	// STAGE client opened ==========================================================
@@ -168,6 +169,7 @@ class Game {
 		Inhibitor.spawnAll();
 		Turret.spawnAll();
 		Barrack.spawnAll();
+		JungleCamp.spawnAll();
 
 	}
 	static started(){

@@ -84,19 +84,24 @@ class Minion extends ExtendWTraits(Unit, IDefendable, IAttackable, IMovable) {
 	/**
 	 * 
 	 * @param {Object} options
-	 * @param {Barrack} options.barrack
+	 * @param {Barrack} options.spawner
 	 */
 	constructor(options){
-		options.spawnPosition = options.spawnPosition || options.barrack.position;
-		options.team = options.team || options.barrack.team;
+		options.spawnPosition = options.spawnPosition || options.spawner.position;
+		options.team = options.team || options.spawner.team;
 		super(options);
 		
-		this.barrack = options.barrack;
+		this.spawner = options.spawner;
 
 		//console.log(this);
 		this.initialized();
 
 		this.on('noTargetsInRange', () => {
+			var InstantStop_Attack = global.Network.createPacket('InstantStop_Attack', 'S2C');
+			InstantStop_Attack.netId = this.netId;
+			InstantStop_Attack.flags = {};
+			this.sendTo_everyone(InstantStop_Attack);
+
 			this.moveLane();
 		});
 	}
@@ -104,20 +109,20 @@ class Minion extends ExtendWTraits(Unit, IDefendable, IAttackable, IMovable) {
 		removeGlobal(this);
 	}
 	spawn(){
-		this.barrack?.spawnUnitAns(this.netId, this.character.id);
+		this.spawner?.spawnUnitAns(this.netId, this.character.id);
 
 		super.spawn();
 	}
 
 	/**
 	 * Set waypoints for the unit to pathing
-	 * @param {String} [team=this.barrack.teamName] (BLUE/RED)
-	 * @param {Number} [lane=this.barrack.num] (0/1/2 TOP/MID/BOT)
+	 * @param {String} [team=this.spawner.teamName] (BLUE/RED)
+	 * @param {Number} [lane=this.spawner.num] (0/1/2 TOP/MID/BOT)
 	 */
 	moveLane(team = null, lane = null){
 		console.log('moveLane', this.constructor.name, this.netId);
-		team = team || this.barrack?.teamName;
-		lane = lane || this.barrack?.num;
+		team = team || this.spawner?.teamName;
+		lane = lane || this.spawner?.num;
 
 		if(!lanePaths[team]?.[lane])
 			return;
@@ -133,7 +138,7 @@ class Minion extends ExtendWTraits(Unit, IDefendable, IAttackable, IMovable) {
 	// on die / death functions ===========================================================
 	
 	/**
-	 * @todo shall return barrack level
+	 * @todo shall return spawner level
 	 */
 	get level(){
 		return 1;
@@ -182,7 +187,7 @@ class Minion extends ExtendWTraits(Unit, IDefendable, IAttackable, IMovable) {
 		// give gold and exp to killer no matter if in range
 		if(source.type == 'Player'){
 			source.expUp(rewardExp);
-			source.goldUp(this.rewardGold);
+			source.goldUp(this.rewardGold, this);
 		}
 
 		// give exp to nearby enemies

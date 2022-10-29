@@ -21,6 +21,7 @@ module.exports = (peer_num, packet) => {
 			playerId: player.info.playerId,
 		};
 		player.sendPacket(KEY_CHECK, loadingStages.NOT_CONNECTED);
+		player.loadingStage = loadingStages.LOADING;
 	}
 	//{
 	//	var World_SendGameNumber = global.Network.createPacket('World_SendGameNumber');

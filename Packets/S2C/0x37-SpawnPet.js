@@ -22,6 +22,6 @@ module.exports = class SpawnPet extends BasePacket {
 			disallowPlayerControl : 4,
 			doFade: 8,
 		}],
-		AIScript: 'string0',//32
+		aiScript: 'string0',//32
 	}
 };

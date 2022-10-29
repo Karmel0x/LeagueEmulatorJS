@@ -66,19 +66,19 @@ module.exports = (I) => class IAttackable extends I {
 		return this.attackTarget;
 	}
 
+	attackTargetUnitTypesOrder = ['Minion', 'Player', 'Turret', 'Inhibitor', 'Nexus'];
 	/**
 	 * Find new target in range, sort by type and distance
 	 * @returns {Unit}
 	 */
 	getNewAttackTarget(){
-		var unitsInRange = this.Filters('EDGE_TO_EDGE').filterByRange(this.getOtherEnemyUnits(), this.attackRange.total || 400);
+		var unitsInRange = this.Filters('EDGE_TO_EDGE').filterByRange(this.getEnemyUnits(), this.attackRange.total || 400);
 		if(!unitsInRange.length)
 			return null;
 
 		this.Filters().sortByDistance(unitsInRange);
-		var targetUnitTypesOrder = ['Minion', 'Player'];
-		unitsInRange = this.Filters().filterByType(unitsInRange, targetUnitTypesOrder);
-		this.Filters().sortByType(unitsInRange, targetUnitTypesOrder);
+		unitsInRange = this.Filters().filterByType(unitsInRange, this.attackTargetUnitTypesOrder);
+		this.Filters().sortByType(unitsInRange, this.attackTargetUnitTypesOrder);
 		return unitsInRange[0];
 	}
 

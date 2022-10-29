@@ -1,5 +1,5 @@
 
-const { Vector2 } = require('three');
+const { Vector2, Vector3 } = require('three');
 
 
 function chatBoxMessage(target, message){
@@ -225,13 +225,21 @@ module.exports = (player, packet) => {
 			player.character = commandArgs[1] || 'Ezreal';
 		}
 		else if(commandArgs[0] == 'SystemMessage'){
-			var SystemMessage = global.Network.createPacket('SystemMessage');
-			SystemMessage.message = commandArgs.join(' ');
-			player.sendPacket(SystemMessage);
+			let packet = global.Network.createPacket('SystemMessage');
+			packet.message = commandArgs.join(' ');
+			player.sendPacket(packet);
 		}
 		else if(commandArgs[0] == 'gold'){
 			player.gold = parseInt(commandArgs[1] || 10000);
 			player.chatBoxMessage(...commandArgs);
+		}
+		else if(commandArgs[0] == 'mm'){
+			let packet = global.Network.createPacket('UnitAddGold');
+			//packet.netId = player.netId;
+			packet.targetNetId = player.netId;
+			packet.sourceNetId = player.netId;
+			packet.goldAmount = 111;
+			player.sendPacket(packet);
 		}
 
 	}

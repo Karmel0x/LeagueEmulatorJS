@@ -18,6 +18,10 @@ class Team {
 		global.Teams['RED'] = new Team('RED');
 		global.Teams['NEUTRAL'] = new Team('NEUTRAL');
 		global.Teams['ALL'] = new Team('ALL');
+
+		global.Teams[TEAM['BLUE']] = global.Teams['BLUE'];
+		global.Teams[TEAM['RED']] = global.Teams['RED'];
+		global.Teams[TEAM['NEUTRAL']] = global.Teams['NEUTRAL'];
 	}
 	static initialize(){
 		Team.createAll();

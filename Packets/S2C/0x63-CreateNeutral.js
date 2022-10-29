@@ -23,6 +23,6 @@ module.exports = class CreateNeutral extends BasePacket {
 		spawnDuration: 'float',
 		spawnTime: 'float',
 		behaviorTree: 'uint8',
-		AIScript: 'string0',//32
+		aiScript: 'string0',//32
 	}
 };

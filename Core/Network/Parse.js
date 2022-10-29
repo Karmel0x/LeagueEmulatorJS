@@ -11,7 +11,14 @@ const Packets = require("./Packets");
 function parseBody(buffer, channel, cmd){
 	var pkt = {};
 	if(typeof Packets[channel] == 'undefined' || typeof Packets[channel][cmd] == 'undefined'){
-		pkt.error = ['packet not defined', [channel, cmd], Packets[channel]?.name, Packets[channel]?.[cmd]?.name, (cmd && cmd.toString ? cmd.toString(16) : cmd)];
+		pkt.error = ['packet not defined', {
+			channel,
+			cmd,
+			channelName: Packets[channel]?.name,
+			cmdName: Packets[channel]?.[cmd]?.name,
+			channelHex: (channel && channel.toString ? channel.toString(16) : ''),
+			cmdHex: (cmd && cmd.toString ? cmd.toString(16) : ''),
+		}];
 		console.log(pkt.error, buffer);
 		return pkt;
 	}

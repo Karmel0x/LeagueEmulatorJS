@@ -3,13 +3,13 @@ const SVector3 = require('../SharedStruct/SVector3');
 
 var MovementDriverHomingData = {
 	targetNetId: 'uint32',
-	TargetHeightModifier: 'float',
+	targetHeightModifier: 'float',
 	targetPosition: SVector3,
 	speed: 'float',
-	Gravity: 'float',
-	RateOfTurn: 'float',
+	gravity: 'float',
+	rateOfTurn: 'float',
 	duration: 'float',
-	MovementPropertyFlags: 'uint32',
+	movementPropertyFlags: 'uint32',
 };
 
 

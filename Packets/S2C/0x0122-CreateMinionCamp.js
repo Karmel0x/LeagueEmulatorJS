@@ -8,7 +8,7 @@ module.exports = class CreateMinionCamp extends ExtendedPacket {
 		minimapIcon: ['char', 64],
 		campIndex: 'uint8',
 		revealAudioVOComponentEvent: 'uint8',
-		sideTeamID: 'uint8',
+		sideTeamId: 'uint8',
 		timerType: 'int32',
 		expire: 'float',
 	}

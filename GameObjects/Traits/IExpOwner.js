@@ -32,10 +32,16 @@ module.exports = (I) => class IExpOwner extends I {
 	 * Increase gold
 	 * @param {Number} amount 
 	 */
-	goldUp(amount){
+	goldUp(amount, source = 0){
 		this.gold += amount;
 
-		this.charStats_send();
+		let packet = global.Network.createPacket('UnitAddGold');
+		packet.sourceNetId = source.netId || source;
+		packet.targetNetId = this.netId;
+		packet.goldAmount = amount;
+		this.sendPacket(packet);
+		//this.charStats_send();
+
 		console.log('goldUp', amount);
 	}
 	
@@ -51,7 +57,12 @@ module.exports = (I) => class IExpOwner extends I {
 			this.levelUp(false);
 		}
 
+		//let packet = global.Network.createPacket('UnitAddEXP');
+		//packet.targetNetId = this.netId;
+		//packet.expAmount = amount;
+		//this.sendPacket(packet);
 		this.charStats_send();
+
 		console.log('expUp', amount);
 	}
 

@@ -13,46 +13,62 @@ class MovementSimulation {
 
 	Map = new Vector2(14000, 14000);
 
-	/**
-	 * Broadcast vision for enemy
-	 */
-	broadcastVision(){
-		global.units.forEach(unit => {
-			let visibleForEnemy = !unit.died && unit.visibleForEnemy2;
-			if(unit.visibleForEnemy != visibleForEnemy){
-				unit.visibleForEnemy = visibleForEnemy;
-				global.Teams[unit.getEnemyTeam()].vision(unit, visibleForEnemy);
-			}
-
-			//let visibleForTeam = !unit.died && unit.visibleForTeam2;
-			//if(unit.visibleForTeam != visibleForTeam){
-			//	unit.visibleForTeam = visibleForTeam;
-			//	global.Teams[unit.getAllyTeam()].vision(unit, visibleForTeam);
-			//}
-		});
-	}
+	lastSeenUnitsByTeam = {};
 
 	/**
 	 * Checks if unit is visible for enemy and broadcasting it
 	 */
 	visionProcess(){
-		const oppositeTeams = {BLUE: 'RED', RED: 'BLUE'};
-		for(var allyUnit_team in oppositeTeams){
-			var enemyUnit_team = oppositeTeams[allyUnit_team];
+		var seenUnitsByTeam = {};
+		global.units.forEach(unit => {
+			if(unit.teamName == 'NEUTRAL')
+				return;
 
-			var allyUnits = global.getUnitsF(allyUnit_team);
-			var enemyUnits = global.getUnitsF(enemyUnit_team);
-			
-			allyUnits.forEach(allyUnit => {
-				let allyUnit_visionRange = allyUnit.visionRange || defaultVisionRange;
-				var visibleUnits = enemyUnits.filter(enemyUnit => {
-					return allyUnit.distanceTo(enemyUnit) <= allyUnit_visionRange;
-				});
-				allyUnit.visibleForEnemy2 = !!visibleUnits.length;
+			seenUnitsByTeam[unit.team] = seenUnitsByTeam[unit.team] || [];
+			let unitVisionRange = unit.visionRange || defaultVisionRange;
+
+			global.units.forEach(unit2 => {
+				if(unit.team == unit2.team)
+					return;
+
+				if(unit2.died)
+					return;
+
+				if(unit.distanceTo(unit2) > unitVisionRange)
+					return;
+
+				if(seenUnitsByTeam[unit.team].includes(unit2))
+					return;
+
+				seenUnitsByTeam[unit.team].push(unit2);
+			});
+		});
+
+		// leaves the vision
+		for(var team in this.lastSeenUnitsByTeam){
+			let teamUnits = this.lastSeenUnitsByTeam[team];
+
+			teamUnits.forEach(unit => {
+				if(seenUnitsByTeam[team]?.includes(unit))
+					return;
+
+				global.Teams[team]?.vision(unit, false);
 			});
 		}
 
-		this.broadcastVision();
+		// enters the vision
+		for(var team in seenUnitsByTeam){
+			let teamUnits = seenUnitsByTeam[team];
+
+			teamUnits.forEach(unit => {
+				if(this.lastSeenUnitsByTeam[team]?.includes(unit))
+					return;
+					
+				global.Teams[team]?.vision(unit, true);
+			});
+		}
+
+		this.lastSeenUnitsByTeam = seenUnitsByTeam;
 	}
 
 	/**

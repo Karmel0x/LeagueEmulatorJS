@@ -4,7 +4,7 @@ var SCastInfo = require('../SharedStruct/SCastInfo');
 
 module.exports = class CastSpellAns extends BasePacket {
 	static struct = {
-		casterPositionSyncID: 'int32',
+		casterPositionSyncId: 'int32',
 		bitfield: ['bitfield', {
 			Unknown: 1,
 		}],
