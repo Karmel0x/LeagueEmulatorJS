@@ -9,10 +9,10 @@ var SConnectionInfo = {
 	ping: 'uint16',
 };
 
-if(config.Version >= 4.18){
+//if(config.Version >= 4.18){
     SConnectionInfo.bitfield = ['bitfield', {
 		ready: 1,
 	}];
-}
+//}
 
 module.exports = SConnectionInfo;

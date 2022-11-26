@@ -6,21 +6,23 @@ module.exports = class CreateHero extends BasePacket {
 		clientId: 'int32',
 		netNodeId: 'uint8',
 		skillLevel: 'uint8',
-		bitfield: ['bitfield', {
-			teamIsOrder: 1,
-			isBot: 2,
-		}],
+		//bitfield: ['bitfield', {
+		//	teamIsOrder: 1,
+		//	isBot: 2,
+		//}],
+		teamIsOrder: 'bool',
+		isBot: 'bool',
 		botRank: 'uint8',
 		spawnPosIndex: 'uint8',
 		skinId: 'int32',
-		objectName: ['char', 128],
+		objectName: ['char', 40],
 		skinName: ['char', 40],
-		deathDurationRemaining: 'float',
-		timeSinceDeath: 'float',
-		createHeroDeath: 'uint32',
-		bitfield2: ['bitfield', {
-			Unknown1: 1,
-			Unknown2: 2,
-		}],
+		//deathDurationRemaining: 'float',
+		//timeSinceDeath: 'float',
+		//createHeroDeath: 'uint32',
+		//bitfield2: ['bitfield', {
+		//	Unknown1: 1,
+		//	Unknown2: 2,
+		//}],
 	}
 };

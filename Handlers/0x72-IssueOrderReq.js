@@ -100,7 +100,7 @@ module.exports = (player, packet) => {
 	player.autoAttackSoftToggle = false;
 
 	if(packet.orderType == OrderTypes.rightClickMove){
-		waypointsDrawer?.drawWaypoints(packet.movementData.waypoints);
+		//waypointsDrawer?.drawWaypoints(packet.movementData.waypoints);
 		player.move0(packet);
 		player.once('reachDestination', () => {
 			player.autoAttackSoftToggle = true;

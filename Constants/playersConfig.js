@@ -4,7 +4,7 @@ module.exports = {//todo: config
 			playerId: 1,
 			rank: '',
 			name: '',
-			character: 'Yasuo',
+			character: 'Ezreal',
 			//team: 'BLUE',
 			skin: 0,
 			summoner1: '',

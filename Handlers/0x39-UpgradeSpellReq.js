@@ -5,5 +5,6 @@ module.exports = (player, packet) => {
 	//console.log(packet);
 
 	
-	player.skillUpgrade(packet.slot, packet.bitfield.isEvolve);
+	//player.skillUpgrade(packet.slot, packet.bitfield.isEvolve);
+	player.skillUpgrade(packet.slot, false);
 };

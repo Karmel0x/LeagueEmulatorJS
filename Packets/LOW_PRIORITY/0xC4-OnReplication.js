@@ -336,7 +336,7 @@ module.exports = class OnReplication extends BasePacket {
 					if(replicantTypes[this.units[i].type || 'Player']?.[primaryId]?.[secondaryId] == 1){
 						if(this.units[i].replicant[primaryId][secondaryId] >= 0xFE000000)
 							buffer.write1('uint8', 0xFE);
-
+					
 						buffer.write1('float', this.units[i].replicant[primaryId][secondaryId]);
 					}else if(replicantTypes[this.units[i].type || 'Player']?.[primaryId]?.[secondaryId] == 0){
 						let num = this.units[i].replicant[primaryId][secondaryId];

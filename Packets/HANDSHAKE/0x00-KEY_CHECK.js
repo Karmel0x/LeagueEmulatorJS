@@ -10,8 +10,9 @@ module.exports = class KEY_CHECK extends BasePacket {
 
 		clientId: 'uint32',
 		playerId: 'uint64',
-		versionNumber: 'uint32',
-		checksum: 'uint64',
-		dummy1: 'uint32',
+		//versionNumber: 'uint32',
+		//checksum: 'uint64',
+		//dummy1: 'uint32',
+		encryptedPlayerId: 'uint64',
 	}
 };

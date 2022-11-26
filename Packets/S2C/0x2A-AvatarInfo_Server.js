@@ -13,6 +13,6 @@ module.exports = class AvatarInfo_Server extends BasePacket {
 		summonerIds2: ['uint32', 2],
 		talents: [Talent, 80],
 		level: 'uint8',
-		wardSkin: 'uint8',
+		//wardSkin: 'uint8',
 	}
 };

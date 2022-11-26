@@ -1,5 +1,5 @@
 const BasePacket = require('../BasePacket');
-var SVector2 = require('../SharedStruct/SVector2');
+var SVector3 = require('../SharedStruct/SVector3');
 var CMovementDataNormal = require('../SharedStruct/CMovementDataNormal');
 
 // something is different in BatchPacket
@@ -16,7 +16,7 @@ var CMovementDataNormal = require('../SharedStruct/CMovementDataNormal');
 module.exports = class IssueOrderReq extends BasePacket {
 	static struct = {
 		orderType: 'uint8',
-		position: SVector2,
+		position: SVector3,
 		targetNetId: 'uint32',
 	}
 	reader(buffer){

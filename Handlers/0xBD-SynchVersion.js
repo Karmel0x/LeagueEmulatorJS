@@ -37,7 +37,8 @@ const MapId = {
 	//NexusBlitz: 21, // Nexus Blitz / Nexus Blitz map
 };
 
-const VersionString = 'Version 4.20.0.315 [PUBLIC]';
+//const VersionString = 'Version 4.20.0.315 [PUBLIC]';
+const VersionString = 'Version 1.0.0.126 [PUBLIC]';
 
 module.exports = (player, packet) => {
 	console.log('handle: C2S.SynchVersion');

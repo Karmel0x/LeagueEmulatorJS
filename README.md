@@ -1,32 +1,20 @@
-# League game server emulator
-Yet another lol server,
-created with the help of the [LeagueSandbox](https://github.com/LeagueSandbox/GameServer) code,
-written in JavaScript ([nodejs](https://nodejs.org/en/)).  
-This project is being created as just for fun and learn and will be discontinued soon or will be developed very rarely,
-anyway making it in JS is not the best idea.  
-At the moment, it ~~does not support multiplayer~~ and there is no game flow yet.  
+# Branch SiphoningStrike
+Lol version 1.0.0.126  
+- Only necessary packets to load game and move character has been updated to this version, most of them are still 4.20  
+- Probably packet id sequence should be used instead of static ids
 
 # Runing
 ```
 # download and install git (optional) - https://git-scm.com/download
 # download and install nodejs - https://nodejs.org/en/download/
 git clone https://github.com/Karmel0x/enetcppjs
+cd enetcppjs
+git checkout 9d1eb919f299a317112fa3bba42ef4e2546b7702
+cd ..
 git clone https://github.com/Karmel0x/navmeshcppjs
 git clone https://github.com/Karmel0x/LeagueEmulatorJS
 cd LeagueEmulatorJS
+git checkout SiphoningStrike
 npm i three ws
 node main
-```
-```
-# download game client (4.20) here - https://github.com/LeagueSandbox/GameServer#manual-setup-windowsmac
-# copy runLol.bat to client directory and run
-# say `.help` ingame to get list of available commands
-```
-
-# Tools
-### Packet inspector
-```
-# download replay from /issues/2 and put to ../LeagueEmulatorJS_replays/
-node tools/packet-inspector
-# open browser at http://127.0.0.1/
 ```

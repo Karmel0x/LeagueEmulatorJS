@@ -43,9 +43,9 @@ module.exports = class OnEnterVisibilityClient extends BasePacket {
 	writer(buffer){
 		super.writer(buffer);
 
-		buffer.write1('uint16', this.packet?.length || 0);
-		if(this.packet?.length)
-			buffer.writeobj([Packet, this.packet.length], this.packet);
+		//buffer.write1('uint16', this.packet?.length || 0);
+		//if(this.packet?.length)
+		//	buffer.writeobj([Packet, this.packet.length], this.packet);
 			
 		buffer.write1('uint8', this.itemData?.length || 0);
 		if(this.itemData?.length)
@@ -54,25 +54,25 @@ module.exports = class OnEnterVisibilityClient extends BasePacket {
 		if(this.isTurret)//is inhib or nexus
 			return;
 
-		buffer.write1('uint8', !!this.shieldValues);
-		if(this.shieldValues)
-			buffer.writeobj(ShieldValues, this.shieldValues);
+		//buffer.write1('uint8', !!this.shieldValues);
+		//if(this.shieldValues)
+		//	buffer.writeobj(ShieldValues, this.shieldValues);
 
-		buffer.write1('int32', this.characterStackData?.length || 0);
-		if(this.characterStackData?.length)
-			buffer.writeobj([CharacterStackData, this.characterStackData.length], this.characterStackData);
+		//buffer.write1('int32', this.characterStackData?.length || 0);
+		//if(this.characterStackData?.length)
+		//	buffer.writeobj([CharacterStackData, this.characterStackData.length], this.characterStackData);
 
 		buffer.writeobj({
-			lookAtNetId: 'uint32',
+			//lookAtNetId: 'uint32',
 			lookAtType: 'uint8',
 			lookAtPosition: SVector3,
 		}, this);
 
-		buffer.write1('int32', this.Buff?.length || 0);
-		if(this.Buff?.length)
-			buffer.writeobj([Buff, this.Buff.length], this.Buff);
+		//buffer.write1('int32', this.Buff?.length || 0);
+		//if(this.Buff?.length)
+		//	buffer.writeobj([Buff, this.Buff.length], this.Buff);
 
-		buffer.write1('uint8', this.unknownIsHero || 0);
+		//buffer.write1('uint8', this.unknownIsHero || 0);
 
 		if(this.movementData){
 			

@@ -8,9 +8,12 @@ module.exports = {//CMovementDataNormal
 			return;
 
 		var obj = {};
-		obj.bitfield = buffer.read1('uint8');
-		obj.waypointsSize = obj.bitfield >> 1;
+		obj.bitfield = buffer.read1('uint16');
+		//obj.waypointsSize = obj.bitfield >> 1;
 		obj.hasTeleportId = (obj.bitfield & 1) != 0;
+
+		obj.bitfield2 = buffer.read1('uint16');
+		obj.waypointsSize = obj.bitfield2 & 0x7F;
 
 		if(obj.waypointsSize){
 			obj.teleportNetId = buffer.read1('uint32');
@@ -28,11 +31,15 @@ module.exports = {//CMovementDataNormal
 		source.waypointsCC = source.waypointsCC || TranslateCenteredCoordinates.to(source.waypoints);
 
 		source.bitfield = 0;
-		source.bitfield |= source.waypointsCC.length << 1;
+		//source.bitfield |= source.waypointsCC.length << 1;
 		if(source.teleportId)
 			source.bitfield |= 1;
 	
-		buffer.write1('uint8', source.bitfield);
+		buffer.write1('uint16', source.bitfield);
+
+		source.bitfield2 |= source.waypointsCC.length & 0x7F;
+		buffer.write1('uint16', source.bitfield2);
+
 		if(source.waypointsCC.length){
 			buffer.write1('uint32', source.teleportNetId);
 			if(source.teleportId)

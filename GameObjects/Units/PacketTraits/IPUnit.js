@@ -45,7 +45,7 @@ module.exports = (I) => class IPUnit extends I {
 	charStats_send(){
 		var OnReplication = global.Network.createPacket('OnReplication', 'LOW_PRIORITY');
 		OnReplication.units = [this];
-		this.sendTo_everyone(OnReplication);
+		//this.sendTo_everyone(OnReplication);
 	}
 	skillUpgrade_send(slot){
 		var UpgradeSpellAns = global.Network.createPacket('UpgradeSpellAns', 'S2C');

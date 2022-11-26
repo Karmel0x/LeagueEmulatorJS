@@ -26,10 +26,12 @@ module.exports = (I) => class IPPlayer extends I {
 		CreateHero.objectName = 'Test';
 		CreateHero.skinName = this.character.model;
 
-		CreateHero.bitfield = {
-			teamIsOrder: this.team == teamIds.BLUE,
-			isBot: false
-		};
+		//CreateHero.bitfield = {
+		//	teamIsOrder: this.team == teamIds.BLUE,
+		//	isBot: false
+		//};
+		CreateHero.teamIsOrder = this.team == teamIds.BLUE;
+		
 		CreateHero.createHeroDeath = createHeroDeath.Alive;
 		CreateHero.spawnPosIndex = this.num;//2;
 
@@ -49,7 +51,7 @@ module.exports = (I) => class IPPlayer extends I {
 		AvatarInfo_Server.summonerIds = [0x0364af1c, 0x06496ea8];
 		AvatarInfo_Server.summonerIds2 = AvatarInfo_Server.summonerIds;
 		
-		dest.sendPacket(AvatarInfo_Server, loadingStages.NOT_CONNECTED);
+		//dest.sendPacket(AvatarInfo_Server, loadingStages.NOT_CONNECTED);
 	}
 	chatBoxMessage(){
 		var message = Array.prototype.slice.call(arguments).join(' ');

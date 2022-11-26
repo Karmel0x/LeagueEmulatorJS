@@ -215,11 +215,11 @@ module.exports = (I) => class IMovable extends I {
 			delete this.callbacks.move.pending;
 		
 		var newWaipoints = movementData.waypoints;
-		if(!global.doNotUsePathfinding){
-			// idk if it's even necessary here but MoveData.waypoints are wrong when character is dashing
-			newWaipoints = Pathfinding.getPath(this.position, packet.position);
-			//console.log({waypoints: movementData.waypoints, newWaipoints});
-		}
+		//if(!global.doNotUsePathfinding){
+		//	// idk if it's even necessary here but MoveData.waypoints are wrong when character is dashing
+		//	newWaipoints = Pathfinding.getPath(this.position, packet.position);
+		//	//console.log({waypoints: movementData.waypoints, newWaipoints});
+		//}
 
 		if(newWaipoints && newWaipoints.length){
 			this.setWaypoints(newWaipoints);
