@@ -10,11 +10,10 @@ global.units = global.units || [];
 global.unitsNetId = global.unitsNetId || {};
 global.destroyedUnits = global.destroyedUnits || [];
 
-
 var unitsCache = {};
 var unitsCache_lastUnitId = 0;
 
-// 
+
 /**
  * Get units by team and type
  * @todo make caching more advanced
@@ -22,12 +21,12 @@ var unitsCache_lastUnitId = 0;
  * @param {String} type 
  * @returns {Array.<Unit>}
  */
-global.getUnits = function(team = 'ALL', type = 'ALL'){
-	if(team == 'ALL' && type == 'ALL')
+global.getUnits = function (team = 'ALL', type = 'ALL') {
+	if (team == 'ALL' && type == 'ALL')
 		return global.units;
 
 	var key = team + '_' + type;
-	if(!unitsCache[key] || global.lastUnitId !== unitsCache_lastUnitId){
+	if (!unitsCache[key] || global.lastUnitId !== unitsCache_lastUnitId) {
 		unitsCache[key] = global.units.filter(unit => {
 			// would be better to use bitwise but teamIds and unitTypes enums are not bitwise
 			return (unit.teamName === team || team === 'ALL') && (unit.type === type || type === 'ALL');
@@ -35,32 +34,32 @@ global.getUnits = function(team = 'ALL', type = 'ALL'){
 	}
 	return unitsCache[key];
 };
-global.getUnitCount = function(team = 'ALL', type = 'ALL'){
+global.getUnitCount = function (team = 'ALL', type = 'ALL') {
 	var units = global.getUnits(team, type);
 	return units.length;
 };
 
-global.getUnitsF = function(team = 'ALL', type = 'ALL'){
+global.getUnitsF = function (team = 'ALL', type = 'ALL') {
 	return global.getUnits(team, type);
 };
 
-global.getUnitByNetId = function(netId){
+global.getUnitByNetId = function (netId) {
 	return global.unitsNetId[netId];
 };
 
 
-function appendGlobal(unit){
+function appendGlobal(unit) {
 	unit.id = global.lastUnitId++;
 	++global.unitCount;
 
 	global.units.push(unit);
 	global.unitsNetId[unit.netId] = unit;
 }
-function removeGlobal(unit){
+function removeGlobal(unit) {
 	--global.unitCount;
 
 	var index = global.units.indexOf(unit);
-	if(index !== -1)
+	if (index !== -1)
 		global.units.splice(index, 1);
 
 	global.destroyedUnits.push(unit);

@@ -8,12 +8,12 @@ class Targetedshot extends Missile {
 	 * @override
 	 * @param {Unit} target
 	 */
-	reachedDest(target){
+	reachedDest(target) {
 		console.log('Targetedshot.reachedDest');
 		this.owner.attack(target);
 		this.destructor();
 	}
-	doFire(){
+	doFire() {
 		this.fire(this.target, this.options.windupPercent ?? 0);
 	}
 }

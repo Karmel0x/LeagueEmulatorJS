@@ -12,7 +12,7 @@ module.exports = class _Basicattack extends _Spell {
 
 	distanceCalc = 'EDGE_TO_EDGE';
 
-	constructor(options){
+	constructor(options) {
 		super(options);
 
 		this.owner.on('changeStats', () => {
@@ -22,19 +22,19 @@ module.exports = class _Basicattack extends _Spell {
 	}
 
 	// attacking
-	attackProcess(target){
-		if(!this.owner.isAbleForAttacking())
+	attackProcess(target) {
+		if (!this.owner.isAbleForAttacking())
 			return;
 
-		var bassicattack = this.process(this.owner, target, {speed: this.missileSpeed});
+		var bassicattack = this.process(this.owner, target, { speed: this.missileSpeed });
 
-		if(this.owner.moveClear)
+		if (this.owner.moveClear)
 			this.owner.moveClear();
 
 		return bassicattack;
 	}
 
-	beginAttackAns(options){
+	beginAttackAns(options) {
 		var Basic_Attack_Pos = global.Network.createPacket('Basic_Attack_Pos', 'S2C');
 		Basic_Attack_Pos.netId = this.owner.netId;
 
@@ -55,10 +55,11 @@ module.exports = class _Basicattack extends _Spell {
 			x: this.owner.position.x,
 			y: this.owner.position.y,
 		};
-		
+
 		this.owner.sendTo_vision(Basic_Attack_Pos);
 	}
-	nextAttackAns(options){
+
+	nextAttackAns(options) {
 		var Basic_Attack = global.Network.createPacket('Basic_Attack', 'S2C');
 		Basic_Attack.netId = this.owner.netId;
 
@@ -75,13 +76,14 @@ module.exports = class _Basicattack extends _Spell {
 			missileNextId: options.missile.netId,
 			extraTime: 127,
 		};
-		
+
 		this.owner.sendTo_vision(Basic_Attack);
 	}
-	
-	attackAnsCurrentUnit = 0;//@todo reset in on move?
-	attackAns(options){
-		if(this.attackAnsCurrentUnit != options.missile.target.netId){
+
+	attackAnsCurrentUnit = 0;//@todo reset it on move?
+
+	attackAns(options) {
+		if (this.attackAnsCurrentUnit != options.missile.target.netId) {
 			this.attackAnsCurrentUnit = options.missile.target.netId;
 			this.beginAttackAns(options);
 		}
@@ -96,26 +98,27 @@ module.exports = class _Basicattack extends _Spell {
 	 * @param {Object} options
 	 * @returns {Targetedshot}
 	 */
-	process(owner, target, options = {}){
+	process(owner, target, options = {}) {
 		options.windupPercent = options.windupPercent || this.windupPercent;
-		var missile = new Targetedshot({owner, target, options});
+		var missile = new Targetedshot({ owner, target, options });
 		this.attackAns({
 			missile,
-			attackSlot: options.attackSlot ?? 1,
+			attackSlot: options.attackSlot ?? 64,
 		});
 		missile.doFire();
 		return missile;
 	}
 
-	onCast(spellData){
+	onCast(spellData) {
 		super.onCast(spellData);
 
 		spellData.missile = this.attackProcess(spellData.target);
 	}
-	afterCast(spellData){
+	
+	async afterCast(spellData) {
 		this.owner.emit('spellCastingEnd', spellData);
-		
-		if(this.isProjectile)
+
+		if (this.isProjectile)
 			this.spawnProjectileAns(spellData.spellCast.castInfo);
 	}
 };

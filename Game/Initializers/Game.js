@@ -14,16 +14,17 @@ const Barrack = require("../../GameObjects/Others/Barrack");
 const Player = require("../../GameObjects/Units/Player");
 const JungleCamp = require('../../GameObjects/Others/JungleCamp');
 
+
 class Game {
 	// STAGE client opened ==========================================================
 
 	/**
-	 * Send packet to client about loding state and ping
+	 * Send packet to client about loading state and ping
 	 * it's just answer to C2S.Ping_Load_Info
 	 * @param {Player} player 
 	 * @param {Object} packet request packet
 	 */
-	static Ping_Load_Info(player, packet){
+	static Ping_Load_Info(player, packet) {
 		var Ping_Load_Info = global.Network.createPacket('Ping_Load_Info', 'LOW_PRIORITY');
 		Ping_Load_Info.clientId = player.info.clientId;
 		Ping_Load_Info.playerId = player.info.playerId;
@@ -41,21 +42,21 @@ class Game {
 	 * Send packet to client to load screen info with info about game
 	 * @param {Player} player 
 	 */
-	static TeamRosterUpdate(player){
+	static TeamRosterUpdate(player) {
 		var TeamRosterUpdate = global.Network.createPacket('TeamRosterUpdate', 'LOADING_SCREEN');
 		TeamRosterUpdate.blueMax = 6;
 		TeamRosterUpdate.redMax = 6;
 		TeamRosterUpdate.teamBlue_playerIds = [];
 		TeamRosterUpdate.teamRed_playerIds = [];
-		
+
 		var bluePlayersUnits = global.getUnitsF('BLUE', 'Player');
-		for(let player_num in bluePlayersUnits){
-			var player2 = bluePlayersUnits[player_num];
+		for (var i = 0, l = bluePlayersUnits.length; i < l; i++) {
+			var player2 = bluePlayersUnits[i];
 			TeamRosterUpdate.teamBlue_playerIds.push(player2.info.playerId);
 		}
 		var redPlayersUnits = global.getUnitsF('RED', 'Player');
-		for(let player_num in redPlayersUnits){
-			var player2 = redPlayersUnits[player_num];
+		for (var i = 0, l = redPlayersUnits.length; i < l; i++) {
+			var player2 = redPlayersUnits[i];
 			TeamRosterUpdate.teamRed_playerIds.push(player2.info.playerId);
 		}
 
@@ -68,7 +69,7 @@ class Game {
 	 * Send packet to client to show name of player
 	 * @param {Player} player 
 	 */
-	static RequestRename(player){
+	static RequestRename(player) {
 		var RequestRename = global.Network.createPacket('RequestRename', 'LOADING_SCREEN');
 		RequestRename.playerId = player.info.playerId;
 		RequestRename.skinId = 0;
@@ -80,18 +81,18 @@ class Game {
 	 * Send packet to client to show player champion and skin
 	 * @param {Player} player 
 	 */
-	static RequestResking(player){
-		var RequestResking = global.Network.createPacket('RequestResking', 'LOADING_SCREEN');
-		RequestResking.playerId = player.info.playerId;
-		RequestResking.skinId = 0;
-		RequestResking.skinName = player.character.model;
-		global.Teams.ALL.sendPacket(RequestResking, loadingStages.NOT_CONNECTED);
+	static RequestReskin(player) {
+		var RequestReskin = global.Network.createPacket('RequestReskin', 'LOADING_SCREEN');
+		RequestReskin.playerId = player.info.playerId;
+		RequestReskin.skinId = 0;
+		RequestReskin.skinName = player.character.model;
+		global.Teams.ALL.sendPacket(RequestReskin, loadingStages.NOT_CONNECTED);
 	}
 
-	static connected(player){
+	static connected(player) {
 		Game.TeamRosterUpdate(player);
 		Game.RequestRename(player);
-		Game.RequestResking(player);
+		Game.RequestReskin(player);
 	}
 
 	// STAGE client loaded ==========================================================
@@ -99,7 +100,7 @@ class Game {
 	/**
 	 * Send packet to client to start game (switch from loading screen to game)
 	 */
-	static StartGame(){
+	static StartGame() {
 		var StartGame = global.Network.createPacket('StartGame');
 		StartGame.bitfield = {
 			enablePause: true,
@@ -111,12 +112,12 @@ class Game {
 	 * Send packet to client to synchronize game time
 	 * @param {Number} time 
 	 */
-	static SynchSimTime(time = 0){
+	static SynchSimTime(time = 0) {
 		var SynchSimTime = global.Network.createPacket('SynchSimTime');
 		SynchSimTime.synchTime = time;
 		global.Teams.ALL.sendPacket(SynchSimTime, loadingStages.NOT_CONNECTED);
 	}
-	static SyncMissionStartTime(time = 0){
+	static SyncMissionStartTime(time = 0) {
 		var SyncMissionStartTime = global.Network.createPacket('SyncMissionStartTime');
 		SyncMissionStartTime.startTime = time;
 		global.Teams.ALL.sendPacket(SyncMissionStartTime, loadingStages.NOT_CONNECTED);
@@ -126,12 +127,12 @@ class Game {
 	 * 
 	 * @todo
 	 */
-	static async GameTimeHeartBeat(){
-		
+	static async GameTimeHeartBeat() {
+
 		var time = 0;
-		for(let i = 0; i < 3; i++){//for(;;){
+		for (let i = 0; i < 3; i++) {//for(;;){
 			Game.SynchSimTime(time);
-	
+
 			await Promise.wait(10 * 1000);
 			time += 10;
 		}
@@ -142,7 +143,7 @@ class Game {
 	 * @todo should be in Game.run
 	 * @param {Player} player 
 	 */
-	static async playerLoaded(player){
+	static async playerLoaded(player) {
 		global.Game.loaded = Date.now() / 1000;// this shouldn't be here
 		Game.StartGame();
 		Game.GameTimeHeartBeat();
@@ -151,20 +152,23 @@ class Game {
 
 	// STAGE start game flow ==========================================================
 
-	static initialize(){
+	static initialize() {
 		Game.initGame();
 		Player.spawnAll(playersConfig);
 	}
 
-	static async run(){
+	static async run() {
+		var SwitchNexusesToOnIdleParticles = global.Network.createPacket('SwitchNexusesToOnIdleParticles');
+		global.Teams.ALL.sendPacket(SwitchNexusesToOnIdleParticles);
+
 		GameComponents.Spawn();
 		//GameComponents.Fountain();//instead of component, create perma buff for fountain turret
 
 	}
 
-	static loaded(){
+	static loaded() {
 		global.Game.loaded = Date.now() / 1000;
-		
+
 		Nexus.spawnAll();
 		Inhibitor.spawnAll();
 		Turret.spawnAll();
@@ -172,23 +176,23 @@ class Game {
 		JungleCamp.spawnAll();
 
 	}
-	static started(){
+	static started() {
 		global.Game.started = Date.now() / 1000;
 		global.Game.paused = false;
-		
+
 		Game.run();
 	}
 
-	static async startWhenReady(){
+	static async startWhenReady() {
 		//Game.loaded();
 		global.Movement = new GameComponents.MovementSimulation();
 		global.Movement.start();
 
-		while(!global.Game.started){
+		while (!global.Game.started) {
 			await Promise.wait(100);
 
 			var playerUnits = global.getUnitsF('ALL', 'Player');
-			if(!playerUnits || !playerUnits.length){
+			if (!playerUnits || !playerUnits.length) {
 				console.log('[weird] players has been not initialized yet?');
 				continue;
 			}
@@ -198,7 +202,7 @@ class Game {
 			//else{
 			//	let playersLoaded = true;
 			//	var players = global.getUnitsF('ALL', 'Player');
-			//	for(let i in players){
+			//	for(var i = 0, l = players.length; i < l; i++){
 			//		if(players[i].loadingStage < loadingStages.LOADED){
 			//			playersLoaded = false;
 			//			break;
@@ -209,12 +213,13 @@ class Game {
 			//}
 
 			// atm we start game with '.start' chat command
-			if(global.command_START_GAME)
+			if (global.command_START_GAME)
 				Game.started();
 		}
-		
+
 	}
-	static async initGame(){
+	
+	static async initGame() {
 
 
 		global.Game = {
@@ -225,14 +230,14 @@ class Game {
 		};
 		global.Game.Timer = () => {
 			//todo: ticker function for setting variables dependent on game time
-			if(!global.Game.started)
+			if (!global.Game.started)
 				return 0;
-				
+
 			return Date.now() / 1000 - global.Game.started;
 		};
 
 		Game.startWhenReady();
-		
+
 	}
 }
 

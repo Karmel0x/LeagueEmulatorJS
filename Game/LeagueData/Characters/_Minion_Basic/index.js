@@ -52,9 +52,9 @@ module.exports = class _Minion_Basic extends _Minion {
 		//BasicAttack: require('./Spells/BasicAttack'),
 	};
 
-	constructor(parent){
+	constructor(parent) {
 		super(parent);
-		
+
 		this.createOnSlots({
 			[slotId.A]: this.constructor.spells.BasicAttack,
 		});

@@ -7,10 +7,11 @@ const package1 = require('../package');
 module.exports = class YasuoQ3Mis extends _Spell {
 	packageHash = package1.packageHash;
 	spellSlot = slotId.Qm;
-	windup = 0.3;
+	windup = 0.35;
 	isProjectile = true;
 
 	castInfo = {
+		designerCastTime: 0.1,
 		designerTotalTime: 1,
 		bitfield: {
 			isForceCastingOrChannel: true,
@@ -19,7 +20,7 @@ module.exports = class YasuoQ3Mis extends _Spell {
 		target: [],
 	};
 
-	onCast(spellData){
+	onCast(spellData) {
 		//console.log(spellData.missile);
 		spellData.missile.fire(spellData.missile.target);
 	}

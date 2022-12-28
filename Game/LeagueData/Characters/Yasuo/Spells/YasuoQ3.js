@@ -9,7 +9,7 @@ const YasuoQ3Mis = require("./YasuoQ3Mis");
 module.exports = class YasuoQ3 extends _Spell {
 	packageHash = package1.packageHash;
 	spellSlot = slotId.Qq;
-	windup = 0.166;
+	windup = 0;
 
 	castInfo = {
 		designerCastTime: 0.35,
@@ -25,15 +25,14 @@ module.exports = class YasuoQ3 extends _Spell {
 		//target: [{ unit: this.owner.netId, hitResult: 0 }],// <- original packet
 
 	};
-	constructor(options){
-		super(options);
+	
+	static childSpellList = [
+		YasuoQ3Mis,
+	];
 
-		this.childSpells.push(new YasuoQ3Mis({...options, parentSpell: this}));
-	}
-
-	onCast(spellData){
+	onCast(spellData) {
 		super.onCast(spellData);
-		
+
 		var skillshotTargetPosition = spellData.anglePosition.add(this.owner.position);
 		var skillshot = Skillshot.create(this.owner, skillshotTargetPosition, {
 			speed: 1200, range: 1150, radius: 90
@@ -45,13 +44,13 @@ module.exports = class YasuoQ3 extends _Spell {
 				range: skillshot.options.radius,
 			},
 			function: (target) => {
-				if(skillshot.owner == target || collidedWith.includes(target.netId))
+				if (skillshot.owner == target || collidedWith.includes(target.netId))
 					return;
-				
+
 				collidedWith.push(target.netId);
-				
+
 				skillshot.owner.attack(target);
-				if(target.knockUp)
+				if (target.knockUp)
 					target.knockUp({
 						duration: 0.75,
 						parabolicGravity: 16.5,

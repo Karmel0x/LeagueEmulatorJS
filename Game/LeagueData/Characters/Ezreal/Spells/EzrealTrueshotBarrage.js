@@ -20,24 +20,24 @@ module.exports = class EzrealTrueshotBarrage extends _Spell {
 		designerTotalTime: 1,
 	};
 
-	preCast(spellData){
+	preCast(spellData) {
 		spellData.maxRangePosition = PositionHelper.getPositionBetweenRange(this.owner, spellData.packet, this.castRange);
-		
+
 		var skillshot = Skillshot.create(this.owner, spellData.maxRangePosition, {
 			speed: 2000, range: 25000, radius: 160
 		});
-		
+
 		var collidedWith = [];
 		skillshot.callbacks.collision._ = {
 			options: {
 				range: skillshot.options.radius,
 			},
 			function: (target) => {
-				if(skillshot.owner == target || collidedWith.includes(target.netId))
+				if (skillshot.owner == target || collidedWith.includes(target.netId))
 					return;
-				
+
 				collidedWith.push(target.netId);
-				
+
 				skillshot.owner.attack(target);
 			},
 		};
@@ -45,7 +45,7 @@ module.exports = class EzrealTrueshotBarrage extends _Spell {
 		spellData.missile = skillshot;
 		return super.preCast(spellData);
 	}
-	onCast(spellData){
+	onCast(spellData) {
 		super.onCast(spellData);
 
 		this.owner.AddParticleTarget(this.packageHash, HashString('Ezreal_bow_huge.troy'), HashString('L_HAND'));
@@ -53,11 +53,11 @@ module.exports = class EzrealTrueshotBarrage extends _Spell {
 		this.fireMissile(spellData.missile);
 	}
 
-	async fireMissile(missile){
+	async fireMissile(missile) {
 
 		var windup = 1;//?
 		await Promise.wait(windup * 1000);
-        missile.fire(missile.target);
+		missile.fire(missile.target);
 
 		await Promise.wait(windup * 1000 / 2);
 	}

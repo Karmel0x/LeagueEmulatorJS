@@ -40,7 +40,7 @@ module.exports = class AncientGolem extends _Monster {
 			baseValue: 0,
 			perLevel: 0,
 		},
-		moveSpeed: 200,
+		moveSpeed: 180,
 
 		collisionRadius: 48,
 	};

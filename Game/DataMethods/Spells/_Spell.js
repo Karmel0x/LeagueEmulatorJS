@@ -1,8 +1,7 @@
 
-const { Vector2 } = require("three");
 const { HashString } = require("../../../Functions/HashString");
-const PositionHelper = require("../../../Functions/PositionHelper");
 const SpellCast = require("./SpellCast");
+
 
 module.exports = class _Spell {
 
@@ -12,6 +11,7 @@ module.exports = class _Spell {
 
 	windup = 0.05;//?
 	castInfo = {};
+	static childSpellList = [];
 	childSpells = [];
 	isProjectile = false;
 	castRange = 25000;
@@ -21,13 +21,17 @@ module.exports = class _Spell {
 	_cooldownTime = 0;
 
 	distanceCalc = 'CENTER_TO_EDGE';
-	
-	
-	constructor(options){
+
+
+	constructor(options) {
 		this.owner = options.owner || null;
 
 		this.parentSpell = options.parentSpell || null;
 		this.spellHash = HashString(this.constructor.name);
+
+		this.constructor.childSpellList.forEach(spell => {
+			this.childSpells.push(new spell({ ...options, parentSpell: this }));
+		});
 	}
 
 
@@ -35,26 +39,25 @@ module.exports = class _Spell {
 	 * @abstract
 	 * @param {Object} spellData
 	 */
-	preCast(spellData){
+	preCast(spellData) {
 		var target = spellData.target || spellData.packet;
 
 		var range = this.castRange;
 		var filters = this.owner.Filters(this.distanceCalc);
 		var rangeSum = filters.getRangeSum(target, range);
 		var isInRange = filters.isInRangeFlat(target, rangeSum);
-		
-		if(!isInRange)
+
+		if (!isInRange)
 			this.owner.moveWithCallback(target, () => this.cast(spellData), rangeSum);
 
 		return isInRange;
 	}
-	
+
 	/**
 	 * @abstract
 	 * @param {Object} spellData
 	 */
-	onCast(spellData){
-		this.owner.emit('spellCasting', spellData);
+	onCast(spellData) {
 
 	}
 
@@ -62,15 +65,18 @@ module.exports = class _Spell {
 	 * @abstract
 	 * @param {Object} spellData
 	 */
-	afterCast(spellData){
-		if(this.isProjectile)
+	async afterCast(spellData) {
+		if (this.isProjectile)
 			this.spawnProjectileAns(spellData.spellCast.castInfo, 0, this.projectileData);
 		else
 			this.castSpellAns(spellData.spellCast.castInfo);
 
 		//console.log('afterCast', spellData);
-		if(this.childSpells.length > 0){
-			this.childSpells.forEach(childSpell => childSpell.cast(spellData));
+		var l = this.childSpells.length;
+		if (l > 0) {
+			for (var i = 0; i < l; i++)
+				await this.childSpells[i].cast(spellData);
+
 			return;
 		}
 		this.owner.emit('spellCastingEnd', spellData);
@@ -81,34 +87,40 @@ module.exports = class _Spell {
 	 * 
 	 * @param {Object} spellData
 	 * @param {Object} spellData.packet
+	 * @returns casted
 	 */
-	cast(spellData){
+	async cast(spellData) {
 		spellData.spell = this;
 		spellData.target = spellData.target || null;
 		spellData.target = typeof spellData.target == 'number' ? global.getUnitByNetId(spellData.target) : spellData.target;
 		spellData.movingSpell = this.movingSpell;
 
-		if(!this.preCast(spellData))
-			return;
+		if (!this.preCast(spellData))
+			return false;
 
-		if(this.waitingCooldown())
+		if (this.waitingCooldown())
 			return false;
 
 		this._lastCastTime = performance.now();
 		this._cooldownTime = this._lastCastTime + (this.cooldown * 1000);
 
-		spellData.spellCast = new SpellCast({spellData});
-		this.onCast(spellData);
-		this.afterCast(spellData)
-	}
-	
+		spellData.spellCast = new SpellCast({ spellData });
 
-	castSpellAns(castInfo, packageHash){
+		this.owner.emit('spellCasting', spellData);
+		await Promise.wait(this.windup * 1000);
+		this.onCast(spellData);
+		await this.afterCast(spellData);
+
+		return true;
+	}
+
+
+	castSpellAns(castInfo, packageHash) {
 		var owner = this.owner;
 
 		var CastSpellAns = global.Network.createPacket('CastSpellAns', 'S2C');
 		CastSpellAns.netId = owner.netId;
-		CastSpellAns.casterPositionSyncId = owner.positionSyncId;
+		CastSpellAns.casterPositionSyncId = owner.moveTime || 1;
 		CastSpellAns.castInfo = {
 			spellHash: 0,
 			spellCastNetId: 1073743439,
@@ -139,7 +151,8 @@ module.exports = class _Spell {
 		owner.sendTo_vision(CastSpellAns);
 		//console.log(CastSpellAns);
 	}
-	spawnProjectileAns(castInfo, packageHash = 0, projectile = {speed: 1200}){//todo
+
+	spawnProjectileAns(castInfo, packageHash = 0, projectile = { speed: 1200 }) {//todo
 		var owner = this.owner;
 
 		var MissileReplication = global.Network.createPacket('MissileReplication', 'S2C');
@@ -191,8 +204,8 @@ module.exports = class _Spell {
 		//console.log(MissileReplication);
 	}
 
-	waitingCooldown(){
-		if(this._cooldownTime > performance.now())
+	waitingCooldown() {
+		if (this._cooldownTime > performance.now())
 			return true;
 
 		return false;

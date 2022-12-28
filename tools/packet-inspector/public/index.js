@@ -1,5 +1,5 @@
 
-WebSocket.prototype.sendJson = function(data){
+WebSocket.prototype.sendJson = function (data) {
 	data = JSON.stringify(data);
 	this.send(data);
 };
@@ -25,24 +25,24 @@ ws.addEventListener('open', (event) => {
 	"7": "LOADING_SCREEN",
 };*/
 
-function strAtPos(str, pos, ins){
+function strAtPos(str, pos, ins) {
 	return [str.slice(0, pos), ins, str.slice(pos)].join('');
 }
-function getPacketSel(element, packetId){
-    var a = window.getSelection().toString();
+function getPacketSel(element, packetId) {
+	var a = window.getSelection().toString();
 	var b = element.parentElement.parentElement.querySelector('.Bytes_textarea');
 	var c = offDEBUGobj[packetId][a] || 0;
 
 	b.value = b.value.replace('>', '');
-	if(c)
+	if (c)
 		b.value = strAtPos(b.value, c * 3, '>');
 
 }
-function collapsePacket(element){
+function collapsePacket(element) {
 	var b = element.parentElement.parentElement.parentElement.querySelector('.packetContentRow');
 	b.style.display = b.style.display == 'none' ? null : 'none';
 }
-function highlightPacket(element){
+function highlightPacket(element) {
 	//var a = element.parentElement.parentElement.parentElement.querySelector('.packetContentRow .Bytes > *');
 	//a.style.border = a.style.border ? null : '1px solid blue';
 	//var b = element.parentElement.parentElement.parentElement.querySelector('.packetContentRow .Parsed > *');
@@ -56,15 +56,15 @@ var offDEBUGobj = {};
 ws.addEventListener('message', (event) => {
 	//console.log('Message from server', event.data);
 	var res = JSON.parse(event.data);
-	if(res.cmd == 'newpacket'){
+	if (res.cmd == 'newpacket') {
 		//Controls.loadingspinnerTime();
 
 		var parsedLines = parseInt((res.packet.Parsed || '').split('\n').length + (res.packet.Parsed || '').length / 100);
 		parsedLines = parsedLines > 10 ? 10 : parsedLines;
 
-		try{
+		try {
 			offDEBUGobj[res.packet.Id] = JSON.parse(res.packet.offDEBUG);
-		}catch(e){
+		} catch (e) {
 			console.error(e, res);
 		}
 
@@ -95,54 +95,54 @@ ws.addEventListener('message', (event) => {
 		var packetlist = document.getElementById('packetlist');
 		packetlist.appendChild(newpacket);
 
-		try{
+		try {
 			var jsonViewer = new JSONViewer();
 			var jsonViewerContainer = jsonViewer.getContainer();
 			jsonViewerContainer.style.height = (parsedLines * 26) + 'px';
 
 			newpacket.querySelector(".Parsed").appendChild(jsonViewerContainer);
 			jsonViewer.showJSON(JSON.parse(res.packet.Parsed));
-		}catch(e){
+		} catch (e) {
 			console.error(e);
 		}
 
 		//console.log(res.packet.Id, res.packet.channelName, res.packet.cmdName, JSON.parse(res.packet.Parsed));
 	}
-	else if(res.cmd == 'loadreplaylist'){
+	else if (res.cmd == 'loadreplaylist') {
 		let loadreplaylist = document.getElementById('loadreplaylist');
 
-		for(let option in res.list){
+		for (let option in res.list) {
 			let optionEl = document.createElement('option');
 			optionEl.value = optionEl.text = res.list[option];
 			loadreplaylist.add(optionEl);
 		}
 	}
-	else if(res.cmd == 'endloading'){
+	else if (res.cmd == 'endloading') {
 		Controls.loadingspinner(false);
 	}
 });
 
 class Messages {
-	static sendpacket_type(name, channel){
+	static sendpacket_type(name, channel) {
 		ws.sendJson({
 			cmd: 'sendpacket_type',
 			name: name,
 			channel: channel,
 		});
 	}
-	static sendpacket(Id){
+	static sendpacket(Id) {
 		ws.sendJson({
 			cmd: 'sendpacket',
 			Id: Id,
 		});
 	}
-	static initialize_client(){
+	static initialize_client() {
 		ws.sendJson({
 			cmd: 'initialize_client',
 		});
 		document.getElementById('send_handshake').disabled = false;
 	}
-	static loadpackets(offset = 0, limit = 2000, packetsearch = []){
+	static loadpackets(offset = 0, limit = 2000, packetsearch = []) {
 		ws.sendJson({
 			cmd: 'loadpackets',
 			offset: offset,
@@ -150,12 +150,12 @@ class Messages {
 			packetsearch: packetsearch,
 		});
 	}
-	static loadreplaylist(){
+	static loadreplaylist() {
 		ws.sendJson({
 			cmd: 'loadreplaylist',
 		});
 	}
-	static loadreplayfile(name = '', offset = undefined, limit = undefined, packetsearch = []){
+	static loadreplayfile(name = '', offset = undefined, limit = undefined, packetsearch = []) {
 		Controls.loadingspinner(true);
 		ws.sendJson({
 			cmd: 'loadreplayfile',
@@ -163,7 +163,7 @@ class Messages {
 		});
 		Messages.loadpackets(offset, limit, packetsearch);
 	}
-	static addpacket(bytes, channel){
+	static addpacket(bytes, channel) {
 		ws.sendJson({
 			cmd: 'addpacket',
 			data: {
@@ -175,9 +175,9 @@ class Messages {
 }
 
 class Controls {
-	static loadingspinner(show){
+	static loadingspinner(show) {
 		var el = document.getElementById('loadingspinner');
-		if(show)
+		if (show)
 			el.classList.remove('d-none');
 		else
 			el.classList.add('d-none');
@@ -196,7 +196,7 @@ class Controls {
 	//	}, ms);
 	//}
 
-	static loadreplayfile(){
+	static loadreplayfile() {
 		var replayFile = document.getElementById('loadreplaylist').value;
 		var offset = document.getElementById('loadreplay_offset').value;
 		var limit = document.getElementById('loadreplay_limit').value;
@@ -209,14 +209,14 @@ class Controls {
 		Messages.loadreplayfile(replayFile, offset, limit, packetsearch);
 	}
 
-	static addpacket(){
+	static addpacket() {
 		var packet = document.getElementById('addpacket_packet').value;
 		var channel = document.getElementById('addpacket_channel').value;
 
 		Messages.addpacket(packet, channel);
 	}
-	
-	static clear(){
+
+	static clear() {
 		var packetlist = document.getElementById('packetlist');
 		packetlist.innerHTML = '';
 	}

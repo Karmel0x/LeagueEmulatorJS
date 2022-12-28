@@ -12,15 +12,15 @@ var Channels = {
 };
 
 var Packets = {};
-for(var channelId in Channels){
+for (var channelId in Channels) {
 	var channelName = Channels[channelId];
 
 	Packets[channelId] = {};
 	Packets[channelId].name = channelName;
 
 	var packetDir = __dirname + '/../Packets/' + channelName + '/';
-	fs.readdirSync(packetDir).forEach(function(file){
-		if(file.endsWith('.js') && file !== 'index.js')
+	fs.readdirSync(packetDir).forEach(function (file) {
+		if (file.endsWith('.js') && file !== 'index.js')
 			Packets[channelId]['0x' + file.between('0x', '-')] = `./${channelName}/${file.replace('.js', '')}`;
 	});
 
@@ -33,13 +33,13 @@ for(var channelId in Channels){
 }
 
 console.log(`module.exports = {`);
-for(var channelId in Packets){
+for (var channelId in Packets) {
 	var channelName = Packets[channelId].name;
 
 	console.log(`\t${channelId}: {`);
 	console.log(`\t\tname: '${channelName}',`);
-	for(var packetId in Packets[channelId]){
-		if(packetId != 'name')
+	for (var packetId in Packets[channelId]) {
+		if (packetId != 'name')
 			console.log(`\t\t${packetId}: require('${Packets[channelId][packetId]}'),`);
 	}
 	console.log(`\t},`);

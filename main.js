@@ -6,6 +6,7 @@ global.Logging.changeOptions({
 	packet: Logging.output.websocket,
 });
 
+global.doNotUsePathfinding = true;
 
 require('./Core/init_utilities')();
 

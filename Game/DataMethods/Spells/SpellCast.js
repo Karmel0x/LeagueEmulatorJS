@@ -6,18 +6,18 @@
 module.exports = class SpellCast {
 
 
-	get spell(){
+	get spell() {
 		return this.spellData.spell;
 	}
-	get owner(){
+	get owner() {
 		return this.spellData.spell.owner;
 	}
-	get missile(){
+	get missile() {
 		return this.spellData.missile;
 	}
 
 	_CastInfo = {};
-	get castInfo(){
+	get castInfo() {
 		var castInfo = {};
 		castInfo.targetPosition = this.missile?.target?.position || this.spellData.position || this.owner?.position;
 		castInfo.targetPositionEnd = this.missile?.target?.position || this.spellData.position || this.owner?.position;
@@ -34,13 +34,13 @@ module.exports = class SpellCast {
 			unit: this.missile?.target?.netId ?? this.target?.netId ?? this.owner.netId,
 			hitResult: this.missile?.target?.netId ? 1 : 0,//todo
 		}];
-		
+
 		castInfo.designerCastTime = -1;
 		castInfo.extraCastTime = 0;
 		castInfo.designerTotalTime = 0.70;
 		castInfo.cooldown = this.spell.cooldown || 0;
 		castInfo.startCastTime = 0;
-		
+
 		castInfo.bitfield = {
 			isAutoAttack: false,
 			isSecondAutoAttack: false,
@@ -67,7 +67,7 @@ module.exports = class SpellCast {
 	 * @param {Missile} args0.missile
 	 * @param {Unit|GameObject|Dummytarget} [args0.target=args0.missile.target] (must have a position, may have netId)
 	 */
-	constructor(options){
+	constructor(options) {
 
 		this.netId = ++global.lastNetId;
 		this.spellData = options.spellData;

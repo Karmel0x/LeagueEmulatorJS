@@ -7,6 +7,6 @@ module.exports = class ExtendedPacket extends BasePacket {
 		netId: 'uint32',
 		cmd: 'uint16',
 	}
-	
+
 	cmd2 = 0xFE;
 };

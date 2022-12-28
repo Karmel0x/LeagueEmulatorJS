@@ -37,7 +37,7 @@ module.exports = class _Minion_MechMelee extends _Minion {
 		armor: 30,
 		resist: -30,
 		moveSpeed: 325,
-		
+
 		collisionRadius: 65,
 	};
 
@@ -45,9 +45,9 @@ module.exports = class _Minion_MechMelee extends _Minion {
 		//BasicAttack: require('./Spells/BasicAttack'),
 	};
 
-	constructor(parent){
+	constructor(parent) {
 		super(parent);
-		
+
 		this.createOnSlots({
 			[slotId.A]: this.constructor.spells.BasicAttack,
 		});

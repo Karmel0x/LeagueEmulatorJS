@@ -1,4 +1,4 @@
-module.exports = {//todo: config
+module.exports = {//@todo
 	BLUE: [
 		{
 			playerId: 1,
@@ -19,7 +19,7 @@ module.exports = {//todo: config
 				summonorSpell1: "HEAL",
 				summonorSpell2: "FLASH",
 				bitfield: 0,//108
-				teamId: "BLUE",
+				team: "BLUE",
 				eloRanking: "DIAMOND",
 				profileIconId: 0,//666,
 				allyBadgeId: 2,
@@ -48,7 +48,7 @@ module.exports = {//todo: config
 				summonorSpell1: "HEAL",
 				summonorSpell2: "FLASH",
 				bitfield: 0,//108
-				teamId: "RED",
+				team: "RED",
 				eloRanking: "DIAMOND",
 				profileIconId: 0,//666,
 				allyBadgeId: 2,

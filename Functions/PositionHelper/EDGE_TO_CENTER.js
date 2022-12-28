@@ -11,7 +11,7 @@ class PositionHelper__EDGE_TO_CENTER extends PositionHelper__CENTER_TO_CENTER {
 	 * @param {Number} range
 	 * @returns {Number}
 	 */
-	static getRangeSum(source, target, range){
+	static getRangeSum(source, target, range) {
 		return range + (source.collisionRadius || 0);
 	}
 

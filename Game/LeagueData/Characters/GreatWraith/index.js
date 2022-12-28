@@ -24,23 +24,23 @@ module.exports = class GreatWraith extends _Monster {
 		mana: 0,
 		manaRegen: 0,
 		attackDamage: {
-			baseValue: 12,
-			perLevel: 1,
+			baseValue: 75,
+			perLevel: 0,
 		},
 		abilityPower: 0,
-		attackSpeed: 1.25,
+		attackSpeed: 0.638,
 		attackSpeedOffset: 0,
 		crit: 0,
 		attackRange: 100,
 		armor: {
-			baseValue: 0,
-			perLevel: 2,
+			baseValue: 15,
+			perLevel: 0,
 		},
 		resist: {
 			baseValue: 0,
-			perLevel: 1.25,
+			perLevel: 0,
 		},
-		moveSpeed: 325,
+		moveSpeed: 330,
 
 		collisionRadius: 48,
 	};

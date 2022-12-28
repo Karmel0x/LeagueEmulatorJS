@@ -10,19 +10,17 @@ module.exports = class Waypoint_Acc extends BasePacket {
 		syncId: 'int32',
 		teleportCount: 'uint8',
 	}
-	reader(buffer){
+	reader(buffer) {
 		super.reader(buffer);
 
 		this.teleport = buffer.readobj([TeleportData, this.teleportCount]);
 	}
-	writer(buffer){
-		//if(!this.teleport || !this.teleport.length || this.teleport.length > 0xFF)
-		//	return;
-
+	writer(buffer) {
+		this.teleport = this.teleport || [];
 		this.teleportCount = this.teleport.length;
 
 		super.writer(buffer);
-		
+
 		buffer.writeobj([TeleportData, this.teleportCount], this.teleport);
 	}
 };

@@ -26,16 +26,16 @@ module.exports = class _Inhibitor extends _Character {
 		armor: 20,
 		resist: 0,
 		moveSpeed: 0,
-		
+
 		collisionRadius: 100,//??
 	};
 
 	static spells = {
-		
+
 	};
 
-	constructor(parent){
+	constructor(parent) {
 		super(parent);
-		
+
 	}
 };

@@ -8,8 +8,8 @@ const _Package = require("./_Package");
 module.exports = class _Summoner extends _Package {
 
 
-	constructor(parent, spells){
+	constructor(parent, spells) {
 		super(parent);
-		
+
 	}
 };

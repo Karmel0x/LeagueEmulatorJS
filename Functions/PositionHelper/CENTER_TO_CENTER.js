@@ -12,7 +12,7 @@ class PositionHelper__CENTER_TO_CENTER extends _PositionHelper {
 	 * @param {Number} range
 	 * @returns {Number}
 	 */
-	static getRangeSum(source, target, range = 0){
+	static getRangeSum(source, target, range = 0) {
 		return range;
 	}
 
@@ -23,7 +23,7 @@ class PositionHelper__CENTER_TO_CENTER extends _PositionHelper {
 	 * @param {Vector2|GameObject} target|target.position
 	 * @return {Vector2}
 	*/
-	static distanceBetween(source, target){
+	static distanceBetween(source, target) {
 		var sourcePosition = source.position || source;
 		var targetPosition = target.position || target;
 		//sourcePosition = new Vector2(sourcePosition.x, sourcePosition.y);
@@ -35,7 +35,7 @@ class PositionHelper__CENTER_TO_CENTER extends _PositionHelper {
 	 * @param {GameObject|Vector2} source
 	 * @param {Array.<GameObject>} targets
 	 */
-	static sortByDistance(source, targets){
+	static sortByDistance(source, targets) {
 		var sourcePosition = source.position || source;
 		targets.sort((a, b) => {
 			return (sourcePosition.distanceTo(a.position) - this.getRangeSum(source, a))
@@ -48,7 +48,7 @@ class PositionHelper__CENTER_TO_CENTER extends _PositionHelper {
 	 * @param {Array.<GameObject>} targets 
 	 * @returns {GameObject}
 	 */
-	static getNearest(source, targets){
+	static getNearest(source, targets) {
 		this.sortByDistance(source, targets);
 		return targets[0] || null;
 	}
@@ -57,7 +57,7 @@ class PositionHelper__CENTER_TO_CENTER extends _PositionHelper {
 	 * @param {GameObject|Vector2} source
 	 * @param {GameObject} target
 	 */
-	static isInRangeFlat(source, target, range){
+	static isInRangeFlat(source, target, range) {
 		var sourcePosition = source.position || source;
 		var targetPosition = target.position || target;
 		return sourcePosition.distanceTo(targetPosition) <= range;
@@ -67,7 +67,7 @@ class PositionHelper__CENTER_TO_CENTER extends _PositionHelper {
 	 * @param {GameObject|Vector2} source
 	 * @param {GameObject} target
 	 */
-	static isInRange(source, target, range){
+	static isInRange(source, target, range) {
 		return this.isInRangeFlat(source, target, this.getRangeSum(source, target, range));
 	}
 
@@ -77,8 +77,9 @@ class PositionHelper__CENTER_TO_CENTER extends _PositionHelper {
 	 * @param {Number} range 
 	 * @returns {Array.<GameObject>}
 	 */
-	static filterByRange(source, targets, range){
-		return targets.filter(target => this.isInRange(source, target, range));
+	static filterByRange(source, targets, range) {
+		var sourcePosition = source.position || source;
+		return targets.filter(target => this.isInRange(sourcePosition, target, range));
 	}
 
 	/**
@@ -87,13 +88,13 @@ class PositionHelper__CENTER_TO_CENTER extends _PositionHelper {
 	 * @param {Number|Object} range|{minimum, maximum}
 	 * @returns {Vector2}
 	 */
-	static getPositionBetweenRange(source, target, range){
+	static getPositionBetweenRange(source, target, range) {
 
 		var sourcePosition = source.position || source;
 		var targetPosition = target.position || target;
 		var positionBetweenRange = new Vector2(targetPosition.x, targetPosition.y);
 		positionBetweenRange.sub(sourcePosition);
-		if(positionBetweenRange.length() == 0)
+		if (positionBetweenRange.length() == 0)
 			positionBetweenRange.x = 0.001;
 
 		var rangeMinimum = this.getRangeSum(source, target, range.minimum || range);
@@ -111,7 +112,7 @@ class PositionHelper__CENTER_TO_CENTER extends _PositionHelper {
 	 * @param {Number} range
 	 * @returns 
 	 */
-	static getPositionToTargetMinusRange(source, target, range = 0){
+	static getPositionToTargetMinusRange(source, target, range = 0) {
 		var sourcePosition = source.position || source;
 		var targetPosition = target.position || target;
 		var positionToTargetMinusRange = new Vector2(sourcePosition.x, sourcePosition.y);
@@ -124,31 +125,31 @@ class PositionHelper__CENTER_TO_CENTER extends _PositionHelper {
 
 	// ===================
 
-	getRangeSum(target, range = 0){
+	getRangeSum(target, range = 0) {
 		return this.constructor.getRangeSum(this.gameObject, target, range);
 	}
-	distanceBetween(target){
+	distanceBetween(target) {
 		return this.constructor.distanceBetween(this.gameObject, target);
 	}
-	sortByDistance(targets){
+	sortByDistance(targets) {
 		return this.constructor.sortByDistance(this.gameObject, targets);
 	}
-	getNearest(objects){
+	getNearest(objects) {
 		return this.constructor.getNearest(this.gameObject, objects);
 	}
-	isInRangeFlat(target, range){
+	isInRangeFlat(target, range) {
 		return this.constructor.isInRangeFlat(this.gameObject, target, range);
 	}
-	isInRange(target, range){
+	isInRange(target, range) {
 		return this.constructor.isInRange(this.gameObject, target, range);
 	}
-	filterByRange(targets, range){
+	filterByRange(targets, range) {
 		return this.constructor.filterByRange(this.gameObject, targets, range);
 	}
-	getPositionBetweenRange(target, range){
+	getPositionBetweenRange(target, range) {
 		return this.constructor.getPositionBetweenRange(this.gameObject, target, range);
 	}
-	getPositionToTargetMinusRange(target, range){
+	getPositionToTargetMinusRange(target, range) {
 		return this.constructor.getPositionToTargetMinusRange(this.gameObject, target, range);
 	}
 

@@ -19,7 +19,7 @@ module.exports = class Worm extends _Monster {
 
 	static stats = {
 		health: {
-			baseValue: 8771,
+			baseValue: 8800,
 			perLevel: 140,
 		},
 		healthRegen: 0,

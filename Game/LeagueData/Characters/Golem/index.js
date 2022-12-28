@@ -24,7 +24,7 @@ module.exports = class Golem extends _Monster {
 		mana: 0,
 		manaRegen: 0,
 		attackDamage: {
-			baseValue: 54,
+			baseValue: 60,
 			perLevel: 1.6,
 		},
 		abilityPower: 0,
@@ -40,7 +40,7 @@ module.exports = class Golem extends _Monster {
 			baseValue: -10,
 			perLevel: 0,
 		},
-		moveSpeed: 350,
+		moveSpeed: 285,
 
 		collisionRadius: 48,
 	};

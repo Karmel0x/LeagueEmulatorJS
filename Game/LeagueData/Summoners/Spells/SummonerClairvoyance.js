@@ -11,7 +11,7 @@ module.exports = class SummonerClairvoyance extends _Spell {
 	range = 25000;
 
 
-	onCast(spellData){
+	onCast(spellData) {
 		super.onCast(spellData);
 
 	}

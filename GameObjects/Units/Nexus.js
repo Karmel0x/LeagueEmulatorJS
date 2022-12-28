@@ -1,13 +1,14 @@
+
 var Unit = require('./Unit');
 const loadingStages = require("../../Constants/loadingStages");
 
 
 const Nexuses = {
 	BLUE: {
-		0: {netId: 0xFFF97DB5, position: {x:  1131.728, y:  1426.288}, info: {name: 'HQ_T1'}, character: 'OrderNexus'}//4294540725
+		0: { netId: 0xFFF97DB5, position: { x: 1131.728, y: 1426.288 }, info: { name: 'HQ_T1' }, character: 'OrderNexus' }//4294540725
 	},
 	RED: {
-		0: {netId: 0xFFF02C0F, position: {x: 12760.906, y: 13026.066}, info: {name: 'HQ_T2'}, character: 'ChaosNexus'},//4293929999
+		0: { netId: 0xFFF02C0F, position: { x: 12760.906, y: 13026.066 }, info: { name: 'HQ_T2' }, character: 'ChaosNexus' },//4293929999
 	},
 };
 
@@ -20,13 +21,14 @@ class Nexus extends ExtendWTraits(Unit, IDefendable) {
 	 * It sends a packet to everyone says that this building has died
 	 * @param source - The source of the damage.
 	 */
-	accounceDie(source){
+	accounceDie(source) {
 		var Building_Die = global.Network.createPacket('Building_Die');
 		Building_Die.netId = this.netId;
 		Building_Die.attackerNetId = source.netId;
 		this.sendTo_everyone(Building_Die);
 	}
-	async onDie(source){
+	
+	async onDie(source) {
 		this.accounceDie(source);
 	}
 
@@ -35,15 +37,17 @@ class Nexus extends ExtendWTraits(Unit, IDefendable) {
 	 * @param {Object} options
 	 * @param {String} options.team
 	 */
-	constructor(options){
+	constructor(options) {
 		super(options);
 
 		this.initialized();
 	}
-	//onDie(source){
+
+	//onDie(source) {
 	//    //end game?
 	//}
-	spawn(){
+
+	spawn() {
 		var OnEnterVisibilityClient = global.Network.createPacket('OnEnterVisibilityClient');
 		OnEnterVisibilityClient.netId = this.netId;
 		OnEnterVisibilityClient.isTurret = true;
@@ -51,15 +55,14 @@ class Nexus extends ExtendWTraits(Unit, IDefendable) {
 
 		super.spawn();
 	}
-	
 
 	/**
 	 * 
 	 * @param {Object} spawnList {TEAM: [{netId, position}]}
 	 */
-	static spawnAll(spawnList = Nexuses){
-		for(let team in spawnList)
-			for(let num in spawnList[team])
+	static spawnAll(spawnList = Nexuses) {
+		for (let team in spawnList)
+			for (let num in spawnList[team])
 				new Nexus({
 					team, num,
 					netId: spawnList[team][num].netId,

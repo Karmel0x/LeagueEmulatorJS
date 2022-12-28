@@ -11,7 +11,7 @@ module.exports = class SummonerOdinGarrison extends _Spell {
 	range = 1250;
 
 
-	onCast(spellData){
+	onCast(spellData) {
 		super.onCast(spellData);
 
 	}

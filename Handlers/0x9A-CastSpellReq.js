@@ -1,7 +1,7 @@
 
 
 module.exports = (player, packet) => {
-    console.log('handle: C2S.CastSpellReq');
+	console.log('handle: C2S.CastSpellReq');
 	//console.log(packet);
 
 	//if(packet.slot >= 0 && packet.slot <= 3)

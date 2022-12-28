@@ -10,7 +10,7 @@ module.exports = class SummonerRevive extends _Spell {
 	cost = 0;
 
 
-	onCast(spellData){
+	onCast(spellData) {
 		super.onCast(spellData);
 
 	}

@@ -2,13 +2,14 @@
 const Network = require('../Network');
 var { WebSocketServer } = require('ws');
 
+
 class NetworkWs extends Network {
 
 	peer_num_number = 0;
 	peers = {};
 
-	listen(){
-		const wss = new WebSocketServer({port: this.port, host: this.host});
+	listen() {
+		const wss = new WebSocketServer({ port: this.port, host: this.host });
 
 		wss.on('connection', function connection(ws) {
 			ws.peer_num = peer_num_number++;
@@ -24,7 +25,7 @@ class NetworkWs extends Network {
 			});
 		});
 	}
-	sendPacketMsg(msg){
+	sendPacketMsg(msg) {
 		peers[msg.peer_num].send(msg.buffer);
 	}
 }

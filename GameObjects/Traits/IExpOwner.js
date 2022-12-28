@@ -32,7 +32,7 @@ module.exports = (I) => class IExpOwner extends I {
 	 * Increase gold
 	 * @param {Number} amount 
 	 */
-	goldUp(amount, source = 0){
+	goldUp(amount, source = 0) {
 		this.gold += amount;
 
 		let packet = global.Network.createPacket('UnitAddGold');
@@ -44,15 +44,15 @@ module.exports = (I) => class IExpOwner extends I {
 
 		console.log('goldUp', amount);
 	}
-	
+
 	/**
 	 * Increase exp and level up if needed
 	 * @param {Number} amount 
 	 */
-	expUp(amount){
+	expUp(amount) {
 		this.exp += amount;
 		this.expTotal += amount;
-		while(this.expTotal >= ExpCurve[this.level]){
+		while (this.expTotal >= ExpCurve[this.level]) {
 			//this.exp -= ExpCurve[this.level];
 			this.levelUp(false);
 		}
@@ -70,19 +70,19 @@ module.exports = (I) => class IExpOwner extends I {
 	 * level up
 	 * @param {Boolean} sendStats
 	 */
-	levelUp(sendStats = true){
-		if(this.level >= 18)
+	levelUp(sendStats = true) {
+		if (this.level >= 18)
 			return;
 
 		++this.level;
 		++this.skillPoints;
 
 		var championWithEvolvePoints = false;
-		if(championWithEvolvePoints && (this.level == 6 || this.level == 11 || this.level == 16))
+		if (championWithEvolvePoints && (this.level == 6 || this.level == 11 || this.level == 16))
 			++this.evolvePoints;
 
 		this.skillUpgrade_send(0);//for now
-		if(sendStats)
+		if (sendStats)
 			this.charStats_send();
 		console.log('levelUp', this.level);
 	}
@@ -93,13 +93,13 @@ module.exports = (I) => class IExpOwner extends I {
 	 * @param {Boolean} isEvolve 
 	 * @returns 
 	 */
-	skillUpgrade(slot, isEvolve = false){
-		
-		if(isEvolve){
-			if(this.evolvePoints < 1)
+	skillUpgrade(slot, isEvolve = false) {
+
+		if (isEvolve) {
+			if (this.evolvePoints < 1)
 				return;
 
-			if(this.evolvePointsF[slot] == true)
+			if (this.evolvePointsF[slot] == true)
 				return;
 
 			this.evolvePointsF[slot] = true;
@@ -107,10 +107,10 @@ module.exports = (I) => class IExpOwner extends I {
 			return;
 		}
 
-		if(this.skillPoints < 1)
+		if (this.skillPoints < 1)
 			return;
 
-		if(this.spellLevel[slot] >= spellLevelMax[slot])
+		if (this.spellLevel[slot] >= spellLevelMax[slot])
 			return;
 
 		++this.spellLevel[slot];

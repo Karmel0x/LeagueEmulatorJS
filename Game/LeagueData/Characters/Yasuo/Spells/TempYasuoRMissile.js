@@ -16,10 +16,10 @@ module.exports = class TempYasuoRMissile extends _Spell {
 			isOverrideCastPosition: true,
 		},
 	};
-	
-	onCast(spellData){
+
+	onCast(spellData) {
 		//console.log(spellData.missile);
 		spellData.missile.fire(spellData.missile.target);
 	}
-	
+
 };

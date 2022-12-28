@@ -32,8 +32,10 @@ module.exports = class Chat extends BasePacket {
 		//console.log(this.pars, this.msg);
 	}
 	writer(buffer){
-		if(!this.msg || !this.msg.length || this.msg.length > 1000)
+		if(!this.msg || !this.msg.length)
 			return;
+		if(this.msg.length > 0xFFFF)
+			this.msg = this.msg.slice(0, 0xFFFF);
 
 		this.messageSize = this.msg.length;
 

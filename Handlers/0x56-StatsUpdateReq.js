@@ -6,6 +6,6 @@ module.exports = (player, packet) => {
 
 	//var StatsUpdateReq? = global.Network.createPacket('StatsUpdateReq?');
 	//player.sendPacket(StatsUpdateReq?);
-	
+
 	//player.loadingStage = true;
 };

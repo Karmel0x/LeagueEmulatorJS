@@ -14,57 +14,45 @@ module.exports = class GameObject extends EventEmitter {
 	netId = 0;
 	collisionRadius = 1;
 
-	_position = new Vector2(0, 0);
-	set position(pos){
-		this._position = new Vector2(pos.x, pos.y);
-	}
-	get position(){
-		return this._position;
-	}
+	position = new Vector2(7000, 7000);
+	spawnPosition = new Vector2(7000, 7000);
 
-	_spawnPosition = new Vector2(0, 0);
-	set spawnPosition(spawnPos){
-		this._spawnPosition = new Vector2(spawnPos.x || 0, spawnPos.y || 0);
-	}
-	get spawnPosition(){
-		return this._spawnPosition;
-	}
-
-	get type(){
+	get type() {
 		return this.constructor.name;
 	}
-
 
 	/**
 	 * 
 	 * @param {Object} options
 	 * @param {Number} [options.netId]
-	 * @param {Vector2} options.spawnPosition|options.position
+	 * @param {Vector2} [options.spawnPosition|options.position]
+	 * @param {Barrack|JungleCamp|Unit} [options.spawner]
 	 */
-	constructor(options){
+	constructor(options) {
 		super(options);
 
 		this.netId = options.netId || ++global.lastNetId;
 
-		this.spawnPosition = options.spawnPosition || options.position;
-		this.position = this.spawnPosition;
+		this.spawner = options.spawner || options.owner;
+		this.spawnPosition = options.spawnPosition || options.position || this.spawner?.position;
+		this.position.copy(this.spawnPosition);
 
 	}
 
 	_Filters = {};
-	Filters(distanceCalcPoint = 'CENTER_TO_CENTER'){
-		if(!this._Filters[distanceCalcPoint])
+	Filters(distanceCalcPoint = 'CENTER_TO_CENTER') {
+		if (!this._Filters[distanceCalcPoint])
 			this._Filters[distanceCalcPoint] = new (Filters(distanceCalcPoint))(this);
 
 		return this._Filters[distanceCalcPoint];
 	}
-	
+
 	/**
 	 * Get distance from this unit to target unit
 	 * @param {Unit|IMovable|Vector2} target 
 	 * @returns {Number}
 	 */
-	distanceTo(target){
+	distanceTo(target) {
 		return this.position.distanceTo(target.position || target);
 	}
 
@@ -72,7 +60,7 @@ module.exports = class GameObject extends EventEmitter {
 	 * for compatibility
 	 * @abstract
 	 */
-	moveWithCallback(target, reachDestinationCallback, range = 0){
+	moveWithCallback(target, reachDestinationCallback, range = 0) {
 
 	}
 };

@@ -7,24 +7,25 @@ const Packets = require('../../Core/Network/Packets');
 
 var packetId = 0;
 
-function findChannelIdByPacketId(packetId){
-	for(var channelId in Packets){
-		if(Packets[channelId][packetId])
+function findChannelIdByPacketId(packetId) {
+	for (var channelId in Packets) {
+		if (Packets[channelId][packetId])
 			return channelId;
 	}
 	return null;
 }
+
 function packetParser(packet1) {
 
 	var buffer;
-	if(packet1.Bytes || packet1.BytesB64)
+	if (packet1.Bytes || packet1.BytesB64)
 		buffer = Buffer.from(packet1.Bytes || packet1.BytesB64, 'base64');
-	else if(packet1.BytesHex)
+	else if (packet1.BytesHex)
 		buffer = Buffer.from(packet1.BytesHex.split(' ').join('').split('-').join(''), 'hex');
-	else if(packet1.BytesBuffer)
+	else if (packet1.BytesBuffer)
 		buffer = packet1.BytesBuffer;
 
-	if(!buffer)
+	if (!buffer)
 		return false;
 
 	packet1.Id = packet1.Id ?? ++packetId;
@@ -37,10 +38,10 @@ function packetParser(packet1) {
 		buffer: buffer,
 	});
 
-	if(parsed.cmd == 0x95)//Ping_Load_Info
+	if (parsed.cmd == 0x95)//Ping_Load_Info
 		return false;
 
-	if(parsed.cmd == 0xFF){
+	if (parsed.cmd == 0xFF) {
 		buffer.off = 0;
 		let batchPackets = new BatchPacket();
 		batchPackets.reader(buffer);//console.log(batchPackets);
@@ -48,10 +49,10 @@ function packetParser(packet1) {
 	}
 
 	var parsedStr = '';
-	try{
+	try {
 		parsedStr = JSON.stringify(parsed, (key, value) =>
 			typeof value == "bigint" ? value.toString() + "n" : value, 2);
-	}catch(e){}
+	} catch (e) { }
 
 	var packetData = {
 		Id: packet1.Id,

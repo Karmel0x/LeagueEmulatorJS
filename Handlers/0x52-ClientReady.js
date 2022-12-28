@@ -12,11 +12,11 @@ module.exports = (player, packet) => {
 	Game.playerLoaded(player);
 
 	var blueUnits = global.getUnitsF('BLUE');
-	for(var allyUnit_id in blueUnits)
-		global.Teams['BLUE'].vision(blueUnits[allyUnit_id], true);// todo
+	for (var i = 0, l = blueUnits.length; i < l; i++)
+		global.Teams['BLUE'].vision(blueUnits[i], true);// todo
 
 	var redUnits = global.getUnitsF('RED');
-	for(var allyUnit_id in redUnits)
-		global.Teams['RED'].vision(redUnits[allyUnit_id], true);// todo
+	for (var i = 0, l = redUnits.length; i < l; i++)
+		global.Teams['RED'].vision(redUnits[i], true);// todo
 
 };

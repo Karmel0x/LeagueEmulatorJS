@@ -3,6 +3,7 @@ const slotId = require("../../Constants/slotId");
 const IStatOwner = require("./IStatOwner");
 const ISpellable = require("./ISpellable");
 
+
 /**
  * Trait for units that can attack
  * @class
@@ -15,17 +16,17 @@ module.exports = (I) => class IAttackable extends I {
 	 * 
 	 * @param {Unit|Number} target|targetNetId 
 	 */
-	attack(target){
-		if(!target.netId)
+	attack(target) {
+		if (!target.netId)
 			target = global.unitsNetId[target];
 
-		if(!target)
+		if (!target)
 			return console.log('unit does not exist', target.netId, target);
 
-		if(!target.damage)
+		if (!target.damage)
 			return console.log('unit cannot be damaged', target.netId, target.constructor.name);
 
-		//if(this.team === target.team)
+		//if(this.teamId === target.teamId)
 		//	return;
 
 		console.log('BattleUnit.attack', this.netId, target.netId);
@@ -42,11 +43,11 @@ module.exports = (I) => class IAttackable extends I {
 	autoAttackSoftToggle = true;
 
 	_acquisitionManual = null;
-	get acquisitionManual(){
+	get acquisitionManual() {
 		return this._acquisitionManual;
 	}
-	set acquisitionManual(target){
-		if(target && typeof target != 'object')
+	set acquisitionManual(target) {
+		if (target && typeof target != 'object')
 			target = global.getUnitByNetId(target);
 
 		this._acquisitionManual = target;
@@ -56,13 +57,13 @@ module.exports = (I) => class IAttackable extends I {
 	 * Get current target if in attackRange
 	 * @returns {?Unit}
 	 */
-	getCurrentAttackTargetIfInAcquisitionRange(){
-		if(!this.attackTarget || !this.attackTarget.canBeAttacked())
+	getCurrentAttackTargetIfInAcquisitionRange() {
+		if (!this.attackTarget || !this.attackTarget.canBeAttacked())
 			return null;
 
-		if(!this.Filters('EDGE_TO_EDGE').isInRange(this.attackTarget, this.attackRange.total || 400))
+		if (!this.Filters('EDGE_TO_EDGE').isInRange(this.attackTarget, this.attackRange.total || 400))
 			return null;
-		
+
 		return this.attackTarget;
 	}
 
@@ -71,23 +72,24 @@ module.exports = (I) => class IAttackable extends I {
 	 * Find new target in range, sort by type and distance
 	 * @returns {Unit}
 	 */
-	getNewAttackTarget(){
+	getNewAttackTarget() {
 		var unitsInRange = this.Filters('EDGE_TO_EDGE').filterByRange(this.getEnemyUnits(), this.attackRange.total || 400);
-		if(!unitsInRange.length)
+		if (!unitsInRange.length)
 			return null;
 
-		this.Filters().sortByDistance(unitsInRange);
-		unitsInRange = this.Filters().filterByType(unitsInRange, this.attackTargetUnitTypesOrder);
-		this.Filters().sortByType(unitsInRange, this.attackTargetUnitTypesOrder);
+		var filters = this.Filters();
+		filters.sortByDistance(unitsInRange);
+		unitsInRange = filters.filterByType(unitsInRange, this.attackTargetUnitTypesOrder);
+		filters.sortByType(unitsInRange, this.attackTargetUnitTypesOrder);
 		return unitsInRange[0];
 	}
 
-	shouldAutoAttackNow(){
-		if(!this.autoAttackToggle)
+	shouldAutoAttackNow() {
+		if (!this.autoAttackToggle)
 			return false;
-		if(!this.autoAttackSoftToggle)
+		if (!this.autoAttackSoftToggle && this.waypoints?.length)
 			return false;
-		if(this.callbacks.move?.dash)//@todo
+		if (this.callbacks.move?.dash)//@todo
 			return false;
 		return true;
 	}
@@ -96,16 +98,16 @@ module.exports = (I) => class IAttackable extends I {
 	 * Find target to attack or get previous target if still in range
 	 * @returns {?Unit}
 	 */
-	findTargetInAcquisitionRange(){
-		if(!this.shouldAutoAttackNow())
+	findTargetInAcquisitionRange() {
+		if (!this.shouldAutoAttackNow())
 			return null;
 
 		var target = this.getCurrentAttackTargetIfInAcquisitionRange();
-		if(target)
+		if (target)
 			return target;
 
 		target = this.getNewAttackTarget();
-		if(target)
+		if (target)
 			return target;
 
 		return null;
@@ -115,14 +117,19 @@ module.exports = (I) => class IAttackable extends I {
 	 * Set attackTarget to attack
 	 * @param {Unit} target
 	 */
-	setAttackTarget(target){
-		if(this.attackTarget === target)
+	setAttackTarget(target) {
+		if (this.attackTarget === target)
 			return;
 
 		this.attackTarget = target;
+
+		//var AI_TargetHero = global.Network.createPacket('AI_TargetHero');
+		//AI_TargetHero.netId = this.netId;
+		//AI_TargetHero.targetNetId = target.netId;
+		//this.sendTo_everyone(AI_TargetHero);
 	}
 
-	//FaceDirection(){
+	//FaceDirection() {
 	//	var FaceDirection = global.Network.createPacket('FaceDirection');
 	//	FaceDirection.netId = this.netId;
 	//	FaceDirection.flags = { doLerpTime: true };
@@ -130,24 +137,13 @@ module.exports = (I) => class IAttackable extends I {
 	//	FaceDirection.lerpTime = 0.08;
 	//	this.sendTo_everyone(FaceDirection, loadingStages.NOT_CONNECTED);
 	//}
-	//UnitApplyDamage(target, damage){
-	//	var UnitApplyDamage = global.Network.createPacket('UnitApplyDamage');
-	//	UnitApplyDamage.netId = this.netId;
-	//	UnitApplyDamage.damageResultType = 4;
-	//	UnitApplyDamage.dummy = 0;
-	//	UnitApplyDamage.damageType = 0;
-	//	UnitApplyDamage.damage = damage;
-	//	UnitApplyDamage.targetNetId = target.netId;
-	//	UnitApplyDamage.sourceNetId = this.netId;
-	//	this.sendTo_everyone(UnitApplyDamage, loadingStages.NOT_CONNECTED);
-	//}
 
-	canFollowTarget(target){
+	canFollowTarget(target) {
 		// todo: checks if target is visible, didn't died, ...
 		return true;
 	}
-	getTargetInAcquisitionManual(){
-		if(!this.acquisitionManual)
+	getTargetInAcquisitionManual() {
+		if (!this.acquisitionManual)
 			return null;
 
 		return this.acquisitionManual;
@@ -157,12 +153,12 @@ module.exports = (I) => class IAttackable extends I {
 	/**
 	 * Scan for enemy units in range and attack nearest one
 	 */
-	attackInRange(){
+	async attackInRange() {
 		var target = this.getTargetInAcquisitionManual();
-		if(!target){
+		if (!target) {
 			target = this.findTargetInAcquisitionRange();
-			if(!target){
-				if(!this.emitted_noTargetsInRange){
+			if (!target) {
+				if (!this.emitted_noTargetsInRange) {
 					this.emitted_noTargetsInRange = true;
 					this.emit('noTargetsInRange');
 				}
@@ -172,29 +168,44 @@ module.exports = (I) => class IAttackable extends I {
 		this.emitted_noTargetsInRange = false;
 
 		this.setAttackTarget(target);
-		this.spellSlots[slotId.A].cast({target});
+		var casted = await this.spellSlots[slotId.A].cast({ target });
+		if (casted) {
+			//var InstantStop_Attack = global.Network.createPacket('InstantStop_Attack');
+			//InstantStop_Attack.netId = this.netId;
+			//InstantStop_Attack.flags = {
+			//	keepAnimating: true,
+			//};
+			//this.sendTo_everyone(InstantStop_Attack);
+
+			var UnitSetLookAt = global.Network.createPacket('UnitSetLookAt');
+			UnitSetLookAt.netId = this.netId;
+			UnitSetLookAt.lookAtType = UnitSetLookAt.constructor.LookAtType.Unit;
+			UnitSetLookAt.targetPosition = {
+				x: target.position.x,
+				y: target.position.y,
+				z: 10,
+			};
+			UnitSetLookAt.targetNetId = target.netId;
+			this.sendTo_everyone(UnitSetLookAt);
+
+			this.emit('afterBasicAttack');
+		}
+
 		//this.FaceDirection();
-		//this.UnitApplyDamage(target, 100);
 		//attackSlot.turretAttackProjectile(basicattack);
 	}
-	
-	async autoAttackLoop(){
-		if(!this.spellSlots[slotId.A])
+
+	async autoAttackLoop() {
+		if (!this.spellSlots[slotId.A])
 			return console.log('unit is IAttackable but has no basic attacks', this.name);
 
-		var autoAttackLoopInterval = setInterval(() => {
-			if(this.died)
-				return;
-
-			this.attackInRange();
-		}, 100);
-
-		this.once('die', () => {
-			clearInterval(autoAttackLoopInterval);
-		});
+		while(!this.died){
+			await this.attackInRange();
+			await Promise.wait(100);
+		}
 	}
 
-	constructor(options){
+	constructor(options) {
 		super(options);
 
 		this.on('respawn', () => {

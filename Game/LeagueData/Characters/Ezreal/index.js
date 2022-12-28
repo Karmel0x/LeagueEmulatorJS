@@ -5,7 +5,7 @@ const _Champion = require("../../../DataMethods/Characters/_Champion");
 
 module.exports = class Ezreal extends _Champion {
 	static package = require('./package');
-	
+
 	static stats = {
 		health: {
 			baseValue: 350,
@@ -42,7 +42,7 @@ module.exports = class Ezreal extends _Champion {
 		resist: 30,
 		moveSpeed: 325,
 	};
-	
+
 	static spells = {
 		EzrealMysticShot: require('./Spells/EzrealMysticShot'),
 		EzrealEssenceFlux: require('./Spells/EzrealEssenceFlux'),
@@ -52,9 +52,9 @@ module.exports = class Ezreal extends _Champion {
 		EzrealBasicAttack: require('./Spells/EzrealBasicAttack'),
 	};
 
-	constructor(parent){
+	constructor(parent) {
 		super(parent);
-		
+
 		this.createOnSlots({
 			[slotId.Q]: this.constructor.spells.EzrealMysticShot,
 			[slotId.W]: this.constructor.spells.EzrealEssenceFlux,

@@ -4,13 +4,16 @@ const { Vector2 } = require('three');
 const ExtendWTraits = require('../../Core/ExtendWTraits');
 const GameObject = require('../GameObject');
 const IMovable = require('../Traits/IMovable');
-const PositionHelper = require("../../Functions/PositionHelper");
+
 
 //global.baseMissileNetId = 0x60000000;
-global.Missiles = global.Missiles || {};
-global.MissilesCount = global.MissilesCount || {count: 0};
+global.Missiles = global.Missiles || [];
+global.MissilesCount = global.MissilesCount || 0;
 
 
+/**
+ * @abstract
+ */
 class Missile extends ExtendWTraits(GameObject, IMovable) {
 
 	/**
@@ -20,19 +23,26 @@ class Missile extends ExtendWTraits(GameObject, IMovable) {
 		move: {},
 		collision: {},
 	};
+
 	appendGlobal(){
 
-		this.id = global.MissilesCount.count;
-		++global.MissilesCount.count;
+		this.id = global.MissilesCount;
+		++global.MissilesCount;
 
-		global.Missiles[this.netId] = this;
+		global.Missiles.push(this);
 	}
 	removeGlobal(){
-		
-		delete global.Missiles[this.netId];
+		global.Missiles.splice(global.Missiles.indexOf(this), 1);
 	}
 	initialize(){
 		// override
+	}
+
+	get owner(){
+		return this.spawner;
+	}
+	set owner(value){
+		this.spawner = value;
 	}
 
 	/**
@@ -48,19 +58,18 @@ class Missile extends ExtendWTraits(GameObject, IMovable) {
 	 * @param {Unit} [options.target]
 	 */
 	constructor(options){
-		options.spawnPosition = options.spawnPosition || options.owner.position;
 		options.stats = options.stats || {};
 		options.stats.moveSpeed = options.stats.moveSpeed || options.options.speed;
 		options.stats.attackRange = options.stats.attackRange || options.options.range;
 		super(options);
 
-		this.owner = options.owner;
 		this.options = options.options || {};
 		this.target = options.target || null;
 		this.initialize();
 
 		this.appendGlobal();
 	}
+
 	destructor(){
 		this.removeAllListeners();
 		this.removeGlobal();
@@ -106,7 +115,6 @@ class Missile extends ExtendWTraits(GameObject, IMovable) {
 		}
 		this.fly(target);
 	}
-	moveTime = 0;
 
 	/**
 	 * Called when the missile reaches its destination (hit the target)
@@ -117,6 +125,7 @@ class Missile extends ExtendWTraits(GameObject, IMovable) {
 		// override
 		console.log('Missile.reachedDest');
 	}
+
 	fulfillRange = 1;
 	fly(target){
 
@@ -126,9 +135,10 @@ class Missile extends ExtendWTraits(GameObject, IMovable) {
 		this.reachedDest(target);
 	}
 
-	move1(position){
-		this.waypoints = [this.waypoints[0], position];
-	}
+	/**
+	 * @override
+	 */
+	moveAns(){}
 }
 
 

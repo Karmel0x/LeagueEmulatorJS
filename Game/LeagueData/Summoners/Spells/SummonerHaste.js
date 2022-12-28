@@ -10,7 +10,7 @@ module.exports = class SummonerHaste extends _Spell {
 	cost = 0;
 
 
-	onCast(spellData){
+	onCast(spellData) {
 		super.onCast(spellData);
 
 	}

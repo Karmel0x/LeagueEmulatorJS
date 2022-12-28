@@ -1,4 +1,6 @@
+
 const SVector2 = require('./SVector2');
+
 
 module.exports = {//SSpeedParams
 	pathSpeedOverride: 'float',

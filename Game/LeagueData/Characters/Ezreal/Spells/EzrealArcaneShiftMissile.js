@@ -11,7 +11,7 @@ module.exports = class EzrealArcaneShiftMissile extends _Spell {
 
 	isProjectile = true;
 
-	onCast(spellData){
+	onCast(spellData) {
 
 	}
 };

@@ -10,18 +10,18 @@
 
 class Logging {
 	static output = {
-		none: () => {},
+		none: () => { },
 		console: console.debug,
-		websocket(){
-			if(!Logging.ws)
+		websocket() {
+			if (!Logging.ws)
 				return;
-	
+
 			Logging.ws.sendMsg({
 				cmd: 'logging',
 				data: arguments,
 			});
 		},
-		file(){
+		file() {
 			//fs.appendFileSync('../LeagueEmulatorJS_log.json', JSON.stringify(arguments) + ",\n");
 		}
 	};
@@ -37,23 +37,24 @@ class Logging {
 	/**
 	 * @arguments printable arguments
 	 */
-	static debug(){
+	static debug() {
 		//Logging._debug(arguments.callee.caller.name, ...arguments);
 		Logging._debug(...arguments);
 	}
+	
 	/**
 	 * @arguments printable arguments (packet ({channel, bytes, time}))
 	 */
-	static packet(){
-		if(Logging._packet == Logging.output.none)
+	static packet() {
+		if (Logging._packet == Logging.output.none)
 			return;
 
-		if(Logging._packet == Logging.output.console)
+		if (Logging._packet == Logging.output.console)
 			return Logging._packet(...arguments);
 
 		// send packet to packet-inspector with websocket
-		if(Logging._packet == Logging.output.websocket){
-			if(!Logging.ws || Logging.ws.readyState != 1)
+		if (Logging._packet == Logging.output.websocket) {
+			if (!Logging.ws || Logging.ws.readyState != 1)
 				return;
 
 			Logging.ws.sendMsg({
@@ -73,33 +74,33 @@ class Logging {
 	 * Set where log should output (none/console/websocket/file)
 	 * @param {Object.<Logging.output>} options { debug, packet }
 	 */
-	static changeOptions(options){
+	static changeOptions(options) {
 		this.options = options;
 
-		for(let key in options){
-			if(options[key] == Logging.output.websocket){
-				try{
+		for (let key in options) {
+			if (options[key] == Logging.output.websocket) {
+				try {
 					const { WebSocket } = require("ws");
 					this.ws = new WebSocket('ws://127.0.0.1/ws');
 					this.ws.sendMsg = (data) => {
 						this.ws.send(typeof data == 'string' ? data : JSON.stringify(data));
 					};
-					this.ws.on('error', function(error) {
+					this.ws.on('error', function (error) {
 
 					});
 					break;
-				}catch(e){
+				} catch (e) {
 
 				}
 			}
 		}
-		
-		if(options.debug)
+
+		if (options.debug)
 			console.debug = options.debug;
 
-		if(options.debug)
+		if (options.debug)
 			Logging._debug = options.debug;
-		if(options.packet)
+		if (options.packet)
 			Logging._packet = options.packet;
 
 	}

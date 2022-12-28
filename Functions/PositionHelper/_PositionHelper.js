@@ -1,4 +1,6 @@
+
 const { Vector2 } = require("three");
+
 
 module.exports = class _PositionHelper {
 
@@ -8,13 +10,13 @@ module.exports = class _PositionHelper {
 	 * @param {Vector2|GameObject} target|target.position
 	 * @return {Vector2}
 	*/
-	static anglePosition(source, target){
+	static anglePosition(source, target) {
 		var sourcePosition = source.position || source;
 		var targetPosition = target.position || target;
 		var angleV2 = new Vector2(sourcePosition.x, sourcePosition.y);
 		angleV2.sub(targetPosition);
 		angleV2.normalize();
-		
+
 		return angleV2;
 	}
 
@@ -24,30 +26,30 @@ module.exports = class _PositionHelper {
 	 * @param {Number} [length]
 	 * @returns {Vector2}
 	 */
-	static getRandomPositionClamped(source = null, length = 10){
+	static getRandomPositionClamped(source = null, length = 10) {
 		var randomPositionClamped = new Vector2().random();
 		randomPositionClamped.subScalar(0.5).normalize();
 		randomPositionClamped.multiplyScalar(length);
 
 		var sourcePosition = source.position || source;
-		if(sourcePosition)
+		if (sourcePosition)
 			randomPositionClamped.add(sourcePosition);
 
 		return randomPositionClamped;
 	}
-	
+
 	/**
 	 * Get the nearest point to the end of the array
 	 * @param {Vector2} position 
 	 * @param {Array.<Vector2>} arrayVector2 
 	 * @returns {Vector2}
 	 */
-	 static getFromNearestToEnd(source, arrayVector2){
+	static getFromNearestToEnd(source, arrayVector2) {
 		var sourcePosition = source.position || source;
 		var nearest = 0;
 		arrayVector2.reduce((previousValue, currentValue, index) => {
 			let dist = sourcePosition.distanceTo(currentValue);
-			if(dist < previousValue){
+			if (dist < previousValue) {
 				nearest = index;
 				return dist;
 			}
@@ -56,16 +58,16 @@ module.exports = class _PositionHelper {
 		return arrayVector2.slice(nearest);
 	}
 
-	constructor(gameObject){
+	constructor(gameObject) {
 		this.gameObject = gameObject;
 	}
-	anglePosition(target){
+	anglePosition(target) {
 		return this.constructor.anglePosition(this.gameObject, target);
 	}
-	getRandomPositionClamped(length = 10){
+	getRandomPositionClamped(length = 10) {
 		return this.constructor.getRandomPositionClamped(this.gameObject, length);
 	}
-	getFromNearestToEnd(arrayVector2){
+	getFromNearestToEnd(arrayVector2) {
 		return this.constructor.getFromNearestToEnd(this.gameObject, arrayVector2);
 	}
 };

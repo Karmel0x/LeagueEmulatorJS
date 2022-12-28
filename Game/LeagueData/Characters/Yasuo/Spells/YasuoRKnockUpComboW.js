@@ -7,14 +7,12 @@ const YasuoRDummySpell = require("./YasuoRDummySpell");
 module.exports = class YasuoRKnockUpComboW extends _Spell {
 	castRange = 1200;
 
-	constructor(options){
-		super(options);
-
-		this.childSpells.push(new YasuoRDummySpell({...options, parentSpell: this}));
-	}
+	static childSpellList = [
+		YasuoRDummySpell,
+	];
 
 	collidedWith = [];
-	onCast(spellData){
+	onCast(spellData) {
 		super.onCast(spellData);
 
 		spellData.anglePosition = PositionHelper.anglePosition(spellData.packet, this.owner);

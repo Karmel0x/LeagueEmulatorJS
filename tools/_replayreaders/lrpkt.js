@@ -4,16 +4,16 @@ global.packetLengthWarning = 50000;
 require("../../Core/BufferExtend");
 
 
-module.exports = function(filePath) {
+module.exports = function (filePath) {
     var f = fs.readFileSync(filePath);
 
     var header = f.readobj({
-       magic: ['char', 4],
-       size: 'uint32',
-       pad: ['char', 8],
+        magic: ['char', 4],
+        size: 'uint32',
+        pad: ['char', 8],
     });
-   
-   f.readobj(['char', header.size]); // json Match Data
+
+    f.readobj(['char', header.size]); // json Match Data
 
     var readPacketChunk = (f) => {
         var packet = f.readobj({
@@ -32,14 +32,14 @@ module.exports = function(filePath) {
             Flags: packet.reserved,
         }
     }
-    
+
     var packets = [];
 
-    while(f.off < f.length) {
-        if(f.read1('uint8') == 'p'.charCodeAt(0))
-            if(f.read1('uint8') == 'k'.charCodeAt(0))
-                if(f.read1('uint8') == 't'.charCodeAt(0))
-                    if(f.read1('uint8') == 0x00) {
+    while (f.off < f.length) {
+        if (f.read1('uint8') == 'p'.charCodeAt(0))
+            if (f.read1('uint8') == 'k'.charCodeAt(0))
+                if (f.read1('uint8') == 't'.charCodeAt(0))
+                    if (f.read1('uint8') == 0x00) {
                         var packet = readPacketChunk(f);
                         packets.push(packet);
                     }

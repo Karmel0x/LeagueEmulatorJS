@@ -67,9 +67,9 @@ module.exports = class Yasuo extends _Champion {
 		//[slotId.CritAttack4]: require('./Spells/YasuoCritAttack4'),
 	};
 
-	constructor(parent){
+	constructor(parent) {
 		super(parent);
-		
+
 		this.createOnSlots({
 			[slotId.Q]: this.constructor.spells.YasuoQ3W,
 			[slotId.W]: this.constructor.spells.YasuoWMovingWall,
@@ -85,12 +85,12 @@ module.exports = class Yasuo extends _Champion {
 	//	[slotId.W]: require('./Spells/YasuoWMovingWall'),
 	//	[slotId.E]: require('./Spells/YasuoDashWrapper'),
 	//	[slotId.R]: require('./Spells/YasuoRKnockUpComboW'),
-//
+	//
 	//	[slotId.BasicAttack]: require('./Spells/YasuoBasicAttack'),
 	//	//[slotId.BasicAttack2]: require('./Spells/YasuoBasicAttack2'),
 	//	//[slotId.BasicAttack3]: require('./Spells/YasuoBasicAttack3'),
 	//	//[slotId.BasicAttack4]: require('./Spells/YasuoBasicAttack4'),
-//
+	//
 	//	//[slotId.CritAttack]: require('./Spells/YasuoCritAttack'),
 	//	//[slotId.CritAttack2]: require('./Spells/YasuoCritAttack2'),
 	//	//[slotId.CritAttack3]: require('./Spells/YasuoCritAttack3'),

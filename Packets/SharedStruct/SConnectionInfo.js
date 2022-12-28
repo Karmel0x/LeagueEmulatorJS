@@ -9,8 +9,8 @@ var SConnectionInfo = {
 	ping: 'uint16',
 };
 
-if(config.Version >= 4.18){
-    SConnectionInfo.bitfield = ['bitfield', {
+if (config.Version >= 4.18) {
+	SConnectionInfo.bitfield = ['bitfield', {
 		ready: 1,
 	}];
 }

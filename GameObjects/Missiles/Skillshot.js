@@ -15,12 +15,12 @@ class Skillshot extends Missile {
 					range: 10,
 				},
 				function: (target) => {
-					if(this.owner == target)
+					if (this.owner == target)
 						return;
-			
+
 					this.owner.attack(target);
 					delete this.callbacks.collision._;
-					//this.waypoints = [this.waypoints[0]];
+					//this.waypoints = [];
 					this.destructor();
 				}
 			}
@@ -34,18 +34,18 @@ class Skillshot extends Missile {
 	 * @param {Object} options
 	 * @returns 
 	 */
-	static create(owner, targetPosition, options = {}){
-		var missile = new Skillshot({owner, position: targetPosition, options});
+	static create(owner, targetPosition, options = {}) {
+		var missile = new Skillshot({ owner, options });
 		missile.callbacks.collision._.options.range = options.radius;
-		
+
 		missile.target = new Dummytarget({
 			// idk if `options.range - (options.radius / 2)` is correct here, corners on max range will not hit
 			position: PositionHelper.getPositionBetweenRange(owner.position, targetPosition, options.range - (options.radius / 2))
 		});
-		
+
 		return missile;
 	}
-	doFire(){
+	doFire() {
 		this.fire(this.target);
 	}
 }

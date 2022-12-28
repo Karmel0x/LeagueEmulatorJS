@@ -8,8 +8,8 @@ module.exports = class _Character extends _Package {
 
 	static spells = {};
 
-	
-	get model(){
+
+	get model() {
 		return this.constructor.name;
 	}
 };

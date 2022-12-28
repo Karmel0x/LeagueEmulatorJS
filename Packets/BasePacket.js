@@ -9,48 +9,48 @@ module.exports = class BasePacket {
 	static struct = {};
 
 
-	constructor(buffer = null){
-		if(buffer)
+	constructor(buffer = null) {
+		if (buffer)
 			this._buffer = buffer;
 	}
 
-	get id(){
+	get id() {
 		return this.constructor.id;
 	}
-	get name(){
+	get name() {
 		return this.constructor.name;
 	}
 
-	get channel(){
+	get channel() {
 		return this.constructor.channel;
 	}
-	get channelName(){
+	get channelName() {
 		return this.constructor.channelName;
 	}
 
-	get baseSize(){
+	get baseSize() {
 		return this.constructor.baseSize;
 	}
-	get struct_header(){
+	get struct_header() {
 		return this.constructor.struct_header;
 	}
-	get struct(){
+	get struct() {
 		return this.constructor.struct;
 	}
 
 	//_buffer = null;
 
-	reader(buffer){
+	reader(buffer) {
 		Object.assign(this, buffer.readobj(this.struct_header));
 		Object.assign(this, buffer.readobj(this.struct));
 	}
 
-	get content(){
+	get content() {
 
-		if(this._buffer){
+		if (this._buffer) {
 			this.reader(this._buffer);
-	
-			if(this._buffer.off != this._buffer.length)
+
+			if (this._buffer.off != this._buffer.length)
 				console.log('packet structure is incorrect',
 					':', `buffer.off(${this._buffer.off}) != buffer.length(${this._buffer.length})`,
 					':', `${this.constructor.channelName}.${this.constructor.name}`,
@@ -63,22 +63,22 @@ module.exports = class BasePacket {
 		return this;
 	}
 
-	set content(value){
+	set content(value) {
 		Object.assign(this, value);
 	}
 
-	writer(buffer){
+	writer(buffer) {
 		buffer.writeobj(this.struct_header, this);
 		buffer.writeobj(this.struct, this);
 	}
-	
-	get buffer(){
-		
-		if(!this._buffer){
+
+	get buffer() {
+
+		if (!this._buffer) {
 			this._buffer = Buffer.allocUnsafe(this.baseSize);
 			this.writer(this._buffer);
-	
-			if(this._buffer.off != this._buffer.length){
+
+			if (this._buffer.off != this._buffer.length) {
 				this._buffer = Buffer.concat([this._buffer], this._buffer.off);
 				this._buffer.off = this._buffer.length;
 			}
@@ -87,7 +87,7 @@ module.exports = class BasePacket {
 		return this._buffer;
 	}
 
-	set buffer(value){
+	set buffer(value) {
 		this._buffer = value;
 	}
 

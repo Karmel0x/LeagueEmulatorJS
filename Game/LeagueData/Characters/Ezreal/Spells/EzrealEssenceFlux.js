@@ -11,7 +11,7 @@ const EzrealEssenceFluxMissile = require("./EzrealEssenceFluxMissile");
 
 class _Particle {
 	// todo
-	
+
 }
 
 class ezreal_bow_yellow extends _Particle {
@@ -21,14 +21,14 @@ class ezreal_bow_yellow extends _Particle {
 	particleHash = HashString(this.constructor.name + '.troy');
 	boneHash = HashString('L_HAND');
 
-	onCast(spellData){
-		
+	onCast(spellData) {
+
 		this.owner.AddParticleTarget(this.packageHash, this.particleHash, this.boneHash);
 	}
-	static tempOnCast(spellData, owner){
+	static tempOnCast(spellData, owner) {
 		var particleHash = HashString(this.constructor.name + '.troy');
 		var boneHash = HashString('L_HAND');
-		
+
 		owner.AddParticleTarget(package1.packageHash, particleHash, boneHash);
 	}
 }
@@ -43,13 +43,11 @@ module.exports = class EzrealEssenceFlux extends _Spell {
 		designerTotalTime: 1,
 	};
 
-	constructor(options){
-		super(options);
+	static childSpellList = [
+		EzrealEssenceFluxMissile,
+	];
 
-		this.childSpells.push(new EzrealEssenceFluxMissile({...options, parentSpell: this}));
-	}
-
-	preCast(spellData){
+	preCast(spellData) {
 		spellData.maxRangePosition = PositionHelper.getPositionBetweenRange(this.owner, spellData.packet, this.castRange);
 
 		var skillshot = Skillshot.create(this.owner, spellData.maxRangePosition, {
@@ -62,9 +60,9 @@ module.exports = class EzrealEssenceFlux extends _Spell {
 				range: 80,
 			},
 			function: (target) => {
-				if(skillshot.owner == target || collidedWith.includes(target.netId))
+				if (skillshot.owner == target || collidedWith.includes(target.netId))
 					return;
-			
+
 				collidedWith.push(target.netId);
 
 				skillshot.owner.attack(target);
@@ -74,7 +72,7 @@ module.exports = class EzrealEssenceFlux extends _Spell {
 		spellData.missile = skillshot;
 		return super.preCast(spellData);
 	}
-	onCast(spellData){
+	onCast(spellData) {
 		super.onCast(spellData);
 		ezreal_bow_yellow.tempOnCast(spellData, this.owner);
 

@@ -6,7 +6,7 @@ const UpdateGameOptions = require("../Packets/C2S/0x47-UpdateGameOptions");
  * @param {UpdateGameOptions.struct} packet 
  */
 module.exports = (player, packet) => {
-    console.log('handle: C2S.UpdateGameOptions');
+	console.log('handle: C2S.UpdateGameOptions');
 	//console.log(packet);
 
 	player.autoAttackToggle = packet.bitfield.autoAttackEnabled;

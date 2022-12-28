@@ -10,10 +10,10 @@ module.exports = class EzrealEssenceFluxMissile extends _Spell {
 	spellSlot = slotId.Qq;
 
 	isProjectile = true;
-	
-	onCast(spellData){
+
+	onCast(spellData) {
 		//console.log(spellData.missile);
 		spellData.missile.fire(spellData.missile.target);
 	}
-	
+
 };

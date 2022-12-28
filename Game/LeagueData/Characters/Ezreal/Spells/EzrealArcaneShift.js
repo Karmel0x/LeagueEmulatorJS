@@ -10,22 +10,20 @@ module.exports = class EzrealArcaneShift extends _Spell {
 	packageHash = package1.packageHash;
 	spellSlot = slotId.E;
 	movingSpell = true;
-	
-	constructor(options){
-		super(options);
 
-		this.childSpells.push(new EzrealArcaneShiftMissile({...options, parentSpell: this}));
-	}
+	static childSpellList = [
+		EzrealArcaneShiftMissile,
+	];
 
-	preCast(spellData){
+	preCast(spellData) {
 
 		spellData.position = spellData.packet.position;
 		return super.preCast(spellData);
 	}
-	onCast(spellData){
+	onCast(spellData) {
 		super.onCast(spellData);
 
-		this.owner.dashTo(spellData.packet.position, {speed: 1800, range: 400});
-		
+		this.owner.dashTo(spellData.packet.position, { speed: 1800, range: 400 });
+
 	}
 };

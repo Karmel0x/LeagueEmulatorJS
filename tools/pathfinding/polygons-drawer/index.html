@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,44 +11,56 @@
 			color-scheme: dark;
 			scrollbar-color: #454a4d #202324;
 		}
+
 		.canvas-wrap {
 			border: 2px solid gray;
 		}
 	</style>
 </head>
+
 <body style="display: flex;">
 	<div>
 		<button onclick="newShape()">new_shape</button>
 		<button onclick="finishEditing()">finish</button>
 		<span id="coords"></span>
 		<br>
+
 		<button onclick="div_optionShow()">options</button>
 		<button onclick="div_infoShow()">info</button>
+
 		<div id="div_options" style="display: none;">
 			<label><input type="checkbox" onclick="xyAsInt(this.checked);" checked>round xy</label>
 			<br>
 			<button onclick="zoom_in()">zoom_in</button>
 			<button onclick="zoom_out()">zoom_out</button>
 		</div>
+
 		<div id="div_info" style="display: none;">
 			right click to remove point<br>
 			doubleclick on shape to edit<br>
 			cpp navmesh does not support concaves<br>
 		</div>
+
 		<div id="div_warningimage">
 			image may load a while..<br>
 		</div>
 		<br><br>
+
 		<div id="shapeList" style="max-height: 400px;overflow: auto;"></div>
 		<br>
+
 		<textarea id="shapeListJson" cols="30" rows="10" autocomplete="off"></textarea>
 		<br>
+
 		<button onclick="readShapeListJson()" id="read_shape_json_list_button">read_shape_json_list</button>
 
 	</div>
+
 	<div oncontextmenu="return false;">
 		<div style="max-width: 1400px;max-height: 900px;overflow: auto;position: relative;">
-			<img id="image" src="https://cdn.discordapp.com/attachments/827653944120442901/976904004388945960/aimesh.png" style="position: absolute;opacity: 0.6;z-index: -1;">
+			<img id="image"
+				src="https://cdn.discordapp.com/attachments/827653944120442901/976904004388945960/aimesh.png"
+				style="position: absolute;opacity: 0.6;z-index: -1;">
 			<canvas class="canvas-wrap" id="canvas" width="6000" height="6000" style="opacity: 0.6;"></canvas>
 		</div>
 
@@ -55,6 +68,7 @@
 
 	<script src="./FreeDraw.js"></script>
 	<script src="./polygon-drawer.js"></script>
+
 	<script>
 		var _xyAsInt = true;
 		const freeDraw = new FreeDraw.default({
@@ -62,30 +76,35 @@
 			eventsReceive: ['doubleclick'],
 			eventsCallBack: (event, key, eventType) => {
 				//console.log(event, key, eventType);
-				if(!freeDraw.editingId && eventType == 'doubleclick') {
+				if (!freeDraw.editingId && eventType == 'doubleclick') {
 					editShape(key);
 				}
 			}
 		});
+
 		var canvas = document.getElementById('canvas');
 		var image = document.getElementById('image');
+
 		image.onload = () => {
 			resetScale();
 			setTimeout(() => {
 				document.getElementById('div_warningimage').style.display = 'none';
 			}, 4000);
 		};
-		if(image.naturalHeight){
+
+		if (image.naturalHeight) {
 			resetScale();
 			document.getElementById('div_warningimage').style.display = 'none';
 		}
+
 		canvas.addEventListener('mousemove', e => {
 			coords.innerHTML = `[${Math.round(e.offsetX / freeDraw.zoomLevel)}, ${Math.round(e.offsetY / freeDraw.zoomLevel)}]`;
 		});
 
 		// const ellipse = freeDraw.addShape({ id: 'ellipse-1', type: 'ellipse', x: 20.213123, y: 20.123123, radiusX: 20.123, radiusY: 20.124124 });
 		// const ellipse = freeDraw.addShape({ id: 'rect-1', type: 'rect', width: 200, height: 100, startPoint: [100, 100] });
-		
+
 	</script>
 </body>
+
 </html>

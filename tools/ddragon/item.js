@@ -5,7 +5,7 @@ const http = require('http');
 
 var url = 'http://ddragon.leagueoflegends.com/cdn/4.20.2/data/en_US/item.json';
 
-function callback(json){
+function callback(json) {
 	var obj = {};
 	//for(var i in json.data){
 	//	obj[i] = json.data[i].stats;

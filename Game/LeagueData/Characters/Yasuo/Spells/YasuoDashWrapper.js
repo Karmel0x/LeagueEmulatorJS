@@ -12,7 +12,7 @@ module.exports = class YasuoDashWrapper extends _Spell {
 	/**
 	 * @todo probably need to create missile cause missileNetId differs from spellNetId
 	 */
-	onCast(spellData){
+	onCast(spellData) {
 		//spellData.maxRangePosition = PositionHelper.getPositionBetweenRange(this.owner, spellData.packet, this.castRange);
 
 		this.castInfo.missileNetId = 1073743444;
@@ -25,7 +25,7 @@ module.exports = class YasuoDashWrapper extends _Spell {
 				range: this.owner.collisionRadius,
 			},
 			function: (target) => {
-				if(target.netId != spellData.packet.targetNetId)
+				if (target.netId != spellData.packet.targetNetId)
 					return;
 
 				delete this.owner.callbacks.collision[spellData.spellCast.netId];
@@ -37,7 +37,7 @@ module.exports = class YasuoDashWrapper extends _Spell {
 			speed: 750 + this.owner.moveSpeed.total * 0.6,
 			range: 475, minRange: 475,
 			callback: () => {
-				if(this.owner.callbacks.collision[spellData.spellCast.netId])
+				if (this.owner.callbacks.collision[spellData.spellCast.netId])
 					delete this.owner.callbacks.collision[spellData.spellCast.netId];
 				//else
 				//	this.hit_TargetNetId(packet.targetNetId);
@@ -47,10 +47,10 @@ module.exports = class YasuoDashWrapper extends _Spell {
 				]);
 			}
 		});
-		
+
 	}
-	
-	hit(target){
+
+	hit(target) {
 		this.owner.attack(target);
 	}
 };

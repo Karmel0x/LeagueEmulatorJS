@@ -24,11 +24,11 @@ module.exports = class LesserWraith extends _Monster {
 		mana: 0,
 		manaRegen: 0,
 		attackDamage: {
-			baseValue: 10,
+			baseValue: 12,
 			perLevel: 0.33,
 		},
 		abilityPower: 0,
-		attackSpeed: 0.63,
+		attackSpeed: 0.638,
 		attackSpeedOffset: 0,
 		crit: 0,
 		attackRange: 100,

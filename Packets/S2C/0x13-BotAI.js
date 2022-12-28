@@ -2,10 +2,10 @@ const BasePacket = require('../BasePacket');
 
 module.exports = class BotAI extends BasePacket {
 	static struct = {
-		AIName: ['char', 64],
-		AIStrategy: ['char', 64],
-		AIBehaviour: ['char', 64],
-		AITask: ['char', 64],
+		aiName: ['char', 64],
+		aiStrategy: ['char', 64],
+		aiBehaviour: ['char', 64],
+		aiTask: ['char', 64],
 		states: {
 			0: ['char', 64],
 			1: ['char', 64],

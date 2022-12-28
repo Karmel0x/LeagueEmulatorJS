@@ -40,7 +40,7 @@ module.exports = class GiantWolf extends _Monster {
 			baseValue: 0,
 			perLevel: 0,
 		},
-		moveSpeed: 443,
+		moveSpeed: 450,
 
 		collisionRadius: 48,
 	};

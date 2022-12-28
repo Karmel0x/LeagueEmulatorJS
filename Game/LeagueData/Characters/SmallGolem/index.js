@@ -40,7 +40,7 @@ module.exports = class SmallGolem extends _Monster {
 			baseValue: -10,
 			perLevel: 0,
 		},
-		moveSpeed: 350,
+		moveSpeed: 285,
 
 		collisionRadius: 48,
 	};

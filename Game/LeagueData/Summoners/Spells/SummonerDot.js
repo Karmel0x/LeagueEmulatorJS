@@ -11,7 +11,7 @@ module.exports = class SummonerDot extends _Spell {
 	range = 600;
 
 
-	onCast(spellData){
+	onCast(spellData) {
 		super.onCast(spellData);
 
 	}

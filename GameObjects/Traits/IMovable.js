@@ -1,7 +1,7 @@
 
 const { Vector2 } = require('three');
 const Pathfinding = require("../../Game/Components/Pathfinding");
-const {IStat} = require("./IStat");
+const { IStat } = require("./IStat");
 const PositionHelper = require("../../Functions/PositionHelper");
 
 
@@ -19,90 +19,121 @@ const PositionHelper = require("../../Functions/PositionHelper");
  * @param {GameObject} I
  */
 module.exports = (I) => class IMovable extends I {
-	constructor(options){
+	constructor(options) {
 		super(options);
-		
+
 		var stats = options.stats || {};
 		this.moveSpeed = this.moveSpeed || new IStat(stats.moveSpeed || 325);
 
-		this.waypoints = [this.position];
 	}
 
-	positionSyncId = 0;
 	_waypoints = [];
-	set waypoints(val){
-		this.positionSyncId = parseInt(performance.now());
-		this._waypoints = val.map(v => new Vector2(v.x, v.y));
-		this.emit('setWaypoints');
-	}
-	get waypoints(){
+	waypointsForced = [];
+	waypointsHalt = false;
+	sentWaypointsType = -1;
+	sentWaypoint = new Vector2();
+	followUnit = null;
+
+	get waypoints() {
+		if (this.waypointsHalt) {
+			return [];
+		}
+
+		if (this.waypointsForced.length) {
+			return this.waypointsForced;
+		}
+
+		if (this.followUnit) {
+			if (this.distanceTo(this.followUnit) <= (this.followRange || 1))
+				this.followUnit = null;
+			else
+				//@todo do not clone ?
+				this._waypoints = [this.followUnit.position.clone()];
+		}
+
 		return this._waypoints;
 	}
-	speedParams = null;
+	set waypoints(value) {
+		if (!value)
+			value = [];
 
-	/**
-	 * @param {Vector2|Object} pos {x, y}
-	 */
-	set position(pos){
-		this.waypoints = [new Vector2(pos.x, pos.y)];
-	}
-	get position(){
-		return this.waypoints[0] || new Vector2(this.spawnPosition.x, this.spawnPosition.y);
+		if (!Array.isArray(value))
+			value = [value];
+
+		this._waypoints = value;
 	}
 
+	sendWaypoints(waypoints) {
+		waypoints = waypoints || this.waypoints;
+
+		var waypointsType = this.waypointsForced.length ? 1 : 0;
+		var nextWaypoint = waypoints[0] || this.position;
+
+		var shouldSend = false;
+		shouldSend = shouldSend || this.sentWaypointsType != waypointsType;
+		shouldSend = shouldSend || this.sentWaypoint.distanceTo(nextWaypoint) > 1;
+
+		if (shouldSend) {
+			this.sentWaypointsType = waypointsType;
+			this.sentWaypoint = nextWaypoint.clone();
+
+			if (waypointsType)
+				this.dashAns();
+			else
+				this.moveAns();
+		}
+
+	}
 
 	/**
-	 * Set waypoint for movement, 0 is current position and it will be overwritten
+	 * Set waypoint for movement
+	 * @todo repath if needed
 	 * @param {Array.<Vector2>} waypoints
 	 * @param {Boolean} send - send packet to client
 	 */
-	setWaypoints(waypoints, send = true){//todo: repath if needed
-		//console.log('setWaypoints', waypoints, this.waypoints, this.waypointsPending);
-		if(this.speedParams){
-			this.waypointsPending = waypoints;
-			return;
-		}
-		var waypoints0 = this.waypoints[0];
+	setWaypoints(waypoints) {
 		this.waypoints = waypoints;
-		this.waypoints[0] = waypoints0;
-		if(send)
-			this.moveAns();
+		this.emit('setWaypoints', this.waypoints);
 	}
+
 	/**
 	 * Teleport to position (..)
 	 * @param {Vector2} position
 	 * @param {Boolean} send - send packet to client
 	 */
-	teleport(position, send = true){
-		this.waypoints = [position];
+	teleport(position, send = true) {
+		this.position.copy(position);
 
-		if(send)
+		if (send)
 			this.moveAns(true);
 	}
-	dashAns(){
+
+	dashAns() {
 		var WaypointGroupWithSpeed = global.Network.createPacket('WaypointGroupWithSpeed');
+		WaypointGroupWithSpeed.syncId = performance.now();
 
 		WaypointGroupWithSpeed.netId = 0;
 		WaypointGroupWithSpeed.teleportNetId = this.netId;
 
-		WaypointGroupWithSpeed.waypoints = this.waypoints;
+		WaypointGroupWithSpeed.waypoints = [this.position, ...this.waypointsForced.slice(0, 2)];
 		WaypointGroupWithSpeed.speedParams = this.speedParams;
-		
+
 		this.sendTo_vision(WaypointGroupWithSpeed);
 		//console.log(WaypointGroupWithSpeed);
 	}
+
 	/**
 	 * Dash to position, but you should use dashTo probably
 	 * @param {Vector2} position
 	 * @param {Object} options
 	 */
-	dash(position, options){
+	dash(position, options) {
 		//this.ACTION = ACTIONS.DASHING;
 
 		this.speedParams = {//todo: names? then just Object.assign
 			pathSpeedOverride: options.speed || 1000,
 			parabolicGravity: options.parabolicGravity || 0,
-			parabolicStartPoint: options.parabolicStartPoint || {x: 0, y: 0},
+			parabolicStartPoint: options.parabolicStartPoint || { x: 0, y: 0 },
 			facing: options.facing || 0,
 			followNetId: options.followNetId || 0,
 			followDistance: options.followDistance || 0,
@@ -110,10 +141,8 @@ module.exports = (I) => class IMovable extends I {
 			followTravelTime: options.followTravelTime || 0,
 		};
 
-		let waypoints0 = this.waypoints[0];
-		this.waypointsPending = this.waypointsPending || this.waypoints;
-		this.waypoints = [waypoints0, position];
-		
+		this.waypointsForced = [position];
+
 		this.callbacks.move.dash = {
 			options: {
 				range: 1,
@@ -122,25 +151,24 @@ module.exports = (I) => class IMovable extends I {
 				//this.ACTION = ACTIONS.FREE;
 				delete this.callbacks.move.dash;
 				this.speedParams = null;
-				if(this.waypointsPending && this.waypointsPending.length > 1)
-					this.setWaypoints(this.waypointsPending);
-				this.waypointsPending = null;
-				if(options.callback)
+
+				if (options.callback)
 					options.callback();
 			}
 		};
-		this.dashAns();
+		//this.dashAns();
 	}
-	
+
 	/**
 	 * Public function to dash unit to position
 	 * @param {Vector2} position 
 	 * @param {Object} options {speed, range, minRange, callback}
 	 */
-	dashTo(position, options){
-		var pos = PositionHelper.getPositionBetweenRange(this, position, {maximum: options.range, minimum: options.minRange || options.range});
+	dashTo(position, options) {
+		var pos = PositionHelper.getPositionBetweenRange(this, position, { maximum: options.range, minimum: options.minRange || options.range });
 		this.dash(pos, options);
 	}
+
 	/**
 	 * Knock unit aside (closer to us)
 	 * @todo calculate options for easier usage
@@ -149,15 +177,16 @@ module.exports = (I) => class IMovable extends I {
 	 * @param {Number} minDistance 
 	 * @param {Object} options {speed, duration}
 	 */
-	knockAside(position, distance = 100, minDistance = null, options = {}){
+	knockAside(position, distance = 100, minDistance = null, options = {}) {
 		minDistance = minDistance ?? distance;
 		options.speed = options.speed || (Math.abs(distance) / (options.duration || 1));
 		options.parabolicGravity = options.parabolicGravity || 0;
 		options.facing = options.facing ?? 1;
 
-		var pos = PositionHelper.getPositionBetweenRange(this, position, {maximum: distance, minimum: minDistance});
+		var pos = PositionHelper.getPositionBetweenRange(this, position, { maximum: distance, minimum: minDistance });
 		this.dash(pos, options);
 	}
+
 	/**
 	 * Knock unit back (further to us)
 	 * @param {Vector2} position 
@@ -165,15 +194,16 @@ module.exports = (I) => class IMovable extends I {
 	 * @param {Number} minDistance 
 	 * @param {Object} options {speed, duration}
 	 */
-	knockBack(position, distance = 100, minDistance = null, options = {}){
+	knockBack(position, distance = 100, minDistance = null, options = {}) {
 		this.knockAside(position, -distance, -minDistance, options);
 	}
+
 	/**
 	 * Knock unit up
 	 * @todo calculate options for easier usage
 	 * @param {Object} options {speed, duration}
 	 */
-	knockUp(options = {}){
+	knockUp(options = {}) {
 		options.speed = options.speed || (10 / (options.duration || 1));
 		options.parabolicGravity = options.parabolicGravity || 16.5;
 		options.facing = options.facing ?? 1;
@@ -181,12 +211,14 @@ module.exports = (I) => class IMovable extends I {
 		var position = this.Filters().getRandomPositionClamped(10);
 		this.dash(position, options);
 	}
-	move1(position){
-		this.setWaypoints([this.waypoints[0], position]);
+
+	move1(position) {
+		this.setWaypoints([position]);
 	}
-	sendDebugData(trace, movementData){
+
+	sendDebugData(trace, movementData) {
 		//if(!this.chatBoxMessage)
-			return;
+		return;
 
 		var message = trace + ' ' + performance.now();
 
@@ -205,85 +237,74 @@ module.exports = (I) => class IMovable extends I {
 
 		this.chatBoxMessage(message);
 	}
-	move0(packet){
-		
+
+	move0(packet) {
+
 		var movementData = packet.movementData;
 		this.sendDebugData('move0', movementData);
 		//if(this.ACTION != ACTIONS.DASHING)
 		//    this.moveCallback = null;
-		if(this.callbacks.move.pending)
+		if (this.callbacks.move.pending)
 			delete this.callbacks.move.pending;
-		
+
 		var newWaipoints = movementData.waypoints;
-		if(!global.doNotUsePathfinding){
+		if (!global.doNotUsePathfinding) {
 			// idk if it's even necessary here but MoveData.waypoints are wrong when character is dashing
 			newWaipoints = Pathfinding.getPath(this.position, packet.position);
 			//console.log({waypoints: movementData.waypoints, newWaipoints});
 		}
 
-		if(newWaipoints && newWaipoints.length){
+		// first waypoint is current position
+		newWaipoints.shift();
+
+		if (newWaipoints && newWaipoints.length) {
 			this.setWaypoints(newWaipoints);
 		}
 	}
-	halt0(send = false, movementData = {}){
-		this.sendDebugData('halt0', movementData);
-		this.moveClear();
 
-		if(send)
-			this.moveAns();
+	moveClear() {
+		this.waypoints = [];
 	}
-	WaypointsHalt = false;
-	halt_start(send = false){
-		this.WaypointsHalt = true;
 
-		if(send && this.waypoints.length > 1)
-			this.moveAns();
-	}
-	halt_stop(send = true){
-		this.WaypointsHalt = false;
-
-		if(send && this.waypoints.length > 1)
-			this.moveAns();
-	}
-	moveClear(){
-		this.waypoints = [this.waypoints[0]];
-	}
-	get movementData(){
+	get movementData() {
 		let movementData = {
 			teleportNetId: this.netId,
 			//syncId: performance.now(),
 		};
 
-		if(this.waypoints.length > 1){
-			movementData.waypoints = this.waypoints;
-			if(this.speedParams)
+		var unitWaypoints = this.waypoints;
+		if (unitWaypoints.length) {
+			movementData.waypoints = [this.position, ...unitWaypoints];
+			if (this.speedParams)
 				movementData.speedParams = this.speedParams;
-		}else{
+		} else {
 			movementData.position = this.position;
-			movementData.forward = {x: 0, y: 0};
+			movementData.forward = { x: 0, y: 0 };
 		};
 
 		return movementData;
 	}
+
 	teleportId = 0;
-	getNextTeleportId(){
+	getNextTeleportId() {
 		return (this.teleportId++ % 255) + 1;
 	}
-	moveAns(teleport = false){
+
+	moveAns(teleport = false) {
 		// this should be in Movement_Simulation so we can resend if destination will change (following moveable unit)
 		// or following should be made with dash.speedParams.followNetId ?
 		var WaypointGroup = global.Network.createPacket('WaypointGroup', 'LOW_PRIORITY');
-		WaypointGroup.syncId = this.positionSyncId;
+		WaypointGroup.syncId = performance.now();
 
 		WaypointGroup.netId = 0;
 		WaypointGroup.teleportNetId = this.netId;
 
 		WaypointGroup.teleportId = teleport ? this.getNextTeleportId() : 0;
-		WaypointGroup.waypoints = this.WaypointsHalt ? [this.waypoints[0]] : this.waypoints;
-		
+		WaypointGroup.waypoints = this.waypointsHalt ? [this.position] : [this.position, ...this._waypoints.slice(0, 2)];
+
 		this.sendTo_vision(WaypointGroup);
-		console.log('WaypointGroup', WaypointGroup);
-		console.log('WaypointGroup.waypoints', WaypointGroup.waypoints);
+		//console.log('WaypointGroup', WaypointGroup);
+		//console.log('WaypointGroup.waypoints', WaypointGroup.waypoints);
 		//console.trace();
 	}
 
@@ -294,19 +315,20 @@ module.exports = (I) => class IMovable extends I {
 	 * @param {Function} reachDestinationCallback 
 	 * @param {Number} range 
 	 */
-	moveWithCallback(target, reachDestinationCallback, range = 0){
+	moveWithCallback(target, reachDestinationCallback, range = 0) {
 		var movePosition = PositionHelper.getPositionToTargetMinusRange(this, target, Math.max(range - 0.1, 0));
 		this.move1(movePosition);
 		this.once('reachDestination', reachDestinationCallback);
 		this.once('cancelSpell', () => this.removeListener('reachDestination', reachDestinationCallback));
 	}
 
-	stopFollowing(){
-		this.followUnit = false;
+	stopFollowing() {
+		this.followUnit = null;
 	}
-	inRangeOrFollow(range, target, reachDestinationCallback){
+
+	inRangeOrFollow(range, target, reachDestinationCallback) {
 		var rangeSum = range + this.collisionRadius + target.collisionRadius;
-		if(this.distanceTo(target) > rangeSum){
+		if (this.distanceTo(target) > rangeSum) {
 
 			this.followUnit = target;
 			this.once('reachDestination', reachDestinationCallback);
@@ -317,7 +339,7 @@ module.exports = (I) => class IMovable extends I {
 
 			return false;
 		}
-		
+
 		return true;
 	}
 };

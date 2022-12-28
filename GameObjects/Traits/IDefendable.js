@@ -8,54 +8,73 @@ const IStatOwner = require("./IStatOwner");
  */
 module.exports = (I) => class IDefendable extends I {
 
-	damageReductionFromArmor(){
+	UnitApplyDamage(source, damage) {
+		var UnitApplyDamage = global.Network.createPacket('UnitApplyDamage');
+		UnitApplyDamage.netId = this.netId;
+		UnitApplyDamage.damageResultType = damage.resultType || UnitApplyDamage.constructor.DamageResultType.normal;
+		UnitApplyDamage.unk1 = 125;
+		UnitApplyDamage.damageType = damage.type || UnitApplyDamage.constructor.DamageType.mixed;
+		UnitApplyDamage.damage = damage.amount || 0;
+		UnitApplyDamage.targetNetId = this.netId;
+		UnitApplyDamage.sourceNetId = source.netId;
+		this.sendTo_everyone(UnitApplyDamage);
+	}
+
+	damageReductionFromArmor() {
 		return 100 / (100 + this.armor.total);
 	}
-	damage(source, dmg){
+
+	damage(source, dmg) {
 		//console.log('damage', dmg, this.health.current, this.health.total);
 		dmg.ad = dmg.ad * this.damageReductionFromArmor();
 
-		if(dmg.ad <= 0)
+		if (dmg.ad <= 0)
 			return;
 
 		// do not die while testing @todo remove it
-		if(this.type == 'Player')
+		if (this.type == 'Player')
 			this.health.minimum = 1;
 
 		this.health.current -= dmg.ad;
 
-		if(this.health.current <= 0)
+		if (this.health.current <= 0)
 			this.die(source);
 
+		this.UnitApplyDamage(source, {
+			amount: dmg.ad,
+		});
 		this.OnEnterLocalVisibilityClient();
 	}
 
-	die(source){
+	die(source) {
 		this.health.current = 0;
 		this.died = Date.now() / 1000;
 		this.onDie(source);
 		global.Teams['ALL'].vision(this, false);
 		this.destructor();
 	}
+
 	died = false;
+
 	/**
 	 * Called when unit dies
 	 * @param {Unit} source - who killed this unit
 	 */
-	onDie(source){
+	onDie(source) {
 		// override
 	}
-	
-	canBeAttacked(){
+
+	canBeAttacked() {
 		return !this.died;
 	}
 
-	heal(hp){
+	heal(hp) {
 		this.health.current += hp;
 		this.OnEnterLocalVisibilityClient();
 	}
-	healPercent(hpPercent){
+	
+	healPercent(hpPercent) {
 		this.heal(this.health.total * hpPercent / 100);
 	}
-	
+
 };

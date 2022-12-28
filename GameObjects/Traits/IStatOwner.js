@@ -1,5 +1,6 @@
 
-var {IStat, IStatLevelable, IStatStateable} = require('./IStat');
+var { IStat, IStatLevelable, IStatStateable } = require('./IStat');
+
 
 /**
  * 
@@ -8,7 +9,7 @@ var {IStat, IStatLevelable, IStatStateable} = require('./IStat');
  */
 module.exports = (I) => class IStatOwner extends I {
 
-	constructor(options){
+	constructor(options) {
 		super(options);
 
 		this.baseStats = options.stats || this.character?.constructor.stats || {};
@@ -42,7 +43,7 @@ module.exports = (I) => class IStatOwner extends I {
 
 		this.critDamage = new IStat(stats.critDamage || 2);
 		this.collisionRadius = stats.collisionRadius || 48;
-		
+
 		this.emit('changeStats');
 	}
 
@@ -50,12 +51,12 @@ module.exports = (I) => class IStatOwner extends I {
 	 * 
 	 * @param {Object} stats 
 	 */
-	increaseStats(stats){
+	increaseStats(stats) {
 		Object.keys(stats).forEach(stat => {
-			if(stats[stat].flatBonus)
+			if (stats[stat].flatBonus)
 				this[stat].flatBonus += stats[stat].flatBonus;
 
-			if(stats[stat].percentBonus)
+			if (stats[stat].percentBonus)
 				this[stat].percentBonus += stats[stat].percentBonus;
 		});
 		this.emit('changeStats');
@@ -65,12 +66,12 @@ module.exports = (I) => class IStatOwner extends I {
 	 * 
 	 * @param {Object} stats 
 	 */
-	decreaseStats(stats){
+	decreaseStats(stats) {
 		Object.keys(stats).forEach(stat => {
-			if(stats[stat].flatBonus)
+			if (stats[stat].flatBonus)
 				this[stat].flatBonus -= stats[stat].flatBonus;
 
-			if(stats[stat].percentBonus)
+			if (stats[stat].percentBonus)
 				this[stat].percentBonus -= stats[stat].percentBonus;
 		});
 		this.emit('changeStats');
@@ -81,7 +82,7 @@ module.exports = (I) => class IStatOwner extends I {
 	 * call this() to decrease stats
 	 * @param {Object} stats 
 	 */
-	tempStats(stats){
+	tempStats(stats) {
 		this.increaseStats(stats);
 		return () => this.decreaseStats(stats);
 	}

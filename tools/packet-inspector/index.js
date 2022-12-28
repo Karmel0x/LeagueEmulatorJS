@@ -13,7 +13,7 @@ var replayDir = '../LeagueEmulatorJS_replays/';
 
 
 require('../../Core/init_utilities')();
-var {server, wss} = require('./init_client-server');
+var { server, wss } = require('./init_client-server');
 const fs = require('fs');
 
 require("../../Core/BufferExtend");
@@ -30,27 +30,28 @@ wss.onMessage = (ws, data) => {
 	var res = JSON.parse(data);
 	console.log(res);
 
-	if(res.cmd == 'loadpackets'){
-		
+	if (res.cmd == 'loadpackets') {
+
 		let offset = res.offset || 0;
 		let limit = (res.limit || 2000) + offset;
 		let packetsearch = res.packetsearch || [];
-		for(let i = offset, l = replayUnpacked.length, ll = 0; i < l && ll < limit;i++){
+		for (let i = offset, l = replayUnpacked.length, ll = 0; i < l && ll < limit; i++) {
 			var packetData = packetParser(replayUnpacked[i], i);
 
-			if(!packetData)
+			if (!packetData)
 				continue;
-			if(packetsearch && packetsearch.length){
 				
+			if (packetsearch && packetsearch.length) {
+
 				packetsearch = packetsearch.map(v => v.toLowerCase());
-				var found = packetsearch.some(v => 
+				var found = packetsearch.some(v =>
 					(packetData.cmdName && packetData.cmdName.toLowerCase().includes(v))
 					|| (packetData.channelName && packetData.channelName.toLowerCase().includes(v))
 					|| (packetData.Parsed && packetData.Parsed.toLowerCase().includes(v))
 					|| (packetData.Bytes && packetData.Bytes.toLowerCase().includes(v))
 				);
 
-				if(!found)
+				if (!found)
 					continue;
 			}
 
@@ -72,7 +73,7 @@ wss.onMessage = (ws, data) => {
 	//	let i = res.Id;
 	//	var buffer = replayUnpacked[i].Bytes ? Buffer.from(replayUnpacked[i].Bytes, 'base64') : Buffer.from(replayUnpacked[i].BytesHex.split(' ').join(''), 'hex');
 	//	
-    //    enet.sendPacket(0, buffer, replayUnpacked[i].Channel);
+	//    enet.sendPacket(0, buffer, replayUnpacked[i].Channel);
 	//}
 	//else if(res.cmd == 'sendpacket_type'){
 	//	var KEY_CHECK = createPacket(res.name, res.channel);
@@ -81,7 +82,7 @@ wss.onMessage = (ws, data) => {
 	//	KEY_CHECK.playerId = 1;
 	//	sendPacket(0, KEY_CHECK);
 	//}
-	else if(res.cmd == 'loadreplaylist'){
+	else if (res.cmd == 'loadreplaylist') {
 		var replayList = fs.readdirSync(replayDir).filter((value) => {
 			return value.endsWith('.json') || value.endsWith('.lrpkt');
 		});
@@ -90,50 +91,50 @@ wss.onMessage = (ws, data) => {
 			list: replayList,
 		});
 	}
-	else if(res.cmd == 'loadreplayfile'){
+	else if (res.cmd == 'loadreplayfile') {
 		replayUnpacked = _replayreaders(replayDir + res.name);
 	}
-	else if(res.cmd == 'addpacket' || res.cmd == 'addpacketforall'){
+	else if (res.cmd == 'addpacket' || res.cmd == 'addpacketforall') {
 		var bytesHexList = res.data.bytes.split("\n");
 
-		for(var i = 0; i < bytesHexList.length; i++){
+		for (var i = 0; i < bytesHexList.length; i++) {
 			var channel = res.data.channel;
 			var bytesHex = bytesHexList[i];
 
 			bytesHex = bytesHex.replace('sent:', 'S2C:').replace('recv:', 'C2S:');
 
-			if(bytesHex.includes('HANDSHAKE:')){
+			if (bytesHex.includes('HANDSHAKE:')) {
 				channel = 0;
 				bytesHex = bytesHex.replace('HANDSHAKE:', '');
 			}
-			else if(bytesHex.includes('C2S:')){
+			else if (bytesHex.includes('C2S:')) {
 				channel = 1;
 				bytesHex = bytesHex.replace('C2S:', '');
 			}
-			else if(bytesHex.includes('GAMEPLAY:')){
+			else if (bytesHex.includes('GAMEPLAY:')) {
 				channel = 2;
 				bytesHex = bytesHex.replace('GAMEPLAY:', '');
 			}
-			else if(bytesHex.includes('S2C:')){
+			else if (bytesHex.includes('S2C:')) {
 				channel = 3;
 				bytesHex = bytesHex.replace('S2C:', '');
 			}
-			else if(bytesHex.includes('LOW_PRIORITY:')){
+			else if (bytesHex.includes('LOW_PRIORITY:')) {
 				channel = 4;
 				bytesHex = bytesHex.replace('LOW_PRIORITY:', '');
 			}
-			else if(bytesHex.includes('COMMUNICATION:')){
+			else if (bytesHex.includes('COMMUNICATION:')) {
 				channel = 5;
 				bytesHex = bytesHex.replace('COMMUNICATION:', '');
 			}
-			else if(bytesHex.includes('LOADING_SCREEN:')){
+			else if (bytesHex.includes('LOADING_SCREEN:')) {
 				channel = 7;
 				bytesHex = bytesHex.replace('LOADING_SCREEN:', '');
 			}
 
 			bytesHex = bytesHex.trim();
 
-			if(!bytesHex)
+			if (!bytesHex)
 				continue;
 
 			var packet = {
@@ -142,12 +143,12 @@ wss.onMessage = (ws, data) => {
 				BytesHex: bytesHex,
 				Time: res.data.time || 1,
 			};
-			
+
 			var packetData = packetParser(packet);
-			if(!packetData)
+			if (!packetData)
 				return;
 
-			if(res.cmd == 'addpacketforall')
+			if (res.cmd == 'addpacketforall')
 				wss.sendJsonToAll({
 					cmd: 'newpacket',
 					packet: packetData,

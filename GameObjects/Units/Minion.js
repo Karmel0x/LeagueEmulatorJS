@@ -86,12 +86,8 @@ class Minion extends ExtendWTraits(Unit, IDefendable, IAttackable, IMovable) {
 	 * @param {Object} options
 	 * @param {Barrack} options.spawner
 	 */
-	constructor(options){
-		options.spawnPosition = options.spawnPosition || options.spawner.position;
-		options.team = options.team || options.spawner.team;
+	constructor(options) {
 		super(options);
-		
-		this.spawner = options.spawner;
 
 		//console.log(this);
 		this.initialized();
@@ -105,10 +101,12 @@ class Minion extends ExtendWTraits(Unit, IDefendable, IAttackable, IMovable) {
 			this.moveLane();
 		});
 	}
-	destructor(){
+
+	destructor() {
 		removeGlobal(this);
 	}
-	spawn(){
+
+	spawn() {
 		this.spawner?.spawnUnitAns(this.netId, this.character.id);
 
 		super.spawn();
@@ -119,16 +117,20 @@ class Minion extends ExtendWTraits(Unit, IDefendable, IAttackable, IMovable) {
 	 * @param {String} [team=this.spawner.teamName] (BLUE/RED)
 	 * @param {Number} [lane=this.spawner.num] (0/1/2 TOP/MID/BOT)
 	 */
-	moveLane(team = null, lane = null){
+	moveLane(team = null, lane = null) {
 		console.log('moveLane', this.constructor.name, this.netId);
 		team = team || this.spawner?.teamName;
 		lane = lane || this.spawner?.num;
 
-		if(!lanePaths[team]?.[lane])
+		if (!lanePaths[team]?.[lane])
 			return;
 
 		var lanePath = lanePaths[team][lane].map(a => a.clone());
 		lanePath = this.Filters().getFromNearestToEnd(lanePath);
+
+		//@todo make path more precise
+		if (lanePath.length > 1)
+			lanePath.shift();
 
 		this.setWaypoints(lanePath);
 	}
@@ -136,18 +138,20 @@ class Minion extends ExtendWTraits(Unit, IDefendable, IAttackable, IMovable) {
 
 
 	// on die / death functions ===========================================================
-	
+
 	/**
 	 * @todo shall return spawner level
 	 */
-	get level(){
+	get level() {
 		return 1;
 	}
-	get rewardExp(){
+
+	get rewardExp() {
 		var character = this.character.constructor;
 		return character.reward.exp;
 	}
-	get rewardGold(){
+
+	get rewardGold() {
 		var character = this.character.constructor;
 		return character.reward.gold + (character.rewardPerLevel.gold * this.level);
 	}
@@ -158,10 +162,10 @@ class Minion extends ExtendWTraits(Unit, IDefendable, IAttackable, IMovable) {
 	 * 
 	 * @param {Unit} source killer
 	 */
-	onDieRewards(source){
-		console.log('onDieRewards', source.team, this.team, source.type);
+	onDieRewards(source) {
+		console.log('onDieRewards', source.teamName, this.teamName, source.type);
 		// make sure once again if we should reward killer
-		if(source.team == this.team || this.killRewarded)
+		if (source.teamId == this.teamId || this.killRewarded)
 			return;
 
 		this.killRewarded = true;
@@ -173,11 +177,11 @@ class Minion extends ExtendWTraits(Unit, IDefendable, IAttackable, IMovable) {
 		enemyPlayersInRange = enemyPlayersInRange.filter(v => v != source);
 
 		var numberOfPlayersToSplitExp = enemyPlayersInRange.length;
-		if(source.type == 'Player')
+		if (source.type == 'Player')
 			numberOfPlayersToSplitExp += 1;
 
 		var rewardExp = this.rewardExp;
-		if(numberOfPlayersToSplitExp <= 1)
+		if (numberOfPlayersToSplitExp <= 1)
 			rewardExp *= 0.92;
 		else
 			rewardExp *= 1.2;
@@ -185,7 +189,7 @@ class Minion extends ExtendWTraits(Unit, IDefendable, IAttackable, IMovable) {
 		rewardExp /= numberOfPlayersToSplitExp;
 
 		// give gold and exp to killer no matter if in range
-		if(source.type == 'Player'){
+		if (source.type == 'Player') {
 			source.expUp(rewardExp);
 			source.goldUp(this.rewardGold, this);
 		}
@@ -196,10 +200,10 @@ class Minion extends ExtendWTraits(Unit, IDefendable, IAttackable, IMovable) {
 		});
 	}
 
-	onDie(source){
+	onDie(source) {
 		this.onDieRewards(source);
 	}
-	
+
 	// =================================================================================
 }
 

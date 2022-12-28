@@ -4,8 +4,8 @@ const _Summoner = require("../../DataMethods/_Summoner");
 
 
 module.exports = class Summoner extends _Summoner {
-	static package = require('./package');
-    
+    static package = require('./package');
+
     static spells = {
         SummonerBarrier: require("./Spells/SummonerBarrier"),
         SummonerBoost: require("./Spells/SummonerBoost"),
@@ -22,15 +22,15 @@ module.exports = class Summoner extends _Summoner {
         SummonerTeleport: require("./Spells/SummonerTeleport"),
     };
 
-    constructor(parent, spells){
+    constructor(parent, spells) {
         super(parent);
 
         spells[slotId.D] = spells[slotId.D] || spells[0] || null;
         spells[slotId.F] = spells[slotId.F] || spells[1] || null;
 
-		this.createOnSlots({
-			[slotId.D]: this.constructor.spells[spells[slotId.D]] || Object.values(this.constructor.spells)[0],
-			[slotId.F]: this.constructor.spells[spells[slotId.F]] || Object.values(this.constructor.spells)[1],
-		});
+        this.createOnSlots({
+            [slotId.D]: this.constructor.spells[spells[slotId.D]] || Object.values(this.constructor.spells)[0],
+            [slotId.F]: this.constructor.spells[spells[slotId.F]] || Object.values(this.constructor.spells)[1],
+        });
     }
 };

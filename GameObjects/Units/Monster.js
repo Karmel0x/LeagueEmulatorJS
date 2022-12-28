@@ -1,7 +1,4 @@
 
-const { Vector2 } = require('three');
-const { removeGlobal } = require('./global.Units');
-
 const ExtendWTraits = require('../../Core/ExtendWTraits');
 const Unit = require('./Unit');
 const IDefendable = require('../Traits/IDefendable');
@@ -11,27 +8,41 @@ const loadingStages = require('../../Constants/loadingStages');
 
 
 class Monster extends ExtendWTraits(Unit, IDefendable, IAttackable, IMovable) {
+
+	//SetCooldown({slot, cooldown}){
+	//	var SetCooldown = global.Network.createPacket('SetCooldown');
+	//	SetCooldown.netId = this.netId;
+	//	SetCooldown.slot = slot;
+	//	SetCooldown.bitfield = {
+	//		playVOWhenCooldownReady: false,
+	//		isSummonerSpell: false,
+	//	};
+	//	SetCooldown.cooldown = cooldown;
+	//	SetCooldown.maxCooldownForDisplay = cooldown || -1;
+	//	this.sendTo_everyone(SetCooldown);
+	//}
+
 	/**
 	 * 
 	 * @param {Object} options
 	 * @param {JungleCamp} options.spawner
 	 */
-	constructor(options){
-		options.spawnPosition = options.spawnPosition || options.position || options.spawner.spawnPosition || options.spawner.position;
-		options.team = options.team || options.spawner.team;
+	constructor(options) {
 		super(options);
-		
-		this.spawner = options.spawner;
 
 		//console.log(this);
 		this.initialized();
 
+		//this.SetCooldown({slot: 0, cooldown: 0});
+		//this.SetCooldown({slot: 1, cooldown: 0});
+		//this.SetCooldown({slot: 2, cooldown: 0});
+		//this.SetCooldown({slot: 3, cooldown: 0});
+
 		this.on('noTargetsInRange', () => {
-			var InstantStop_Attack = global.Network.createPacket('InstantStop_Attack', 'S2C');
+			var InstantStop_Attack = global.Network.createPacket('InstantStop_Attack');
 			InstantStop_Attack.netId = this.netId;
 			InstantStop_Attack.flags = {};
 			this.sendTo_everyone(InstantStop_Attack);
-
 		});
 
 		this.spawnAns1();
@@ -40,7 +51,7 @@ class Monster extends ExtendWTraits(Unit, IDefendable, IAttackable, IMovable) {
 	/**
 	 * @todo send this packet on first visibility ?
 	 */
-	spawnAns1(){
+	spawnAns1() {
 		var CreateNeutral = global.Network.createPacket('CreateNeutral');
 		Object.assign(CreateNeutral, {
 			netId: this.netId,
@@ -53,7 +64,7 @@ class Monster extends ExtendWTraits(Unit, IDefendable, IAttackable, IMovable) {
 			skinName: this.character.name,
 			uniqueName: this.info.name,
 			spawnAnimationName: '',
-			teamId: this.team,
+			teamId: this.teamId,
 			damageBonus: 0,
 			healthBonus: 0,
 			minionRoamState: 0,
@@ -71,18 +82,20 @@ class Monster extends ExtendWTraits(Unit, IDefendable, IAttackable, IMovable) {
 	}
 
 	// on die / death functions ===========================================================
-	
+
 	/**
 	 * @todo shall return spawner level
 	 */
-	get level(){
+	get level() {
 		return 1;
 	}
-	get rewardExp(){
+
+	get rewardExp() {
 		var character = this.character.constructor;
 		return character.reward.exp;
 	}
-	get rewardGold(){
+
+	get rewardGold() {
 		var character = this.character.constructor;
 		return character.reward.gold + (character.rewardPerLevel.gold * this.level);
 	}
@@ -93,25 +106,24 @@ class Monster extends ExtendWTraits(Unit, IDefendable, IAttackable, IMovable) {
 	 * 
 	 * @param {Unit} source killer
 	 */
-	onDieRewards(source){
-		console.log('onDieRewards', source.team, this.team, source.type);
+	onDieRewards(source) {
+		console.log('onDieRewards', source.teamName, this.teamName, source.type);
 		// make sure once again if we should reward killer
-		if(source.team == this.team || this.killRewarded)
+		if (source.teamId == this.teamId || this.killRewarded)
 			return;
 
 		this.killRewarded = true;
 
-		if(source.type == 'Player'){
+		if (source.type == 'Player') {
 			source.expUp(this.rewardExp);
 			source.goldUp(this.rewardGold, this);
 		}
 	}
 
-	onDie(source){
+	onDie(source) {
 		this.onDieRewards(source);
 	}
-	
-	// =================================================================================
+
 }
 
 

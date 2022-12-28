@@ -1,6 +1,4 @@
 
-const teamIds = require('../../Constants/teamIds');
-
 const { Vector2 } = require('three');
 const { appendGlobal, removeGlobal } = require('./global.Units');
 
@@ -82,21 +80,24 @@ class Unit extends ExtendWTraits(GameObject, IHasTeam, ISpellable, ICharacter, I
 		// todo
 		//removeGlobal(this);
 	}
+
 	initialized(){
 		console.log('initialized', this.constructor.name, this.netId);
 		//this.levelUp();
 		this.spawn();
 		this.loop();
 	}
+
 	spawn(){
 		this.respawn();
 	}
+
 	async loop(){
 
 	}
 
-	moveTime = 0;
 	ACTION = 0;
+
 	/**
 	 * Returns if unit is dead
 	 * @returns {Boolean}
@@ -122,6 +123,7 @@ class Unit extends ExtendWTraits(GameObject, IHasTeam, ISpellable, ICharacter, I
 
 		return true;
 	}
+
 	/**
 	 * Returns if unit is able to attack
 	 * @returns {Boolean}
@@ -135,7 +137,6 @@ class Unit extends ExtendWTraits(GameObject, IHasTeam, ISpellable, ICharacter, I
 
 		return true;
 	}
-
 
 	async update(){
 		for(;;){
@@ -154,8 +155,8 @@ class Unit extends ExtendWTraits(GameObject, IHasTeam, ISpellable, ICharacter, I
 		this.health.current = this.health.total;
 		this.mana.current = this.mana.total;
 		
-		if(this.waypoints)
-			this.waypoints = [this.spawnPosition];
+		if(this.position)
+			this.position.copy(this.spawnPosition);
 		
 		this.OnEnterLocalVisibilityClient();
 		
@@ -196,15 +197,16 @@ class Unit extends ExtendWTraits(GameObject, IHasTeam, ISpellable, ICharacter, I
 	 * Get all units
 	 * @returns {Array.<Unit>}
 	 */
-	getUnits(team = 'ALL'){
-		return global.getUnits(team);
+	getUnits(teamName = 'ALL'){
+		return global.getUnits(teamName);
 	}
 	/**
 	 * Get ally units to this unit
 	 * @returns {Array.<Unit>}
 	 */
 	getAllyUnits(){
-		return global.units.filter(unit => unit.team == this.team);
+		var thisTeamId = this.teamId;
+		return global.units.filter(unit => unit.teamId == thisTeamId);
 		//return this.getUnits(this.getAllyTeam());
 	}
 	/**
@@ -212,7 +214,8 @@ class Unit extends ExtendWTraits(GameObject, IHasTeam, ISpellable, ICharacter, I
 	 * @returns {Array.<Unit>}
 	 */
 	getEnemyUnits(){
-		return global.units.filter(unit => unit.team != this.team);
+		var thisTeamId = this.teamId;
+		return global.units.filter(unit => unit.teamId != thisTeamId);
 		//return this.getUnits(this.getEnemyTeam());
 	}
 
@@ -236,7 +239,6 @@ class Unit extends ExtendWTraits(GameObject, IHasTeam, ISpellable, ICharacter, I
 	/**
 	 * Get ally units in range of this unit
 	 * @param {Number} range 
-	 * @param {String} team (RED/BLUE/NEUTRAL/ALL)
 	 * @returns 
 	 */
 	getAllyUnitsInRange(range = this.range.total, distanceCalcPoint = 'CENTER_TO_CENTER'){
@@ -246,7 +248,6 @@ class Unit extends ExtendWTraits(GameObject, IHasTeam, ISpellable, ICharacter, I
 	/**
 	 * Get enemy units in range of this unit
 	 * @param {Number} range 
-	 * @param {String} team (RED/BLUE/NEUTRAL/ALL)
 	 * @returns 
 	 */
 	getEnemyUnitsInRange(range = this.range.total){

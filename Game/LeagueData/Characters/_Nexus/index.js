@@ -26,16 +26,16 @@ module.exports = class _Nexus extends _Character {
 		armor: 0,
 		resist: 0,
 		moveSpeed: 0,
-		
+
 		collisionRadius: 200,
 	};
 
 	static spells = {
-		
+
 	};
 
-	constructor(parent){
+	constructor(parent) {
 		super(parent);
-		
+
 	}
 };

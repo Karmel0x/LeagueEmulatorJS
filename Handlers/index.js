@@ -5,7 +5,7 @@ module.exports = {
 	0x09: require('./0x09-RemoveItemReq'),
 	0x0A: require('./0x0A-ResumePacket'),
 	0x14: require('./0x14-QueryStatusReq'),
-	0x16: require('./0x16-Ping_Load_Info_'),
+	0x16: require('./0x16-Ping_Load_Info'),
 	0x1D: require('./0x1D-WriteNavFlags_Acc'),
 	0x20: require('./0x20-SwapItemReq'),
 	0x2E: require('./0x2E-World_SendCamera_Server'),

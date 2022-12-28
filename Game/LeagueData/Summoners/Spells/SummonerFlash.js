@@ -12,7 +12,7 @@ module.exports = class SummonerFlash extends _Spell {
 	range = 425;
 
 
-	onCast(spellData){
+	onCast(spellData) {
 		super.onCast(spellData);
 
 		var pos = new Vector2(spellData.packet.position.x, spellData.packet.position.y);

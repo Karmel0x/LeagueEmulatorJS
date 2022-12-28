@@ -17,7 +17,7 @@ module.exports = class Wolf extends _Monster {
 
 	static stats = {
 		health: {
-			baseValue: 200,
+			baseValue: 350,
 			perLevel: 0,
 		},
 		healthRegen: 0,
@@ -28,7 +28,7 @@ module.exports = class Wolf extends _Monster {
 			perLevel: 0,
 		},
 		abilityPower: 0,
-		attackSpeed: 0.679,
+		attackSpeed: 0.658,
 		attackSpeedOffset: 0,
 		crit: 0,
 		attackRange: 100,
@@ -40,7 +40,7 @@ module.exports = class Wolf extends _Monster {
 			baseValue: 0,
 			perLevel: 0,
 		},
-		moveSpeed: 443,
+		moveSpeed: 450,
 
 		collisionRadius: 48,
 	};

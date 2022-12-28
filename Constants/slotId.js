@@ -5,7 +5,7 @@ module.exports = {
 	W: 1,
 	E: 2,
 	R: 3,
-	
+
 	// summoners (2) 4-5
 	D: 4,
 	F: 5,

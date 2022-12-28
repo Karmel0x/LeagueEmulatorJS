@@ -20,10 +20,10 @@ module.exports = class EzrealMysticShotMissile extends _Spell {
 		speed: 2000,
 	};
 
-	
-	onCast(spellData){
+
+	onCast(spellData) {
 		//console.log(spellData.missile);
 		spellData.missile.fire(spellData.missile.target);
 	}
-	
+
 };

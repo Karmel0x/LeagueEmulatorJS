@@ -21,15 +21,13 @@ module.exports = class EzrealMysticShot extends _Spell {
 		//manaCost: 28,
 	};
 
-	constructor(options){
-		super(options);
+	static childSpellList = [
+		EzrealMysticShotMissile,
+	];
 
-		this.childSpells.push(new EzrealMysticShotMissile({...options, parentSpell: this}));
-	}
-
-	preCast(spellData){
+	preCast(spellData) {
 		spellData.maxRangePosition = PositionHelper.getPositionBetweenRange(this.owner, spellData.packet, this.castRange);
-		
+
 		var skillshot = Skillshot.create(this.owner, spellData.maxRangePosition, {
 			speed: 2000, range: 1150, radius: 60
 		});
@@ -38,7 +36,7 @@ module.exports = class EzrealMysticShot extends _Spell {
 		return super.preCast(spellData);
 	}
 
-	onCast(spellData){
+	onCast(spellData) {
 		super.onCast(spellData);
 
 		this.owner.AddParticleTarget(this.packageHash, HashString('ezreal_bow.troy'), HashString('L_HAND'));

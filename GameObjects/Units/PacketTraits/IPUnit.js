@@ -3,7 +3,7 @@ const loadingStages = require("../../../Constants/loadingStages");
 
 module.exports = (I) => class IPUnit extends I {
 
-	OnEnterLocalVisibilityClient(){
+	OnEnterLocalVisibilityClient() {
 		var OnEnterLocalVisibilityClient = global.Network.createPacket('OnEnterLocalVisibilityClient');
 		OnEnterLocalVisibilityClient.netId = this.netId;
 		OnEnterLocalVisibilityClient.count = 0;
@@ -12,7 +12,8 @@ module.exports = (I) => class IPUnit extends I {
 		this.sendTo_everyone(OnEnterLocalVisibilityClient, loadingStages.NOT_CONNECTED);
 		//console.log(OnEnterLocalVisibilityClient);
 	}
-	ChangeCharacterData(character){
+
+	ChangeCharacterData(character) {
 		var ChangeCharacterData = global.Network.createPacket('ChangeCharacterData');
 		ChangeCharacterData.netId = this.netId;
 		ChangeCharacterData.bitfield = {
@@ -25,15 +26,16 @@ module.exports = (I) => class IPUnit extends I {
 		ChangeCharacterData.skinName = character;
 		this.sendTo_vision(ChangeCharacterData);
 	}
-	SetAnimStates(animPairs){
+
+	SetAnimStates(animPairs) {
 		var SetAnimStates = global.Network.createPacket('SetAnimStates');
 		SetAnimStates.netId = this.netId;
-		SetAnimStates.animationOverrides = [];
-		for(let i in animPairs)
-			SetAnimStates.animationOverrides.push({
-				fromAnim: animPairs[i][0],
-				toAnim: animPairs[i][1],
-			});
+		SetAnimStates.animationOverrides = animPairs.map(pair => {
+			return {
+				fromAnim: pair[0],
+				toAnim: pair[1],
+			};
+		});
 		this.sendTo_vision(SetAnimStates);
 	}
 
@@ -42,12 +44,13 @@ module.exports = (I) => class IPUnit extends I {
 	 * @todo delay for few ms so it will not send multiple packets on same action
 	 * for example SummonerHeal will not send two packets (for heal and for buff)
 	 */
-	charStats_send(){
+	charStats_send() {
 		var OnReplication = global.Network.createPacket('OnReplication', 'LOW_PRIORITY');
 		OnReplication.units = [this];
 		this.sendTo_everyone(OnReplication);
 	}
-	skillUpgrade_send(slot){
+	
+	skillUpgrade_send(slot) {
 		var UpgradeSpellAns = global.Network.createPacket('UpgradeSpellAns', 'S2C');
 		UpgradeSpellAns.netId = this.netId;
 		UpgradeSpellAns.slot = slot;

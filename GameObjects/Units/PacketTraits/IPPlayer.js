@@ -2,6 +2,7 @@
 const loadingStages = require('../../../Constants/loadingStages');
 const TranslateCenteredCoordinates = require('../../../Functions/TranslateCenteredCoordinates');
 const teamIds = require('../../../Constants/teamIds');
+
 const createHeroDeath = {
 	Alive: 0,
 	Zombie: 1,
@@ -10,13 +11,14 @@ const createHeroDeath = {
 
 
 module.exports = (I) => class IPPlayer extends I {
-	
-	OnEnterLocalVisibilityClient(){
+
+	OnEnterLocalVisibilityClient() {
 		this.charStats_send();
 	}
-	CreateHero(dest = global.Teams['ALL']){
+
+	CreateHero(dest = global.Teams['ALL']) {
 		//todo
-		
+
 		var CreateHero = global.Network.createPacket('CreateHero');
 		//CreateHero.netId = this.netId;
 		CreateHero.netObjId = this.netId;
@@ -27,7 +29,7 @@ module.exports = (I) => class IPPlayer extends I {
 		CreateHero.skinName = this.character.model;
 
 		CreateHero.bitfield = {
-			teamIsOrder: this.team == teamIds.BLUE,
+			teamIsOrder: this.teamId == teamIds.BLUE,
 			isBot: false
 		};
 		CreateHero.createHeroDeath = createHeroDeath.Alive;
@@ -35,7 +37,8 @@ module.exports = (I) => class IPPlayer extends I {
 
 		dest.sendPacket(CreateHero, loadingStages.NOT_CONNECTED);
 	}
-	AvatarInfo_Server(dest = global.Teams['ALL']){
+
+	AvatarInfo_Server(dest = global.Teams['ALL']) {
 		//todo
 		var AvatarInfo_Server = global.Network.createPacket('AvatarInfo_Server');
 		AvatarInfo_Server.netId = this.netId;
@@ -48,19 +51,21 @@ module.exports = (I) => class IPPlayer extends I {
 		];
 		AvatarInfo_Server.summonerIds = [0x0364af1c, 0x06496ea8];
 		AvatarInfo_Server.summonerIds2 = AvatarInfo_Server.summonerIds;
-		
+
 		dest.sendPacket(AvatarInfo_Server, loadingStages.NOT_CONNECTED);
 	}
-	chatBoxMessage(){
+
+	chatBoxMessage() {
 		var message = Array.prototype.slice.call(arguments).join(' ');
-		
+
 		var Chat = global.Network.createPacket('Chat', 'COMMUNICATION');
 		Chat.netId = this.netId;
 		Chat.msg = message;
 		this.sendTo_self(Chat);
 		console.debug(Chat);
 	}
-	SetCooldown(slot, cooldown = 0){//return;
+
+	SetCooldown(slot, cooldown = 0) {//return;
 		var SetCooldown = global.Network.createPacket('SetCooldown', 'S2C');
 		SetCooldown.netId = this.netId;
 		SetCooldown.slot = slot;
@@ -73,8 +78,9 @@ module.exports = (I) => class IPPlayer extends I {
 		this.sendTo_self(SetCooldown);
 		//console.log(SetCooldown);
 	}
+	
 	// 497252 = root
-	AddParticleTarget(packageHash, effectNameHash, boneNameHash = 497252, target = undefined){
+	AddParticleTarget(packageHash, effectNameHash, boneNameHash = 497252, target = undefined) {
 		var FX_Create_Group = global.Network.createPacket('FX_Create_Group', 'S2C');
 		FX_Create_Group.netId = 0;//this.netId;
 		FX_Create_Group.FXCreateGroupData = [];
@@ -113,7 +119,7 @@ module.exports = (I) => class IPPlayer extends I {
 
 		FX_Create_Group.FXCreateGroupData[0].count = FX_Create_Group.FXCreateGroupData[0].FXCreateData.length;
 		FX_Create_Group.count = FX_Create_Group.FXCreateGroupData.length;
-		
+
 		this.sendTo_vision(FX_Create_Group);
 		//console.log(FX_Create_Group);
 		//console.log(FX_Create_Group.FXCreateGroupData[0].FXCreateData);

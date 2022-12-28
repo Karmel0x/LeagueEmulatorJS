@@ -8,20 +8,20 @@ const { parsePacket } = require('../Core/Network/Parse');
 module.exports = class BatchPacket {
 	static channel = 3;//S2C
 
-	static findPacketById(packetId){
-		for(var channelId in Packets){
-			if(Packets[channelId][packetId])
+	static findPacketById(packetId) {
+		for (var channelId in Packets) {
+			if (Packets[channelId][packetId])
 				return Packets[channelId][packetId];
 		}
 		return null;
 	}
 
-	reader(buffer){
+	reader(buffer) {
 		this.cmd = buffer.read1('uint8');
 		this.packets_length = buffer.read1('uint8');
 		this.parsedPackets = [];
 
-		if(this.packets_length < 1 || buffer.length < 3)
+		if (this.packets_length < 1 || buffer.length < 3)
 			return;
 
 		var packets = [];
@@ -39,7 +39,7 @@ module.exports = class BatchPacket {
 			var buffer2 = Buffer.from([].concat(packet.cmd, getIntBytes_r(packet.netId), packetData));
 			packets.push(buffer2);
 		}
-		for(let i = 1; i < this.packets_length; i++){
+		for (let i = 1; i < this.packets_length; i++) {
 			let bitfield = buffer.read1('uint8');
 			let packetSize = (bitfield >> 2);
 
@@ -55,28 +55,29 @@ module.exports = class BatchPacket {
 			packets.push(buffer2);
 		}
 
-		for(var i in packets){
+		for (var i in packets) {
 			//// some batched packets are different?
 			//var cmd = packets[i].readUInt8(0);
 			//if(cmd == 0x72) // IssueOrderReq
 			//	continue;
 
-			var parsed = parsePacket({channel: this.constructor.channel, buffer: packets[i]});
+			var parsed = parsePacket({ channel: this.constructor.channel, buffer: packets[i] });
 			parsed.cmdName = this.constructor.findPacketById(parsed.cmd).name;//dev
 			this.parsedPackets.push(parsed);
 		}
 		//console.log(packets, this.parsedPackets);
 	}
-	writer(buffer){
+	
+	writer(buffer) {
 		this.cmd = 0xFF;
 		buffer.write1('uint8', this.cmd);
 		buffer.write1('uint8', this.packets.length);
 
-		if(this.packets.length < 1)
+		if (this.packets.length < 1)
 			return;
 
 		this.packets = this.packets.filter((packet, i) => {
-			if(packet.buffer.length > 0xFF){
+			if (packet.buffer.length > 0xFF) {
 				console.log(`BatchPacket : packet[${i}] size too big[${packet.buffer.length}]`);
 				return false;
 			}
@@ -97,7 +98,7 @@ module.exports = class BatchPacket {
 			buffer.write1('uint8', packet.packetSize);
 			buffer = Buffer.concat([buffer, this.packets[0].buffer]);
 		}
-		for(let i = 1; i < this.packets.length; i++){
+		for (let i = 1; i < this.packets.length; i++) {
 
 			let packet2 = {
 				cmd: this.packets[i].buffer.readUint8(0),
@@ -108,30 +109,30 @@ module.exports = class BatchPacket {
 			let bitfield = 0;
 
 			// if cmd has changed
-			if(packet2.cmd != packet.cmd)
+			if (packet2.cmd != packet.cmd)
 				bitfield |= 1;
 
 			// if difference between netId is more than byte
-			if(Math.abs(packet2.netId - packet.netId) > 0xFF)
+			if (Math.abs(packet2.netId - packet.netId) > 0xFF)
 				bitfield |= 2;
 
 			// if buffer length is less than 63 we push (length << 2)
-			if(packet2.packetSize < 63)
+			if (packet2.packetSize < 63)
 				bitfield |= packet2.packetSize << 2;
 			else
 				bitfield |= 63 << 2;
 
 			buffer.write1('uint8', bitfield);
 
-			if((bitfield & 1) == 0)
+			if ((bitfield & 1) == 0)
 				buffer.write1('uint8', packet2.cmd);
 
-			if((bitfield & 2) == 0)
+			if ((bitfield & 2) == 0)
 				buffer.write1('uint32', packet2.netId)
 			else
 				buffer.write1('int8', (packet.netId - packet2.netId));
 
-			if((bitfield >> 2) == 63)
+			if ((bitfield >> 2) == 63)
 				buffer.write1('uint8', packet2.packetSize);
 
 			buffer = Buffer.concat([buffer, this.packets[i].buffer.slice(5)]);

@@ -43,7 +43,7 @@ module.exports = class _Minion_Wizard extends _Minion {
 			perLevel: 2,
 		},
 		moveSpeed: 325,
-		
+
 		collisionRadius: 48,
 	};
 
@@ -51,9 +51,9 @@ module.exports = class _Minion_Wizard extends _Minion {
 		//BasicAttack: require('./Spells/BasicAttack'),
 	};
 
-	constructor(parent){
+	constructor(parent) {
 		super(parent);
-		
+
 		this.createOnSlots({
 			[slotId.A]: this.constructor.spells.BasicAttack,
 		});
