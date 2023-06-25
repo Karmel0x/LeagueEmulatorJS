@@ -1,16 +1,16 @@
 
-const enet = require('../../Core/enet');
-//const Handlers = require('../../Core/Handlers');
+const enet = require('../../../enetcppjs');
+//const handlers = require('../../src/core/handlers');
 
 
 async function init_network(handlers = null) {
-	var enet_initialize = Boolean(enet.initialize_client(5119, "127.0.0.1", "17BLOhi6KZsTtldTsizvHg=="));
-	console.log('enet_initialize:', enet_initialize);
-	if (!enet_initialize)
+	var enetInitialize = Boolean(enet.initialize_client(5119, "127.0.0.1", "17BLOhi6KZsTtldTsizvHg=="));
+	console.log('enetInitialize:', enetInitialize);
+	if (!enetInitialize)
 		return false;
 
 	var q = {};
-	while (true) {
+	for (; ;) {
 		q = enet.netLoop();
 		if (typeof q.type == 'undefined') {//no packets atm
 			await Promise.wait(1);//don't overload cpu

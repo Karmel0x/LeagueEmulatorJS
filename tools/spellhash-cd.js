@@ -1,4 +1,4 @@
-const { HashStringObject } = require("../Functions/HashString");
+const HashString = require("../src/functions/HashString");
 const fs = require('fs');
 
 const clientPath = 'LOL_CLIENT_PATH';
@@ -28,5 +28,5 @@ if (fs.existsSync(path2) && fs.lstatSync(path2).isDirectory()) {
 	}
 }
 
-HashStringObject(spellHash);
+HashString.HashStringObject(spellHash);
 console.log(spellHash);

@@ -9,24 +9,31 @@ WebSocket.prototype.sendJson = function (data) {
 };
 
 var server = http.createServer((req, res) => {
-	console.log(req.url);
-	if (req.url == '/')
-		req.url = '/index.html';
+	let url = req.url;
+	if (!url) {
+		res.writeHead(400);
+		res.end('400 Bad Request');
+		return;
+	}
+
+	console.log(url);
+	if (url == '/')
+		url = '/index.html';
 
 	// do not allow access to files outside of the public directory
 	// allow only alphanumeric, dots, slashes, underscores, dashes
-	if (req.url.indexOf('..') != -1 || !req.url.match(/^\/[a-zA-Z0-9\.\/_-]+$/)) {
+	if (url.indexOf('..') != -1 || !url.match(/^\/[a-zA-Z0-9\.\/_-]+$/)) {
 		res.writeHead(403);
 		res.end('403 Forbidden');
 		return;
 	}
-	if (!fs.existsSync(__dirname + '/public' + req.url)) {
+	if (!fs.existsSync(__dirname + '/public' + url)) {
 		res.writeHead(404);
 		res.end('404 Not Found');
 		return;
 	}
 
-	fs.readFile(__dirname + '/public' + req.url, (err, data) => {
+	fs.readFile(__dirname + '/public' + url, (err, data) => {
 		if (err) {
 			res.writeHead(404);
 			res.end(JSON.stringify(err));
@@ -35,11 +42,11 @@ var server = http.createServer((req, res) => {
 
 		// mimetype
 		var mime = 'text/plain';
-		if (req.url.match(/\.html$/))
+		if (url.match(/\.html$/))
 			mime = 'text/html';
-		else if (req.url.match(/\.css$/))
+		else if (url.match(/\.css$/))
 			mime = 'text/css';
-		else if (req.url.match(/\.js$/))
+		else if (url.match(/\.js$/))
 			mime = 'text/javascript';
 
 		res.writeHead(200, { 'Content-Type': mime });

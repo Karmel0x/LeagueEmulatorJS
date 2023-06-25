@@ -16,10 +16,11 @@ var replayUnpacked = _replayreaders(process.argv[2] || '../../LeagueEmulatorJS_r
 //}
 //return;
 
-const enetLib = require('../Core/Network/libs/enet');
-//const Handlers = require('../Core/Handlers');
-const BasePacket = require('../Packets/BasePacket');
-require("../Core/BufferExtend");
+const enetLib = require('../src/core/network/libs/enet');
+//const handlers = require('../src/core/handlers');
+const BasePacket = require('../src/packets/BasePacket');
+const Server = require('../src/app/Server');
+require("../src/core/BufferExtend");
 
 
 async function start_spectator() {
@@ -32,7 +33,7 @@ async function start_spectator() {
 
 		while (performance.now() - time < (replayUnpacked[i].Time || (replayUnpacked[i].TimeS * 1000).toFixed(3))) {
 			await Promise.wait(1);
-		};
+		}
 
 		// todo: ignore some packets: S2C.World_SendCamera_Server_Acknologment ?
 
@@ -44,7 +45,7 @@ async function start_spectator() {
 		else if (replayUnpacked[i].BytesBuffer)
 			buffer = replayUnpacked[i].BytesBuffer;
 
-		global.Network.sendPacket([0], { buffer, channel: replayUnpacked[i].Channel });
+		Server.network.sendPacket([0], { buffer, channel: replayUnpacked[i].Channel });
 
 		if (i % 100 == 0)
 			console.log('packet number:', i);
@@ -60,7 +61,7 @@ function init_network_handler(q) {
 		var keyExchangePacket = '00 2a 00 ff 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00';
 		keyExchangePacket = keyExchangePacket.split(' ').join('');
 		var buffer = Buffer.from(keyExchangePacket, 'hex');
-		global.Network.sendPacket([0], { buffer, channel: 0 });
+		Server.network.sendPacket([0], { buffer, channel: 0 });
 	}
 
 	if (!_init_network_handler) {
@@ -69,14 +70,14 @@ function init_network_handler(q) {
 	}
 }
 
-require('../Core/init_utilities')();
+require('../src/core/init_utilities')();
 
 enetLib.logPackets = () => { };
 
-global.Network = enetLib.start({
+Server.network = enetLib.start({
 	port: 5119,
 	host: "127.0.0.1",
 	blowfishKey: "17BLOhi6KZsTtldTsizvHg==",
 });
 
-global.Network.handlePackets = init_network_handler;
+Server.network.handlePackets = init_network_handler;

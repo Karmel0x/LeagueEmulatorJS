@@ -1,0 +1,17 @@
+{
+	"compilerOptions": {
+		"noEmit": true,
+		"allowJs": true,
+		"checkJs": true,
+		"strict": true,
+		//"declaration": true,
+		//"declarationDir": "types",
+		//"emitDeclarationOnly": true,
+		//"declarationMap": true,
+		"resolveJsonModule": true,
+		"esModuleInterop": true
+	},
+	"include": [
+		"src"
+	]
+}

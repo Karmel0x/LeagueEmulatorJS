@@ -1,20 +1,20 @@
 //
 //// need some changes in enetcppjs to make it working...
 //
-//const enet = require('../Core/enet');
-////const Handlers = require('../Core/Handlers');
-//const Packets = require('../Core/Packets');
-//require("../Core/BufferExtend");
+//const enet = require('../src/core/enet');
+////const handlers = require('../src/core/handlers');
+//const packets = require('../src/core/packets');
+//require("../src/core/BufferExtend");
 //
 //
 //async function init_client_nn() {
-//	var enet_initialize = Boolean(enet.initialize_client(5119, "127.0.0.1", "17BLOhi6KZsTtldTsizvHg=="));
-//	console.log('enet_initialize:', enet_initialize);
-//	if (!enet_initialize)
+//	var enetInitialize = Boolean(enet.initialize_client(5119, "127.0.0.1", "17BLOhi6KZsTtldTsizvHg=="));
+//	console.log('enetInitialize:', enetInitialize);
+//	if (!enetInitialize)
 //		return false;
 //
 //	//var q = {};
-//	//while (true) {
+//	//for (; ;) {
 //	//	q = enet.netLoop();
 //	//	if (typeof q.type == 'undefined') {//no packets atm
 //	//		await Promise.wait(1);//don't overload cpu
@@ -34,13 +34,13 @@
 //		await init_client_nn();
 //		await Promise.wait(100);
 //	}
-//	console.log(q.peer_num, q.channel || 0, q.peer_num == 0 ? '(client)' : '(server)', q.buffer);
+//	console.log(q.peerNum, q.channel || 0, q.peerNum == 0 ? '(client)' : '(server)', q.buffer);
 //
-//	enet.sendPacket(q.peer_num == 0 ? 1 : 0, q.buffer, q.channel || 0);
+//	enet.sendPacket(q.peerNum == 0 ? 1 : 0, q.buffer, q.channel || 0);
 //}
 //
-//require('../Core/init_utilities')();
-//require('../Core/Network/libs/enet')({ port: 5118, host: "127.0.0.1", blowfishKey: "17BLOhi6KZsTtldTsizvHg==" }, init_network_handler);
+//require('../src/core/init_utilities')();
+//require('../src/core/network/libs/enet')({ port: 5118, host: "127.0.0.1", blowfishKey: "17BLOhi6KZsTtldTsizvHg==" }, init_network_handler);
 //
 //
 ////async function t1() {

@@ -1,7 +1,8 @@
 
 const fs = require('fs');
-global.packetLengthWarning = 50000;
-require("../../Core/BufferExtend");
+require("../../src/core/BufferExtend");
+const Server = require('../../src/app/Server');
+Server.packetLengthWarning = 50000;
 
 
 module.exports = function (filePath) {
@@ -30,8 +31,8 @@ module.exports = function (filePath) {
             Channel: packet.channel,
             BytesBuffer: Buffer.from(data),
             Flags: packet.reserved,
-        }
-    }
+        };
+    };
 
     var packets = [];
 

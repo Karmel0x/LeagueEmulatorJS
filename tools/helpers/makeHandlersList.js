@@ -1,23 +1,23 @@
 
 const fs = require('fs');
 
-var Handlers = {};
+var handlers = {};
 
-var packetDir = __dirname + '/../Handlers/';
+var packetDir = __dirname + '/../handlers/';
 fs.readdirSync(packetDir).forEach(function (file) {
 	if (file.endsWith('.js') && file !== 'index.js')
-		Handlers['0x' + file.between('0x', '-')] = `./${file.replace('.js', '')}`;
+		handlers['0x' + file.between('0x', '-')] = `./${file.replace('.js', '')}`;
 });
 
-Handlers = Object.keys(Handlers).sort((a, b) => parseInt(a, 16) - parseInt(b, 16)).reduce(
+handlers = Object.keys(handlers).sort((a, b) => parseInt(a, 16) - parseInt(b, 16)).reduce(
 	(obj, key) => {
-		obj[key] = Handlers[key];
+		obj[key] = handlers[key];
 		return obj;
 	}, {}
 );
 
 console.log(`module.exports = {`);
-for (var packetId in Handlers) {
-	console.log(`\t${packetId}: require('${Handlers[packetId]}'),`);
+for (var packetId in handlers) {
+	console.log(`\t${packetId}: require('${handlers[packetId]}'),`);
 }
 console.log(`};\n`);

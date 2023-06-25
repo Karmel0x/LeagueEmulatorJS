@@ -28,6 +28,7 @@ ws.addEventListener('open', (event) => {
 function strAtPos(str, pos, ins) {
 	return [str.slice(0, pos), ins, str.slice(pos)].join('');
 }
+
 function getPacketSel(element, packetId) {
 	var a = window.getSelection().toString();
 	var b = element.parentElement.parentElement.querySelector('.Bytes_textarea');
@@ -38,10 +39,12 @@ function getPacketSel(element, packetId) {
 		b.value = strAtPos(b.value, c * 3, '>');
 
 }
+
 function collapsePacket(element) {
 	var b = element.parentElement.parentElement.parentElement.querySelector('.packetContentRow');
 	b.style.display = b.style.display == 'none' ? null : 'none';
 }
+
 function highlightPacket(element) {
 	//var a = element.parentElement.parentElement.parentElement.querySelector('.packetContentRow .Bytes > *');
 	//a.style.border = a.style.border ? null : '1px solid blue';
@@ -70,25 +73,25 @@ ws.addEventListener('message', (event) => {
 
 		var newpacket = document.createElement('div');
 		newpacket.className = 'Packet';
-		newpacket.innerHTML = `
-<div class="packetrow">
-	<div class="row">
-		<div class="Id col">Id:` + (res.packet.Id || 0) + `</div>
-		<div class="Time col">Time:` + (res.packet.Time || '') + ' (' + (new Date(parseFloat(res.packet.Time || 0)).toISOString().slice(11, 19)) + `)</div>
-		<div class="Channel col">` + res.packet.channelName + `.` + res.packet.cmdName + ` (size:` + (res.packet.Bytes || '').split(' ').length + `)</div>
-		<div class="col text-end">
-			<button class="btn btn-light btn-sm" style="border:0;line-height:10px" onclick="collapsePacket(this)">collapse</button>
-			<button class="btn btn-light btn-sm" style="border:0;line-height:10px" onclick="highlightPacket(this)">highlight</button>
-		</div>
-	</div>
-	<div class="row packetContentRow">
-		<div class="Bytes col"><textarea class="Bytes_Parsed_textarea Bytes_textarea">` + (res.packet.Bytes || '') + `</textarea></div>
-		<div class="Parsed col" ondblclick="getPacketSel(this.children[0], ` + (res.packet.Id || 0) + `)"></div>
-	</div>
-	<div class="row" style="display:none">
-		<div class="col"><button class="btn btn-light" onclick="Messages.sendpacket(` + (res.packet.Id || 0) + `)">send packet</button></div>
-	</div>
-</div>`;
+		newpacket.innerHTML = /* html */ `
+			<div class="packetrow">
+				<div class="row">
+					<div class="Id col">Id:${res.packet.Id || 0}</div>
+					<div class="Time col">Time:${res.packet.Time || ''} (${(new Date(parseFloat(res.packet.Time || 0)).toISOString().slice(11, 19))})</div>
+					<div class="Channel col">${res.packet.channelName}.${res.packet.cmdName} (size:${(res.packet.Bytes || '').split(' ').length})</div>
+					<div class="col text-end">
+						<button class="btn btn-sm btn-secondary" style="border:0;line-height:10px" onclick="collapsePacket(this)">collapse</button>
+						<button class="btn btn-sm btn-secondary" style="border:0;line-height:10px" onclick="highlightPacket(this)">highlight</button>
+					</div>
+				</div>
+				<div class="row packetContentRow">
+					<div class="Bytes col"><textarea class="Bytes_Parsed_textarea Bytes_textarea">${res.packet.Bytes || ''}</textarea></div>
+					<div class="Parsed col" ondblclick="getPacketSel(this.children[0], ${res.packet.Id || 0})"></div>
+				</div>
+				<div class="row" style="display:none">
+					<div class="col"><button class="btn btn-sm btn-secondary" onclick="Messages.sendpacket(${res.packet.Id || 0})">send packet</button></div>
+				</div>
+			</div>`;
 
 		newpacket.querySelector(".Bytes_Parsed_textarea").style.height = (parsedLines * 26) + 'px';
 
@@ -130,18 +133,21 @@ class Messages {
 			channel: channel,
 		});
 	}
+
 	static sendpacket(Id) {
 		ws.sendJson({
 			cmd: 'sendpacket',
 			Id: Id,
 		});
 	}
+
 	static initialize_client() {
 		ws.sendJson({
 			cmd: 'initialize_client',
 		});
 		document.getElementById('send_handshake').disabled = false;
 	}
+
 	static loadpackets(offset = 0, limit = 2000, packetsearch = []) {
 		ws.sendJson({
 			cmd: 'loadpackets',
@@ -150,11 +156,13 @@ class Messages {
 			packetsearch: packetsearch,
 		});
 	}
+
 	static loadreplaylist() {
 		ws.sendJson({
 			cmd: 'loadreplaylist',
 		});
 	}
+
 	static loadreplayfile(name = '', offset = undefined, limit = undefined, packetsearch = []) {
 		Controls.loadingspinner(true);
 		ws.sendJson({
@@ -163,6 +171,7 @@ class Messages {
 		});
 		Messages.loadpackets(offset, limit, packetsearch);
 	}
+
 	static addpacket(bytes, channel) {
 		ws.sendJson({
 			cmd: 'addpacket',

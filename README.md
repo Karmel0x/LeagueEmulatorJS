@@ -14,8 +14,8 @@ git clone https://github.com/Karmel0x/enetcppjs
 git clone https://github.com/Karmel0x/navmeshcppjs
 git clone https://github.com/Karmel0x/LeagueEmulatorJS
 cd LeagueEmulatorJS
-npm i three ws
-node main
+npm install
+node src/main
 ```
 ```
 # download game client (4.20) here - https://github.com/LeagueSandbox/GameServer#manual-setup-windowsmac

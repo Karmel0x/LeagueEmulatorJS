@@ -1,4 +1,4 @@
-const { HashStringObject } = require("../Functions/HashString");
+const HashString = require("../src/functions/HashString");
 
 
 const spellHash = {
@@ -24,7 +24,7 @@ const spellHash = {
 	YasuoQ3W: 0,
 };
 
-HashStringObject(spellHash);
+HashString.HashStringObject(spellHash);
 console.log(spellHash);
 
 
@@ -199,5 +199,5 @@ championList.forEach(champion => {
 
 
 
-HashStringObject(packageHash, true);
+HashString.HashStringObject(packageHash, true);
 console.log(packageHash);

@@ -12,11 +12,11 @@
 var replayDir = '../LeagueEmulatorJS_replays/';
 
 
-require('../../Core/init_utilities')();
-var { server, wss } = require('./init_client-server');
+require('../../src/core/init_utilities')();
+const { server, wss } = require('./init_client-server');
 const fs = require('fs');
 
-require("../../Core/BufferExtend");
+require("../../src/core/BufferExtend");
 
 const packetParser = require('./packetParser');
 const _replayreaders = require('../_replayreaders');
@@ -40,7 +40,7 @@ wss.onMessage = (ws, data) => {
 
 			if (!packetData)
 				continue;
-				
+
 			if (packetsearch && packetsearch.length) {
 
 				packetsearch = packetsearch.map(v => v.toLowerCase());

@@ -1,4 +1,5 @@
 const colors = require("./_colors");
+const Server = require("./manual_vision/_env");
 
 class _tests {
 
@@ -8,9 +9,9 @@ class _tests {
 	 * function to prepare test
 	 * for example, functionality that will run one time on program start
 	 * @abstract
-	 * @returns {Boolean}
+	 * @returns
 	 */
-	static async prepareTest(){
+	static async prepareTest() {
 		return true;
 	}
 
@@ -18,9 +19,9 @@ class _tests {
 	 * the actual functionality of the test
 	 * should return true to pass
 	 * @abstract
-	 * @returns {Boolean|String}
+	 * @returns
 	 */
-	static async processTest(){
+	static async processTest() {
 		return false;
 	}
 
@@ -30,21 +31,21 @@ class _tests {
 
 	/**
 	 * measuring method
-	 * @param {Number} iterations 
+	 * @param {number} iterations 
 	 */
-	static async test(iterations = 1){
+	static async test(iterations = 1) {
 		this._iterations = iterations;
 		var expectedTime = this.expectedIterationTime * iterations;
 
 		process.stdout.write(`testing ${this.name}`);
-		if(!global.processingAllTests && iterations > 1)
+		if (!Server.processingAllTests && iterations > 1)
 			process.stdout.write(` (${iterations} iterations)`);
-		if(expectedTime > 0)
+		if (expectedTime > 0)
 			process.stdout.write(` (expecting ${colors.fgYellow}${expectedTime}${colors.reset} ms)`);
 		process.stdout.write(` :: `);
-		
+
 		var prepared = await this.prepareTest();
-		if(!prepared){
+		if (!prepared) {
 			process.stdout.write(colors.fgRed);
 			process.stdout.write(`failed preparing test`);
 			console.log(colors.reset);
@@ -55,16 +56,16 @@ class _tests {
 		var i = 1, l = iterations;
 		var timeBefore = performance.now();
 
-		for(; i <= l; i++){
+		for (; i <= l; i++) {
 			var result = await this.processTest();
 
-			if(result !== true){
+			if (result !== true) {
 				passed = false;
 				process.stdout.write(colors.fgRed);
 				process.stdout.write(`failed (at iteration: ${i}/${iterations} :: returned '${result}')`);
 				break;
 			}
-			if(expectedTime > 0 && performance.now() - timeBefore > expectedTime){
+			if (expectedTime > 0 && performance.now() - timeBefore > expectedTime) {
 				passed = false;
 				process.stdout.write(colors.fgRed);
 				process.stdout.write(`failed (at iteration: ${i}/${iterations} :: running too long)`);
@@ -72,11 +73,11 @@ class _tests {
 			}
 			passed = true;
 		}
-		
+
 		var timeAfter = performance.now();
 		var timeElapsed = Math.round((timeAfter - timeBefore) * 1000) / 1000;
 
-		if(passed){
+		if (passed) {
 			process.stdout.write(colors.fgGreen,);
 			process.stdout.write('passed');
 		}
@@ -87,12 +88,12 @@ class _tests {
 
 	}
 
-	static singleTestMaybe(){
-		if(!global.processingAllTests){
+	static singleTestMaybe() {
+		if (!Server.processingAllTests) {
 			this.test(process.argv[2] ?? 1);
 		}
 	}
-	
+
 };
 
 module.exports = _tests;

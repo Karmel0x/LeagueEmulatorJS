@@ -1,9 +1,9 @@
 
 const fs = require('fs');
 
-require('../../../Core/init_utilities');
+require('../../../src/core/init_utilities');
 const _replayreaders = require('../../_replayreaders');
-const HandlersParse = require('../../../Core/Network/Parse');
+const HandlersParse = require('../../../src/core/network/parse');
 
 const WaypointsDrawer = require('../WaypointsDrawer');
 
@@ -31,7 +31,7 @@ function processReplay(replayUnpacked) {
 
 		if (!packet.BytesBuffer || packet.BytesBuffer.length < 6)
 			continue;
-		
+
 		var firstByte = packet.BytesBuffer.readUInt8(0);
 		if (firstByte != packetId_WaypointGroup && firstByte != packetId_SynchVersion)
 			continue;
@@ -53,7 +53,7 @@ function processReplay(replayUnpacked) {
 		if (firstByte == packetId_SynchVersion && !parsed.mapToLoad)
 			return;
 
-		if (parsed.mapToLoad){
+		if (parsed.mapToLoad) {
 			mapToLoad = parsed.mapToLoad;
 			//console.log('mapToLoad:', mapToLoad);
 			waypointsDrawer[mapToLoad] = waypointsDrawer[mapToLoad] || new WaypointsDrawer(mapToLoad);
@@ -62,7 +62,7 @@ function processReplay(replayUnpacked) {
 		if (!parsed.movementData || parsed.movementData.length < 1)
 			continue;
 
-		if(!waypointsDrawer[mapToLoad])
+		if (!waypointsDrawer[mapToLoad])
 			return;
 
 		for (var k = 0; k < parsed.movementData.length; k++) {

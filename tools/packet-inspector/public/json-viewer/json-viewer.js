@@ -1,10 +1,10 @@
 /**
  * JSONViewer - by Roman Makudera 2016 (c) MIT licence.
  */
-var JSONViewer = (function(document) {
+var JSONViewer = (function (document) {
 	var Object_prototype_toString = ({}).toString;
 	var DatePrototypeAsString = Object_prototype_toString.call(new Date);
-	
+
 	/** @constructor */
 	function JSONViewer() {
 		this._dom_container = document.createElement("pre");
@@ -14,16 +14,16 @@ var JSONViewer = (function(document) {
 	/**
 	 * Visualise JSON object.
 	 * 
-	 * @param {Object|Array} json Input value
-	 * @param {Number} [inputMaxLvl] Process only to max level, where 0..n, -1 unlimited
-	 * @param {Number} [inputColAt] Collapse at level, where 0..n, -1 unlimited
+	 * @param {Object | Array} json Input value
+	 * @param {number} [inputMaxLvl] Process only to max level, where 0..n, -1 unlimited
+	 * @param {number} [inputColAt] Collapse at level, where 0..n, -1 unlimited
 	 */
-	JSONViewer.prototype.showJSON = function(jsonValue, inputMaxLvl, inputColAt) {
+	JSONViewer.prototype.showJSON = function (jsonValue, inputMaxLvl, inputColAt) {
 		// Process only to maxLvl, where 0..n, -1 unlimited
 		var maxLvl = typeof inputMaxLvl === "number" ? inputMaxLvl : -1; // max level
 		// Collapse at level colAt, where 0..n, -1 unlimited
 		var colAt = typeof inputColAt === "number" ? inputColAt : -1; // collapse at
-		
+
 		this._dom_container.innerHTML = "";
 		walkJSONTree(this._dom_container, jsonValue, maxLvl, colAt, 0);
 	};
@@ -33,7 +33,7 @@ var JSONViewer = (function(document) {
 	 * 
 	 * @return {Element}
 	 */
-	JSONViewer.prototype.getContainer = function() {
+	JSONViewer.prototype.getContainer = function () {
 		return this._dom_container;
 	};
 
@@ -41,10 +41,10 @@ var JSONViewer = (function(document) {
 	 * Recursive walk for input value.
 	 * 
 	 * @param {Element} outputParent is the Element that will contain the new DOM
-	 * @param {Object|Array} value Input value
-	 * @param {Number} maxLvl Process only to max level, where 0..n, -1 unlimited
-	 * @param {Number} colAt Collapse at level, where 0..n, -1 unlimited
-	 * @param {Number} lvl Current level
+	 * @param {Object | Array} value Input value
+	 * @param {number} maxLvl Process only to max level, where 0..n, -1 unlimited
+	 * @param {number} colAt Collapse at level, where 0..n, -1 unlimited
+	 * @param {number} lvl Current level
 	 */
 	function walkJSONTree(outputParent, value, maxLvl, colAt, lvl) {
 		var isDate = Object_prototype_toString.call(value) === DatePrototypeAsString;
@@ -52,7 +52,7 @@ var JSONViewer = (function(document) {
 		if (typeof realValue === "object" && realValue !== null && !isDate) {
 			var isMaxLvl = maxLvl >= 0 && lvl >= maxLvl;
 			var isCollapse = colAt >= 0 && lvl >= colAt;
-			
+
 			var isArray = Array.isArray(realValue);
 			var items = isArray ? realValue : Object.keys(realValue);
 
@@ -63,7 +63,7 @@ var JSONViewer = (function(document) {
 				var rootLink = _createLink();
 
 				if (items.length) {
-					rootLink.addEventListener("click", function() {
+					rootLink.addEventListener("click", function () {
 						if (isMaxLvl) return;
 
 						rootLink.classList.toggle("collapsed");
@@ -93,7 +93,7 @@ var JSONViewer = (function(document) {
 				ulList.setAttribute("data-level", lvl);
 				ulList.classList.add("type-" + (isArray ? "array" : "object"));
 
-				items.forEach(function(key, ind) {
+				items.forEach(function (key, ind) {
 					var item = isArray ? key : value[key];
 					var li = document.createElement("li");
 
@@ -130,9 +130,9 @@ var JSONViewer = (function(document) {
 
 								walkJSONTree(li, item, maxLvl, colAt, lvl + 1);
 								li.appendChild(document.createTextNode(itemIsArray ? "]" : "}"));
-								
+
 								var list = li.querySelector("ul");
-								var itemLinkCb = function() {
+								var itemLinkCb = function () {
 									itemLink.classList.toggle("collapsed");
 									itemsCount.classList.toggle("hide");
 									list.classList.toggle("hide");
@@ -195,14 +195,14 @@ var JSONViewer = (function(document) {
 			}
 		} else {
 			// simple values
-			outputParent.appendChild( createSimpleViewOf(value, isDate) );
+			outputParent.appendChild(createSimpleViewOf(value, isDate));
 		}
 	};
 
 	/**
-	 * Create simple value (no object|array).
+	 * Create simple value (no object/array).
 	 * 
-	 * @param  {Number|String|null|undefined|Date} value Input value
+	 * @param  {number | string | null | undefined | Date} value Input value
 	 * @return {Element}
 	 */
 	function createSimpleViewOf(value, isDate) {
@@ -229,7 +229,7 @@ var JSONViewer = (function(document) {
 	/**
 	 * Create items count element.
 	 * 
-	 * @param  {Number} count Items count
+	 * @param  {number} count Items count
 	 * @return {Element}
 	 */
 	function _createItemsCount(count) {
@@ -243,7 +243,7 @@ var JSONViewer = (function(document) {
 	/**
 	 * Create clickable link.
 	 * 
-	 * @param  {String} title Link title
+	 * @param  {string} title Link title
 	 * @return {Element}
 	 */
 	function _createLink(title) {
@@ -256,10 +256,10 @@ var JSONViewer = (function(document) {
 	};
 
 	/**
-	 * Get correct item|s title for count.
+	 * Get correct items title for count.
 	 * 
-	 * @param  {Number} count Items count
-	 * @return {String}
+	 * @param  {number} count Items count
+	 * @return {string}
 	 */
 	function _getItemsTitle(count) {
 		var itemsTxt = count > 1 || count === 0 ? "items" : "item";

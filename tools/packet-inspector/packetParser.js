@@ -1,15 +1,15 @@
 
-const HandlersParse = require('../../Core/Network/Parse');
-var BatchPacket = require('../../Packets/BatchPacket');
-const BasePacket = require('../../Packets/BasePacket');
-const Packets = require('../../Core/Network/Packets');
+const HandlersParse = require('../../src/core/network/parse');
+const BatchPacket = require('../../src/packets/BatchPacket');
+const BasePacket = require('../../src/packets/BasePacket');
+const packets = require('../../src/core/network/packets');
 
 
 var packetId = 0;
 
 function findChannelIdByPacketId(packetId) {
-	for (var channelId in Packets) {
-		if (Packets[channelId][packetId])
+	for (var channelId in packets) {
+		if (packets[channelId][packetId])
 			return channelId;
 	}
 	return null;
