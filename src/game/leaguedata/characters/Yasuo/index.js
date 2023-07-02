@@ -80,7 +80,7 @@ module.exports = class Yasuo extends _Champion {
 		});
 	}
 
-	//static spellSlots = {
+	//static slots = {
 	//	[slotId.Q]: require('./spells/YasuoQW'),
 	//	[slotId.W]: require('./spells/YasuoWMovingWall'),
 	//	[slotId.E]: require('./spells/YasuoDashWrapper'),

@@ -8,12 +8,12 @@
 //
 //
 //async function init_client_nn() {
-//	var enetInitialize = Boolean(enet.initialize_client(5119, "127.0.0.1", "17BLOhi6KZsTtldTsizvHg=="));
+//	let enetInitialize = Boolean(enet.initialize_client(5119, "127.0.0.1", "17BLOhi6KZsTtldTsizvHg=="));
 //	console.log('enetInitialize:', enetInitialize);
 //	if (!enetInitialize)
 //		return false;
 //
-//	//var q = {};
+//	//let q = {};
 //	//for (; ;) {
 //	//	q = enet.netLoop();
 //	//	if (typeof q.type == 'undefined') {//no packets atm
@@ -27,7 +27,7 @@
 //	//}
 //}
 //
-//var _init_network_handler = false;
+//let _init_network_handler = false;
 //async function init_network_handler(q) {
 //	if (!_init_network_handler) {
 //		_init_network_handler = true;
@@ -44,10 +44,10 @@
 //
 //
 ////async function t1() {
-////	var keyExchangePacket = '00 72 93 03 00 00 00 00 01 00 00 00 00 00 00 00 bb df 80 02 16 6a df 67 50 b9 27 f6 70 e9 36 0a';
-////	//var keyExchangePacket = '00 2a 00 ff 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00';
+////	let keyExchangePacket = '00 72 93 03 00 00 00 00 01 00 00 00 00 00 00 00 bb df 80 02 16 6a df 67 50 b9 27 f6 70 e9 36 0a';
+////	//let keyExchangePacket = '00 2a 00 ff 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00';
 ////	keyExchangePacket = keyExchangePacket.split(' ').join('');
-////	var buffer = Buffer.from(keyExchangePacket, 'hex');
+////	let buffer = Buffer.from(keyExchangePacket, 'hex');
 ////	console.log(buffer);
 ////	enet.sendPacket(0, buffer, 0);
 ////	await Promise.wait(1000);

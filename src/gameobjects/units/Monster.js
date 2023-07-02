@@ -1,33 +1,28 @@
 
-const ExtendWTraits = require('../../core/ExtendWTraits');
-const Unit = require('./Unit');
-const IDefendable = require('../traits/IDefendable');
-const IAttackable = require('../traits/IAttackable');
-const IMovable = require('../traits/IMovable');
 const loadingStages = require('../../constants/loadingStages');
 const Server = require('../../app/Server');
 
+const Unit = require('./Unit');
+const Spellable = require('../extensions/combat/Spellable');
+const Moving = require('../extensions/traits/Moving');
+const Team = require('../extensions/traits/Team');
+const MovingUnit = require('../extensions/traits/MovingUnit');
 
-class Monster extends ExtendWTraits(Unit, IDefendable, IAttackable, IMovable) {
 
-	//SetCooldown({slot, cooldown}){
-	//	var SetCooldown = Server.network.createPacket('SetCooldown');
-	//	SetCooldown.netId = this.netId;
-	//	SetCooldown.slot = slot;
-	//	SetCooldown.bitfield = {
-	//		playVOWhenCooldownReady: false,
-	//		isSummonerSpell: false,
-	//	};
-	//	SetCooldown.cooldown = cooldown;
-	//	SetCooldown.maxCooldownForDisplay = cooldown || -1;
-	//	this.sendTo_everyone(SetCooldown);
-	//}
+class Monster extends Unit {
+
+	combat;
+	moving;
 
 	/**
 	 * @param {import('../GameObjects').MonsterOptions} options 
 	 */
 	constructor(options) {
 		super(options);
+		this.options = options;
+
+		this.combat = new Spellable(this);
+		this.moving = new MovingUnit(this);
 
 		//console.log(this);
 		this.initialized();
@@ -38,20 +33,33 @@ class Monster extends ExtendWTraits(Unit, IDefendable, IAttackable, IMovable) {
 		//this.SetCooldown({slot: 3, cooldown: 0});
 
 		this.on('noTargetsInRange', () => {
-			var InstantStop_Attack = Server.network.createPacket('InstantStop_Attack');
+			const InstantStop_Attack = Server.network.createPacket('InstantStop_Attack');
 			InstantStop_Attack.netId = this.netId;
 			InstantStop_Attack.flags = {};
-			this.sendTo_everyone(InstantStop_Attack);
+			this.packets.toEveryone(InstantStop_Attack);
 		});
 
 		this.spawnAns1();
 	}
 
+	//SetCooldown({slot, cooldown}){
+	//	const SetCooldown = Server.network.createPacket('SetCooldown');
+	//	SetCooldown.netId = this.netId;
+	//	SetCooldown.slot = slot;
+	//	SetCooldown.bitfield = {
+	//		playVOWhenCooldownReady: false,
+	//		isSummonerSpell: false,
+	//	};
+	//	SetCooldown.cooldown = cooldown;
+	//	SetCooldown.maxCooldownForDisplay = cooldown || -1;
+	//	this.packets.toEveryone(SetCooldown);
+	//}
+
 	/**
 	 * @todo send this packet on first visibility ?
 	 */
 	spawnAns1() {
-		var CreateNeutral = Server.network.createPacket('CreateNeutral');
+		const CreateNeutral = Server.network.createPacket('CreateNeutral');
 		Object.assign(CreateNeutral, {
 			netId: this.netId,
 			netObjId: this.netId,
@@ -63,11 +71,11 @@ class Monster extends ExtendWTraits(Unit, IDefendable, IAttackable, IMovable) {
 			skinName: this.character.name,
 			uniqueName: this.info.name,
 			spawnAnimationName: '',
-			teamId: this.teamId,
+			team: this.team,
 			damageBonus: 0,
 			healthBonus: 0,
 			minionRoamState: 0,
-			groupNumber: this.spawner?.num,
+			groupNumber: this.spawner?.team.num,
 			buffSideTeamId: 0,
 			revealEvent: 0,
 			initialLevel: 1,
@@ -76,7 +84,7 @@ class Monster extends ExtendWTraits(Unit, IDefendable, IAttackable, IMovable) {
 			behaviorTree: 0,
 			aiScript: '',
 		});
-		Server.teams.ALL.sendPacket(CreateNeutral, loadingStages.LOADING);
+		Server.teams[Team.TEAM_MAX].sendPacket(CreateNeutral, loadingStages.LOADING);
 		//console.log('CreateNeutral', CreateNeutral);
 	}
 
@@ -90,12 +98,12 @@ class Monster extends ExtendWTraits(Unit, IDefendable, IAttackable, IMovable) {
 	}
 
 	get rewardExp() {
-		var character = this.character.constructor;
+		let character = this.character.constructor;
 		return character.reward.exp;
 	}
 
 	get rewardGold() {
-		var character = this.character.constructor;
+		let character = this.character.constructor;
 		return character.reward.gold + (character.rewardPerLevel.gold * this.level);
 	}
 
@@ -103,22 +111,26 @@ class Monster extends ExtendWTraits(Unit, IDefendable, IAttackable, IMovable) {
 
 	/**
 	 * 
-	 * @param {Unit} source killer
+	 * @param {import('../GameObjects').AttackableUnit} source killer
 	 */
 	onDieRewards(source) {
-		console.log('onDieRewards', source.teamName, this.teamName, source.type);
+		console.log('onDieRewards', source.team.id, this.team.id, source.type);
 		// make sure once again if we should reward killer
-		if (source.teamId == this.teamId || this.killRewarded)
+		if (source.team.id == this.team.id || this.killRewarded)
 			return;
 
 		this.killRewarded = true;
 
 		if (source.type == 'Player') {
-			source.expUp(this.rewardExp);
-			source.goldUp(this.rewardGold, this);
+			source.progress.expUp(this.rewardExp);
+			source.progress.goldUp(this.rewardGold, this);
 		}
 	}
 
+	/**
+	 * 
+	 * @param {import('../GameObjects').AttackableUnit} source killer
+	 */
 	onDie(source) {
 		this.onDieRewards(source);
 	}

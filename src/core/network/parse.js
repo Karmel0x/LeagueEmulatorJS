@@ -10,7 +10,7 @@ const packets = require("./packets");
  * @returns {Object}
  */
 function parseBody(buffer, channel, cmd) {
-	var pkt = {};
+	let pkt = {};
 	if (typeof packets[channel] == 'undefined' || typeof packets[channel][cmd] == 'undefined') {
 		pkt.error = ['packet not defined', {
 			channel,
@@ -35,7 +35,7 @@ function parseBody(buffer, channel, cmd) {
  */
 function parsePacket(packet) {
 	packet.buffer.off = 0;
-	var pkt = packet.buffer.readobj(BasePacket.struct_header);
+	let pkt = packet.buffer.readobj(BasePacket.struct_header);
 
 	if (pkt.cmd == 0xFE) {
 		packet.buffer.off = 0;

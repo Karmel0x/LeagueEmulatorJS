@@ -1,5 +1,5 @@
 
-const PositionHelper = require('../../functions/PositionHelper');
+const PositionHelper = require('../extensions/Measure');
 const Dummytarget = require('./Dummytarget');
 const Missile = require('./Missile');
 
@@ -12,18 +12,18 @@ class Skillshot extends Missile {
 
 	/**
 	 * @todo
-	 * @param {Unit} owner
+	 * @param {import('../GameObjects').AttackableUnit} spawner
 	 * @param {Vector2} targetPosition
 	 * @param {Object} options
 	 * @returns 
 	 */
-	static create(owner, targetPosition, options = {}) {
-		var missile = new Skillshot({ owner, options });
+	static create(spawner, targetPosition, options = {}) {
+		const missile = new Skillshot({ spawner, options });
 		missile.callbacks.collision._.options.range = options.radius;
 
 		missile.target = new Dummytarget({
 			// idk if `options.range - (options.radius / 2)` is correct here, corners on max range will not hit
-			position: PositionHelper.getPositionBetweenRange(owner.position, targetPosition, options.range - (options.radius / 2))
+			position: PositionHelper.getPositionBetweenRange(spawner.position, targetPosition, options.range - (options.radius / 2))
 		});
 
 		return missile;
@@ -41,7 +41,7 @@ class Skillshot extends Missile {
 					if (this.owner == target)
 						return;
 
-					this.owner.attack(target);
+					this.owner.combat.attack(target);
 					delete this.callbacks.collision._;
 					//this.waypoints = [];
 					this.destructor();

@@ -12,11 +12,11 @@ module.exports = class HashString {
 	static HashString(path) {
 		path = path.toLowerCase();
 
-		var hash = 0;
+		let hash = 0;
 		const magic = 16;
 		const mask = 0xF0000000;
 
-		for (var i = 0; i < path.length; i++) {
+		for (let i = 0; i < path.length; i++) {
 			hash = path.charCodeAt(i) + magic * hash;
 
 			let hm = (hash & mask) >>> 0;
@@ -33,10 +33,10 @@ module.exports = class HashString {
 	static HashStringNorm(str) {
 		str = str.toLowerCase();
 
-		var hash = 0;
+		let hash = 0;
 		const magic = 65599;
 
-		for (var i = 0; i < str.length; i++)
+		for (let i = 0; i < str.length; i++)
 			hash = (str.charCodeAt(i) + magic * hash) >>> 0;
 
 		return hash;
@@ -56,9 +56,9 @@ module.exports = class HashString {
 			obj[i] = (norm ? HashString.HashStringNorm : HashString.HashString)(i);
 			HashString.HashStringObject_cache[i] = obj[i];
 
-			var fd = i + ': ' + obj[i] + ',\n';
-			var fn = '../HashString.txt';
-			var data = fs.existsSync(fn) ? fs.readFileSync(fn) : '';
+			let fd = i + ': ' + obj[i] + ',\n';
+			let fn = '../HashString.txt';
+			let data = fs.existsSync(fn) ? fs.readFileSync(fn) : '';
 			if (!data.includes(fd))
 				fs.appendFileSync(fn, fd);
 

@@ -9,7 +9,7 @@ module.exports = {//CMovementDataWithSpeed
 		if (buffer.length - buffer.off < 9)
 			return;
 
-		var obj = {};
+		let obj = {};
 		obj.bitfield = buffer.read1('uint8');
 		obj.waypointsSize = obj.bitfield >> 1;
 		obj.hasTeleportId = (obj.bitfield & 1) != 0;

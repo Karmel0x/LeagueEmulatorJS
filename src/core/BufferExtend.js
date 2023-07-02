@@ -35,7 +35,7 @@ Buffer.prototype.off = 0;
  */
 Buffer.prototype.read1 = function (type) {
 
-	var variable;
+	let variable;
 	try {
 		switch (type) {
 			case 'bool': variable = !!this.readUInt8(this.off); break;
@@ -118,7 +118,7 @@ Buffer.prototype.write1 = function (type, value) {
 	//todo: buffer expand if overflowing
 
 	//console.log(type, value, this.off);
-	var variable;
+	let variable;
 	switch (type) {
 		// @ts-ignore
 		case 'bool': variable = this.writeUInt8(!!value, this.off); break;
@@ -215,7 +215,7 @@ Buffer.prototype.readobj = function (template) {
 					console.trace();
 					return obj;
 				}
-				for (var j = 0; j < template[1]; j++) {
+				for (let j = 0; j < template[1]; j++) {
 					obj[j] = this.readobj(template[0]);
 					//console.log(template[0], this.off);
 				}
@@ -225,7 +225,7 @@ Buffer.prototype.readobj = function (template) {
 			}
 
 			let obj = {};
-			for (var i in template) {
+			for (let i in template) {
 				//if(typeof template[i]?.[1] == 'string')
 				//	template[i][1] = obj[template[i][1]];
 
@@ -275,14 +275,14 @@ Buffer.prototype.writeobj = function (template, source) {
 					this.write1('uint64', bitfield);
 					return;
 				}
-				for (var j = 0; j < template[1]; j++) {
+				for (let j = 0; j < template[1]; j++) {
 					this.writeobj(template[0], source[j] || 0);
 					//console.log(template[0], this.off);
 				}
 				return;
 			}
 
-			for (var i in template) {
+			for (let i in template) {
 				if (typeof template[i]?.[1] == 'string')
 					template[i][1] = source[template[i][1]];
 

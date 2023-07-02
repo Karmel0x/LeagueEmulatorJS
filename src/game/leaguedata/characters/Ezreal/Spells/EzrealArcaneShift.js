@@ -23,7 +23,7 @@ module.exports = class EzrealArcaneShift extends _Spell {
 	onCast(spellData) {
 		super.onCast(spellData);
 
-		this.owner.dashTo(spellData.packet.position, { speed: 1800, range: 400 });
+		this.owner.moving.dashTo(spellData.packet.position, { speed: 1800, range: 400 });
 
 	}
 };

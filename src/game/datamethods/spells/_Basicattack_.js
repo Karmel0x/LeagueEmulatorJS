@@ -20,8 +20,8 @@ module.exports = class _Basicattack extends _Spell {
 		super(options);
 
 		this.owner.on('changeStats', () => {
-			this.castRange = this.owner.attackRange.total;
-			this.cooldown = 1 / this.owner.attackSpeed.total;
+			this.castRange = this.owner.stats.attackRange.total;
+			this.cooldown = 1 / this.owner.stats.attackSpeed.total;
 		});
 	}
 
@@ -30,16 +30,16 @@ module.exports = class _Basicattack extends _Spell {
 		if (!this.owner.isAbleForAttacking())
 			return;
 
-		var bassicattack = this.process(this.owner, target, { speed: this.missileSpeed });
+		let basicattack = this.process(this.owner, target, { speed: this.missileSpeed });
 
-		if (this.owner.moveClear)
-			this.owner.moveClear();
+		if (this.owner.moving)
+			this.owner.moving.moveClear();
 
-		return bassicattack;
+		return basicattack;
 	}
 
 	beginAttackAns(options) {
-		var Basic_Attack_Pos = Server.network.createPacket('Basic_Attack_Pos', 'S2C');
+		const Basic_Attack_Pos = Server.network.createPacket('Basic_Attack_Pos', 'S2C');
 		Basic_Attack_Pos.netId = this.owner.netId;
 
 		let targetPosition = {
@@ -60,11 +60,11 @@ module.exports = class _Basicattack extends _Spell {
 			y: this.owner.position.y,
 		};
 
-		this.owner.sendTo_vision(Basic_Attack_Pos);
+		this.owner.packets.toVision(Basic_Attack_Pos);
 	}
 
 	nextAttackAns(options) {
-		var Basic_Attack = Server.network.createPacket('Basic_Attack', 'S2C');
+		const Basic_Attack = Server.network.createPacket('Basic_Attack', 'S2C');
 		Basic_Attack.netId = this.owner.netId;
 
 		let targetPosition = {
@@ -81,7 +81,7 @@ module.exports = class _Basicattack extends _Spell {
 			extraTime: 127,
 		};
 
-		this.owner.sendTo_vision(Basic_Attack);
+		this.owner.packets.toVision(Basic_Attack);
 	}
 
 	attackAnsCurrentUnit = 0;//@todo reset it on move?
@@ -97,14 +97,14 @@ module.exports = class _Basicattack extends _Spell {
 
 	/**
 	 * 
-	 * @param {Unit} owner
-	 * @param {Unit} target
+	 * @param {import('../../../gameobjects/GameObjects').AttackableUnit} spawner
+	 * @param {import('../../../gameobjects/GameObjects').DefendableUnit} target
 	 * @param {Object} options
 	 * @returns {Targetedshot}
 	 */
-	process(owner, target, options = {}) {
+	process(spawner, target, options = {}) {
 		options.windupPercent = options.windupPercent || this.windupPercent;
-		var missile = new Targetedshot({ owner, target, options });
+		let missile = new Targetedshot({ spawner, target, options });
 		this.attackAns({
 			missile,
 			attackSlot: options.attackSlot ?? 64,

@@ -1,11 +1,11 @@
 const BasePacket = require('../BasePacket');
 
 
-var BuffUpdateCountGroupEntry = {
-    ownerNetId: 'uint32',
-    casterNetId: 'uint32',
-    buffSlot: 'uint8',
-    count: 'uint8',
+const BuffUpdateCountGroupEntry = {
+	ownerNetId: 'uint32',
+	casterNetId: 'uint32',
+	buffSlot: 'uint8',
+	count: 'uint8',
 };
 
 module.exports = class BuffUpdateCountGroup extends BasePacket {
@@ -14,12 +14,12 @@ module.exports = class BuffUpdateCountGroup extends BasePacket {
 		runningTime: 'float',
 		count: 'uint8',
 	}
-	reader(buffer){
+	reader(buffer) {
 		super.reader(buffer);
 
 		this.entries = buffer.readobj([BuffUpdateCountGroupEntry, this.count]);
 	}
-	writer(buffer){
+	writer(buffer) {
 		//if(!this.entries || !this.entries.length || this.entries.length > 0xFF)
 		//	return;
 

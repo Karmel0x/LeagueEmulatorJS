@@ -1,6 +1,6 @@
 
-const { HashString } = require("../../../../../functions/HashString");
-const PositionHelper = require("../../../../../functions/PositionHelper");
+const HashString = require("../../../../../functions/HashString");
+const PositionHelper = require("../../../../../gameobjects/extensions/Measure");
 const _Spell = require("../../../../datamethods/spells/_Spell");
 
 
@@ -17,12 +17,12 @@ module.exports = class YasuoDashWrapper extends _Spell {
 
 		this.castInfo.missileNetId = 1073743444;
 
-		this.owner.SetAnimStates([
+		this.owner.packets.SetAnimStates([
 			['RUN', 'Spell3']
 		]);
 		this.owner.callbacks.collision[spellData.spellCast.netId] = {
 			options: {
-				range: this.owner.collisionRadius,
+				range: this.owner.stats.collisionRadius,
 			},
 			function: (target) => {
 				if (target.netId != spellData.packet.targetNetId)
@@ -33,8 +33,8 @@ module.exports = class YasuoDashWrapper extends _Spell {
 			}
 		};
 
-		this.owner.dashTo(spellData.packet.position, {
-			speed: 750 + this.owner.moveSpeed.total * 0.6,
+		this.owner.moving.dashTo(spellData.packet.position, {
+			speed: 750 + this.owner.stats.moveSpeed.total * 0.6,
 			range: 475, minRange: 475,
 			callback: () => {
 				if (this.owner.callbacks.collision[spellData.spellCast.netId])
@@ -42,7 +42,7 @@ module.exports = class YasuoDashWrapper extends _Spell {
 				//else
 				//	this.hit_TargetNetId(packet.targetNetId);
 
-				this.owner.SetAnimStates([
+				this.owner.packets.SetAnimStates([
 					['Spell3', 'RUN']
 				]);
 			}
@@ -51,6 +51,6 @@ module.exports = class YasuoDashWrapper extends _Spell {
 	}
 
 	hit(target) {
-		this.owner.attack(target);
+		this.owner.combat.attack(target);
 	}
 };

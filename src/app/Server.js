@@ -2,7 +2,7 @@
 /**
  * @typedef {import('../gameobjects/units/Unit')} Unit
  * @typedef {import('../gameobjects/units/Player')} Player
- * @typedef {import('../game/initializers/Team')} Team
+ * @typedef {import('../game/initializers/Teams')} Teams
  */
 
 class Server {
@@ -32,7 +32,7 @@ class Server {
     static playerPeers = {};
 
     /**
-     * @type {Object.<string, Team>}
+     * @type {Object.<string, Teams>}
      */
     static teams = {};
 

@@ -20,28 +20,28 @@
 //
 //	static async prepareTest() {
 //
-//		var unit0 = new TestsMovableUnit({
+//		let unit0 = new TestsMovableUnit({
 //			spawnPosition: new Vector2(100, 100),
 //			team: 'RED',
 //			character: 'Red_Minion_Basic',
 //		});
-//		var unit1 = new TestsMovableUnit({
+//		let unit1 = new TestsMovableUnit({
 //			spawnPosition: new Vector2(200, 200),
 //			team: 'BLUE',
 //			character: 'Red_Minion_Basic',
 //		});
-//		var unit2 = new TestsMovableUnit({
+//		let unit2 = new TestsMovableUnit({
 //			spawnPosition: new Vector2(1500, 1500),
 //			team: 'RED',
 //			character: 'Red_Minion_Basic',
 //		});
-//		var unit3 = new TestsMovableUnit({
+//		let unit3 = new TestsMovableUnit({
 //			spawnPosition: new Vector2(2000, 2000),
 //			team: 'BLUE',
 //			character: 'Red_Minion_Basic',
 //		});
 //
-//		var movementSimulation = new MovementSimulation();
+//		let movementSimulation = new MovementSimulation();
 //		movementSimulation.start();
 //
 //		unit0.move1(new Vector2(1500, 1500));

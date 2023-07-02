@@ -48,7 +48,7 @@ const SCastInfo_struct2 = {
 
 module.exports = {//SCastInfo
 	reader: (buffer) => {
-		var obj = {};
+		let obj = {};
 
 		Object.assign(obj, buffer.readobj(SCastInfo_struct));
 		obj.target = buffer.readobj([target, obj.targetCount]);

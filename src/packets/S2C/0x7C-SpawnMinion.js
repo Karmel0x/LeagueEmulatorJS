@@ -9,7 +9,7 @@ module.exports = class SpawnMinion extends BasePacket {
 		position: SVector3,
 		skinId: 'int32',
 		cloneNetId: 'uint32',
-		teamId: 'uint16',
+		team: 'uint16',
 		bitfield: ['bitfield', {
 			ignoreCollision: 1,
 			isWard: 2,

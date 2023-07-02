@@ -1,5 +1,5 @@
 
-const PositionHelper = require("../../../../../functions/PositionHelper");
+const PositionHelper = require("../../../../../gameobjects/extensions/Measure");
 const _Spell = require("../../../../datamethods/spells/_Spell");
 const YasuoRDummySpell = require("./YasuoRDummySpell");
 

@@ -7,7 +7,7 @@ class NetworkEnet extends Network {
 
 	async netLoop() {
 		for (; ;) {
-			var msg = enet.netLoop();
+			let msg = enet.netLoop();
 			if (typeof msg.type == 'undefined') {//no packets atm
 				await Promise.wait(1);//don't overload cpu
 				continue;
@@ -20,7 +20,7 @@ class NetworkEnet extends Network {
 	}
 
 	listen() {
-		var enetInitialize = enet.initialize(this.port, this.host, this.blowfishKey);
+		let enetInitialize = enet.initialize(this.port, this.host, this.blowfishKey);
 		enetInitialize = Boolean(enetInitialize);
 
 		console.log('enetInitialize:', enetInitialize);

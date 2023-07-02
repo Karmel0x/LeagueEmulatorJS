@@ -1,7 +1,7 @@
 const BasePacket = require('../BasePacket');
 const SVector3 = require('../sharedstruct/SVector3');
 
-var MovementDriverHomingData = {
+const MovementDriverHomingData = {
 	targetNetId: 'uint32',
 	targetHeightModifier: 'float',
 	targetPosition: SVector3,

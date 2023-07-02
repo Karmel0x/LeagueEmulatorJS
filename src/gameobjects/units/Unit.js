@@ -1,22 +1,29 @@
 
 const slotId = require('../../constants/slotId');
 const loadingStages = require('../../constants/loadingStages');
-
-const ExtendWTraits = require('../../core/ExtendWTraits');
-const GameObject = require('../GameObject');
-const IDieReward = require('../traits/IDieReward');
-const IExpOwner = require('../traits/IExpOwner');
-const IStatOwner = require('../traits/IStatOwner');
-const IHasTeam = require('../traits/IHasTeam');
-const IPUnit = require('./packettraits/IPUnit');
-const IBuffable = require('../traits/IBuffable');
-const ISpellable = require('../traits/ISpellable');
-const ICharacter = require('../traits/ICharacter');
-const UnitList = require('../../app/UnitList');
 const Server = require('../../app/Server');
+const UnitList = require('../../app/UnitList');
 
-// @todo remove mixins? ts doesn't support it
-class Unit extends ExtendWTraits(GameObject, IHasTeam, ISpellable, ICharacter, IDieReward, IExpOwner, IStatOwner, IPUnit, IBuffable) {
+const GameObject = require('../GameObject');
+const PUnit = require('../extensions/packets/Unit');
+const Buffs = require('../extensions/traits/Buffs');
+const Progress = require('../extensions/traits/Progress');
+const Rewards = require('../extensions/traits/Rewards');
+const Stats = require('../extensions/traits/Stats');
+const Team = require('../extensions/traits/Team');
+
+
+class Unit extends GameObject {
+
+	packets;
+	buffs;
+	progress;
+	rewards;
+	stats;
+	team;
+
+	id = 0;
+	died = 0;
 
 	visibleForEnemy = false;
 	visibleForEnemy2 = false;
@@ -28,30 +35,54 @@ class Unit extends ExtendWTraits(GameObject, IHasTeam, ISpellable, ICharacter, I
 		collision: {},
 	};
 
-	sendTo_self(packet, minStage = loadingStages.IN_GAME) {
-		this.sendPacket?.(packet, minStage);
+	/** @type {Object.<string, *>} */
+	slots = {};
+
+	/** @type {import('../../game/datamethods/characters/_Character') | undefined} */
+	_character;
+
+	/**
+	 * @returns {import('../../game/datamethods/characters/_Character')}
+	 */
+	get character() {
+		return /** @type {import('../../game/datamethods/characters/_Character')} */ (this._character);
 	}
-	sendTo_everyone(packet, minStage = loadingStages.IN_GAME) {
-		Server.teams.ALL.sendPacket(packet, minStage);
+
+	/**
+	 * @todo make this more clear
+	 * @param {import('../../game/datamethods/characters/_Character') | string} char
+	 */
+	set character(char) {
+		if (typeof char == 'string')
+			char = require('../../game/leaguedata/characters/' + char);
+
+		if (typeof char == 'function')
+			char = new char(this);
+
+		this._character = /** @type {import('../../game/datamethods/characters/_Character')} */ (char);
 	}
-	sendTo_vision(packet, minStage = loadingStages.IN_GAME) {
-		Server.teams.ALL.sendPacket_withVision(packet, minStage);
-	}
-	sendTo_team(packet, minStage = loadingStages.IN_GAME) {
-		Server.teams[this.teamName].sendPacket(packet, minStage);
-	}
-	sendTo_loading(packet) {
-		//Server.teams.ALL.sendPacket(packet, loadingStages.LOADING);
-		Server.teams.ALL.sendPacket(packet, loadingStages.NOT_CONNECTED);
-	}
+
+	/** @type {import('../GameObjects').UnitSpawner | undefined} */
+	spawner;
 
 	/**
 	 * @param {import('../GameObjects').UnitOptions} options 
 	 */
 	constructor(options) {
+		options.spawnPosition = options.spawnPosition || options.spawner?.position;
 		super(options);
+		this.options = options;
+		this.spawner = options.spawner;
 
+		this.character = options.character;
 		this.info = options.info || {};
+
+		this.packets = new PUnit(this);
+		this.buffs = new Buffs(this);
+		this.progress = new Progress(this);
+		this.rewards = new Rewards(this);
+		this.stats = new Stats(this, options.stats || this.character.stats);
+		this.team = new Team(this, options.team, options.num);
 
 		UnitList.append(this);
 		console.debug(Date.now(), 'Created Unit', this.constructor.name, this.netId);
@@ -61,7 +92,6 @@ class Unit extends ExtendWTraits(GameObject, IHasTeam, ISpellable, ICharacter, I
 		this.update();
 	}
 
-
 	destructor() {
 		// todo
 		//UnitList.remove(this);
@@ -69,7 +99,8 @@ class Unit extends ExtendWTraits(GameObject, IHasTeam, ISpellable, ICharacter, I
 
 	initialized() {
 		console.log('initialized', this.constructor.name, this.netId);
-		//this.levelUp();
+		this.emit('initialized');
+		//this.progress.levelUp();
 		this.spawn();
 		this.loop();
 	}
@@ -101,7 +132,7 @@ class Unit extends ExtendWTraits(GameObject, IHasTeam, ISpellable, ICharacter, I
 	 * @returns 
 	 */
 	isAbleForMoving() {
-		if (!this.Movement)
+		if (!this.moving)
 			return false;
 
 		if (this.isDead())
@@ -115,7 +146,7 @@ class Unit extends ExtendWTraits(GameObject, IHasTeam, ISpellable, ICharacter, I
 	 * @returns 
 	 */
 	isAbleForAttacking() {
-		if (!this.spellSlots[slotId.A])
+		if (!this.slots[slotId.A])
 			return false;
 
 		if (this.isDead())
@@ -136,17 +167,17 @@ class Unit extends ExtendWTraits(GameObject, IHasTeam, ISpellable, ICharacter, I
 
 	respawn() {
 		this.emit('respawn');
-		this.died = false;
+		this.died = 0;
 
-		this.health.current = this.health.total;
-		this.mana.current = this.mana.total;
+		this.stats.health.current = this.stats.health.total;
+		this.stats.mana.current = this.stats.mana.total;
 
 		if (this.position)
 			this.position.copy(this.spawnPosition);
 
-		this.OnEnterLocalVisibilityClient();
+		this.packets.OnEnterLocalVisibilityClient();
 
-		Server.teams[this.teamName].vision(this, true);
+		Server.teams[this.team.id].vision(this, true);
 	}
 
 	// ==================================================
@@ -154,16 +185,16 @@ class Unit extends ExtendWTraits(GameObject, IHasTeam, ISpellable, ICharacter, I
 	/**
 	 * Filter units by team
 	 * @param {Unit[]} targets
-	 * @param {string[] | string} teams (RED/BLUE/NEUTRAL/ALL)
+	 * @param {number[] | number} teams (RED/BLUE/NEUTRAL/ALL)
 	 * @returns {Unit[]}
 	 */
-	static filterByTeam(targets, teams = 'ALL') {
-		teams = typeof teams == 'string' ? [teams] : teams;
+	static filterByTeam(targets, teams = Team.TEAM_MAX) {
+		teams = typeof teams == 'number' ? [teams] : teams;
 
-		if (teams.includes('ALL'))
+		if (teams.includes(Team.TEAM_MAX))
 			return targets;
 
-		return targets.filter(target => teams.includes(target.teamName));
+		return targets.filter(target => teams.includes(target.team.id));
 	}
 
 
@@ -172,7 +203,7 @@ class Unit extends ExtendWTraits(GameObject, IHasTeam, ISpellable, ICharacter, I
 	 * @param {Unit[]} array
 	 */
 	removeThisFromArray(array) {
-		var index = array.indexOf(this);
+		let index = array.indexOf(this);
 		if (index === -1)
 			return;
 
@@ -183,16 +214,16 @@ class Unit extends ExtendWTraits(GameObject, IHasTeam, ISpellable, ICharacter, I
 	 * Get all units
 	 * @returns {Unit[]}
 	 */
-	getUnits(teamName = 'ALL') {
-		return UnitList.getUnits(teamName);
+	getUnits(team = Team.TEAM_MAX) {
+		return UnitList.getUnits(team);
 	}
 	/**
 	 * Get ally units to this unit
 	 * @returns {Unit[]}
 	 */
 	getAllyUnits() {
-		var thisTeamId = this.teamId;
-		return UnitList.units.filter(unit => unit.teamId == thisTeamId);
+		let thisTeamId = this.team.id;
+		return UnitList.units.filter(unit => unit.team.id == thisTeamId);
 		//return this.getUnits(this.getAllyTeam());
 	}
 	/**
@@ -200,17 +231,17 @@ class Unit extends ExtendWTraits(GameObject, IHasTeam, ISpellable, ICharacter, I
 	 * @returns {Unit[]}
 	 */
 	getEnemyUnits() {
-		var thisTeamId = this.teamId;
-		return UnitList.units.filter(unit => unit.teamId != thisTeamId);
-		//return this.getUnits(this.getEnemyTeam());
+		let thisTeamId = this.team.id;
+		return UnitList.units.filter(unit => unit.team.id != thisTeamId);
+		//return this.getUnits(this.team.getEnemyTeam());
 	}
 
 	/**
 	 * Get all units except this
 	 * @returns {Unit[]}
 	 */
-	getOtherUnits(team = 'ALL') {
-		var units = this.getUnits(team);
+	getOtherUnits(team = Team.TEAM_MAX) {
+		let units = this.getUnits(team);
 		this.removeThisFromArray(units);
 		return units;
 	}
@@ -219,7 +250,7 @@ class Unit extends ExtendWTraits(GameObject, IHasTeam, ISpellable, ICharacter, I
 	 * @returns {Unit[]}
 	 */
 	getOtherAllyUnits() {
-		return this.getOtherUnits(this.getAllyTeam());
+		return this.getOtherUnits(this.team.getAllyTeam());
 	}
 
 	/**
@@ -227,8 +258,8 @@ class Unit extends ExtendWTraits(GameObject, IHasTeam, ISpellable, ICharacter, I
 	 * @param {number} range 
 	 * @returns 
 	 */
-	getAllyUnitsInRange(range = this.range.total, distanceCalcPoint = 'CENTER_TO_CENTER') {
-		return this.Filters(distanceCalcPoint).filterByRange(this.getAllyTeamUnits(), range);
+	getAllyUnitsInRange(range, distanceCalcPoint = 'CENTER_TO_CENTER') {
+		return this.measure[distanceCalcPoint].filterByRange(this.getAllyUnits(), range);
 	}
 
 	/**
@@ -236,8 +267,8 @@ class Unit extends ExtendWTraits(GameObject, IHasTeam, ISpellable, ICharacter, I
 	 * @param {number} range 
 	 * @returns 
 	 */
-	getEnemyUnitsInRange(range = this.range.total) {
-		return this.Filters().filterByRange(this.getEnemyUnits(), range);
+	getEnemyUnitsInRange(range, distanceCalcPoint = 'CENTER_TO_CENTER') {
+		return this.measure[distanceCalcPoint].filterByRange(this.getEnemyUnits(), range);
 	}
 
 }

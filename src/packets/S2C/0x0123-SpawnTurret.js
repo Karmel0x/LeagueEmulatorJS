@@ -16,7 +16,7 @@ module.exports = class SpawnTurret extends ExtendedPacket {
 			isInvulnerable: 1,
 			isTargetable: 2,
 		}],
-		teamId: 'uint16',
+		team: 'uint16',
 		isTargetableToTeamSpellFlags: 'uint32',
 	}
 };

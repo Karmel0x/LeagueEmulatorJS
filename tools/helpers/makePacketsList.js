@@ -1,7 +1,7 @@
 
 const fs = require('fs');
 
-var Channels = {
+let Channels = {
 	0: 'HANDSHAKE',
 	1: 'C2S',
 	2: 'GAMEPLAY',
@@ -11,14 +11,14 @@ var Channels = {
 	7: 'LOADING_SCREEN',
 };
 
-var packets = {};
-for (var channelId in Channels) {
-	var channelName = Channels[channelId];
+let packets = {};
+for (let channelId in Channels) {
+	let channelName = Channels[channelId];
 
 	packets[channelId] = {};
 	packets[channelId].name = channelName;
 
-	var packetDir = __dirname + '/../packets/' + channelName + '/';
+	let packetDir = __dirname + '/../packets/' + channelName + '/';
 	fs.readdirSync(packetDir).forEach(function (file) {
 		if (file.endsWith('.js') && file !== 'index.js')
 			packets[channelId]['0x' + file.between('0x', '-')] = `./${channelName}/${file.replace('.js', '')}`;
@@ -33,12 +33,12 @@ for (var channelId in Channels) {
 }
 
 console.log(`module.exports = {`);
-for (var channelId in packets) {
-	var channelName = packets[channelId].name;
+for (let channelId in packets) {
+	let channelName = packets[channelId].name;
 
 	console.log(`\t${channelId}: {`);
 	console.log(`\t\tname: '${channelName}',`);
-	for (var packetId in packets[channelId]) {
+	for (let packetId in packets[channelId]) {
 		if (packetId != 'name')
 			console.log(`\t\t${packetId}: require('${packets[channelId][packetId]}'),`);
 	}

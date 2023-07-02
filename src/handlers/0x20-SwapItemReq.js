@@ -1,8 +1,13 @@
 
 
+/**
+ * 
+ * @param {import('../gameobjects/units/Player')} player 
+ * @param {*} packet 
+ */
 module.exports = (player, packet) => {
 	console.log('handle: C2S.SwapItemReq');
 	//console.log(packet);
 
-	player.swapItems(packet.sourceSlot, packet.destinationSlot);
+	player.inventory.swapItems(packet.sourceSlot, packet.destinationSlot);
 };

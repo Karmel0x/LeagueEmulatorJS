@@ -7,11 +7,11 @@
 // then run this with `node tools/spectator-emulator` and lol client with `runLol.bat`
 
 const _replayreaders = require('./_replayreaders');
-var replayUnpacked = _replayreaders(process.argv[2] || '../../LeagueEmulatorJS_replays/LOL-REPLAY.rlp.json');
+let replayUnpacked = _replayreaders(process.argv[2] || '../../LeagueEmulatorJS_replays/LOL-REPLAY.rlp.json');
 
 // or if you just want packets in hex, uncomment these lines and run `node spectator-emulator > LOL-REPLAY.txt`
 //for(let i = 0; i < replayUnpacked.length; i++){
-//    var bytes = Buffer.from(replayUnpacked[i].Bytes, 'base64').toString('hex').match(/../g).join(' ');
+//    let bytes = Buffer.from(replayUnpacked[i].Bytes, 'base64').toString('hex').match(/../g).join(' ');
 //    console.log(('      ' + parseInt(replayUnpacked[i].Time)).substr(-7), replayUnpacked[i].Channel, ':', bytes);
 //}
 //return;
@@ -24,7 +24,7 @@ require("../src/core/BufferExtend");
 
 
 async function start_spectator() {
-	var time = performance.now();
+	let time = performance.now();
 
 	console.log('packet count:', replayUnpacked.length);
 	for (let i = 0; i < replayUnpacked.length; i++) {
@@ -37,7 +37,7 @@ async function start_spectator() {
 
 		// todo: ignore some packets: S2C.World_SendCamera_Server_Acknologment ?
 
-		var buffer = null;
+		let buffer = null;
 		if (replayUnpacked[i].Bytes || replayUnpacked[i].BytesB64)
 			buffer = Buffer.from(replayUnpacked[i].Bytes || replayUnpacked[i].BytesB64, 'base64');
 		else if (replayUnpacked[i].BytesHex)
@@ -53,14 +53,14 @@ async function start_spectator() {
 
 }
 
-var _init_network_handler = false;
+let _init_network_handler = false;
 function init_network_handler(q) {
-	var obj1 = q.buffer.readobj(BasePacket.struct_header);
+	let obj1 = q.buffer.readobj(BasePacket.struct_header);
 	q.buffer.off = 0;
 	if (obj1.cmd == 0x00) {
-		var keyExchangePacket = '00 2a 00 ff 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00';
+		let keyExchangePacket = '00 2a 00 ff 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00';
 		keyExchangePacket = keyExchangePacket.split(' ').join('');
-		var buffer = Buffer.from(keyExchangePacket, 'hex');
+		let buffer = Buffer.from(keyExchangePacket, 'hex');
 		Server.network.sendPacket([0], { buffer, channel: 0 });
 	}
 

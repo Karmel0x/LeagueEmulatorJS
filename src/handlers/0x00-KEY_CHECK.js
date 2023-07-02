@@ -12,32 +12,32 @@ module.exports = (peerNum, packet) => {
 	console.log(packet);
 
 	//todo:checks
-	var player = Server.players.find(
-		player => player.info.playerId == packet.playerId
+	let player = Server.players.find(
+		player => player.summoner.id == packet.playerId
 	);
 
 	if (!player)
 		return console.log('player not found');
 
-	Server.playerPeers[peerNum] = player.info.clientId;
-	player.peerNum = peerNum;
+	Server.playerPeers[peerNum] = player.clientId;
+	player.network.peerNum = peerNum;
 
 	{
-		var KEY_CHECK = Server.network.createPacket('KEY_CHECK', 'HANDSHAKE');
+		const KEY_CHECK = Server.network.createPacket('KEY_CHECK', 'HANDSHAKE');
 		KEY_CHECK.content = {
 			partialKey: [0x2A, 0x00, 0xFF],
-			clientId: player.info.clientId,
-			playerId: player.info.playerId,
+			clientId: player.clientId,
+			playerId: player.summoner.id,
 		};
-		player.sendPacket(KEY_CHECK, loadingStages.NOT_CONNECTED);
-		player.loadingStage = loadingStages.LOADING;
+		player.network.sendPacket(KEY_CHECK, loadingStages.NOT_CONNECTED);
+		player.network.loadingStage = loadingStages.LOADING;
 	}
 	//{
-	//	var World_SendGameNumber = Server.network.createPacket('World_SendGameNumber');
+	//	const World_SendGameNumber = Server.network.createPacket('World_SendGameNumber');
 	//	//World_SendGameNumber.netId = ;
 	//	World_SendGameNumber.gameId = 1;
 	//	World_SendGameNumber.summonerName = 'Coquinounet';
-	//	player.sendPacket(World_SendGameNumber);
+	//	player.network.sendPacket(World_SendGameNumber);
 	//}
 
 };

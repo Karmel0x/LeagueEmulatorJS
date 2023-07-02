@@ -19,21 +19,22 @@ module.exports = class SummonerHeal extends _Spell {
 		buffType: BuffTypes.Haste,
 		duration: 5,
 	};
+
 	onCast(spellData) {
 		super.onCast(spellData);
 
-		var source = this.owner;
-		source.heal((this.effect.heal + (source.level * this.effect.healPerLevel)) / (1 + source.hasBuff(this)));
-		source.addBuffC(this);
+		const source = this.owner;
+		source.combat.heal((this.effect.heal + (source.progress.level * this.effect.healPerLevel)) / (1 + source.buffs.hasBuff(this)));
+		source.buffs.addBuffC(this);
 	}
 	buffActivate() {
-		var source = this.owner;
-		source.moveSpeed.percentBonus += 30;
-		source.charStats_send();
+		const source = this.owner;
+		source.stats.moveSpeed.percentBonus += 30;
+		source.packets.charStats_send();
 	}
 	buffDeactivate() {
-		var source = this.owner;
-		source.moveSpeed.percentBonus -= 30;
-		source.charStats_send();
+		const source = this.owner;
+		source.stats.moveSpeed.percentBonus -= 30;
+		source.packets.charStats_send();
 	}
 };

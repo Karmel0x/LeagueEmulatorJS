@@ -1,6 +1,6 @@
 const BasePacket = require('../BasePacket');
 
-var Tooltip = {
+const Tooltip = {
 	ownerNetId: 'uint32',
 	slotIndex: 'uint8',
 	values: ['float', 16],

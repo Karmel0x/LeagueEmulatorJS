@@ -2,20 +2,20 @@
 const packets = require('../../packets');
 
 
-for (var channelId in packets) {
+for (let channelId in packets) {
 	if (!packets[channelId].name)
 		continue;
 
-	var channelName = packets[channelId].name;
+	let channelName = packets[channelId].name;
 
 	packets[channelId].id = parseInt(channelId);
 	packets[channelName] = packets[channelId];
 
-	for (var packetId in packets[channelId]) {
+	for (let packetId in packets[channelId]) {
 		if (!packets[channelId][packetId].name)
 			continue;
 
-		var packetName = packets[channelId][packetId].name;
+		let packetName = packets[channelId][packetId].name;
 
 		packets[channelId][packetId].id = parseInt(packetId);
 		packets[channelId][packetId].channel = parseInt(channelId);
@@ -36,8 +36,8 @@ static packetSize(packet, source = false){
 		if (Array.isArray(packet))
 			return packet[1] ? packetSize(packet[0]) * packet[1] : 0;
 
-		var packetSizeCount = 0;
-		for (var i in packet) {
+		let packetSizeCount = 0;
+		for (let i in packet) {
 			packetSizeCount += packetSize(packet[i], source[i] || 0);
 			//console.log(packet[i], packetSizeCount);
 		}
@@ -46,7 +46,7 @@ static packetSize(packet, source = false){
 	return 0;
 }
 const PacketsSizes = {};
-for (var i in packets.cmd)
+for (let i in packets.cmd)
 	if (typeof packets.cmd[i].packet != 'undefined')
 		PacketsSizes[packets.cmd[i].id] = packetSize(packets.cmd[i].packet);
 */

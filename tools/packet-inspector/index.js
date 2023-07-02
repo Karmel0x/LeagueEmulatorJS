@@ -9,7 +9,7 @@
 // run with 'node tools/packet-inspector' then open link in your browser: `http://127.0.0.1/`
 // example recordings: https://github.com/Karmel0x/LeagueEmulatorJS/issues/2
 
-var replayDir = '../LeagueEmulatorJS_replays/';
+let replayDir = '../LeagueEmulatorJS_replays/';
 
 
 require('../../src/core/init_utilities')();
@@ -22,12 +22,12 @@ const packetParser = require('./packetParser');
 const _replayreaders = require('../_replayreaders');
 
 
-var replayUnpacked;
-var pId = 0;
+let replayUnpacked;
+let pId = 0;
 
 wss.onMessage = (ws, data) => {
 
-	var res = JSON.parse(data);
+	let res = JSON.parse(data);
 	console.log(res);
 
 	if (res.cmd == 'loadpackets') {
@@ -36,7 +36,7 @@ wss.onMessage = (ws, data) => {
 		let limit = (res.limit || 2000) + offset;
 		let packetsearch = res.packetsearch || [];
 		for (let i = offset, l = replayUnpacked.length, ll = 0; i < l && ll < limit; i++) {
-			var packetData = packetParser(replayUnpacked[i], i);
+			let packetData = packetParser(replayUnpacked[i], i);
 
 			if (!packetData)
 				continue;
@@ -44,7 +44,7 @@ wss.onMessage = (ws, data) => {
 			if (packetsearch && packetsearch.length) {
 
 				packetsearch = packetsearch.map(v => v.toLowerCase());
-				var found = packetsearch.some(v =>
+				let found = packetsearch.some(v =>
 					(packetData.cmdName && packetData.cmdName.toLowerCase().includes(v))
 					|| (packetData.channelName && packetData.channelName.toLowerCase().includes(v))
 					|| (packetData.Parsed && packetData.Parsed.toLowerCase().includes(v))
@@ -71,19 +71,19 @@ wss.onMessage = (ws, data) => {
 	//}
 	//else if(res.cmd == 'sendpacket'){
 	//	let i = res.Id;
-	//	var buffer = replayUnpacked[i].Bytes ? Buffer.from(replayUnpacked[i].Bytes, 'base64') : Buffer.from(replayUnpacked[i].BytesHex.split(' ').join(''), 'hex');
+	//	let buffer = replayUnpacked[i].Bytes ? Buffer.from(replayUnpacked[i].Bytes, 'base64') : Buffer.from(replayUnpacked[i].BytesHex.split(' ').join(''), 'hex');
 	//	
 	//    enet.sendPacket(0, buffer, replayUnpacked[i].Channel);
 	//}
 	//else if(res.cmd == 'sendpacket_type'){
-	//	var KEY_CHECK = createPacket(res.name, res.channel);
+	//	const KEY_CHECK = createPacket(res.name, res.channel);
 	//	KEY_CHECK.partialKey = [ 0x2A, 0x00, 0xFF ];
 	//	KEY_CHECK.clientId = 0;
 	//	KEY_CHECK.playerId = 1;
 	//	sendPacket(0, KEY_CHECK);
 	//}
 	else if (res.cmd == 'loadreplaylist') {
-		var replayList = fs.readdirSync(replayDir).filter((value) => {
+		let replayList = fs.readdirSync(replayDir).filter((value) => {
 			return value.endsWith('.json') || value.endsWith('.lrpkt');
 		});
 		ws.sendJson({
@@ -95,11 +95,11 @@ wss.onMessage = (ws, data) => {
 		replayUnpacked = _replayreaders(replayDir + res.name);
 	}
 	else if (res.cmd == 'addpacket' || res.cmd == 'addpacketforall') {
-		var bytesHexList = res.data.bytes.split("\n");
+		let bytesHexList = res.data.bytes.split("\n");
 
-		for (var i = 0; i < bytesHexList.length; i++) {
-			var channel = res.data.channel;
-			var bytesHex = bytesHexList[i];
+		for (let i = 0; i < bytesHexList.length; i++) {
+			let channel = res.data.channel;
+			let bytesHex = bytesHexList[i];
 
 			bytesHex = bytesHex.replace('sent:', 'S2C:').replace('recv:', 'C2S:');
 
@@ -137,14 +137,15 @@ wss.onMessage = (ws, data) => {
 			if (!bytesHex)
 				continue;
 
-			var packet = {
+			let packet = {
 				Id: pId++,
 				Channel: channel,
 				BytesHex: bytesHex,
 				Time: res.data.time || 1,
+				peerNums: res.data.peerNums || [],
 			};
 
-			var packetData = packetParser(packet);
+			let packetData = packetParser(packet);
 			if (!packetData)
 				return;
 

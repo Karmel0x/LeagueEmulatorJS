@@ -1,14 +1,19 @@
+const slotId = require('../constants/slotId');
 
-
+/**
+ * 
+ * @param {import('../gameobjects/units/Player')} player 
+ * @param {*} packet 
+ */
 module.exports = (player, packet) => {
 	console.log('handle: C2S.CastSpellReq');
 	//console.log(packet);
 
-	//if(packet.slot >= 0 && packet.slot <= 3)
-	//	player.character.castSpell(packet);
-	//else if(packet.slot >= 4 && packet.slot <= 5)
-	//	player.summonerSpells.castSpell(packet);
-	//else if(packet.slot >= 6 && packet.slot <= 12)
-	//	player.inventory.castSpell(packet);
-	player.castSpell(packet);
+	if (packet.slot >= slotId.Q && packet.slot <= slotId.F)
+		player.combat.castSpell(packet);
+	else if (packet.slot >= slotId.A && packet.slot <= slotId.A9)
+		player.combat.castAttack(packet);
+	else if (packet.slot >= slotId.I && packet.slot <= slotId.I7)
+		player.inventory.castItem(packet);
+
 };

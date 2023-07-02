@@ -1,6 +1,6 @@
 
-const { HashString } = require("../../../../../functions/HashString");
-const PositionHelper = require("../../../../../functions/PositionHelper");
+const HashString = require("../../../../../functions/HashString");
+const PositionHelper = require("../../../../../gameobjects/extensions/Measure");
 const Skillshot = require("../../../../../gameobjects/missiles/Skillshot");
 const _Spell = require("../../../../datamethods/spells/_Spell");
 const EzrealMysticShotMissile = require("./EzrealMysticShotMissile");
@@ -28,7 +28,7 @@ module.exports = class EzrealMysticShot extends _Spell {
 	preCast(spellData) {
 		spellData.maxRangePosition = PositionHelper.getPositionBetweenRange(this.owner, spellData.packet, this.castRange);
 
-		var skillshot = Skillshot.create(this.owner, spellData.maxRangePosition, {
+		let skillshot = Skillshot.create(this.owner, spellData.maxRangePosition, {
 			speed: 2000, range: 1150, radius: 60
 		});
 
@@ -39,7 +39,7 @@ module.exports = class EzrealMysticShot extends _Spell {
 	onCast(spellData) {
 		super.onCast(spellData);
 
-		this.owner.AddParticleTarget(this.packageHash, HashString('ezreal_bow.troy'), HashString('L_HAND'));
+		this.owner.packets.AddParticleTarget(this.packageHash, HashString.HashString('ezreal_bow.troy'), HashString.HashString('L_HAND'));
 
 	}
 };

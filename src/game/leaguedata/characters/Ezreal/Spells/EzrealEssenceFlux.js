@@ -1,7 +1,7 @@
 
 const slotId = require("../../../../../constants/slotId");
-const { HashString } = require("../../../../../functions/HashString");
-const PositionHelper = require("../../../../../functions/PositionHelper");
+const HashString = require("../../../../../functions/HashString");
+const PositionHelper = require("../../../../../gameobjects/extensions/Measure");
 const Skillshot = require("../../../../../gameobjects/missiles/Skillshot");
 const _Spell = require("../../../../datamethods/spells/_Spell");
 
@@ -18,18 +18,18 @@ class ezreal_bow_yellow extends _Particle {
 	// todo
 
 	packageHash = package1.packageHash;
-	particleHash = HashString(this.constructor.name + '.troy');
-	boneHash = HashString('L_HAND');
+	particleHash = HashString.HashString(this.constructor.name + '.troy');
+	boneHash = HashString.HashString('L_HAND');
 
 	onCast(spellData) {
 
-		this.owner.AddParticleTarget(this.packageHash, this.particleHash, this.boneHash);
+		this.owner.packets.AddParticleTarget(this.packageHash, this.particleHash, this.boneHash);
 	}
 	static tempOnCast(spellData, owner) {
-		var particleHash = HashString(this.constructor.name + '.troy');
-		var boneHash = HashString('L_HAND');
+		let particleHash = HashString.HashString(this.constructor.name + '.troy');
+		let boneHash = HashString.HashString('L_HAND');
 
-		owner.AddParticleTarget(package1.packageHash, particleHash, boneHash);
+		owner.packets.AddParticleTarget(package1.packageHash, particleHash, boneHash);
 	}
 }
 
@@ -50,11 +50,12 @@ module.exports = class EzrealEssenceFlux extends _Spell {
 	preCast(spellData) {
 		spellData.maxRangePosition = PositionHelper.getPositionBetweenRange(this.owner, spellData.packet, this.castRange);
 
-		var skillshot = Skillshot.create(this.owner, spellData.maxRangePosition, {
+		let skillshot = Skillshot.create(this.owner, spellData.maxRangePosition, {
 			speed: 1550, range: 1000, radius: 80
 		});
 
-		var collidedWith = [];
+		/** @type {number[]} */
+		let collidedWith = [];
 		skillshot.callbacks.collision._ = {
 			options: {
 				range: 80,
@@ -65,7 +66,7 @@ module.exports = class EzrealEssenceFlux extends _Spell {
 
 				collidedWith.push(target.netId);
 
-				skillshot.owner.attack(target);
+				skillshot.owner.combat.attack(target);
 			},
 		};
 

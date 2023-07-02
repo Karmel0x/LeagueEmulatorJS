@@ -106,7 +106,7 @@ const Args = {
 		itemId: 'uint32',
 		ItemCount: 'uint32',
 		Unknown: ['uint8', 24],
-		teamId: 'uint32',
+		team: 'uint32',
 	},
 	ItemChange: {
 		otherNetId: 'uint32',

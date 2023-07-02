@@ -8,7 +8,7 @@ module.exports = class SpawnPet extends BasePacket {
 		position: SVector3,
 		castSpellLevelPlusOne: 'int32',
 		duration: 'float',
-		teamId: 'uint32',
+		team: 'uint32',
 		damageBonus: 'int32',
 		healthBonus: 'int32',
 		objectName: ['char', 128],

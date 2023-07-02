@@ -8,7 +8,7 @@ WebSocket.prototype.sendJson = function (data) {
 	this.send(data);
 };
 
-var server = http.createServer((req, res) => {
+let server = http.createServer((req, res) => {
 	let url = req.url;
 	if (!url) {
 		res.writeHead(400);
@@ -41,7 +41,7 @@ var server = http.createServer((req, res) => {
 		}
 
 		// mimetype
-		var mime = 'text/plain';
+		let mime = 'text/plain';
 		if (url.match(/\.html$/))
 			mime = 'text/html';
 		else if (url.match(/\.css$/))
@@ -55,10 +55,10 @@ var server = http.createServer((req, res) => {
 });
 
 
-var wss = new WebSocket.Server({ noServer: true });
+let wss = new WebSocket.Server({ noServer: true });
 
 wss.sendToAll = function (data) {
-	for (var client of wss.clients) {
+	for (let client of wss.clients) {
 		//if(client === ws || client.readyState !== WebSocket.OPEN)
 		//	continue;
 
@@ -66,7 +66,7 @@ wss.sendToAll = function (data) {
 	};
 }
 wss.sendJsonToAll = function (data) {
-	for (var client of wss.clients) {
+	for (let client of wss.clients) {
 		//if(client === ws || client.readyState !== WebSocket.OPEN)
 		//	continue;
 

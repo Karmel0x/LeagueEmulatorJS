@@ -19,7 +19,7 @@ module.exports = class SpellCast {
 
 	_CastInfo = {};
 	get castInfo() {
-		var castInfo = {};
+		const castInfo = {};
 		castInfo.targetPosition = this.missile?.target?.position || this.spellData.position || this.owner?.position;
 		castInfo.targetPositionEnd = this.missile?.target?.position || this.spellData.position || this.owner?.position;
 

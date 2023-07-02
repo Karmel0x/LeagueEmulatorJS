@@ -1,7 +1,7 @@
 const BasePacket = require('../BasePacket');
 const SVector2 = require('../sharedstruct/SVector2');
 
-var NavFlagCricle = {
+const NavFlagCricle = {
 	position: SVector2,
 	radius: 'float',
 	flags: 'uint32',

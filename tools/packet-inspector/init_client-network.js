@@ -4,12 +4,12 @@ const enet = require('../../../enetcppjs');
 
 
 async function init_network(handlers = null) {
-	var enetInitialize = Boolean(enet.initialize_client(5119, "127.0.0.1", "17BLOhi6KZsTtldTsizvHg=="));
+	let enetInitialize = Boolean(enet.initialize_client(5119, "127.0.0.1", "17BLOhi6KZsTtldTsizvHg=="));
 	console.log('enetInitialize:', enetInitialize);
 	if (!enetInitialize)
 		return false;
 
-	var q = {};
+	let q = {};
 	for (; ;) {
 		q = enet.netLoop();
 		if (typeof q.type == 'undefined') {//no packets atm

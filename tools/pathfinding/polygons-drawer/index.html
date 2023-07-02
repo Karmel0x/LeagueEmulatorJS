@@ -70,7 +70,7 @@
 	<script src="./polygon-drawer.js"></script>
 
 	<script>
-		var _xyAsInt = true;
+		let _xyAsInt = true;
 		const freeDraw = new FreeDraw.default({
 			canvas: document.getElementById('canvas'),
 			eventsReceive: ['doubleclick'],
@@ -82,8 +82,8 @@
 			}
 		});
 
-		var canvas = document.getElementById('canvas');
-		var image = document.getElementById('image');
+		let canvas = document.getElementById('canvas');
+		let image = document.getElementById('image');
 
 		image.onload = () => {
 			resetScale();

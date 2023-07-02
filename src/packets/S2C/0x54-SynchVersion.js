@@ -7,7 +7,7 @@ const SPlayerInfo = {
 	summonorSpell1: 'uint32',
 	summonorSpell2: 'uint32',
 	bitfield: 'uint8',
-	teamId: 'uint32',
+	team: 'uint32',
 	botName: ['char', 64],
 	botSkinName: ['char', 64],
 	eloRanking: ['char', 16],

@@ -5,25 +5,30 @@ const loadingStages = require("../constants/loadingStages");
 const Game = require('../game/initializers/Game');
 
 
-var spawned = false;
+let spawned = false;
 
 
+/**
+ * 
+ * @param {import('../gameobjects/units/Player')} player 
+ * @param {*} packet 
+ */
 module.exports = (player, packet) => {
 	console.log('handle: C2S.CharSelected');
 	//console.log(packet);
 
 
-	var StartSpawn = Server.network.createPacket('StartSpawn');
-	player.sendPacket(StartSpawn, loadingStages.NOT_CONNECTED);
+	const StartSpawn = Server.network.createPacket('StartSpawn');
+	player.network.sendPacket(StartSpawn, loadingStages.NOT_CONNECTED);
 
 	if (!spawned) {//temporary here
 		spawned = true;
 		Game.loaded();
 	}
 
-	player.sendReconnectPackets();
+	player.network.sendReconnectPackets();
 
-	var EndSpawn = Server.network.createPacket('EndSpawn');
-	player.sendPacket(EndSpawn, loadingStages.NOT_CONNECTED);
+	const EndSpawn = Server.network.createPacket('EndSpawn');
+	player.network.sendPacket(EndSpawn, loadingStages.NOT_CONNECTED);
 
 };

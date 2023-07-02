@@ -10,11 +10,14 @@ const playersConfig = require('../../constants/playersConfig');
 const Inhibitor = require("../../gameobjects/units/Inhibitor");
 const Nexus = require("../../gameobjects/units/Nexus");
 const Turret = require("../../gameobjects/units/Turret");
-const Barrack = require("../../gameobjects/others/Barrack");
+const Barrack = require("../../gameobjects/spawners/Barrack");
 const Player = require("../../gameobjects/units/Player");
-const JungleCamp = require('../../gameobjects/others/JungleCamp');
+const JungleCamp = require('../../gameobjects/spawners/JungleCamp');
 const UnitList = require('../../app/UnitList');
 const Server = require('../../app/Server');
+const Team = require('../../gameobjects/extensions/traits/Team');
+const Fountain = require('../../gameobjects/spawners/Fountain');
+const Builder = require('../../gameobjects/spawners/Builder');
 
 
 class Game {
@@ -27,9 +30,9 @@ class Game {
 	 * @param {typeof import('../../packets/C2S/0x16-Ping_Load_Info').struct} packet request packet
 	 */
 	static Ping_Load_Info(player, packet) {
-		var Ping_Load_Info = Server.network.createPacket('Ping_Load_Info', 'LOW_PRIORITY');
-		Ping_Load_Info.clientId = player.info.clientId;
-		Ping_Load_Info.playerId = player.info.playerId;
+		const Ping_Load_Info = Server.network.createPacket('Ping_Load_Info', 'LOW_PRIORITY');
+		Ping_Load_Info.clientId = player.clientId;
+		Ping_Load_Info.playerId = player.summoner.id;
 		Ping_Load_Info.percentage = packet.percentage;
 		Ping_Load_Info.ETA = packet.ETA;
 		Ping_Load_Info.count = packet.count;
@@ -37,7 +40,7 @@ class Game {
 		Ping_Load_Info.bitfield = {
 			ready: packet.bitfield.ready,
 		};
-		Server.teams.ALL.sendPacket(Ping_Load_Info, loadingStages.NOT_CONNECTED);
+		Server.teams[Team.TEAM_MAX].sendPacket(Ping_Load_Info, loadingStages.NOT_CONNECTED);
 	}
 
 	/**
@@ -45,26 +48,26 @@ class Game {
 	 * @param {Player} player 
 	 */
 	static TeamRosterUpdate(player) {
-		var TeamRosterUpdate = Server.network.createPacket('TeamRosterUpdate', 'LOADING_SCREEN');
+		const TeamRosterUpdate = Server.network.createPacket('TeamRosterUpdate', 'LOADING_SCREEN');
 		TeamRosterUpdate.blueMax = 6;
 		TeamRosterUpdate.redMax = 6;
 		TeamRosterUpdate.teamBlue_playerIds = [];
 		TeamRosterUpdate.teamRed_playerIds = [];
 
-		var bluePlayersUnits = UnitList.getUnitsF('BLUE', 'Player');
-		for (var i = 0, l = bluePlayersUnits.length; i < l; i++) {
-			var player2 = bluePlayersUnits[i];
-			TeamRosterUpdate.teamBlue_playerIds.push(player2.info.playerId);
+		let bluePlayersUnits = /** @type {Player[]} */ (UnitList.getUnitsF(Team.TEAM_BLUE, 'Player'));
+		for (let i = 0, l = bluePlayersUnits.length; i < l; i++) {
+			let player2 = bluePlayersUnits[i];
+			TeamRosterUpdate.teamBlue_playerIds.push(player2.summoner.id);
 		}
-		var redPlayersUnits = UnitList.getUnitsF('RED', 'Player');
-		for (var i = 0, l = redPlayersUnits.length; i < l; i++) {
-			var player2 = redPlayersUnits[i];
-			TeamRosterUpdate.teamRed_playerIds.push(player2.info.playerId);
+		let redPlayersUnits = /** @type {Player[]} */ (UnitList.getUnitsF(Team.TEAM_RED, 'Player'));
+		for (let i = 0, l = redPlayersUnits.length; i < l; i++) {
+			let player2 = redPlayersUnits[i];
+			TeamRosterUpdate.teamRed_playerIds.push(player2.summoner.id);
 		}
 
 		TeamRosterUpdate.currentBlue = TeamRosterUpdate.teamBlue_playerIds.length;
 		TeamRosterUpdate.currentRed = TeamRosterUpdate.teamRed_playerIds.length;
-		Server.teams.ALL.sendPacket(TeamRosterUpdate, loadingStages.NOT_CONNECTED);
+		Server.teams[Team.TEAM_MAX].sendPacket(TeamRosterUpdate, loadingStages.NOT_CONNECTED);
 	}
 
 	/**
@@ -72,11 +75,11 @@ class Game {
 	 * @param {Player} player 
 	 */
 	static RequestRename(player) {
-		var RequestRename = Server.network.createPacket('RequestRename', 'LOADING_SCREEN');
-		RequestRename.playerId = player.info.playerId;
+		const RequestRename = Server.network.createPacket('RequestRename', 'LOADING_SCREEN');
+		RequestRename.playerId = player.summoner.id;
 		RequestRename.skinId = 0;
 		RequestRename.playerName = 'Test';
-		Server.teams.ALL.sendPacket(RequestRename, loadingStages.NOT_CONNECTED);
+		Server.teams[Team.TEAM_MAX].sendPacket(RequestRename, loadingStages.NOT_CONNECTED);
 	}
 
 	/**
@@ -84,11 +87,11 @@ class Game {
 	 * @param {Player} player 
 	 */
 	static RequestReskin(player) {
-		var RequestReskin = Server.network.createPacket('RequestReskin', 'LOADING_SCREEN');
-		RequestReskin.playerId = player.info.playerId;
+		const RequestReskin = Server.network.createPacket('RequestReskin', 'LOADING_SCREEN');
+		RequestReskin.playerId = player.summoner.id;
 		RequestReskin.skinId = 0;
 		RequestReskin.skinName = player.character.model;
-		Server.teams.ALL.sendPacket(RequestReskin, loadingStages.NOT_CONNECTED);
+		Server.teams[Team.TEAM_MAX].sendPacket(RequestReskin, loadingStages.NOT_CONNECTED);
 	}
 
 	/**
@@ -107,11 +110,11 @@ class Game {
 	 * Send packet to client to start game (switch from loading screen to game)
 	 */
 	static StartGame() {
-		var StartGame = Server.network.createPacket('StartGame');
+		const StartGame = Server.network.createPacket('StartGame');
 		StartGame.bitfield = {
 			enablePause: true,
 		};
-		Server.teams.ALL.sendPacket(StartGame, loadingStages.NOT_CONNECTED);
+		Server.teams[Team.TEAM_MAX].sendPacket(StartGame, loadingStages.NOT_CONNECTED);
 	}
 
 	/**
@@ -119,14 +122,14 @@ class Game {
 	 * @param {number} time 
 	 */
 	static SynchSimTime(time = 0) {
-		var SynchSimTime = Server.network.createPacket('SynchSimTime');
+		const SynchSimTime = Server.network.createPacket('SynchSimTime');
 		SynchSimTime.synchTime = time;
-		Server.teams.ALL.sendPacket(SynchSimTime, loadingStages.NOT_CONNECTED);
+		Server.teams[Team.TEAM_MAX].sendPacket(SynchSimTime, loadingStages.NOT_CONNECTED);
 	}
 	static SyncMissionStartTime(time = 0) {
-		var SyncMissionStartTime = Server.network.createPacket('SyncMissionStartTime');
+		const SyncMissionStartTime = Server.network.createPacket('SyncMissionStartTime');
 		SyncMissionStartTime.startTime = time;
-		Server.teams.ALL.sendPacket(SyncMissionStartTime, loadingStages.NOT_CONNECTED);
+		Server.teams[Team.TEAM_MAX].sendPacket(SyncMissionStartTime, loadingStages.NOT_CONNECTED);
 	}
 
 	/**
@@ -135,7 +138,7 @@ class Game {
 	 */
 	static async GameTimeHeartBeat() {
 
-		var time = 0;
+		let time = 0;
 		for (let i = 0; i < 3; i++) {//for(;;){
 			Game.SynchSimTime(time);
 
@@ -160,12 +163,12 @@ class Game {
 
 	static initialize() {
 		Game.initGame();
-		Player.spawnAll(playersConfig);
+		Fountain.spawnAll(playersConfig);
 	}
 
 	static async run() {
-		var SwitchNexusesToOnIdleParticles = Server.network.createPacket('SwitchNexusesToOnIdleParticles');
-		Server.teams.ALL.sendPacket(SwitchNexusesToOnIdleParticles);
+		const SwitchNexusesToOnIdleParticles = Server.network.createPacket('SwitchNexusesToOnIdleParticles');
+		Server.teams[Team.TEAM_MAX].sendPacket(SwitchNexusesToOnIdleParticles);
 
 		GameComponents.Spawn();
 		//GameComponents.Fountain();//instead of component, create perma buff for fountain turret
@@ -175,9 +178,7 @@ class Game {
 	static loaded() {
 		Server.game.loaded = Date.now() / 1000;
 
-		Nexus.spawnAll();
-		Inhibitor.spawnAll();
-		Turret.spawnAll();
+		Builder.spawnAll();
 		Barrack.spawnAll();
 		JungleCamp.spawnAll();
 
@@ -197,7 +198,7 @@ class Game {
 		while (!Server.game.started) {
 			await Promise.wait(100);
 
-			var playerUnits = UnitList.getUnitsF('ALL', 'Player');
+			let playerUnits = UnitList.getUnitsF(Team.TEAM_MAX, 'Player');
 			if (!playerUnits || !playerUnits.length) {
 				console.log('[weird] players has been not initialized yet?');
 				continue;
@@ -207,9 +208,9 @@ class Game {
 			//	start_game();// start game if 5 minutes passed
 			//else{
 			//	let playersLoaded = true;
-			//	var players = UnitList.getUnitsF('ALL', 'Player');
-			//	for(var i = 0, l = players.length; i < l; i++){
-			//		if(players[i].loadingStage < loadingStages.LOADED){
+			//	let players = UnitList.getUnitsF(Team.TEAM_MAX, 'Player');
+			//	for(let i = 0, l = players.length; i < l; i++){
+			//		if(players[i].network.loadingStage < loadingStages.LOADED){
 			//			playersLoaded = false;
 			//			break;
 			//		}

@@ -2,7 +2,7 @@ const HashString = require("../src/functions/HashString");
 const fs = require('fs');
 
 const clientPath = 'LOL_CLIENT_PATH';
-var spellHash = {};
+let spellHash = {};
 
 const path = clientPath + '\\DATA\\Characters';
 if (fs.existsSync(path) && fs.lstatSync(path).isDirectory()) {

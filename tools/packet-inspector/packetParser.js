@@ -5,10 +5,10 @@ const BasePacket = require('../../src/packets/BasePacket');
 const packets = require('../../src/core/network/packets');
 
 
-var packetId = 0;
+let packetId = 0;
 
 function findChannelIdByPacketId(packetId) {
-	for (var channelId in packets) {
+	for (let channelId in packets) {
 		if (packets[channelId][packetId])
 			return channelId;
 	}
@@ -17,7 +17,7 @@ function findChannelIdByPacketId(packetId) {
 
 function packetParser(packet1) {
 
-	var buffer;
+	let buffer;
 	if (packet1.Bytes || packet1.BytesB64)
 		buffer = Buffer.from(packet1.Bytes || packet1.BytesB64, 'base64');
 	else if (packet1.BytesHex)
@@ -32,8 +32,8 @@ function packetParser(packet1) {
 	packet1.Time = Math.round((packet1.Time ?? ((packet1.TimeS ?? 0) * 1000)) * 1000) / 1000;
 	packet1.Channel = packet1.Channel || findChannelIdByPacketId(buffer.readUInt8(0));
 
-	var bytes = buffer.toString('hex').match(/../g)?.join(' ') || '';
-	var parsed = HandlersParse.parsePacket({
+	let bytes = buffer.toString('hex').match(/../g)?.join(' ') || '';
+	let parsed = HandlersParse.parsePacket({
 		channel: packet1.Channel,
 		buffer: buffer,
 	});
@@ -48,13 +48,13 @@ function packetParser(packet1) {
 		parsed = batchPackets;
 	}
 
-	var parsedStr = '';
+	let parsedStr = '';
 	try {
 		parsedStr = JSON.stringify(parsed, (key, value) =>
 			typeof value == "bigint" ? value.toString() + "n" : value, 2);
 	} catch (e) { }
 
-	var packetData = {
+	let packetData = {
 		Id: packet1.Id,
 		Time: packet1.Time,
 		Channel: parsed.channel,
@@ -63,7 +63,8 @@ function packetParser(packet1) {
 		channelName: parsed.channelName,
 		cmdName: parsed.name,
 		offDEBUG: JSON.stringify(Buffer.offDEBUG),
-	}
+		peerNums: packet1.peerNums || [],
+	};
 
 	return packetData;
 };

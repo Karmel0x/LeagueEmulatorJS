@@ -1,12 +1,13 @@
 const { Vector2 } = require('three');
-const PositionHelper = require('../../functions/PositionHelper');
+const PositionHelper = require('../../gameobjects/extensions/Measure');
 const Monster = require('../../gameobjects/units/Monster');
 const UnitList = require('../../app/UnitList');
 const Server = require('../../app/Server');
+const Team = require('../../gameobjects/extensions/traits/Team');
 
 
 // https://leagueoflegends.fandom.com/wiki/Sight#Sight_Ranges
-var defaultVisionRange = 1350;
+const defaultVisionRange = 1350;
 
 /**
  * @typedef {import('../../gameobjects/units/Unit')} Unit
@@ -31,22 +32,22 @@ class MovementSimulation {
 	 */
 	visionProcess() {
 		/** @type {Object<number, Unit[]>} */
-		var seenUnitsByTeam = {};
+		let seenUnitsByTeam = {};
 		UnitList.units.forEach(unit => {
-			if (unit.teamName == 'NEUTRAL')
+			if (unit.team.id == Team.TEAM_NEUTRAL)
 				return;
 
 			if (unit.died)
 				return;
 
-			var unitTeamId = unit.teamId;
-			var unitPosition = unit.position;
+			let unitTeamId = unit.team.id;
+			let unitPosition = unit.position;
 			let unitVisionRange = unit.visionRange || defaultVisionRange;
 
 			seenUnitsByTeam[unitTeamId] = seenUnitsByTeam[unitTeamId] || [];
 
 			UnitList.units.forEach(unit2 => {
-				if (unitTeamId == unit2.teamId)
+				if (unitTeamId == unit2.team.id)
 					return;
 
 				if (unit2.died)
@@ -101,7 +102,7 @@ class MovementSimulation {
 
 	/**
 	 * Actually move unit
-	 * @param {Unit | Missile} unit 
+	 * @param {import('../../gameobjects/GameObjects').MovableObject} unit 
 	 * @param {number} diff 
 	 * @returns {boolean} hasMoved
 	 */
@@ -111,11 +112,11 @@ class MovementSimulation {
 
 		//console.log('move', unit.netId, unitWaypoints[0]);
 
-		let unitWaypoints = unit.waypoints;
+		let unitWaypoints = unit.moving.waypoints;
 		if (!unitWaypoints)
 			return false;
 
-		unit.sendWaypoints(unitWaypoints);
+		unit.moving.sendWaypoints(unitWaypoints);
 
 		let nextWaypoint = unitWaypoints[0];
 		if (!nextWaypoint)
@@ -123,7 +124,7 @@ class MovementSimulation {
 
 		let unitPosition = unit.position;
 
-		let moveSpeed = (unit.speedParams?.pathSpeedOverride || unit.moveSpeed.total) / 1000;
+		let moveSpeed = (unit.moving.speedParams?.pathSpeedOverride || unit.stats.moveSpeed.total) / 1000;
 		let moveDistance = moveSpeed * diff;
 
 		let remainingDistance = moveDistance;
@@ -146,22 +147,22 @@ class MovementSimulation {
 
 	/**
 	 * Called if unit has moved to call unit movement callbacks
-	 * @param {Unit | Missile} unit 
+	 * @param {import('../../gameobjects/GameObjects').MovableObject} unit 
 	 * @param {number} diff 
 	 */
 	callbacks(unit, diff) {
 
-		var unitWaypoints = unit.waypoints;
+		let unitWaypoints = unit.moving.waypoints;
 		if (unitWaypoints.length < 1) {
 			unit.emit('reachDestination');
 		}
 
 		//@todo change callbacks to events
-		var unitCallbacks = unit.callbacks;
+		let unitCallbacks = unit.callbacks;
 		if (!unitCallbacks)
 			return false;
 
-		var unitPosition = unit.position;
+		let unitPosition = unit.position;
 
 		for (let i in unitCallbacks.move) {
 			let callback = unitCallbacks.move[i];
@@ -171,12 +172,12 @@ class MovementSimulation {
 
 		for (let i in unitCallbacks.collision) {
 			let callback = unitCallbacks.collision[i];
-			var collisionRadius = callback.options?.range || unit.collisionRadius;
+			let collisionRadius = callback.options?.range || unit.collisionRadius;
 			//@todo flags like self targetable, ally targetable, enemy targetable
 			//callback.options.flags;
 
-			var units = UnitList.getUnits();
-			for (var j = 0, l = units.length; j < l; j++) {
+			let units = UnitList.getUnits();
+			for (let j = 0, l = units.length; j < l; j++) {
 				let unit2 = units[j];
 
 				//@todo
@@ -203,17 +204,18 @@ class MovementSimulation {
 
 	/**
 	 * Get unit elapsed time in ms since last movement update
-	 * @param {Unit | Missile} unit 
+	 * @param {import('../../gameobjects/GameObjects').MovableObject} unit 
 	 * @returns {number}
 	 */
 	unitDiff(unit) {
 		let now = performance.now();
-		if (!unit.moveTime) {
-			unit.moveTime = now;
+		if (!unit.moving.moveTime) {
+			unit.moving.moveTime = now;
 			return 0;
 		}
-		let diff = now - unit.moveTime;
-		unit.moveTime = now;
+
+		let diff = now - unit.moving.moveTime;
+		unit.moving.moveTime = now;
 		return diff;
 	}
 
@@ -230,8 +232,12 @@ class MovementSimulation {
 			await Promise.wait(20);//lower this?
 			this.moved = {};
 
-			var units = UnitList.getUnits();
+			// @todo: get only movable units
+			let units = /** @type {import('../../gameobjects/GameObjects').MovableUnit[]} */ (UnitList.getUnits());
 			units.forEach(unit => {
+				if (!unit.moving)
+					return;
+
 				let diff = this.unitDiff(unit);
 				let moved = this.move(unit, diff);
 				if (moved)
@@ -239,8 +245,11 @@ class MovementSimulation {
 				this.moved[unit.netId] = moved;
 			});
 
-			var missiles = UnitList.missiles;
+			let missiles = UnitList.missiles;
 			missiles.forEach(missile => {
+				//if (!missile.moving)
+				//	return;
+
 				let diff = this.unitDiff(missile);
 				//todo: flags like collidable with terrain, with ally units, with enemy units
 				let moved = this.move(missile, diff);

@@ -54,7 +54,7 @@ class WaypointsDrawer {
 			return { x: waypoint.x * this.waypointsScale, y: waypoint.y * this.waypointsScale }
 		});
 
-		var lastWaypoint = null;
+		let lastWaypoint = null;
 		waypoints.forEach(waypoint => {
 			if (lastWaypoint) {
 				this.context.beginPath();

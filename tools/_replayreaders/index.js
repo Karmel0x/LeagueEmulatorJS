@@ -7,7 +7,7 @@ const readers = {
 module.exports = function (filePath) {
 	console.log('_replayreaders', filePath);
 
-	var replayUnpacked = null;
+	let replayUnpacked = null;
 	if (filePath.endsWith('.json')) {
 		replayUnpacked = readers['json'](filePath);
 	}

@@ -6,9 +6,9 @@ Server.packetLengthWarning = 50000;
 
 
 module.exports = function (filePath) {
-    var f = fs.readFileSync(filePath);
+    let f = fs.readFileSync(filePath);
 
-    var header = f.readobj({
+    let header = f.readobj({
         magic: ['char', 4],
         size: 'uint32',
         pad: ['char', 8],
@@ -16,15 +16,15 @@ module.exports = function (filePath) {
 
     f.readobj(['char', header.size]); // json Match Data
 
-    var readPacketChunk = (f) => {
-        var packet = f.readobj({
+    let readPacketChunk = (f) => {
+        let packet = f.readobj({
             size: 'uint32',
             time: 'float',
             channel: 'uint8',
             reserved: ['uint8', 3],
         });
 
-        var data = f.readobj(['uint8', packet.size]);
+        let data = f.readobj(['uint8', packet.size]);
 
         return {
             Time: packet.time,
@@ -34,14 +34,14 @@ module.exports = function (filePath) {
         };
     };
 
-    var packets = [];
+    let packets = [];
 
     while (f.off < f.length) {
         if (f.read1('uint8') == 'p'.charCodeAt(0))
             if (f.read1('uint8') == 'k'.charCodeAt(0))
                 if (f.read1('uint8') == 't'.charCodeAt(0))
                     if (f.read1('uint8') == 0x00) {
-                        var packet = readPacketChunk(f);
+                        let packet = readPacketChunk(f);
                         packets.push(packet);
                     }
     }

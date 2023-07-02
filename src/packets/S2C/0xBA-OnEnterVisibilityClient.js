@@ -104,11 +104,11 @@ module.exports = class OnEnterVisibilityClient extends BasePacket {
 	reader(buffer) {
 		super.reader(buffer);
 
-		var packet_length = buffer.read1('uint16');
+		let packet_length = buffer.read1('uint16');
 		if (packet_length)
 			this.packet = buffer.readobj(['uint8', packet_length]);//Packet
 
-		var itemData_length = buffer.read1('uint8', this.itemData?.length || 0);
+		let itemData_length = buffer.read1('uint8', this.itemData?.length || 0);
 		if (itemData_length)
 			this.itemData = buffer.readobj([ItemData, itemData_length]);
 
@@ -120,7 +120,7 @@ module.exports = class OnEnterVisibilityClient extends BasePacket {
 		if (this.shieldValues)
 			this.shieldValues = buffer.readobj(ShieldValues);
 
-		var characterStackData_length = buffer.read1('int32');
+		let characterStackData_length = buffer.read1('int32');
 		if (characterStackData_length)
 			this.characterStackData = buffer.readobj([CharacterStackData, characterStackData_length]);
 
@@ -130,7 +130,7 @@ module.exports = class OnEnterVisibilityClient extends BasePacket {
 			lookAtPosition: SVector3,
 		}));
 
-		var buff_length = buffer.read1('int32');
+		let buff_length = buffer.read1('int32');
 		if (buff_length)
 			this.Buff = buffer.readobj([Buff, buff_length]);
 

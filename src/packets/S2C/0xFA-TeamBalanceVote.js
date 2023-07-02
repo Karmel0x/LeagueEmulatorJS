@@ -10,7 +10,7 @@ module.exports = class TeamBalanceVote extends BasePacket {
 		forVote: 'uint8',
 		againstVote: 'uint8',
 		numPlayers: 'uint8',
-		teamId: 'uint32',
+		team: 'uint32',
 		timeout: 'float',
 		goldGranted: 'float',
 		experienceGranted: 'int32',

@@ -9,7 +9,7 @@ module.exports = class BatchPacket {
 	static channel = 3;//S2C
 
 	static findPacketById(packetId) {
-		for (var channelId in packets) {
+		for (let channelId in packets) {
 			if (packets[channelId][packetId])
 				return packets[channelId][packetId];
 		}
@@ -24,7 +24,7 @@ module.exports = class BatchPacket {
 		if (this.packets_length < 1 || buffer.length < 3)
 			return;
 
-		var packets = [];
+		let packets = [];
 
 		let packet = {};
 		{
@@ -36,7 +36,7 @@ module.exports = class BatchPacket {
 
 			let packetData = buffer.readobj(['uint8', packet.packetSize]);
 			//console.log({packet, c: packet.cmd.toString(16), data: Buffer.from(packetData)});
-			var buffer2 = Buffer.from([].concat(packet.cmd, getIntBytes_r(packet.netId), packetData));
+			let buffer2 = Buffer.from([].concat(packet.cmd, getIntBytes_r(packet.netId), packetData));
 			packets.push(buffer2);
 		}
 		for (let i = 1; i < this.packets_length; i++) {
@@ -51,17 +51,17 @@ module.exports = class BatchPacket {
 
 			let packetData = buffer.readobj(['uint8', packet.packetSize]);
 			//console.log({bitfield, packet, c: packet.cmd.toString(16), b: [(packetSize == 63), ((bitfield & 1) == 0), ((bitfield & 2) != 0)], data: Buffer.from(packetData)});
-			var buffer2 = Buffer.from([].concat(packet.cmd, getIntBytes_r(packet.netId), packetData));
+			let buffer2 = Buffer.from([].concat(packet.cmd, getIntBytes_r(packet.netId), packetData));
 			packets.push(buffer2);
 		}
 
-		for (var i in packets) {
+		for (let i in packets) {
 			//// some batched packets are different?
-			//var cmd = packets[i].readUInt8(0);
+			//let cmd = packets[i].readUInt8(0);
 			//if(cmd == 0x72) // IssueOrderReq
 			//	continue;
 
-			var parsed = parsePacket({ channel: this.constructor.channel, buffer: packets[i] });
+			let parsed = parsePacket({ channel: this.constructor.channel, buffer: packets[i] });
 			parsed.cmdName = this.constructor.findPacketById(parsed.cmd).name;//dev
 			this.parsedPackets.push(parsed);
 		}

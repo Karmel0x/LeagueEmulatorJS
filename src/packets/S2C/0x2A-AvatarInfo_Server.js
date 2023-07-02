@@ -1,6 +1,6 @@
 const BasePacket = require('../BasePacket');
 
-var Talent = {
+const Talent = {
 	hash: 'uint32',
 	level: 'uint8',
 };

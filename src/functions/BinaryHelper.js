@@ -8,7 +8,7 @@ module.exports = {
 	 */
 	getIntBytes_r: (num, len = 4) => {
 		/** @type {number[]} */
-		var bytes = [];
+		let bytes = [];
 		for (; len > 0; --len) {
 			bytes.push(num & 255);
 			num = num >> 8;

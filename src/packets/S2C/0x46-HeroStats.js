@@ -53,7 +53,7 @@ const ChampionStats = {
 	unk8: 'int32',//[FieldOffset(166)]
 	QuadraKills: 'int32',//public int _QuadraKills;
 	unk9: ['int32', 9],//[FieldOffset(206)]
-	teamId: 'int32',//public int _TeamId;
+	team: 'int32',//public int _TeamId;
 	unk10: ['int32', 4],//[FieldOffset(226)]
 	TotalDamageDealt: 'float',//public float _TotalDamageDealt;
 	//[FieldOffset(230)]

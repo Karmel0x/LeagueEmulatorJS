@@ -1,6 +1,6 @@
 const config = require('../../constants/config.json');
 
-var SConnectionInfo = {
+let SConnectionInfo = {
 	clientId: 'int32',
 	playerId: 'int64',
 	percentage: 'float',

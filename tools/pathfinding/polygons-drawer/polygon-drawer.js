@@ -24,7 +24,7 @@ function zoom_in() {
 	if (freeDraw.zoomLevel >= 10)
 		return;
 
-	var scale = freeDraw.zoomLevel + (freeDraw.zoomLevel <= 1 ? 0.1 : 1);
+	let scale = freeDraw.zoomLevel + (freeDraw.zoomLevel <= 1 ? 0.1 : 1);
 	scaleFreedraw(scale);
 	scaleImage(scale);
 }
@@ -32,7 +32,7 @@ function zoom_out() {
 	if (freeDraw.zoomLevel <= 0.11)
 		return;
 
-	var scale = freeDraw.zoomLevel - (freeDraw.zoomLevel <= 1 ? 0.1 : 1);
+	let scale = freeDraw.zoomLevel - (freeDraw.zoomLevel <= 1 ? 0.1 : 1);
 	scaleFreedraw(scale);
 	scaleImage(scale);
 }
@@ -62,21 +62,21 @@ function xyAsInt(value = null) {
 	refreshShapeList();
 }
 function shapesToJson() {
-	//var json = Object.values(freeDraw.shapeInCanvas).map(shape => shape.points);
+	//let json = Object.values(freeDraw.shapeInCanvas).map(shape => shape.points);
 	//document.getElementById('shapeListJson').value = JSON.stringify(json);
 
-	var shapePoints = Object.values(freeDraw.shapeInCanvas).map(shape => shape.points);
+	let shapePoints = Object.values(freeDraw.shapeInCanvas).map(shape => shape.points);
 	if (_xyAsInt)
 		shapePoints = shapePoints.map(shape => shape.map(point => point.map(xy => Math.round(xy))));
-	var json = shapePoints.map(point => JSON.stringify(point));
+	let json = shapePoints.map(point => JSON.stringify(point));
 
 	return "[\n" + json.join(",\n") + "\n]";
 }
 
 function refreshShapeList() {
 	document.getElementById('shapeList').innerHTML = '';
-	for (var id in freeDraw.shapeInCanvas) {
-		var shape = freeDraw.shapeInCanvas[id];
+	for (let id in freeDraw.shapeInCanvas) {
+		let shape = freeDraw.shapeInCanvas[id];
 		document.getElementById('shapeList').innerHTML +=
 			`<div>${shape.id} `
 			+ (!shape.edit ? `<button onclick="editShape('${id}')">edit</button>` : `<button onclick="cancelEditShape()">cancel</button>`)
@@ -88,11 +88,11 @@ function refreshShapeList() {
 }
 
 function readShapeListJson() {
-	var json = JSON.parse(document.getElementById('shapeListJson').value);
+	let json = JSON.parse(document.getElementById('shapeListJson').value);
 	json = json.filter(points => points.length > 0);
 	//json.sort((a, b) => a[0][1] - b[0][1]);
 
-	var shapes = json.map((points) => {
+	let shapes = json.map((points) => {
 		freeDraw.shapeCounter = ++freeDraw.shapeCounter || 0;
 		return {
 			id: 'polygon-' + freeDraw.shapeCounter,
@@ -108,7 +108,7 @@ function readShapeListJson() {
 function newShape() {
 	finishEditing();
 	freeDraw.shapeCounter = ++freeDraw.shapeCounter || 0;
-	var shape = freeDraw.addShape({ id: 'polygon-' + freeDraw.shapeCounter, type: 'polygon' });
+	let shape = freeDraw.addShape({ id: 'polygon-' + freeDraw.shapeCounter, type: 'polygon' });
 
 	// add deleting point method on right mouse click
 	if (!shape.__proto__.__polygonMouseDown) {
@@ -135,7 +135,7 @@ function newShape() {
 }
 
 function repToCp(scaling = 1) {
-	var q = document.getElementById('shapeListJson').value;
+	let q = document.getElementById('shapeListJson').value;
 	if (scaling != 1) {
 		q = q.replace(/\d+/g, (match) => {
 			return Math.round(parseInt(match) * scaling);

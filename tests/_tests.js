@@ -35,7 +35,7 @@ class _tests {
 	 */
 	static async test(iterations = 1) {
 		this._iterations = iterations;
-		var expectedTime = this.expectedIterationTime * iterations;
+		let expectedTime = this.expectedIterationTime * iterations;
 
 		process.stdout.write(`testing ${this.name}`);
 		if (!Server.processingAllTests && iterations > 1)
@@ -44,7 +44,7 @@ class _tests {
 			process.stdout.write(` (expecting ${colors.fgYellow}${expectedTime}${colors.reset} ms)`);
 		process.stdout.write(` :: `);
 
-		var prepared = await this.prepareTest();
+		let prepared = await this.prepareTest();
 		if (!prepared) {
 			process.stdout.write(colors.fgRed);
 			process.stdout.write(`failed preparing test`);
@@ -52,12 +52,12 @@ class _tests {
 			return;
 		}
 
-		var passed = false;
-		var i = 1, l = iterations;
-		var timeBefore = performance.now();
+		let passed = false;
+		let i = 1, l = iterations;
+		let timeBefore = performance.now();
 
 		for (; i <= l; i++) {
-			var result = await this.processTest();
+			let result = await this.processTest();
 
 			if (result !== true) {
 				passed = false;
@@ -74,8 +74,8 @@ class _tests {
 			passed = true;
 		}
 
-		var timeAfter = performance.now();
-		var timeElapsed = Math.round((timeAfter - timeBefore) * 1000) / 1000;
+		let timeAfter = performance.now();
+		let timeElapsed = Math.round((timeAfter - timeBefore) * 1000) / 1000;
 
 		if (passed) {
 			process.stdout.write(colors.fgGreen,);

@@ -8,12 +8,12 @@ const HandlersParse = require('../../../src/core/network/parse');
 const WaypointsDrawer = require('../WaypointsDrawer');
 
 
-var waypointsDrawer = {};
+let waypointsDrawer = {};
 
-//var replayDir = '../LeagueEmulatorJS_replays/';
-var replayDir = 'E:\\Games\\lol\\replays\\ReplayStuff\\4.20+\\';
+//let replayDir = '../LeagueEmulatorJS_replays/';
+let replayDir = 'E:\\Games\\lol\\replays\\ReplayStuff\\4.20+\\';
 
-var replayList = fs.readdirSync(replayDir).filter((value) => {
+let replayList = fs.readdirSync(replayDir).filter((value) => {
 	return value.endsWith('.json') || value.endsWith('.lrpkt');
 });
 
@@ -25,21 +25,21 @@ function processReplay(replayUnpacked) {
 	const packetId_WaypointGroup = 0x61;
 	const packetId_SynchVersion = 0x54;
 
-	var mapToLoad = 0;
-	for (var j = 0; j < replayUnpacked.length; j++) {
-		var packet = replayUnpacked[j];
+	let mapToLoad = 0;
+	for (let j = 0; j < replayUnpacked.length; j++) {
+		let packet = replayUnpacked[j];
 
 		if (!packet.BytesBuffer || packet.BytesBuffer.length < 6)
 			continue;
 
-		var firstByte = packet.BytesBuffer.readUInt8(0);
+		let firstByte = packet.BytesBuffer.readUInt8(0);
 		if (firstByte != packetId_WaypointGroup && firstByte != packetId_SynchVersion)
 			continue;
 
 		if (firstByte == packetId_SynchVersion && packet.BytesBuffer.length < 500)
 			return;
 
-		var parsed = HandlersParse.parsePacket({
+		let parsed = HandlersParse.parsePacket({
 			channel: packet.Channel,
 			buffer: packet.BytesBuffer,
 		});
@@ -65,8 +65,8 @@ function processReplay(replayUnpacked) {
 		if (!waypointsDrawer[mapToLoad])
 			return;
 
-		for (var k = 0; k < parsed.movementData.length; k++) {
-			var movementData = parsed.movementData[k];
+		for (let k = 0; k < parsed.movementData.length; k++) {
+			let movementData = parsed.movementData[k];
 			if (!movementData || !movementData.waypoints || movementData.waypoints.length < 3)
 				continue;
 
@@ -76,9 +76,9 @@ function processReplay(replayUnpacked) {
 	}
 }
 async function process() {
-	for (var i = 0; i < replayList.length; i++) {
-		var replayFilename = replayList[i];
-		var replayUnpacked = _replayreaders(replayDir + replayFilename);
+	for (let i = 0; i < replayList.length; i++) {
+		let replayFilename = replayList[i];
+		let replayUnpacked = _replayreaders(replayDir + replayFilename);
 		processReplay(replayUnpacked);
 
 		console.log(replayFilename, '>', 'done');

@@ -1,60 +1,47 @@
-module.exports = {//@todo
-	BLUE: [
-		{
-			playerId: 1,
-			rank: '',
-			name: '',
-			character: 'Yasuo',
-			//team: 'BLUE',
-			skin: 0,
-			summoner1: '',
-			summoner2: '',
-			ribbon: 0,
-			icon: 0,
-			//blowfishKey: '',
-			runes: [],
-			info: {
-				playerId: 1,
-				summonorLevel: 30,
-				summonorSpell1: "HEAL",
-				summonorSpell2: "FLASH",
-				bitfield: 0,//108
-				team: "BLUE",
-				eloRanking: "DIAMOND",
-				profileIconId: 0,//666,
-				allyBadgeId: 2,
-				enemyBadgeId: 0,
-				clientId: 0,
-			}
+const Team = require("../gameobjects/extensions/traits/Team");
+
+/** @type {import("../gameobjects/GameObjects").PlayerConfig[]} */
+module.exports = [
+	{
+		summoner: {
+			id: 1,
+			name: 'Player1',
+			level: 30,
+			spells: {
+				d: '',
+				f: '',
+			},
+			iconId: 666,
+			rankId: 0,
+			ribbonId: 0,
 		},
-	],
-	RED: [
-		{
-			playerId: 2,
-			rank: '',
-			name: '',
-			character: 'Ezreal',
-			//team: 'BLUE',
+		match: {
+			team: Team.TEAM_BLUE,
+			champion: 'Yasuo',
 			skin: 0,
-			summoner1: '',
-			summoner2: '',
-			ribbon: 0,
-			icon: 0,
-			//blowfishKey: '',
-			runes: [],
-			info: {
-				playerId: 2,
-				summonorLevel: 30,
-				summonorSpell1: "HEAL",
-				summonorSpell2: "FLASH",
-				bitfield: 0,//108
-				team: "RED",
-				eloRanking: "DIAMOND",
-				profileIconId: 0,//666,
-				allyBadgeId: 2,
-				enemyBadgeId: 0,
-				clientId: 1,
-			}
 		},
-	],
-};
+		runes: [],
+		masteries: [],
+	},
+	{
+		summoner: {
+			id: 2,
+			name: 'Player2',
+			level: 30,
+			spells: {
+				d: '',
+				f: '',
+			},
+			iconId: 666,
+			rankId: 0,
+			ribbonId: 0,
+		},
+		match: {
+			team: Team.TEAM_RED,
+			champion: 'Ezreal',
+			skin: 0,
+		},
+		runes: [],
+		masteries: [],
+	},
+];

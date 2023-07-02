@@ -23,7 +23,7 @@ class NetworkWs extends Network {
 				/**
 				 * @type {PacketMessage}
 				 */
-				var msg = {
+				let msg = {
 					peerNum: peerNum,
 					channel: 1,//C2S // channels should not exists here
 					buffer: data,

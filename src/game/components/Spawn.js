@@ -1,5 +1,6 @@
 const Server = require("../../app/Server");
 const UnitList = require("../../app/UnitList");
+const Team = require("../../gameobjects/extensions/traits/Team");
 
 /**
  * 
@@ -9,16 +10,16 @@ async function spawnMinions(spawnMinions_count) {
 	console.log('Minions spawn - wave', spawnMinions_count);
 
 	for (let i = 0; i < 3; i++) {
-		UnitList.barracks['BLUE'][i].spawnWave();
-		UnitList.barracks['RED'][i].spawnWave();
+		UnitList.barracks[Team.TEAM_BLUE][i].spawnWave();
+		UnitList.barracks[Team.TEAM_RED][i].spawnWave();
 	}
 }
 
 async function wait_spawnMinions() {
 	//return;///////////
 
-	var spawnMinions_next = Server.game.started + 9.0;
-	var spawnMinions_count = 0;
+	let spawnMinions_next = Server.game.started + 9.0;
+	let spawnMinions_count = 0;
 
 	for (; ;) {
 		while (spawnMinions_next > Date.now() / 1000)
@@ -36,8 +37,8 @@ async function wait_spawnMinions() {
 //}
 //
 //async function wait_spawnMonsters() {
-//	var spawnMonsters_next = Server.game.started + 11.0;//test:110
-//	var spawnMonsters_count = 0;
+//	let spawnMonsters_next = Server.game.started + 11.0;//test:110
+//	let spawnMonsters_count = 0;
 //
 //	for (; ;) {
 //		await Promise.wait(10);

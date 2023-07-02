@@ -7,7 +7,7 @@ WebSocket.prototype.sendJson = function (data) {
 const ws = new WebSocket('ws://127.0.0.1/ws');
 
 ws.addEventListener('close', (event) => {
-	var a = document.getElementById('top-header');
+	let a = document.getElementById('top-header');
 	a.style.setProperty('border-color', 'red', 'important');
 });
 
@@ -15,7 +15,7 @@ ws.addEventListener('open', (event) => {
 	Messages.loadreplaylist();
 });
 
-/*var Channels = {
+/*let Channels = {
 	"0": "HANDSHAKE",
 	"1": "C2S",
 	"2": "GAMEPLAY",
@@ -30,9 +30,9 @@ function strAtPos(str, pos, ins) {
 }
 
 function getPacketSel(element, packetId) {
-	var a = window.getSelection().toString();
-	var b = element.parentElement.parentElement.querySelector('.Bytes_textarea');
-	var c = offDEBUGobj[packetId][a] || 0;
+	let a = window.getSelection().toString();
+	let b = element.parentElement.parentElement.querySelector('.Bytes_textarea');
+	let c = offDEBUGobj[packetId][a] || 0;
 
 	b.value = b.value.replace('>', '');
 	if (c)
@@ -41,29 +41,30 @@ function getPacketSel(element, packetId) {
 }
 
 function collapsePacket(element) {
-	var b = element.parentElement.parentElement.parentElement.querySelector('.packetContentRow');
+	let b = element.parentElement.parentElement.parentElement.querySelector('.packetContentRow');
 	b.style.display = b.style.display == 'none' ? null : 'none';
 }
 
 function highlightPacket(element) {
-	//var a = element.parentElement.parentElement.parentElement.querySelector('.packetContentRow .Bytes > *');
+	//let a = element.parentElement.parentElement.parentElement.querySelector('.packetContentRow .Bytes > *');
 	//a.style.border = a.style.border ? null : '1px solid blue';
-	//var b = element.parentElement.parentElement.parentElement.querySelector('.packetContentRow .Parsed > *');
+	//let b = element.parentElement.parentElement.parentElement.querySelector('.packetContentRow .Parsed > *');
 	//b.style.border = b.style.border ? null : '1px solid blue';
-	var a = element.parentElement.parentElement.parentElement;
+	let a = element.parentElement.parentElement.parentElement;
 	a.style.backgroundColor = a.style.backgroundColor ? null : 'rgba(43, 255, 0, 0.2)';
 }
 
 // Listen for messages
-var offDEBUGobj = {};
+let offDEBUGobj = {};
 ws.addEventListener('message', (event) => {
 	//console.log('Message from server', event.data);
-	var res = JSON.parse(event.data);
+	let res = JSON.parse(event.data);
 	if (res.cmd == 'newpacket') {
 		//Controls.loadingspinnerTime();
 
-		var parsedLines = parseInt((res.packet.Parsed || '').split('\n').length + (res.packet.Parsed || '').length / 100);
+		let parsedLines = parseInt((res.packet.Parsed || '').split('\n').length + (res.packet.Parsed || '').length / 100);
 		parsedLines = parsedLines > 10 ? 10 : parsedLines;
+		let peerNums = res.packet.peerNums.join(', ');
 
 		try {
 			offDEBUGobj[res.packet.Id] = JSON.parse(res.packet.offDEBUG);
@@ -71,13 +72,16 @@ ws.addEventListener('message', (event) => {
 			console.error(e, res);
 		}
 
-		var newpacket = document.createElement('div');
+		let newpacket = document.createElement('div');
 		newpacket.className = 'Packet';
 		newpacket.innerHTML = /* html */ `
 			<div class="packetrow">
 				<div class="row">
 					<div class="Id col">Id:${res.packet.Id || 0}</div>
-					<div class="Time col">Time:${res.packet.Time || ''} (${(new Date(parseFloat(res.packet.Time || 0)).toISOString().slice(11, 19))})</div>
+					<div class="Time col">
+						Time:${res.packet.Time || ''} (${(new Date(parseFloat(res.packet.Time || 0)).toISOString().slice(11, 19))})
+						${peerNums ? ` | PeerNums: ${peerNums}` : ''}
+					</div>
 					<div class="Channel col">${res.packet.channelName}.${res.packet.cmdName} (size:${(res.packet.Bytes || '').split(' ').length})</div>
 					<div class="col text-end">
 						<button class="btn btn-sm btn-secondary" style="border:0;line-height:10px" onclick="collapsePacket(this)">collapse</button>
@@ -95,12 +99,12 @@ ws.addEventListener('message', (event) => {
 
 		newpacket.querySelector(".Bytes_Parsed_textarea").style.height = (parsedLines * 26) + 'px';
 
-		var packetlist = document.getElementById('packetlist');
+		let packetlist = document.getElementById('packetlist');
 		packetlist.appendChild(newpacket);
 
 		try {
-			var jsonViewer = new JSONViewer();
-			var jsonViewerContainer = jsonViewer.getContainer();
+			let jsonViewer = new JSONViewer();
+			let jsonViewerContainer = jsonViewer.getContainer();
 			jsonViewerContainer.style.height = (parsedLines * 26) + 'px';
 
 			newpacket.querySelector(".Parsed").appendChild(jsonViewerContainer);
@@ -185,7 +189,7 @@ class Messages {
 
 class Controls {
 	static loadingspinner(show) {
-		var el = document.getElementById('loadingspinner');
+		let el = document.getElementById('loadingspinner');
 		if (show)
 			el.classList.remove('d-none');
 		else
@@ -206,10 +210,10 @@ class Controls {
 	//}
 
 	static loadreplayfile() {
-		var replayFile = document.getElementById('loadreplaylist').value;
-		var offset = document.getElementById('loadreplay_offset').value;
-		var limit = document.getElementById('loadreplay_limit').value;
-		var packetsearch = document.getElementById('packetsearch').value;
+		let replayFile = document.getElementById('loadreplaylist').value;
+		let offset = document.getElementById('loadreplay_offset').value;
+		let limit = document.getElementById('loadreplay_limit').value;
+		let packetsearch = document.getElementById('packetsearch').value;
 		packetsearch = packetsearch.split('||').filter(Boolean);
 
 		offset = parseInt(offset) || undefined;
@@ -219,14 +223,14 @@ class Controls {
 	}
 
 	static addpacket() {
-		var packet = document.getElementById('addpacket_packet').value;
-		var channel = document.getElementById('addpacket_channel').value;
+		let packet = document.getElementById('addpacket_packet').value;
+		let channel = document.getElementById('addpacket_channel').value;
 
 		Messages.addpacket(packet, channel);
 	}
 
 	static clear() {
-		var packetlist = document.getElementById('packetlist');
+		let packetlist = document.getElementById('packetlist');
 		packetlist.innerHTML = '';
 	}
 }

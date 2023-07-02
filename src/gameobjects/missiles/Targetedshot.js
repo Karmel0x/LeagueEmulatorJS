@@ -19,11 +19,11 @@ class Targetedshot extends Missile {
 
 	/**
 	 * @override
-	 * @param {Unit} target
+	 * @param {import('../GameObjects').DefendableUnit} target
 	 */
 	reachedDest(target) {
 		console.log('Targetedshot.reachedDest');
-		this.owner.attack(target);
+		this.owner.combat.attack(target);
 		this.destructor();
 	}
 	doFire() {

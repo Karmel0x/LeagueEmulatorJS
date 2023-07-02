@@ -33,12 +33,13 @@ module.exports = class YasuoQ3 extends _Spell {
 	onCast(spellData) {
 		super.onCast(spellData);
 
-		var skillshotTargetPosition = spellData.anglePosition.add(this.owner.position);
-		var skillshot = Skillshot.create(this.owner, skillshotTargetPosition, {
+		let skillshotTargetPosition = spellData.anglePosition.add(this.owner.position);
+		let skillshot = Skillshot.create(this.owner, skillshotTargetPosition, {
 			speed: 1200, range: 1150, radius: 90
 		});
 
-		var collidedWith = [];
+		/** @type {number[]} */
+		let collidedWith = [];
 		skillshot.callbacks.collision._ = {
 			options: {
 				range: skillshot.options.radius,
@@ -49,9 +50,9 @@ module.exports = class YasuoQ3 extends _Spell {
 
 				collidedWith.push(target.netId);
 
-				skillshot.owner.attack(target);
-				if (target.knockUp)
-					target.knockUp({
+				skillshot.owner.combat.attack(target);
+				if (target.moving)
+					target.moving.knockUp({
 						duration: 0.75,
 						parabolicGravity: 16.5,
 						facing: 1,

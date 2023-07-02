@@ -15,7 +15,7 @@ module.exports = class SummonerFlash extends _Spell {
 	onCast(spellData) {
 		super.onCast(spellData);
 
-		var pos = new Vector2(spellData.packet.position.x, spellData.packet.position.y);
-		this.owner.teleport(pos);
+		let pos = new Vector2(spellData.packet.position.x, spellData.packet.position.y);
+		this.owner.moving.teleport(pos);
 	}
 };

@@ -1,10 +1,8 @@
 
-const ExtendWTraits = require('../../core/ExtendWTraits');
 const GameObject = require("../GameObject");
-const IMovable = require('../traits/IMovable');
 
 
-class Dummytarget extends ExtendWTraits(GameObject, IMovable) {
+class Dummytarget extends GameObject {
 
 	/**
 	 * 

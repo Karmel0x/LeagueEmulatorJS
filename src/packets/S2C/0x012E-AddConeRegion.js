@@ -4,7 +4,7 @@ const SVector2 = require('../sharedstruct/SVector2');
 
 module.exports = class AddConeRegion extends ExtendedPacket {
 	static struct = {
-		teamId: 'uint32',
+		team: 'uint32',
 		regionType: 'int32',
 		clientId: 'int32',
 		unitNetId: 'uint32',

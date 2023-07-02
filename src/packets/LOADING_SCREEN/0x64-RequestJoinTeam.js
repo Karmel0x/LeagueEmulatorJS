@@ -7,6 +7,6 @@ module.exports = class RequestJoinTeam extends BasePacket {
 	}
 	static struct = {
 		clientId: 'int32',
-		teamId: 'uint32',
+		team: 'uint32',
 	}
 };

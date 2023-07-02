@@ -3,11 +3,11 @@
 
 const http = require('http');
 
-var url = 'http://ddragon.leagueoflegends.com/cdn/4.20.2/data/en_US/champion.json';
+let url = 'http://ddragon.leagueoflegends.com/cdn/4.20.2/data/en_US/champion.json';
 
 function callback(json) {
-	var obj = {};
-	for (var i in json.data) {
+	let obj = {};
+	for (let i in json.data) {
 		obj[i] = json.data[i].stats;
 	}
 	obj = JSON.stringify(obj, null, 2);
@@ -15,7 +15,7 @@ function callback(json) {
 }
 
 const req = http.request(url, res => {
-	var data = '';
+	let data = '';
 	res.on('data', (chunk) => {
 		data += chunk;
 	});

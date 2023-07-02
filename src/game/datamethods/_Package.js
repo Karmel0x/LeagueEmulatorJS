@@ -19,10 +19,10 @@ module.exports = class _Package {
 	 * @param {Object.<string, object | Spell>} slotToCastable {slot: castable}
 	 */
 	createOnSlots(slotToCastable) {
-		for (var key in slotToCastable) {
-			this.owner.spellSlots[key] = new slotToCastable[key]({ owner: this.owner });
-			this.owner.spellSlots[key].slot = key;
-			this.owner.spellSlots[key].package = this.package;
+		for (let key in slotToCastable) {
+			this.owner.slots[key] = new slotToCastable[key]({ owner: this.owner });
+			this.owner.slots[key].slot = key;
+			this.owner.slots[key].package = this.package;
 		}
 	}
 };

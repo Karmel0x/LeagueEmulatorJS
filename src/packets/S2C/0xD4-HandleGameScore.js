@@ -5,7 +5,7 @@ const BasePacket = require('../BasePacket');
  */
 module.exports = class HandleGameScore extends BasePacket {
 	static struct = {
-		teamId: 'uint32',
+		team: 'uint32',
 		score: 'int32',
 	}
 };

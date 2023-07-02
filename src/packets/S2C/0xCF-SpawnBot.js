@@ -7,7 +7,7 @@ module.exports = class SpawnBot extends BasePacket {
 		netNodeId: 'uint8',
 		position: SVector3,
 		botRank: 'uint8',
-		teamId: 'uint16',//(bitfield & 0x1FF)
+		team: 'uint16',//(bitfield & 0x1FF)
 		skinId: 'int32',
 		objectName: ['char', 64],
 		skinName: 'string0',//64

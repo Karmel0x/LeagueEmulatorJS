@@ -23,6 +23,11 @@ const MapId = {
 const VersionString = 'Version 4.20.0.315 [PUBLIC]';
 
 
+/**
+ * 
+ * @param {import('../gameobjects/units/Player')} player 
+ * @param {*} packet 
+ */
 module.exports = (player, packet) => {
 	console.log('handle: C2S.SynchVersion');
 	//console.log(packet);
@@ -30,7 +35,7 @@ module.exports = (player, packet) => {
 	//if(!packet.version.startsWith(VersionString))
 	//	return console.log('wrong client version', packet.version);
 
-	var SynchVersion = Server.network.createPacket('SynchVersion');
+	const SynchVersion = Server.network.createPacket('SynchVersion');
 
 	SynchVersion.bitfield = {
 		versionMatches: true,
@@ -63,6 +68,6 @@ module.exports = (player, packet) => {
 	for (let i = 0; i < 19; i++)
 		SynchVersion.enabledDradisMessages[i] = true;
 
-	player.sendPacket(SynchVersion, loadingStages.NOT_CONNECTED);
+	player.network.sendPacket(SynchVersion, loadingStages.NOT_CONNECTED);
 	//console.debug(SynchVersion);
 };

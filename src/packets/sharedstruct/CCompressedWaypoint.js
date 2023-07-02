@@ -4,7 +4,7 @@ const { getIntBytes_r, binaryToByteArray, byteArrayToBinary } = require("../../f
 
 module.exports = {//CCompressedWaypoint
 	reader: (buffer, size) => {
-		var obj = {};
+		let obj = {};
 		obj.flagsBuffer = [];
 		if (size > 1) {
 			obj.flagsBufferByte = buffer.readobj(['uint8', parseInt((size - 2) / 4 + 1)]);
@@ -35,8 +35,8 @@ module.exports = {//CCompressedWaypoint
 		return obj.waypoints;
 	},
 	writer: (buffer, waypoints) => {
-		var relativeWaypoints = [];
-		var flagsBinary = '';
+		let relativeWaypoints = [];
+		let flagsBinary = '';
 
 		if (waypoints.length > 1) {
 			for (let i = 1; i < waypoints.length; i++) {
@@ -50,8 +50,8 @@ module.exports = {//CCompressedWaypoint
 				flagsBinary += +(relativeWaypoint.y <= Types.maxValues['int8'] && relativeWaypoint.y >= Types.minValues['int8']);
 			}
 
-			var flagsBuffer = getIntBytes_r(binaryToByteArray(flagsBinary), 8);
-			var flagsCount = parseInt((waypoints.length - 2) / 4 + 1);
+			let flagsBuffer = getIntBytes_r(binaryToByteArray(flagsBinary), 8);
+			let flagsCount = parseInt((waypoints.length - 2) / 4 + 1);
 			buffer.writeobj(['uint8', flagsCount], flagsBuffer);
 
 			//console.log('flagsBinary, Types.maxValues, flagsBuffer', flagsBinary, Types.maxValues, flagsBuffer);

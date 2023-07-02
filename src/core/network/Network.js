@@ -4,6 +4,7 @@ const handlers = require('../../handlers');
 const parse = require('./parse');
 const UnitList = require('../../app/UnitList');
 const Server = require('../../app/Server');
+const Team = require('../../gameobjects/extensions/traits/Team');
 require('../BufferExtend');
 
 
@@ -21,11 +22,18 @@ class Network {
 	 * @returns 
 	 */
 	static start(config = {}) {
-		var network = new this(config);
+		let network = new this(config);
 		network.listen();
 		return network;
 	}
 
+	/**
+	 * 
+	 * @param {Object} config 
+	 * @param {number} [config.port] 
+	 * @param {string} [config.host] 
+	 * @param {string} [config.blowfishKey] 
+	 */
 	constructor(config = {}) {
 
 		this.port = config.port || 5119;
@@ -78,7 +86,7 @@ class Network {
 			return {};
 		}
 
-		var packet = /** @type {BasePacket} */ (new Packet());
+		let packet = /** @type {BasePacket} */ (new Packet());
 		packet.cmd = Packet.id;
 
 		return packet;
@@ -95,7 +103,7 @@ class Network {
 	 * @param {BasePacket} packet 
 	 */
 	static sendPacketM(peerNums, packet) {
-		this.logPackets(packet);
+		this.logPackets(packet, peerNums);
 		console.debug('peer:', peerNums, 'sent:', (packet.channelName || packets[packet.channel]?.name || packet.channel) + '.' + (packet.name || packets[packet.channel]?.[packet.buffer.readUint8(0)]?.name || packet.buffer.readUint8(0)));
 		//console.debug(packet, packet.buffer);
 
@@ -124,12 +132,12 @@ class Network {
 	 */
 	static sendPacketP(players, packet) {
 		/** @type {number[]} */
-		var peerNums = [];
+		let peerNums = [];
 		players.forEach((player) => {
-			if (typeof player.peerNum == 'undefined' || player.peerNum < 0)
+			if (typeof player.network.peerNum == 'undefined' || player.network.peerNum < 0)
 				return;
 
-			peerNums.push(player.peerNum);
+			peerNums.push(player.network.peerNum);
 		});
 
 		this.sendPacket(peerNums, packet);
@@ -168,14 +176,15 @@ class Network {
 
 	/**
 	 * @param {*} packet 
+	 * @param {number[]} [peerNums] 
 	 */
-	static logPackets(packet) {
+	static logPackets(packet, peerNums = []) {
 		Server.logging.packet({
 			channel: packet.channel || 0,
-			//peerNum: packet.peerNum,
 			bytes: packet.buffer.toString('hex'),
 			time: Math.round(performance.now()),
 			packet: packet.packet || packet,
+			peerNums: peerNums,
 		});
 	}
 
@@ -186,16 +195,16 @@ class Network {
 	async handlePackets(msg) {
 
 		/** @type {number | Player | Unit} */
-		var player = msg.peerNum;
+		let player = msg.peerNum;
 		msg.channel = msg.channel || 0;
 
 		if (msg.channel) {// not HANDSHAKE
-			var clientId = Server.playerPeers[msg.peerNum];
-			player = UnitList.getUnitsF('ALL', 'Player')[clientId];
+			let clientId = Server.playerPeers[msg.peerNum];
+			player = UnitList.getUnitsF(Team.TEAM_MAX, 'Player')[clientId];
 		}
 
-		var packet = parse.parsePacket(msg);
-		this.constructor.logPackets({ ...msg, packet });
+		let packet = parse.parsePacket(msg);
+		this.constructor.logPackets({ ...msg, packet }, ['C2S', msg.peerNum]);
 		console.debug('peer:', msg.peerNum, 'recv:', (packets[msg.channel]?.name || msg.channel || 0) + '.' + (packets[msg.channel]?.[packet.cmd]?.name || packet.cmd || ''));
 		//console.log('packet:', packet);
 

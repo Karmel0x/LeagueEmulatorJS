@@ -1,6 +1,6 @@
 const BasePacket = require('../BasePacket');
 
-var UpdateLevelPropData = {//todo
+const UpdateLevelPropData = {//todo
 	stringParam1: ['char', 64],
 	floatParam1: 'float',
 	floatParam2: 'float',

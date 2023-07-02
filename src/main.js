@@ -18,7 +18,7 @@ Server.network = require('./core/network/libs/enet').start({
 	blowfishKey: "17BLOhi6KZsTtldTsizvHg==",
 });
 
-require('./game/initializers/Team').initialize();
+require('./game/initializers/Teams').initialize();
 require('./game/initializers/Game').initialize();
 
 //process.on('uncaughtException', (err) => {

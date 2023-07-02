@@ -67,6 +67,7 @@ class Logging {
 					channel: arguments[0].channel || '',
 					bytes: arguments[0].bytes || '',
 					time: arguments[0].time || '',
+					peerNums: arguments[0].peerNums || [],
 				},
 			}));
 		}

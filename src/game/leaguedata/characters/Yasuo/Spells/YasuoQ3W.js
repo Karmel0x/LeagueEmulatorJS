@@ -1,7 +1,7 @@
 
 const slotId = require('../../../../../constants/slotId');
 const _Spell = require("../../../../datamethods/spells/_Spell");
-const PositionHelper = require("../../../../../functions/PositionHelper");
+const PositionHelper = require("../../../../../gameobjects/extensions/Measure");
 
 const package1 = require('../package');
 const YasuoQ3 = require('./YasuoQ3');
@@ -26,10 +26,10 @@ module.exports = class YasuoQ3W extends _Spell {
 
 	castRange = 1150;
 	preCast(spellData) {
-		if (this.owner.castingSpell)
+		if (this.owner.combat.castingSpell)
 			return false;
 
-		if (this.owner.hasBuff("YasuoQ") || this.owner.hasBuff("YasuoQ2"))
+		if (this.owner.buffs.hasBuff("YasuoQ") || this.owner.buffs.hasBuff("YasuoQ2"))
 			return false;
 
 		return super.preCast(spellData);

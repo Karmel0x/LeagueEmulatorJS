@@ -1,11 +1,12 @@
 
 const { Vector2 } = require('three');
 
-const ExtendWTraits = require('../../core/ExtendWTraits');
 const GameObject = require('../GameObject');
-const IMovable = require('../traits/IMovable');
+const IMovable = require('../extensions/traits/Moving');
 const UnitList = require('../../app/UnitList');
 const Server = require('../../app/Server');
+const Moving = require('../extensions/traits/Moving');
+const { IStat } = require('../extensions/traits/IStat');
 
 /**
  * @typedef {import('../../gameobjects/units/Unit')} Unit
@@ -14,7 +15,14 @@ const Server = require('../../app/Server');
 /**
  * @abstract
  */
-class Missile extends ExtendWTraits(GameObject, IMovable) {
+class Missile extends GameObject {
+
+	spawner;
+	moving;
+
+	/** @type {Object.<string, *>} */
+	stats = {};
+	target;
 
 	/**
 	 * @todo events instead of callbacks?
@@ -41,22 +49,23 @@ class Missile extends ExtendWTraits(GameObject, IMovable) {
 	get owner() {
 		return this.spawner;
 	}
-	set owner(value) {
-		this.spawner = value;
-	}
 
 	/**
 	 * 
 	 * @param {import('../GameObjects').MissileOptions} options 
 	 */
 	constructor(options) {
+		options.spawnPosition = options.spawnPosition || options.spawner?.position;
 		options.stats = options.stats || {};
-		options.stats.moveSpeed = options.stats.moveSpeed || options.options.speed;
-		options.stats.attackRange = options.stats.attackRange || options.options.range;
+		options.stats.moveSpeed = new IStat(options.stats.moveSpeed || options.options.speed);
+		options.stats.attackRange = new IStat(options.stats.attackRange || options.options.range);
 		super(options);
+		this.spawner = options.spawner;
+		this.stats = options.stats;
+		this.moving = new Moving(this);
 
 		this.options = options.options || {};
-		this.target = options.target || null;
+		this.target = options.target || undefined;
 		this.initialize();
 
 		this.appendGlobal();
@@ -69,6 +78,7 @@ class Missile extends ExtendWTraits(GameObject, IMovable) {
 
 	/**
 	 * @todo move windup somewhere else?
+	 * @param {import('../GameObjects').GameTarget|number|undefined} target
 	 */
 	async fire(target, windupPercent = 0) {
 		target = typeof target == 'number' ? UnitList.unitsNetId[target] : target;
@@ -81,7 +91,7 @@ class Missile extends ExtendWTraits(GameObject, IMovable) {
 		//		position: this.owner.position,
 		//	},
 		//	this: {
-		//		netId: this.netId,
+		//		netId: this.owner.netId,
 		//		position: this.position,
 		//	},
 		//	target: {
@@ -95,8 +105,8 @@ class Missile extends ExtendWTraits(GameObject, IMovable) {
 			let windupP = windupPercent / 100;
 			let windupModifier = 1;//?
 
-			let bWindupTime = 1 / this.owner.attackSpeed.baseValue;
-			let cAttackTime = 1 / this.owner.attackSpeed.total;
+			let bWindupTime = 1 / this.owner.stats.attackSpeed.baseValue;
+			let cAttackTime = 1 / this.owner.stats.attackSpeed.total;
 			let windup = bWindupTime + ((cAttackTime * windupP) - bWindupTime) * windupModifier;
 
 			//console.debug('Missile.fire:windupCalc', {
@@ -111,7 +121,7 @@ class Missile extends ExtendWTraits(GameObject, IMovable) {
 	/**
 	 * Called when the missile reaches its destination (hit the target)
 	 * @abstract
-	 * @param {Unit} target 
+	 * @param {import('../GameObjects').GameTarget} target 
 	 */
 	reachedDest(target) {
 		// override
@@ -119,18 +129,20 @@ class Missile extends ExtendWTraits(GameObject, IMovable) {
 	}
 
 	fulfillRange = 1;
+
+	/**
+	 * 
+	 * @param {import('../GameObjects').GameTarget} target 
+	 * @returns 
+	 */
 	fly(target) {
 
-		if (!this.inRangeOrFollow(this.fulfillRange, target, () => this.reachedDest(target)))
+		if (!this.moving.inRangeOrFollow(this.fulfillRange, target, () => this.reachedDest(target)))
 			return false;
 
 		this.reachedDest(target);
 	}
 
-	/**
-	 * @override
-	 */
-	moveAns() { }
 }
 
 

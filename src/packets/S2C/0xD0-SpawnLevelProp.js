@@ -10,7 +10,7 @@ module.exports = class SpawnLevelProp extends BasePacket {
 		facingDirection: SVector3,
 		positionOffset: SVector3,
 		scale: SVector3,
-		teamId: 'uint16',
+		team: 'uint16',
 		rank: 'uint8',
 		skillLevel: 'uint8',
 		type: 'uint32',

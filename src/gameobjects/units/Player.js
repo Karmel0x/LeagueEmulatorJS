@@ -2,64 +2,82 @@
 const slotId = require('../../constants/slotId');
 const loadingStages = require('../../constants/loadingStages');
 const Summoners = require("../../game/leaguedata/Summoners");
-
-const { Vector2 } = require("three");
-
-
 const EVENT = require("../../packets/EVENT");
-const ExtendWTraits = require('../../core/ExtendWTraits');
-const Unit = require('./Unit');
-const INetwork = require('../traits/INetwork');
-const IDefendable = require('../traits/IDefendable');
-const IAttackable = require('../traits/IAttackable');
-const IMovable = require('../traits/IMovable');
-const IInventory = require('../traits/IInventory');
-const IPPlayer = require("./packettraits/IPPlayer");
-const IRespawnable = require("../traits/IRespawnable");
 const Server = require('../../app/Server');
 
+const Unit = require('./Unit');
+const PPlayer = require("../extensions/packets/Player");
+const Spellable = require('../extensions/combat/Spellable');
+const Inventory = require('../extensions/traits/Inventory');
+const Moving = require('../extensions/traits/Moving');
+const Network = require('../extensions/traits/Network');
+const Scoreboard = require('../extensions/traits/Scoreboard');
+const MovingUnit = require('../extensions/traits/MovingUnit');
 
-const Players = {
-	BLUE: {//ORDER
-		0: { position: { x: 25.9, y: 280 }, rotation: 0 },
-		1: { position: { x: 25.9, y: 280 }, rotation: 0 },
-		2: { position: { x: 25.9, y: 280 }, rotation: 0 },
-		3: { position: { x: 25.9, y: 280 }, rotation: 0 },
-		4: { position: { x: 25.9, y: 280 }, rotation: 0 },
-		5: { position: { x: 25.9, y: 280 }, rotation: 0 },
-	},
-	RED: {//CHAOS
-		0: { position: { x: 13948, y: 14202 }, rotation: 0 },
-		1: { position: { x: 13948, y: 14202 }, rotation: 0 },
-		2: { position: { x: 13948, y: 14202 }, rotation: 0 },
-		3: { position: { x: 13948, y: 14202 }, rotation: 0 },
-		4: { position: { x: 13948, y: 14202 }, rotation: 0 },
-		5: { position: { x: 13948, y: 14202 }, rotation: 0 },
-	},
-};
 
-class Player extends ExtendWTraits(Unit, INetwork, IDefendable, IAttackable, IMovable, IInventory, IPPlayer, IRespawnable) {
+class Player extends Unit {
+
+	static clientIds = -1;
+
+	/** @type {PPlayer} */
+	packets;
+	combat;
+	inventory;
+	moving;
+	network;
+	scoreboard;
+
+	summoner;
+	clientId = -1;
+
+	/**
+	 * 
+	 * @param {import('../GameObjects').PlayerOptions} options 
+	 */
+	constructor(options) {
+		super(options);
+		this.options = options;
+		this.summoner = options.summoner;
+		this.clientId = ++Player.clientIds;
+
+		this.packets = new PPlayer(this);
+		this.combat = new Spellable(this);
+		this.inventory = new Inventory(this);
+		this.moving = new MovingUnit(this);
+		this.network = new Network(this);
+		this.scoreboard = new Scoreboard(this);
+
+		this.summonerSpells = new Summoners(this, ['SummonerHeal', 'SummonerFlash']);
+
+		Server.players.push(this);
+		this.initialized();
+	}
+
 	/**
 	 * It sends a packet to everyone in the game that the player has died
-	 * @param source - The source of the damage.
+	 * @param {Unit} source - The source of the damage.
 	 */
 	announceDie(source) {
-		var OnEvent = Server.network.createPacket('OnEvent');
+		const OnEvent = Server.network.createPacket('OnEvent');
 		OnEvent.netId = this.netId;
 		OnEvent.eventId = EVENT.OnChampionDie;
 		OnEvent.eventData = {
 			otherNetId: source.netId
 		};
-		this.sendTo_everyone(OnEvent);
+		this.packets.toEveryone(OnEvent);
 	}
 
+	/**
+	 * 
+	 * @param {Unit} source 
+	 */
 	async onDie(source) {
 		this.announceDie(source);
 
 		if (!this.died)
 			return console.log('[weird] died but not died?');
 
-		this.respawnWaiter();
+		this.emit('die', source);
 	}
 
 	/**
@@ -76,74 +94,37 @@ class Player extends ExtendWTraits(Unit, INetwork, IDefendable, IAttackable, IMo
 
 		let gold = 300;
 		if (this.killDeathCounter >= 0) {
-			for (var i = this.killDeathCounter; i > 1; --i)
+			for (let i = this.killDeathCounter; i > 1; --i)
 				gold += gold * 0.165;
+
 			return gold;
 		}
-		for (var i = this.killDeathCounter; i < -1; ++i)
-			gold -= gold * (0.085 + !!i * 0.115);
+
+		for (let i = this.killDeathCounter; i < -1; ++i)
+			gold -= gold * (0.085 + /** @type {number} */ (/** @type {*} */ (!!i)) * 0.115);
 
 		return gold < 50 ? 50 : gold;
 	}
 
-
-	loadingStage = loadingStages.NOT_CONNECTED;
-
-	/**
-	 * 
-	 * @param {import('../GameObjects').PlayerOptions} options 
-	 */
-	constructor(options) {
-		super(options);
-
-		this.summonerSpells = new Summoners(this, ['SummonerHeal', 'SummonerFlash']);
-
-		this.spawnPosition = Players[this.teamName][5].position;
-		Server.players.push(this);
-		this.initialized();
-	}
-
 	get playerInfo() {
-		return Object.assign({}, this.info, {
-			summonorSpell1: this.spellSlots[slotId.D].spellHash,
-			summonorSpell2: this.spellSlots[slotId.F].spellHash,
-			teamId: this.teamId,
-		});
+		return {
+			playerId: this.summoner.id,
+			summonorLevel: this.summoner.level,
+			summonorSpell1: this.slots[slotId.D].spellHash,
+			summonorSpell2: this.slots[slotId.F].spellHash,
+			//bitfield: 0,
+			team: this.team.id,
+			//botName: "",
+			//botSkinName: "",
+			eloRanking: "DIAMOND",
+			//botSkinId: 0,
+			//botDifficulty: 0,
+			//profileIconId: 0,
+			//allyBadgeId: 2,
+			//enemyBadgeId: 0
+		};
 	}
 
-	useSlot(packet) {
-		this.emit('useSlot', packet.slot, packet);
-		//if(packet.slot >= 0 && packet.slot <= 3)
-		//	this.character.castSpell(packet);
-		//else if(packet.slot >= 4 && packet.slot <= 5)
-		//	this.summonerSpells.castSpell(packet);
-		//else if(packet.slot >= 6 && packet.slot <= 12)
-		//	this.inventory.castSpell(packet);
-	}
-
-	castSpell(packet) {
-		this.useSlot(packet);
-	}
-
-	/**
-	 * 
-	 * @param {Object} spawnList 
-	 * @param {Object} spawnList[team]
-	 * @param {Object} spawnList[team][num]
-	 * @param {string} spawnList[team][num].character
-	 * @param {Vector2} [spawnList[team][num].position=Players[team][num].position] {x, y}
-	 * @param {Object} spawnList[team][num].info - player details
-	 */
-	static spawnAll(spawnList) {
-		for (let team in spawnList)
-			for (let num in spawnList[team])
-				new Player({
-					team, num,
-					character: spawnList[team][num].character,
-					spawnPosition: spawnList[team][num].position || Players[team][num].position,
-					info: spawnList[team][num].info,
-				});
-	}
 }
 
 

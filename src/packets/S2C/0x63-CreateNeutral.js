@@ -12,7 +12,7 @@ module.exports = class CreateNeutral extends BasePacket {
 		skinName: ['char', 64],
 		uniqueName: ['char', 64],
 		spawnAnimationName: ['char', 64],
-		teamId: 'uint32',
+		team: 'uint32',
 		damageBonus: 'int32',
 		healthBonus: 'int32',
 		minionRoamState: 'uint32',

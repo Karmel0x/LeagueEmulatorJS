@@ -6,6 +6,6 @@ module.exports = class TeamSurrenderStatus extends BasePacket {
 		surrenderReason: 'uint32',
 		forVote: 'uint8',
 		againstVote: 'uint8',
-		teamId: 'uint32',
+		team: 'uint32',
 	}
 };
