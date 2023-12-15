@@ -2,7 +2,7 @@
 /**
  * @abstract
  */
-module.exports = class _Package {
+export default class _Package {
 
 	package = {};
 	constructor(parent) {
@@ -25,4 +25,4 @@ module.exports = class _Package {
 			this.owner.slots[key].package = this.package;
 		}
 	}
-};
+}

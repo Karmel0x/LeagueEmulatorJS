@@ -1,6 +1,6 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class OnTutorialPopupClosed extends BasePacket {
-	
-};
+export default class OnTutorialPopupClosed extends BasePacket {
+
+}

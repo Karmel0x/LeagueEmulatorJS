@@ -1,6 +1,6 @@
 
-const { createCanvas, loadImage } = require('canvas');
-const fs = require('fs');
+import { createCanvas, loadImage } from 'canvas';
+import fs from 'fs';
 
 class WaypointsDrawer {
 
@@ -51,7 +51,7 @@ class WaypointsDrawer {
 			return;
 
 		waypoints = waypoints.map(waypoint => {
-			return { x: waypoint.x * this.waypointsScale, y: waypoint.y * this.waypointsScale }
+			return { x: waypoint.x * this.waypointsScale, y: waypoint.y * this.waypointsScale };
 		});
 
 		let lastWaypoint = null;
@@ -69,4 +69,4 @@ class WaypointsDrawer {
 }
 
 
-module.exports = WaypointsDrawer;
+export default WaypointsDrawer;

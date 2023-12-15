@@ -1,8 +1,8 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
 // packet lenght should be 203
-module.exports = class UnitSetMinimapIcon extends BasePacket {
+export default class UnitSetMinimapIcon extends BasePacket {
 	static struct = {
 		unitNetId: 'uint32',
 		changeIcon: 'uint8',//bitfield & 1 ?
@@ -11,5 +11,5 @@ module.exports = class UnitSetMinimapIcon extends BasePacket {
 		borderCategory: ['char', 64],
 		borderScriptName: ['char', 64],
 		//borderScriptName: 'string0',//64
-	}
-};
+	};
+}

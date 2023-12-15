@@ -1,5 +1,5 @@
-const BasePacket = require('../BasePacket');
-const SVector3 = require('../sharedstruct/SVector3');
+import BasePacket from '../BasePacket.js';
+import SVector3 from '../sharedstruct/SVector3.js';
 
 const MovementDriverHomingData = {
 	targetNetId: 'uint32',
@@ -13,18 +13,18 @@ const MovementDriverHomingData = {
 };
 
 
-module.exports = class MovementDriverReplication extends BasePacket {
+export default class MovementDriverReplication extends BasePacket {
 	static struct = {
 		movementTypeId: 'uint8',
 		position: SVector3,
 		velocity: SVector3,
 		movementDriverParamType: 'int32',
-	}
+	};
 	reader(buffer) {
 		super.reader(buffer);
 
 		if (this.movementDriverParamType == 1)
-			this.movementDriverHomingData = buffer.readobj(MovementDriverHomingData);
+			this.movementDriverHomingData = buffer.read(MovementDriverHomingData);
 	}
 	writer(buffer) {
 		this.movementDriverParamType = !!this.movementDriverHomingData;
@@ -32,6 +32,6 @@ module.exports = class MovementDriverReplication extends BasePacket {
 		super.writer(buffer);
 
 		if (this.movementDriverParamType == 1)
-			buffer.writeobj(MovementDriverHomingData, this.movementDriverHomingData);
+			buffer.write(MovementDriverHomingData, this.movementDriverHomingData);
 	}
-};
+}

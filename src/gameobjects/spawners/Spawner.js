@@ -1,10 +1,14 @@
-const GameObject = require("../GameObject");
-const Team = require("../extensions/traits/Team");
+import GameObject from '../GameObject.js';
+import Team from '../extensions/traits/Team.js';
 
 
 class Spawner extends GameObject {
     team;
 
+    /**
+     * 
+     * @param {import('../GameObjects.js').SpawnerOptions} options 
+     */
     constructor(options) {
         super(options);
 
@@ -13,4 +17,4 @@ class Spawner extends GameObject {
 
 }
 
-module.exports = Spawner;
+export default Spawner;

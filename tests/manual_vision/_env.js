@@ -63,5 +63,5 @@
 //	ALL: new TestsTeams('ALL'),
 //};
 //
-//module.exports = Server;
+//export default Server;
 //

@@ -1,9 +1,9 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class SetItemCharges extends BasePacket {
+export default class SetItemCharges extends BasePacket {
 	static struct = {
 		slot: 'uint8',
 		spellCharges: 'uint8',
-	}
-};
+	};
+}

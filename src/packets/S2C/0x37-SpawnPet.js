@@ -1,7 +1,7 @@
-const BasePacket = require('../BasePacket');
-const SVector3 = require('../sharedstruct/SVector3');
+import BasePacket from '../BasePacket.js';
+import SVector3 from '../sharedstruct/SVector3.js';
 
-module.exports = class SpawnPet extends BasePacket {
+export default class SpawnPet extends BasePacket {
 	static struct = {
 		ownerNetId: 'uint32',
 		netNodeId: 'uint8',
@@ -23,5 +23,5 @@ module.exports = class SpawnPet extends BasePacket {
 			doFade: 8,
 		}],
 		aiScript: 'string0',//32
-	}
-};
+	};
+}

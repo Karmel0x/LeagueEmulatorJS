@@ -1,9 +1,9 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class SwapItemReq extends BasePacket {
+export default class SwapItemReq extends BasePacket {
 	static struct = {
 		sourceSlot: 'uint8',
 		destinationSlot: 'uint8',
-	}
-};
+	};
+}

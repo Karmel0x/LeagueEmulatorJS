@@ -1,10 +1,10 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
 /**
  * closing shop ui
  * may be used to close shop on getting damage
  */
-module.exports = class CloseShop extends BasePacket {
-	
-};
+export default class CloseShop extends BasePacket {
+
+}

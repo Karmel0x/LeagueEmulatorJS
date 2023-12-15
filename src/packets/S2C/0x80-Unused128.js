@@ -1,6 +1,6 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class Unused128 extends BasePacket {
-	
-};
+export default class Unused128 extends BasePacket {
+
+}

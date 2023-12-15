@@ -1,7 +1,7 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class ModifyShield extends BasePacket {
+export default class ModifyShield extends BasePacket {
 	static struct = {
 		bitfield: ['bitfield', {
 			physical: 1,
@@ -9,5 +9,5 @@ module.exports = class ModifyShield extends BasePacket {
 			stopShieldFade: 4,
 		}],
 		amount: 'float',
-	}
-};
+	};
+}

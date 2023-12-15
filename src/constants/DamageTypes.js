@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	PHYSICAL: 0x0,
 	MAGIC: 0x1,
 	TRUE: 0x2,

@@ -1,5 +1,5 @@
-const colors = require("./_colors");
-const Server = require("./manual_vision/_env");
+import colors from './_colors.js';
+import Server from './manual_vision/_env.js';
 
 class _tests {
 
@@ -96,4 +96,4 @@ class _tests {
 
 };
 
-module.exports = _tests;
+export default _tests;

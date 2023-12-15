@@ -1,15 +1,15 @@
 
-const HashString = require("../../../../../functions/HashString");
-const PositionHelper = require("../../../../../gameobjects/extensions/Measure");
-const Skillshot = require("../../../../../gameobjects/missiles/Skillshot");
-const _Spell = require("../../../../datamethods/spells/_Spell");
-const EzrealMysticShotMissile = require("./EzrealMysticShotMissile");
+import HashString from '../../../../../functions/HashString.js';
+import PositionHelper from '../../../../../gameobjects/extensions/Measure/index.js';
+import Skillshot from '../../../../../gameobjects/missiles/Skillshot.js';
+import _Spell from '../../../../datamethods/spells/_Spell.js';
+import EzrealMysticShotMissile from './EzrealMysticShotMissile.js';
 
-const package1 = require('../package');
-const slotId = require("../../../../../constants/slotId");
+import package1 from '../package.js';
+import slotId from '../../../../../constants/slotId.js';
 
 
-module.exports = class EzrealMysticShot extends _Spell {
+export default class EzrealMysticShot extends _Spell {
 	packageHash = package1.packageHash;
 	spellSlot = slotId.Q;
 
@@ -42,4 +42,4 @@ module.exports = class EzrealMysticShot extends _Spell {
 		this.owner.packets.AddParticleTarget(this.packageHash, HashString.HashString('ezreal_bow.troy'), HashString.HashString('L_HAND'));
 
 	}
-};
+}

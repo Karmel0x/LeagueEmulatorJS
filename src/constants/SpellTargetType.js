@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	Invalid: 0xFFFFFFFF,
 	Self: 0x0,
 	Target: 0x1,

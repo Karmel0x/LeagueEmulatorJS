@@ -1,8 +1,8 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class RemoveRegion extends BasePacket {
+export default class RemoveRegion extends BasePacket {
 	static struct = {
 		regionNetId: 'uint32',
-	}
-};
+	};
+}

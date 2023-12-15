@@ -1,9 +1,9 @@
-const BasePacket = require('../BasePacket');
-const SVector2 = require('../sharedstruct/SVector2');
-const SVector3 = require('../sharedstruct/SVector3');
+import BasePacket from '../BasePacket.js';
+import SVector2 from '../sharedstruct/SVector2.js';
+import SVector3 from '../sharedstruct/SVector3.js';
 
-const CMovementDataNormal = require('../sharedstruct/CMovementDataNormal');
-const CMovementDataWithSpeed = require('../sharedstruct/CMovementDataWithSpeed');
+import CMovementDataNormal from '../sharedstruct/CMovementDataNormal.js';
+import CMovementDataWithSpeed from '../sharedstruct/CMovementDataWithSpeed.js';
 
 const Packet = {
 	size: 'uint16',
@@ -39,40 +39,40 @@ const MovementDataType = {
 };
 
 
-module.exports = class OnEnterVisibilityClient extends BasePacket {
+export default class OnEnterVisibilityClient extends BasePacket {
 	writer(buffer) {
 		super.writer(buffer);
 
-		buffer.write1('uint16', this.packet?.length || 0);
+		buffer.write('uint16', this.packet?.length || 0);
 		if (this.packet?.length)
-			buffer.writeobj([Packet, this.packet.length], this.packet);
+			buffer.write([Packet, this.packet.length], this.packet);
 
-		buffer.write1('uint8', this.itemData?.length || 0);
+		buffer.write('uint8', this.itemData?.length || 0);
 		if (this.itemData?.length)
-			buffer.writeobj([ItemData, this.itemData.length], this.itemData);
+			buffer.write([ItemData, this.itemData.length], this.itemData);
 
 		if (this.isTurret)//is inhib or nexus
 			return;
 
-		buffer.write1('uint8', !!this.shieldValues);
+		buffer.write('uint8', !!this.shieldValues);
 		if (this.shieldValues)
-			buffer.writeobj(ShieldValues, this.shieldValues);
+			buffer.write(ShieldValues, this.shieldValues);
 
-		buffer.write1('int32', this.characterStackData?.length || 0);
+		buffer.write('int32', this.characterStackData?.length || 0);
 		if (this.characterStackData?.length)
-			buffer.writeobj([CharacterStackData, this.characterStackData.length], this.characterStackData);
+			buffer.write([CharacterStackData, this.characterStackData.length], this.characterStackData);
 
-		buffer.writeobj({
+		buffer.write({
 			lookAtNetId: 'uint32',
 			lookAtType: 'uint8',
 			lookAtPosition: SVector3,
 		}, this);
 
-		buffer.write1('int32', this.Buff?.length || 0);
+		buffer.write('int32', this.Buff?.length || 0);
 		if (this.Buff?.length)
-			buffer.writeobj([Buff, this.Buff.length], this.Buff);
+			buffer.write([Buff, this.Buff.length], this.Buff);
 
-		buffer.write1('uint8', this.unknownIsHero || 0);
+		buffer.write('uint8', this.unknownIsHero || 0);
 
 		if (this.movementData) {
 
@@ -82,7 +82,7 @@ module.exports = class OnEnterVisibilityClient extends BasePacket {
 
 			this.movementData.syncId = this.movementData.syncId || performance.now();
 
-			buffer.writeobj({
+			buffer.write({
 				type: 'uint8',
 				syncId: 'int32',
 			}, this.movementData);
@@ -94,7 +94,7 @@ module.exports = class OnEnterVisibilityClient extends BasePacket {
 				CMovementDataNormal.writer(buffer, this.movementData);
 			}
 			else if (this.movementData.type == MovementDataType.Stop) {
-				buffer.writeobj({
+				buffer.write({
 					position: SVector2,
 					forward: SVector2,
 				}, this.movementData);
@@ -104,42 +104,42 @@ module.exports = class OnEnterVisibilityClient extends BasePacket {
 	reader(buffer) {
 		super.reader(buffer);
 
-		let packet_length = buffer.read1('uint16');
+		let packet_length = buffer.read('uint16');
 		if (packet_length)
-			this.packet = buffer.readobj(['uint8', packet_length]);//Packet
+			this.packet = buffer.read(['uint8', packet_length]);//Packet
 
-		let itemData_length = buffer.read1('uint8', this.itemData?.length || 0);
+		let itemData_length = buffer.read('uint8', this.itemData?.length || 0);
 		if (itemData_length)
-			this.itemData = buffer.readobj([ItemData, itemData_length]);
+			this.itemData = buffer.read([ItemData, itemData_length]);
 
-		this.isTurret = buffer.off == buffer.length;
+		this.isTurret = buffer.offset == buffer.length;
 		if (this.isTurret)
 			return;
 
-		this.shieldValues = buffer.read1('uint8');//!!
+		this.shieldValues = buffer.read('uint8');//!!
 		if (this.shieldValues)
-			this.shieldValues = buffer.readobj(ShieldValues);
+			this.shieldValues = buffer.read(ShieldValues);
 
-		let characterStackData_length = buffer.read1('int32');
+		let characterStackData_length = buffer.read('int32');
 		if (characterStackData_length)
-			this.characterStackData = buffer.readobj([CharacterStackData, characterStackData_length]);
+			this.characterStackData = buffer.read([CharacterStackData, characterStackData_length]);
 
-		Object.assign(this, buffer.readobj({
+		Object.assign(this, buffer.read({
 			lookAtNetId: 'uint32',
 			lookAtType: 'uint8',
 			lookAtPosition: SVector3,
 		}));
 
-		let buff_length = buffer.read1('int32');
+		let buff_length = buffer.read('int32');
 		if (buff_length)
-			this.Buff = buffer.readobj([Buff, buff_length]);
+			this.Buff = buffer.read([Buff, buff_length]);
 
-		this.unknownIsHero = buffer.read1('uint8');
+		this.unknownIsHero = buffer.read('uint8');
 
-		this.movementData = buffer.off == buffer.length ? false : {};
+		this.movementData = buffer.offset == buffer.length ? false : {};
 		if (this.movementData) {
 
-			Object.assign(this.movementData, buffer.readobj({
+			Object.assign(this.movementData, buffer.read({
 				type: 'uint8',
 				syncId: 'int32',
 			}));
@@ -151,11 +151,11 @@ module.exports = class OnEnterVisibilityClient extends BasePacket {
 				CMovementDataNormal.reader(buffer, this);
 			}
 			else if (this.movementData.type == MovementDataType.Stop) {
-				Object.assign(this.movementData, buffer.readobj({
+				Object.assign(this.movementData, buffer.read({
 					position: SVector2,
 					forward: SVector2,
 				}));
 			}
 		}
 	}
-};
+}

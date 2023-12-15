@@ -1,7 +1,7 @@
-const _Spell = require("../../../datamethods/spells/_Spell");
+import _Spell from '../../../datamethods/spells/_Spell.js';
 
 
-module.exports = class SummonerRevive extends _Spell {
+export default class SummonerRevive extends _Spell {
 	summonerSpellKey = 10;
 	summonerSpellName = 'Revive';
 	spellHash = 97039269;
@@ -14,4 +14,4 @@ module.exports = class SummonerRevive extends _Spell {
 		super.onCast(spellData);
 
 	}
-};
+}

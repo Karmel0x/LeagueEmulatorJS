@@ -1,9 +1,9 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class ClientCheatDetectionSignal extends BasePacket {
+export default class ClientCheatDetectionSignal extends BasePacket {
 	static struct = {
 		signal: 'uint32',
 		flags: 'uint32',
-	}
-};
+	};
+}

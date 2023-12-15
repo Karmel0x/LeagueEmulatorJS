@@ -1,11 +1,11 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class HighlightHUDElement extends BasePacket {
+export default class HighlightHUDElement extends BasePacket {
 	static struct = {
 		elementPart: 'uint8',
 		elementType: 'uint8',
 		elementNumber: 'uint8',
 		elementSubCategory: 'uint8',
-	}
-};
+	};
+}

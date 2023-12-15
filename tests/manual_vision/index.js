@@ -1,14 +1,14 @@
 //
-//const _tests = require('../_tests');
-//const colors = require('../_colors');
-//const { Vector2 } = require('three');
+//import _tests from '../_tests.js';
+//import colors from '../_colors.js';
+//import { Vector2 } from 'three';
 //
-//const Server = require('./_env');
-//const MovementSimulation = require('../../game/components/MovementSimulation');
+//import Server from './_env.js';
+//import MovementSimulation from '../../game/components/MovementSimulation.js';
 //
-//const ExtendWTraits = require('../../core/ExtendWTraits');
-//const Unit = require('../../gameobjects/units/Unit');
-//const IMovable = require('../../gameobjects/traits/IMovable');
+//import ExtendWTraits from '../../core/ExtendWTraits.js';
+//import Unit from '../../gameobjects/units/Unit.js';
+//import IMovable from '../../gameobjects/traits/IMovable.js';
 //
 //
 //class TestsMovableUnit extends ExtendWTraits(Unit, IMovable) { }
@@ -70,5 +70,5 @@
 //
 //
 //manual_vision.singleTestMaybe();
-//module.exports = manual_vision;
+//export default manual_vision;
 //

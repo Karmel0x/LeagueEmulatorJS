@@ -1,7 +1,7 @@
-const BasePacket = require('../BasePacket');
-const SVector2 = require('../sharedstruct/SVector2');
+import BasePacket from '../BasePacket.js';
+import SVector2 from '../sharedstruct/SVector2.js';
 
-module.exports = class MapPing extends BasePacket {
+export default class MapPing extends BasePacket {
 	static struct = {
 		position: SVector2,
 		targetNetId: 'uint32',
@@ -13,5 +13,5 @@ module.exports = class MapPing extends BasePacket {
 			pingThrottled: 4,
 			playVO: 8,
 		}],//0xFB // 4.18
-	}
-};
+	};
+}

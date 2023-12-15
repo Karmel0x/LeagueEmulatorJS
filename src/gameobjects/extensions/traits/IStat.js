@@ -1,5 +1,5 @@
 
-class IStat {
+export class IStat {
 	baseValue = 0;
 	flatBonus = 0;
 	flatBonus2 = 0;
@@ -26,7 +26,7 @@ class IStat {
 	}
 }
 
-class IStatLevelable extends IStat {
+export class IStatLevelable extends IStat {
 	perLevel = 0;
 
 	get levelValue() {
@@ -45,7 +45,7 @@ class IStatLevelable extends IStat {
 
 	/**
 	 * 
-	 * @param {import("../../units/Unit")} owner 
+	 * @param {import("../../units/Unit.js").default} owner 
 	 * @param {number} baseValue 
 	 * @param {number} perLevel 
 	 */
@@ -56,7 +56,7 @@ class IStatLevelable extends IStat {
 	}
 }
 
-class IStatStateable extends IStatLevelable {
+export class IStatStateable extends IStatLevelable {
 	minimum = 0;
 	_current = this.total;
 
@@ -74,5 +74,3 @@ class IStatStateable extends IStatLevelable {
 		this._current = value;
 	}
 }
-
-module.exports = { IStat, IStatLevelable, IStatStateable };

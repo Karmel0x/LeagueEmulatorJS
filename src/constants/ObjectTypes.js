@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	Barracks: 0x0,
 	SpawnPoint: 0x1,
 	LevelSize: 0x2,

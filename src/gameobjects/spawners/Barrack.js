@@ -1,16 +1,18 @@
-const Minion = require("../units/Minion");
 
-const Team = require("../extensions/traits/Team");
-const Server = require("../../app/Server");
-const UnitList = require("../../app/UnitList");
-const Spawner = require("./Spawner");
-const { barracks } = require("../positions");
+import packets from '../../packets/index.js';
+import Minion from '../units/Minion.js';
+
+import Team from '../extensions/traits/Team.js';
+import Server from '../../app/Server.js';
+import UnitList from '../../app/UnitList.js';
+import Spawner from './Spawner.js';
+import { barracks } from '../positions/index.js';
 
 
 /**
  * minion spawner
  */
-module.exports = class Barrack extends Spawner {
+export default class Barrack extends Spawner {
 
 	waveCount = 1;
 	damageBonus = 10;
@@ -19,7 +21,7 @@ module.exports = class Barrack extends Spawner {
 	unitNamePrefix = '';
 
 	/**
-	 * @param {import('../GameObjects').BarrackOptions} options
+	 * @param {import('../GameObjects.js').BarrackOptions} options
 	 */
 	constructor(options) {
 		super(options);
@@ -34,18 +36,18 @@ module.exports = class Barrack extends Spawner {
 	 * @param {number} minionType 
 	 */
 	spawnUnitAns(unitNetId, minionType) {
-		const Barrack_SpawnUnit = Server.network.createPacket('Barrack_SpawnUnit');
-		Barrack_SpawnUnit.netId = unitNetId;
-		Barrack_SpawnUnit.objectId = unitNetId;
-		Barrack_SpawnUnit.objectNodeId = 0x40;
-		Barrack_SpawnUnit.barracksNetId = this.netId;
-		Barrack_SpawnUnit.waveCount = this.waveCount;
-		Barrack_SpawnUnit.minionType = minionType;
-		Barrack_SpawnUnit.damageBonus = this.damageBonus;
-		Barrack_SpawnUnit.healthBonus = this.healthBonus;
-		Barrack_SpawnUnit.minionLevel = this.minionLevel;
-		Server.teams[Team.TEAM_MAX].sendPacket(Barrack_SpawnUnit);
-		//console.debug(Barrack_SpawnUnit);
+		const packet1 = new packets.Barrack_SpawnUnit();
+		packet1.netId = unitNetId;
+		packet1.objectId = unitNetId;
+		packet1.objectNodeId = 0x40;
+		packet1.barracksNetId = this.netId;
+		packet1.waveCount = this.waveCount;
+		packet1.minionType = minionType;
+		packet1.damageBonus = this.damageBonus;
+		packet1.healthBonus = this.healthBonus;
+		packet1.minionLevel = this.minionLevel;
+		Server.teams[Team.TEAM_MAX].sendPacket(packet1);
+		//console.debug(packet1);
 	}
 
 	/**
@@ -111,4 +113,4 @@ module.exports = class Barrack extends Spawner {
 			}
 		}
 	}
-};
+}

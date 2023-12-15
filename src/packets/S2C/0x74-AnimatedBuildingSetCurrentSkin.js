@@ -1,8 +1,8 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class AnimatedBuildingSetCurrentSkin extends BasePacket {
+export default class AnimatedBuildingSetCurrentSkin extends BasePacket {
 	static struct = {
 		team: 'uint8',
 		skinId: 'uint32',
-	}
-};
+	};
+}

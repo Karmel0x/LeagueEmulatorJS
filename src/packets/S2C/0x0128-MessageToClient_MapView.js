@@ -1,7 +1,7 @@
-const ExtendedPacket = require('../ExtendedPacket');
+import ExtendedPacket from '../ExtendedPacket.js';
 
 
-module.exports = class MessageToClient_MapView extends ExtendedPacket {
+export default class MessageToClient_MapView extends ExtendedPacket {
 	static struct = {
 		bubbleDelay: 'float',
 		slotNumber: 'int32',
@@ -9,5 +9,5 @@ module.exports = class MessageToClient_MapView extends ExtendedPacket {
 		colorIndex: 'uint8',
 		floatTextType: 'uint32',
 		message: 'string_',
-	}
-};
+	};
+}

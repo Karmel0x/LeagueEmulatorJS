@@ -1,8 +1,8 @@
-const BasePacket = require('../BasePacket');
-const SVector3 = require('../sharedstruct/SVector3');
+import BasePacket from '../BasePacket.js';
+import SVector3 from '../sharedstruct/SVector3.js';
 
 
-module.exports = class SpellChargeUpdateReq extends BasePacket {
+export default class SpellChargeUpdateReq extends BasePacket {
 	static struct = {
 		bitfield: ['bitfield', {
 			isSummonerSpellBook: 1,
@@ -10,5 +10,5 @@ module.exports = class SpellChargeUpdateReq extends BasePacket {
 		}],
 		slot: 'uint8',
 		position: SVector3,
-	}
-};
+	};
+}

@@ -1,10 +1,10 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
 /**
  * hide text in border on right of the screen
  * to show it use ShowAuxiliaryText
  */
-module.exports = class HideAuxiliaryText extends BasePacket {
-	
-};
+export default class HideAuxiliaryText extends BasePacket {
+
+}

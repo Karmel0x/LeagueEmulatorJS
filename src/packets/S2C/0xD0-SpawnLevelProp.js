@@ -1,7 +1,7 @@
-const BasePacket = require('../BasePacket');
-const SVector3 = require('../sharedstruct/SVector3');
+import BasePacket from '../BasePacket.js';
+import SVector3 from '../sharedstruct/SVector3.js';
 
-module.exports = class SpawnLevelProp extends BasePacket {
+export default class SpawnLevelProp extends BasePacket {
 	static struct = {
 		netObjId: 'uint32',
 		netNodeId: 'uint8',
@@ -17,5 +17,5 @@ module.exports = class SpawnLevelProp extends BasePacket {
 		objectName: ['char', 64],
 		propName: ['char', 64],
 		//propName: 'string0',//64
-	}
-};
+	};
+}

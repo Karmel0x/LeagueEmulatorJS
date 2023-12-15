@@ -2,6 +2,6 @@
 /**
  * @abstract
  */
-module.exports = class _Item {
+export default class _Item {
 
-};
+}

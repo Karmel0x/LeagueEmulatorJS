@@ -1,244 +1,273 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
+class ReplicantBase {
+	static types = {
+		bool: /** @type {boolean} */ (/** @type {any} */ (1)),
+		int: 2,
+		float: 3,
+	};
 
-//todo: replicantList and replicantTypes is definitely wrong
-const replicantList = {
-	Player: [
-		[
-			'gold', 'totalGold',
-			'spellsEnabled', 'spellsEnabled_',
-			'summonerSpellsEnabled', 'summonerSpellsEnabled_',
-			'evolvePoints', 'evolveFlags',
-			'manaCost4', 'manaCost4', 'manaCost4', 'manaCost4',
-			'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16',
-			'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16',
-		], [
-			'actionState', 'isMagicImmune', 'isInvulnerable', 'isPhysicalImmune', 'isLifestealImmune',
-			'attackDamage_baseValue', 'abilityPower_baseValue',
-			'crit', 'armor', 'resist', 'healthRegen', 'manaRegen', 'attackRange',
-			'attackDamage_flatBonus', 'attackDamage_percentBonus', 'abilityPower_flatBonus',
-			'magicResist_flatBonus', 'magicResist_percentBonus', 'attackSpeedMultiplier', 'range_flatBonus',
-			'cooldownReduction', 'passiveCooldownEndTime', 'passiveCooldownTotalTime',
-			'armorPenetration_flatBonus', 'armorPenetration_percentBonus',
-			'magicPenetration_flatBonus', 'magicPenetration_percentBonus',
-			'lifeSteal', 'spellVamp', 'tenacity',
-		], [
-			'armor_percentBonus', 'magicPenetration_percentBonus',
-			'healthRegen', 'manaRegen',
-		], [
-			'health.current', 'mana.current', 'health', 'mana',
-			'experience', 'lifeTime', 'maxLifeTime', 'lifeTimeTicks',
-			'perceptionRange_flatMod', 'perceptionRange_percentMod',
-			'moveSpeed', 'size', 'flatPathfindingRadiusMod',
-			'level', 'minionCounter', 'isTargetable', 'isTargetableToTeam',
-		], [
+	static one = {
+		gold: ReplicantBase.types.float,
+		totalGold: ReplicantBase.types.float,
+		spellsEnabled: ReplicantBase.types.int,
+		spellsEnabled_: ReplicantBase.types.int,
+		summonerSpellsEnabled: ReplicantBase.types.int,
+		summonerSpellsEnabled_: ReplicantBase.types.int,
+		evolvePoints: ReplicantBase.types.int,
+		evolveFlags: ReplicantBase.types.int,
+		manaCost4a: ReplicantBase.types.float,
+		manaCost4b: ReplicantBase.types.float,
+		manaCost4c: ReplicantBase.types.float,
+		manaCost4d: ReplicantBase.types.float,
+		manaCost16a: ReplicantBase.types.float,
+		manaCost16b: ReplicantBase.types.float,
+		manaCost16c: ReplicantBase.types.float,
+		manaCost16d: ReplicantBase.types.float,
+		manaCost16e: ReplicantBase.types.float,
+		manaCost16f: ReplicantBase.types.float,
+		manaCost16g: ReplicantBase.types.float,
+		manaCost16h: ReplicantBase.types.float,
+		manaCost16i: ReplicantBase.types.float,
+		manaCost16j: ReplicantBase.types.float,
+		manaCost16k: ReplicantBase.types.float,
+		manaCost16l: ReplicantBase.types.float,
+		manaCost16m: ReplicantBase.types.float,
+		manaCost16n: ReplicantBase.types.float,
+		manaCost16o: ReplicantBase.types.float,
+		manaCost16p: ReplicantBase.types.float,
+	};
 
-		], [
-			'isTargetable', 'isTargetableToTeam',
-		],
-	],
-	Turret: [
-		[
-			'gold', 'totalGold',
-			'spellsEnabled', 'spellsEnabled_',
-			'summonerSpellsEnabled', 'summonerSpellsEnabled_',
-			'evolvePoints', 'evolveFlags',
-			'manaCost4', 'manaCost4', 'manaCost4', 'manaCost4',
-			'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16',
-			'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16',
-		], [
-			'mana', 'mana.current', 'actionState', 'isMagicImmune', 'isInvulnerable',
-			'attackDamage.baseValue', 'armor.total',
-			'resist.total', 'attackSpeedMultiplier.total', 'attackDamage.flatBonus', 'attackDamage.percentBonus',
-			'abilityPower.total', 'healthRegen.total',
-		], [
-			'armor_percentBonus', 'magicPenetration_percentBonus',
-			'healthRegen', 'manaRegen',
-		], [
-			'health.current', 'health.total', 'perceptionRange.flatBonus', 'perceptionRange.percentBonus',
-			'moveSpeed.total', 'size.total',
-		], [
+	static two = {};
 
-		], [
-			'isTargetable', 'isTargetableToTeam',
-		],
-	],
-	AnimatedBuilding: [
-		[
-			'gold', 'totalGold',
-			'spellsEnabled', 'spellsEnabled_',
-			'summonerSpellsEnabled', 'summonerSpellsEnabled_',
-			'evolvePoints', 'evolveFlags',
-			'manaCost4', 'manaCost4', 'manaCost4', 'manaCost4',
-			'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16',
-			'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16',
-		], [
-			'health.current', 'isInvulnerable', 'isTargetable', 'isTargetableToTeam',
-		], [
-			'armor_percentBonus', 'magicPenetration_percentBonus',
-			'healthRegen', 'manaRegen',
-		], [
-			'health.current', 'health.total', 'perceptionRange.flatBonus', 'perceptionRange.percentBonus',
-			'moveSpeed.total', 'size.total',
-		], [
+	static three = {
+		armor_percentBonus: ReplicantBase.types.float,
+		magicPenetration_percentBonus: ReplicantBase.types.float,
+		healthRegen: ReplicantBase.types.float,
+		manaRegen: ReplicantBase.types.float,
+	};
 
-		], [
-			'isTargetable', 'isTargetableToTeam',
-		],
-	],
-	Minion: [
-		[
-			'gold', 'totalGold',
-			'spellsEnabled', 'spellsEnabled_',
-			'summonerSpellsEnabled', 'summonerSpellsEnabled_',
-			'evolvePoints', 'evolveFlags',
-			'manaCost4', 'manaCost4', 'manaCost4', 'manaCost4',
-			'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16',
-			'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16', 'manaCost16',
-		], [
-			'health.current', 'health.total',
-			'lifeTime', 'maxLifeTime', 'lifeTimeTicks', 'mana.total', 'mana.current',
-			'actionState',
-			'isMagicImmune', 'isInvulnerable', 'isPhysicalImmune', 'isLifestealImmune',
-			'attackDamage.baseValue', 'armor.total', 'resist.total', 'attackSpeedMultiplier.total',
-			'attackDamage.flatBonus', 'attackDamage.percentBonus', 'abilityPower.total', 'healthRegen.total',
-			'manaRegen.total', 'resist.flatBonus', 'resist.percentBonus',
-		], [
-			'armor_percentBonus', 'magicPenetration_percentBonus',
-			'healthRegen', 'manaRegen',
-		], [
-			'perceptionRange.flatBonus', 'perceptionRange.percentBonus', 'size.total', 'isTargetable', 'isTargetableToTeam',
-			'moveSpeed.total', 'size.total',
-		], [
+	static four = {};
 
-		], [
-			'isTargetable', 'isTargetableToTeam',
-		],
-	],
+	static five = {};
+
+	static six = {
+		isTargetable: ReplicantBase.types.bool,
+		isTargetableToTeam: ReplicantBase.types.int,
+	};
+
+	static namesArray() {
+		let constructor = this;///** @type {typeof ReplicantBase} */ (this.constructor);
+
+		return [
+			Object.keys(constructor.one),
+			Object.keys(constructor.two),
+			Object.keys(constructor.three),
+			Object.keys(constructor.four),
+			Object.keys(constructor.five),
+			Object.keys(constructor.six),
+		];
+	}
+
+	static valuesArray() {
+		let constructor = this;///** @type {typeof ReplicantBase} */ (this.constructor);
+
+		return [
+			Object.values(constructor.one),
+			Object.values(constructor.two),
+			Object.values(constructor.three),
+			Object.values(constructor.four),
+			Object.values(constructor.five),
+			Object.values(constructor.six),
+		];
+	}
+}
+
+class ReplicantPlayer extends ReplicantBase {
+	static two = {
+		actionState: ReplicantBase.types.int,
+		isMagicImmune: ReplicantBase.types.bool,
+		isInvulnerable: ReplicantBase.types.bool,
+		isPhysicalImmune: ReplicantBase.types.bool,
+		isLifestealImmune: ReplicantBase.types.bool,
+		attackDamage_baseValue: ReplicantBase.types.float,
+		abilityPower_baseValue: ReplicantBase.types.float,
+		crit: ReplicantBase.types.float,
+		armor: ReplicantBase.types.float,
+		resist: ReplicantBase.types.float,
+		healthRegen: ReplicantBase.types.float,
+		manaRegen: ReplicantBase.types.float,
+		attackRange: ReplicantBase.types.float,
+		attackDamage_flatBonus: ReplicantBase.types.float,
+		attackDamage_percentBonus: ReplicantBase.types.float,
+		abilityPower_flatBonus: ReplicantBase.types.float,
+		magicResist_flatBonus: ReplicantBase.types.float,
+		magicResist_percentBonus: ReplicantBase.types.float,
+		attackSpeedMultiplier: ReplicantBase.types.float,
+		range_flatBonus: ReplicantBase.types.float,
+		cooldownReduction: ReplicantBase.types.float,
+		passiveCooldownEndTime: ReplicantBase.types.float,
+		passiveCooldownTotalTime: ReplicantBase.types.float,
+		armorPenetration_flatBonus: ReplicantBase.types.float,
+		armorPenetration_percentBonus: ReplicantBase.types.float,
+		magicPenetration_flatBonus: ReplicantBase.types.float,
+		magicPenetration_percentBonus: ReplicantBase.types.float,
+		lifeSteal: ReplicantBase.types.float,
+		spellVamp: ReplicantBase.types.float,
+		tenacity: ReplicantBase.types.float,
+	};
+
+	static four = {
+		health_current: ReplicantBase.types.float,
+		mana_current: ReplicantBase.types.float,
+		health: ReplicantBase.types.float,
+		mana: ReplicantBase.types.float,
+		experience: ReplicantBase.types.float,
+		lifeTime: ReplicantBase.types.float,
+		maxLifeTime: ReplicantBase.types.float,
+		lifeTimeTicks: ReplicantBase.types.float,
+		perceptionRange_flatMod: ReplicantBase.types.float,
+		perceptionRange_percentMod: ReplicantBase.types.float,
+		moveSpeed: ReplicantBase.types.float,
+		size: ReplicantBase.types.float,
+		flatPathfindingRadiusMod: ReplicantBase.types.float,
+		level: ReplicantBase.types.int,
+		minionCounter: ReplicantBase.types.int,
+		isTargetable: ReplicantBase.types.bool,
+		isTargetableToTeam: ReplicantBase.types.int,
+	};
+}
+
+class ReplicantTurret extends ReplicantBase {
+	static two = {
+		mana: ReplicantBase.types.float,
+		mana_current: ReplicantBase.types.float,
+		actionState: ReplicantBase.types.int,
+		isMagicImmune: ReplicantBase.types.bool,
+		isInvulnerable: ReplicantBase.types.bool,
+		attackDamage_baseValue: ReplicantBase.types.float,
+		armor: ReplicantBase.types.float,
+		resist: ReplicantBase.types.float,
+		attackSpeedMultiplier: ReplicantBase.types.float,
+		attackDamage_flatBonus: ReplicantBase.types.float,
+		attackDamage_percentBonus: ReplicantBase.types.float,
+		abilityPower: ReplicantBase.types.float,
+		healthRegen: ReplicantBase.types.float,
+	};
+
+	static four = {
+		health_current: ReplicantBase.types.float,
+		health_total: ReplicantBase.types.float,
+		perceptionRange_flatBonus: ReplicantBase.types.float,
+		perceptionRange_percentBonus: ReplicantBase.types.float,
+		moveSpeed_total: ReplicantBase.types.float,
+		size_total: ReplicantBase.types.float,
+	};
+}
+
+class ReplicantAnimatedBuilding extends ReplicantBase {
+	static two = {
+		health_current: ReplicantBase.types.float,
+		isInvulnerable: ReplicantBase.types.bool,
+		isTargetable: ReplicantBase.types.bool,
+		isTargetableToTeam: ReplicantBase.types.int,
+	};
+
+	static four = {
+		health_current: ReplicantBase.types.float,
+		health_total: ReplicantBase.types.float,
+		perceptionRange_flatBonus: ReplicantBase.types.float,
+		perceptionRange_percentBonus: ReplicantBase.types.float,
+		moveSpeed_total: ReplicantBase.types.float,
+		size_total: ReplicantBase.types.float,
+	};
+}
+
+class ReplicantMinion extends ReplicantBase {
+	static two = {
+		health_current: ReplicantBase.types.float,
+		health_total: ReplicantBase.types.float,
+		lifeTime: ReplicantBase.types.float,
+		maxLifeTime: ReplicantBase.types.float,
+		lifeTimeTicks: ReplicantBase.types.float,
+		mana_total: ReplicantBase.types.float,
+		mana_current: ReplicantBase.types.float,
+		actionState: ReplicantBase.types.int,
+		isMagicImmune: ReplicantBase.types.bool,
+		isInvulnerable: ReplicantBase.types.bool,
+		isPhysicalImmune: ReplicantBase.types.bool,
+		isLifestealImmune: ReplicantBase.types.bool,
+		attackDamage_baseValue: ReplicantBase.types.float,
+		armor: ReplicantBase.types.float,
+		resist: ReplicantBase.types.float,
+		attackSpeedMultiplier: ReplicantBase.types.float,
+		attackDamage_flatBonus: ReplicantBase.types.float,
+		attackDamage_percentBonus: ReplicantBase.types.float,
+		abilityPower: ReplicantBase.types.float,
+		healthRegen: ReplicantBase.types.float,
+		manaRegen: ReplicantBase.types.float,
+		resist_flatBonus: ReplicantBase.types.float,
+		resist_percentBonus: ReplicantBase.types.float,
+	};
+
+	static four = {
+		perceptionRange_flatBonus: ReplicantBase.types.float,
+		perceptionRange_percentBonus: ReplicantBase.types.float,
+		size_total: ReplicantBase.types.float,
+		isTargetable: ReplicantBase.types.bool,
+		isTargetableToTeam: ReplicantBase.types.int,
+		moveSpeed_total: ReplicantBase.types.float,
+		size2_total: ReplicantBase.types.float,
+	};
+}
+
+// @todo replicantList and replicantTypes is definitely wrong
+const replicantListNames = {
+	Player: ReplicantPlayer.namesArray(),
+	Turret: ReplicantTurret.namesArray(),
+	AnimatedBuilding: ReplicantAnimatedBuilding.namesArray(),
+	Minion: ReplicantMinion.namesArray(),
 };
 
-const replicantTypes = {// 0 - int, 1 - float, 2 - bool
-	Player: [
-		[
-			1, 1,
-			0, 0, 0, 0, 0, 0,
-			1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-			1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-		], [
-			0, 2, 2, 2, 2,
-			1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-			1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-			1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-		], [
-			1, 1, 1, 1,
-		], [
-			1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-			1, 1, 0, 0, 2, 0,
-		], [
-
-		], [
-			2, 0,
-		],
-	],
-	Turret: [
-		[
-			1, 1,
-			0, 0, 0, 0, 0, 0,
-			1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-			1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-		], [
-			1, 1, 0, 2, 2, 2, 2,
-			1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-			1, 1, 1, 1, 2, 0,
-		], [
-			1, 1, 1, 1,
-		], [
-			1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-			1, 1, 0, 0, 2, 0,
-		], [
-
-		], [
-			2, 0,
-		],
-	],
-	AnimatedBuilding: [
-		[
-			1, 1,
-			0, 0, 0, 0, 0, 0,
-			1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-			1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-		], [
-			1, 2, 0, 2, 2, 2, 2,
-			1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-			1, 1, 1, 1, 2, 0,
-		], [
-			1, 1, 1, 1,
-		], [
-			1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-			1, 1, 0, 0, 2, 0,
-		], [
-
-		], [
-			2, 0,
-		],
-	],
-	Minion: [
-		[
-			1, 1,
-			0, 0, 0, 0, 0, 0,
-			1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-			1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-		], [
-			1, 1, 1, 1, 1, 1, 1,
-			0, 2, 2, 2, 2,
-			1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-			1, 1, 1, 1, 1,
-			2, 0,
-		], [
-			1, 1, 1, 1,
-		], [
-			1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-			1, 1, 0, 0, 2, 0,
-		], [
-
-		], [
-			2, 0,
-		],
-	],
+const replicantListTypes = {
+	Player: ReplicantPlayer.valuesArray(),
+	Turret: ReplicantTurret.valuesArray(),
+	AnimatedBuilding: ReplicantAnimatedBuilding.valuesArray(),
+	Minion: ReplicantMinion.valuesArray(),
 };
 
-module.exports = class OnReplication extends BasePacket {
+export default class OnReplication extends BasePacket {
 	static struct = {
 		syncId: 'int32',
 		count: 'uint8',
-	}
+	};
 
 	/**
 	 * 
-	 * @param {import('../../gameobjects/units/Player')} unit 
+	 * @param {import('../../gameobjects/units/Player.js').default} unit 
 	 */
 	Replicant_PLAYER(unit) {//todo: some values may be wrong
 
 		this.UpdateReplicant(unit, unit.progress.gold, 0, 0);//ok
-		this.UpdateReplicant(unit, unit.progress.totalGold, 0, 1);
+		//this.UpdateReplicant(unit, unit.progress.goldTotal, 0, 1);
 
 		let spellsEnabled = 0;
 		for (let i in unit.progress.spellLevel)
 			if (unit.progress.spellLevel[i])
-				spellsEnabled |= 1 << i;
+				spellsEnabled |= 1 << Number(i);
 
 		this.UpdateReplicant(unit, spellsEnabled, 0, 2);//ok?
-		this.UpdateReplicant(unit, spellsEnabled ? spellsEnabled >> 32 : undefined, 0, 3);//ok?
+		this.UpdateReplicant(unit, spellsEnabled ? (spellsEnabled >> 32) : undefined, 0, 3);//ok?
 
 		let summonerSpellsEnabled = 0;
 		for (let i in unit.progress.summonerSpellsEnabled)
 			if (unit.progress.summonerSpellsEnabled[i])
-				summonerSpellsEnabled |= 16 << i;
+				summonerSpellsEnabled |= 16 << Number(i);
 
 		this.UpdateReplicant(unit, summonerSpellsEnabled, 0, 4);
-		this.UpdateReplicant(unit, summonerSpellsEnabled ? summonerSpellsEnabled >> 32 : undefined, 0, 5);
+		this.UpdateReplicant(unit, summonerSpellsEnabled ? (summonerSpellsEnabled >> 32) : undefined, 0, 5);
 		this.UpdateReplicant(unit, unit.progress.evolvePoints, 0, 6);//ok?
-		this.UpdateReplicant(unit, unit.progress.evolveFlags, 0, 7);//ok?
+		//this.UpdateReplicant(unit, unit.progress.evolvePointsF, 0, 7);
 		for (let i = 0; i < 4; i++)
 			this.UpdateReplicant(unit, unit.manaCost?.[i], 0, 8 + i);
 		for (let i = 0; i < 16; i++)
@@ -277,7 +306,7 @@ module.exports = class OnReplication extends BasePacket {
 		this.UpdateReplicant(unit, unit.stats.tenacity?.total, 1, 30);//ok
 
 		this.UpdateReplicant(unit, unit.stats.armor?.percentBonus, 2, 0);//not working?
-		this.UpdateReplicant(unit, unit.stats.magicPenetration?.PercentBonus2, 2, 1);//ok
+		this.UpdateReplicant(unit, unit.stats.magicPenetration?.PercentBonus, 2, 1);
 		this.UpdateReplicant(unit, unit.stats.healthRegen?.baseValue, 2, 2);
 		this.UpdateReplicant(unit, unit.stats.manaRegen?.baseValue, 2, 3);
 
@@ -299,8 +328,17 @@ module.exports = class OnReplication extends BasePacket {
 		this.UpdateReplicant(unit, unit.isTargetable, 3, 15);//ok
 		this.UpdateReplicant(unit, unit.isTargetableToTeam, 3, 16);
 	}
+
+	/**
+	 * 
+	 * @param {Unit} unit 
+	 * @param {number | undefined} value 
+	 * @param {number} primaryId 
+	 * @param {number} secondaryId 
+	 * @returns 
+	 */
 	UpdateReplicant(unit, value, primaryId, secondaryId) {
-		if (typeof value == 'undefined' || unit.replicant[primaryId][secondaryId] === value)
+		if (typeof value === 'undefined' || unit.replicant[primaryId][secondaryId] === value)
 			return;
 
 		unit.primaryIdArray |= 1 << primaryId;
@@ -308,113 +346,145 @@ module.exports = class OnReplication extends BasePacket {
 
 		unit.replicant[primaryId][secondaryId] = value;
 	}
+
+	/**
+	 * 
+	 * @param {PacketReaderWriter} buffer 
+	 */
 	writer(buffer) {
+		if (!this.units || this.units.length == 0)
+			return;
+
 		this.syncId = this.syncId || performance.now();
 		this.count = this.count ?? this.units.length;
 		super.writer(buffer);
 
 		for (let i = 0; i < this.count; i++) {
 			let unit = this.units[i];
-			if (!unit.replicant)
-				unit.replicant = [{}, {}, {}, {}, {}, {}];
 
+			unit.replicant = unit.replicant || [{}, {}, {}, {}, {}, {}];
 			unit.primaryIdArray = 0;
 			unit.seconadaryIdArray = [0, 0, 0, 0, 0, 0];
 
 			//console.log(unit);
 			this.Replicant_PLAYER(unit);
 
-			buffer.write1('uint8', unit.primaryIdArray);
-			buffer.write1('uint32', unit.netId);
+			buffer.write('uint8', unit.primaryIdArray);
+			buffer.write('uint32', unit.netId);
+
+			let unitType = /** @type {keyof typeof replicantListNames} */(unit.type || 'Player');
 
 			for (let primaryId = 0; primaryId < 6; primaryId++) {
 				if ((unit.primaryIdArray & (1 << primaryId)) == 0)
 					continue;
 
-				buffer.write1('uint32', unit.seconadaryIdArray[primaryId]);
-				let sizeOffset = buffer.off++;
+				let replicantTypesUnit = replicantListTypes[unitType];
+				if (!replicantTypesUnit)
+					continue;
+
+				let replicantTypesPrimary = replicantTypesUnit[primaryId];
+				if (!replicantTypesPrimary)
+					continue;
+
+				let seconadaryIdVal = unit.seconadaryIdArray[primaryId];
+				buffer.write('uint32', seconadaryIdVal);
+				let sizeOffset = buffer.offset++;
 
 				for (let secondaryId = 0; secondaryId < 32; secondaryId++) {
-					if ((unit.seconadaryIdArray[primaryId] & (1 << secondaryId)) == 0)
+					if ((seconadaryIdVal & (1 << secondaryId)) == 0)
 						continue;
 
-					if (replicantTypes[unit.type || 'Player']?.[primaryId]?.[secondaryId] == 1) {
-						if (unit.replicant[primaryId][secondaryId] >= 0xFE000000)
-							buffer.write1('uint8', 0xFE);
+					let replicantTypeSecondary = replicantTypesPrimary[secondaryId];
+					let val = unit.replicant[primaryId][secondaryId];
 
-						buffer.write1('float', unit.replicant[primaryId][secondaryId]);
-					} else if (replicantTypes[unit.type || 'Player']?.[primaryId]?.[secondaryId] == 0) {
-						let num = unit.replicant[primaryId][secondaryId];
+					if (replicantTypeSecondary == ReplicantBase.types.bool) {
+						buffer.write('uint8', val);
+					} else if (replicantTypeSecondary == ReplicantBase.types.int) {
+						let num = val;
 						while (num >= 0x80) {
-							buffer.write1('uint8', (num | 0x80));
+							buffer.write('uint8', (num | 0x80));
 							num >>= 7;
 						}
-						buffer.write1('uint8', num);
-						//buffer.write1('uint16', unit.replicant[primaryId][secondaryId]);
+						buffer.write('uint8', num);
+						//buffer.write('uint16', val);
 					} else {
-						buffer.write1('uint8', unit.replicant[primaryId][secondaryId]);
+						if (val >= 0xFE000000)
+							buffer.write('uint8', 0xFE);
+
+						buffer.write('float', val);
 					}
 				}
 
-				buffer.writeUInt8(buffer.off - (sizeOffset + 1), sizeOffset);
+				buffer.dv.setUint8(sizeOffset, buffer.offset - (sizeOffset + 1));
 			}
 			//console.debug('OnReplication writer unit', unit);
 		}
 	}
+
+	/**
+	 * 
+	 * @param {PacketReaderWriter} buffer 
+	 */
 	reader(buffer) {
 		super.reader(buffer);
 
 		this.units = [];
+
 		for (let i = 0; i < this.count; i++) {
-			let unit = this.units[i] = {};
-
-			unit.primaryIdArray = buffer.read1('uint8');
-			unit.netId = buffer.read1('uint32');
-			unit.type = 'Player';
-			//unit.netId >= 0xFF000000 ? 'Turret' :
-			//unit.netId >= 0x40000000 ? 'Minion' :
-			//'Player';
-			unit.seconadaryIdArray = [];
-			unit.dataCount = [];
-			unit.replicant = [{}, {}, {}, {}, {}, {}];
-
+			let unit = this.units[i] = {
+				primaryIdArray: buffer.read('uint8'),
+				netId: buffer.read('uint32'),
+				type: /** @type {keyof typeof replicantListNames} */('Player'),
+				//netId >= 0xFF000000 ? 'Turret' :
+				//netId >= 0x40000000 ? 'Minion' :
+				seconadaryIdArray: /** @type {number[]} */([]),
+				dataCount: /** @type {number[]} */([]),
+				replicant: /** @type {{[x: number]: [string, number]}[]} */([]),
+			};
 
 			for (let primaryId = 0; primaryId < 6; primaryId++) {
 				if ((unit.primaryIdArray & (1 << primaryId)) == 0)
 					continue;
 
-				unit.seconadaryIdArray[primaryId] = buffer.read1('uint32');
-				unit.dataCount[primaryId] = buffer.read1('uint8');
-				let sizeOffset = buffer.off;
+				let replicantPrimary = unit.replicant[primaryId] = /** @type {{[x: number]: [string, number]}} */({});
+				let secondaryIdBit = unit.seconadaryIdArray[primaryId] = buffer.read('uint32');
+				let dataCount = unit.dataCount[primaryId] = buffer.read('uint8');
+				let sizeOffset = buffer.offset;
+
 				for (let secondaryId = 0; secondaryId < 32; secondaryId++) {
-					if ((unit.seconadaryIdArray[primaryId] & (1 << secondaryId)) == 0)
+					if ((secondaryIdBit & (1 << secondaryId)) == 0)
 						continue;
 
-					if (replicantTypes[unit.type]?.[primaryId]?.[secondaryId] == 1) {
-						let f = buffer.read1('uint8');
-						if (f < 0xFE)
-							--buffer.off;
+					let replicantName = replicantListNames[unit.type]?.[primaryId]?.[secondaryId];
+					let replicantType = replicantListTypes[unit.type]?.[primaryId]?.[secondaryId];
 
-						unit.replicant[primaryId][secondaryId] = [replicantList[unit.type]?.[primaryId]?.[secondaryId] || '', buffer.read1('float')];
+					if (replicantType == ReplicantBase.types.bool) {
+						let val = buffer.read('uint8');
+						replicantPrimary[secondaryId] = [replicantName, val];
 					}
-					else if (replicantTypes[unit.type]?.[primaryId]?.[secondaryId] == 0) {
+					else if (replicantType == ReplicantBase.types.int) {
 
 						let num = 0;
 						let num1 = 0;
 						do {
-							num = buffer.read1('uint8')
+							num = buffer.read('uint8');
 							num1 = num1 * 128 + num;
 						} while (num >= 0x80);
-						unit.replicant[primaryId][secondaryId] = [replicantList[unit.type]?.[primaryId]?.[secondaryId] || '', num1];
+
+						replicantPrimary[secondaryId] = [replicantName, num1];
 					}
 					else {
-						let num1 = buffer.read1('uint8');
-						unit.replicant[primaryId][secondaryId] = [replicantList[unit.type]?.[primaryId]?.[secondaryId] || '', num1];
+						let f = buffer.read('uint8');
+						if (f < 0xFE)
+							--buffer.offset;
+
+						let val = buffer.read('float');
+						replicantPrimary[secondaryId] = [replicantName, val];
 					}
 				}
-				buffer.off = sizeOffset + unit.dataCount[primaryId];
+				buffer.offset = sizeOffset + dataCount;
 			}
 		}
 
 	}
-};
+}

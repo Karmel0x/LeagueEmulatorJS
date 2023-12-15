@@ -1,6 +1,6 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class CreateTurret extends BasePacket {
+export default class CreateTurret extends BasePacket {
 	static struct = {
 		netObjId: 'uint32',
 		netNodeId: 'uint8',
@@ -11,5 +11,5 @@ module.exports = class CreateTurret extends BasePacket {
 			unk2: 3,
 		}],
 		isTargetableToTeamSpellFlags: 'uint32',
-	}
-};
+	};
+}

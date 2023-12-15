@@ -1,10 +1,10 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class MuteVolumeCategory extends BasePacket {
+export default class MuteVolumeCategory extends BasePacket {
 	static struct = {
 		volumeCategoryType: 'uint8',
 		bitfield: ['bitfield', {
 			mute: 1,
 		}],
-	}
-};
+	};
+}

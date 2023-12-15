@@ -1,13 +1,15 @@
 
-const slotId = require("../../../../constants/slotId");
-const _Minion = require("../../../datamethods/characters/_Minion");
+import slotId from '../../../../constants/slotId.js';
+import _Minion from '../../../datamethods/characters/_Minion.js';
+import package1 from './package.js';
+//import BasicAttack from './spells/BasicAttack.js';
 
 
 /**
  * @abstract
  */
-module.exports = class _Minion_Wizard extends _Minion {
-	static package = require('./package');
+export default class _Minion_Wizard extends _Minion {
+	static package = package1;
 
 	static reward = {
 		gold: 14,
@@ -48,7 +50,7 @@ module.exports = class _Minion_Wizard extends _Minion {
 	};
 
 	static spells = {
-		//BasicAttack: require('./spells/BasicAttack'),
+		//BasicAttack,
 	};
 
 	constructor(parent) {
@@ -58,4 +60,4 @@ module.exports = class _Minion_Wizard extends _Minion {
 			[slotId.A]: this.constructor.spells.BasicAttack,
 		});
 	}
-};
+}

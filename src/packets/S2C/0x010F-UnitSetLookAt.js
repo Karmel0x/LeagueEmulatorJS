@@ -1,8 +1,8 @@
-const ExtendedPacket = require('../ExtendedPacket');
-const SVector3 = require('../sharedstruct/SVector3');
+import ExtendedPacket from '../ExtendedPacket.js';
+import SVector3 from '../sharedstruct/SVector3.js';
 
 
-module.exports = class UnitSetLookAt extends ExtendedPacket {
+export default class UnitSetLookAt extends ExtendedPacket {
 	static LookAtType = {
 		Direction: 0,
 		Location: 1,
@@ -13,5 +13,5 @@ module.exports = class UnitSetLookAt extends ExtendedPacket {
 		lookAtType: 'uint8',
 		targetPosition: SVector3,
 		targetNetId: 'uint32',
-	}
-};
+	};
+}

@@ -1,11 +1,11 @@
 
-const Server = require("../../../app/Server");
-const UnitList = require("../../../app/UnitList");
-const HashString = require("../../../functions/HashString");
-const SpellCast = require("./SpellCast");
+import packets from '../../../packets/index.js';
+import UnitList from '../../../app/UnitList.js';
+import HashString from '../../../functions/HashString.js';
+import SpellCast from './SpellCast.js';
 
 
-module.exports = class _Spell {
+export default class _Spell {
 
 	owner;
 	spellSlot = 255;
@@ -14,8 +14,14 @@ module.exports = class _Spell {
 
 	windup = 0.05;//?
 	castInfo = {};
+
+	/** @type {_Spell[] | any[]} */
 	static childSpellList = [];
+	/** @type {_Spell[] | any[]} */
 	childSpells = [];
+	/** @type {_Spell | undefined} */
+	parentSpell = undefined;
+
 	isProjectile = false;
 	castRange = 25000;
 	movingSpell = false;
@@ -28,12 +34,13 @@ module.exports = class _Spell {
 	/**
 	 * 
 	 * @param {Object} options
-	 * @param {import("../../../gameobjects/units/Player")} options.owner
+	 * @param {import("../../../gameobjects/units/Player.js").default} options.owner
+	 * @param {_Spell} [options.parentSpell]
 	 */
 	constructor(options) {
 		this.owner = options.owner || null;
 
-		this.parentSpell = options.parentSpell || null;
+		this.parentSpell = options.parentSpell || undefined;
 		this.spellHash = HashString.HashString(this.constructor.name);
 
 		this.constructor.childSpellList.forEach(spell => {
@@ -44,15 +51,15 @@ module.exports = class _Spell {
 
 	/**
 	 * @abstract
-	 * @param {Object} spellData
+	 * @param {import('../../../gameobjects/GameObjects.js').SpellData} spellData
 	 */
 	preCast(spellData) {
 		let target = spellData.target || spellData.packet;
 
 		let range = this.castRange;
-		let filters = this.owner.measure[this.distanceCalc];
-		let rangeSum = filters.getRangeSum(target, range);
-		let isInRange = filters.isInRangeFlat(target, rangeSum);
+		let measure = this.owner.measure[this.distanceCalc];
+		let rangeSum = measure.getRangeSum(target, range);
+		let isInRange = measure.isInRangeFlat(target, rangeSum);
 
 		if (!isInRange)
 			this.owner.moving.moveWithCallback(target, () => this.cast(spellData), rangeSum);
@@ -62,7 +69,7 @@ module.exports = class _Spell {
 
 	/**
 	 * @abstract
-	 * @param {Object} spellData
+	 * @param {import('../../../gameobjects/GameObjects.js').SpellData} spellData
 	 */
 	onCast(spellData) {
 
@@ -70,7 +77,7 @@ module.exports = class _Spell {
 
 	/**
 	 * @abstract
-	 * @param {Object} spellData
+	 * @param {import('../../../gameobjects/GameObjects.js').SpellData} spellData
 	 */
 	async afterCast(spellData) {
 		if (this.isProjectile)
@@ -92,14 +99,13 @@ module.exports = class _Spell {
 
 	/**
 	 * 
-	 * @param {Object} spellData
-	 * @param {Object} spellData.packet
+	 * @param {import('../../../gameobjects/GameObjects.js').SpellData} spellData
 	 * @returns casted
 	 */
 	async cast(spellData) {
 		spellData.spell = this;
-		spellData.target = spellData.target || null;
-		spellData.target = typeof spellData.target == 'number' ? UnitList.getUnitByNetId(spellData.target) : spellData.target;
+		spellData.target = spellData.target || undefined;
+		spellData.target = typeof spellData.target === 'number' ? UnitList.getUnitByNetId(spellData.target) : spellData.target;
 		spellData.movingSpell = this.movingSpell;
 
 		if (!this.preCast(spellData))
@@ -121,14 +127,18 @@ module.exports = class _Spell {
 		return true;
 	}
 
-
+	/**
+	 * 
+	 * @param {Object} castInfo 
+	 * @param {number} [packageHash] 
+	 */
 	castSpellAns(castInfo, packageHash) {
 		let owner = this.owner;
 
-		const CastSpellAns = Server.network.createPacket('CastSpellAns', 'S2C');
-		CastSpellAns.netId = owner.netId;
-		CastSpellAns.casterPositionSyncId = owner.moving?.moveTime || 1;
-		CastSpellAns.castInfo = {
+		const packet1 = new packets.CastSpellAns();
+		packet1.netId = owner.netId;
+		packet1.casterPositionSyncId = owner.moving?.moveTime || 1;
+		packet1.castInfo = {
 			spellHash: 0,
 			spellCastNetId: 1073743439,
 			spellLevel: 1,
@@ -153,17 +163,23 @@ module.exports = class _Spell {
 				hitResult: 0,
 			}],
 		};
-		Object.assign(CastSpellAns.castInfo, castInfo);
+		Object.assign(packet1.castInfo, castInfo);
 
-		owner.packets.toVision(CastSpellAns);
-		//console.log(CastSpellAns);
+		owner.packets.toVision(packet1);
+		//console.log(packet1);
 	}
 
+	/**
+	 * 
+	 * @param {Object} castInfo 
+	 * @param {number} [packageHash] 
+	 * @param {Object} [projectile] 
+	 */
 	spawnProjectileAns(castInfo, packageHash = 0, projectile = { speed: 1200 }) {//todo
 		let owner = this.owner;
 
-		const MissileReplication = Server.network.createPacket('MissileReplication', 'S2C');
-		MissileReplication.castInfo = {
+		const packet1 = new packets.MissileReplication();
+		packet1.castInfo = {
 			spellHash: 0,
 			spellCastNetId: 1073743439,
 			spellLevel: 1,
@@ -188,27 +204,27 @@ module.exports = class _Spell {
 				hitResult: 0,
 			}],
 		};
-		Object.assign(MissileReplication.castInfo, castInfo);
-		MissileReplication.netId = MissileReplication.castInfo._netId ?? MissileReplication.castInfo.missileNetId;// ??
-		MissileReplication.position = MissileReplication.position || MissileReplication.castInfo.spellCastLaunchPosition;
-		MissileReplication.casterPosition = MissileReplication.casterPosition || MissileReplication.castInfo.spellCastLaunchPosition;
-		//MissileReplication.direction = {
+		Object.assign(packet1.castInfo, castInfo);
+		packet1.netId = packet1.castInfo._netId ?? packet1.castInfo.missileNetId;// ??
+		packet1.position = packet1.position || packet1.castInfo.spellCastLaunchPosition;
+		packet1.casterPosition = packet1.casterPosition || packet1.castInfo.spellCastLaunchPosition;
+		//packet1.direction = {
 		//    "x": 0.36772018671035767,
 		//    "z": 0,
 		//    "y": 0.9299365282058716
 		//}
-		//MissileReplication.velocity = {
+		//packet1.velocity = {
 		//    "x": 441.2642517089844,
 		//    "z": -109.0909194946289,
 		//    "y": 1115.9239501953125
 		//};
-		MissileReplication.startPoint = MissileReplication.startPoint || MissileReplication.castInfo.spellCastLaunchPosition;
-		MissileReplication.endPoint = MissileReplication.endPoint || MissileReplication.castInfo.targetPosition;
-		MissileReplication.unitPosition = MissileReplication.unitPosition || MissileReplication.castInfo.spellCastLaunchPosition;
-		MissileReplication.speed = projectile.speed;
+		packet1.startPoint = packet1.startPoint || packet1.castInfo.spellCastLaunchPosition;
+		packet1.endPoint = packet1.endPoint || packet1.castInfo.targetPosition;
+		packet1.unitPosition = packet1.unitPosition || packet1.castInfo.spellCastLaunchPosition;
+		packet1.speed = projectile.speed;
 
-		owner.packets.toVision(MissileReplication);
-		//console.log(MissileReplication);
+		owner.packets.toVision(packet1);
+		//console.log(packet1);
 	}
 
 	waitingCooldown() {
@@ -217,4 +233,4 @@ module.exports = class _Spell {
 
 		return false;
 	}
-};
+}

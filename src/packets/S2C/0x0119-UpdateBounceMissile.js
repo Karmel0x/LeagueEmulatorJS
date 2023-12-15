@@ -1,9 +1,9 @@
-const ExtendedPacket = require('../ExtendedPacket');
-const SVector3 = require('../sharedstruct/SVector3');
+import ExtendedPacket from '../ExtendedPacket.js';
+import SVector3 from '../sharedstruct/SVector3.js';
 
-module.exports = class UpdateBounceMissile extends ExtendedPacket {
+export default class UpdateBounceMissile extends ExtendedPacket {
 	static struct = {
 		targetNetId: 'uint32',
 		casterPosition: SVector3,
-	}
-};
+	};
+}

@@ -1,25 +1,24 @@
 
-const slotId = require('../../constants/slotId');
-const loadingStages = require('../../constants/loadingStages');
-const Summoners = require("../../game/leaguedata/Summoners");
-const EVENT = require("../../packets/EVENT");
-const Server = require('../../app/Server');
+import packets from '../../packets/index.js';
+import slotId from '../../constants/slotId.js';
+import loadingStages from '../../constants/loadingStages.js';
+import Summoners from '../../game/leaguedata/Summoners/index.js';
+import EVENT from '../../packets/EVENT.js';
+import Server from '../../app/Server.js';
 
-const Unit = require('./Unit');
-const PPlayer = require("../extensions/packets/Player");
-const Spellable = require('../extensions/combat/Spellable');
-const Inventory = require('../extensions/traits/Inventory');
-const Moving = require('../extensions/traits/Moving');
-const Network = require('../extensions/traits/Network');
-const Scoreboard = require('../extensions/traits/Scoreboard');
-const MovingUnit = require('../extensions/traits/MovingUnit');
+import Unit from './Unit.js';
+import PPlayer from '../extensions/packets/Player.js';
+import Spellable from '../extensions/combat/Spellable.js';
+import Inventory from '../extensions/traits/Inventory.js';
+import Network from '../extensions/traits/Network.js';
+import Scoreboard from '../extensions/traits/Scoreboard.js';
+import MovingUnit from '../extensions/traits/MovingUnit.js';
 
 
 class Player extends Unit {
 
 	static clientIds = -1;
 
-	/** @type {PPlayer} */
 	packets;
 	combat;
 	inventory;
@@ -31,11 +30,11 @@ class Player extends Unit {
 	clientId = -1;
 
 	/**
-	 * 
-	 * @param {import('../GameObjects').PlayerOptions} options 
+	 * @param {import('../GameObjects.js').PlayerOptions} options 
 	 */
-	constructor(options) {
-		super(options);
+	async loader(options) {
+		await super.loader(options);
+
 		this.options = options;
 		this.summoner = options.summoner;
 		this.clientId = ++Player.clientIds;
@@ -54,17 +53,24 @@ class Player extends Unit {
 	}
 
 	/**
+	 * @param {import('../GameObjects.js').PlayerOptions} options 
+	 */
+	constructor(options) {
+		super(options);
+	}
+
+	/**
 	 * It sends a packet to everyone in the game that the player has died
 	 * @param {Unit} source - The source of the damage.
 	 */
 	announceDie(source) {
-		const OnEvent = Server.network.createPacket('OnEvent');
-		OnEvent.netId = this.netId;
-		OnEvent.eventId = EVENT.OnChampionDie;
-		OnEvent.eventData = {
+		const packet1 = new packets.OnEvent();
+		packet1.netId = this.netId;
+		packet1.eventId = EVENT.OnChampionDie;
+		packet1.eventData = {
 			otherNetId: source.netId
 		};
-		this.packets.toEveryone(OnEvent);
+		this.packets.toEveryone(packet1);
 	}
 
 	/**
@@ -128,4 +134,4 @@ class Player extends Unit {
 }
 
 
-module.exports = Player;
+export default Player;

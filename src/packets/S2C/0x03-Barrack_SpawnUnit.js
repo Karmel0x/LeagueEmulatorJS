@@ -1,10 +1,10 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
 /**
  * necessary packet to spawn minion
  */
-module.exports = class Barrack_SpawnUnit extends BasePacket {
+export default class Barrack_SpawnUnit extends BasePacket {
 	static struct = {
 		objectId: 'uint32',
 		objectNodeId: 'uint8',
@@ -14,5 +14,5 @@ module.exports = class Barrack_SpawnUnit extends BasePacket {
 		damageBonus: 'int16',
 		healthBonus: 'int16',
 		minionLevel: 'uint8',
-	}
-};
+	};
+}

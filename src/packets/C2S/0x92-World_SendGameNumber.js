@@ -1,10 +1,10 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class World_SendGameNumber extends BasePacket {
+export default class World_SendGameNumber extends BasePacket {
 	static struct = {
 		gameId: 'int64',
 		summonerName: ['char', 128],//128
 		//summonerName: 'string0',//128
-	}
-};
+	};
+}

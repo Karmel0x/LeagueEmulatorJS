@@ -1,24 +1,24 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class ShowHealthBar extends BasePacket {
+export default class ShowHealthBar extends BasePacket {
 	static struct = {
 		bitfield: ['bitfield', {
 			showHealthBar: 1,
 			changeHealthBarType: 2,
 		}],
 		healthBarType: 'uint8',
-	}
-	reader(buffer){
+	};
+	reader(buffer) {
 		super.reader(buffer);
 
-		if(this.bitfield.changeHealthBarType)
-			this.observerTeamId = buffer.read1('uint32');
+		if (this.bitfield.changeHealthBarType)
+			this.observerTeamId = buffer.read('uint32');
 	}
-	writer(buffer){
+	writer(buffer) {
 		super.writer(buffer);
 
-		if(this.bitfield.changeHealthBarType)
-			buffer.writeobj('uint32', this.observerTeamId);
+		if (this.bitfield.changeHealthBarType)
+			buffer.write('uint32', this.observerTeamId);
 	}
-};
+}

@@ -1,7 +1,7 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class QueryStatusAns extends BasePacket {
+export default class QueryStatusAns extends BasePacket {
 	static struct = {
 		response: 'bool',
-	}
-};
+	};
+}

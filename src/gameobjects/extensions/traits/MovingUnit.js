@@ -1,10 +1,6 @@
 
-const { Vector2 } = require('three');
-const Pathfinding = require("../../../game/components/Pathfinding");
-const { IStat } = require("./IStat");
-const PositionHelper = require("../Measure");
-const Server = require('../../../app/Server');
-const Moving = require('./Moving');
+import packets from '../../../packets/index.js';
+import Moving from './Moving.js';
 
 
 //const ACTIONS = {
@@ -18,12 +14,12 @@ const Moving = require('./Moving');
 /**
  * Trait for units that can move
  */
-module.exports = class MovingUnit extends Moving {
+export default class MovingUnit extends Moving {
 
 	owner;
 	/**
 	 * 
-	 * @param {import('../../GameObjects').MovableUnit} owner 
+	 * @param {import('../../GameObjects.js').MovableUnit} owner 
 	 * @param {number} [speed] 
 	 */
 	constructor(owner, speed) {
@@ -58,35 +54,35 @@ module.exports = class MovingUnit extends Moving {
 	}
 
 	dashAns() {
-		const WaypointGroupWithSpeed = Server.network.createPacket('WaypointGroupWithSpeed');
-		WaypointGroupWithSpeed.syncId = performance.now();
+		const packet1 = new packets.WaypointGroupWithSpeed();
+		packet1.syncId = performance.now();
 
-		WaypointGroupWithSpeed.netId = 0;
-		WaypointGroupWithSpeed.teleportNetId = this.owner.netId;
+		packet1.netId = 0;
+		packet1.teleportNetId = this.owner.netId;
 
-		WaypointGroupWithSpeed.waypoints = [this.owner.position, ...this.waypointsForced.slice(0, 2)];
-		WaypointGroupWithSpeed.speedParams = this.speedParams;
+		packet1.waypoints = [this.owner.position, ...this.waypointsForced.slice(0, 2)];
+		packet1.speedParams = this.speedParams;
 
-		this.owner.packets.toVision(WaypointGroupWithSpeed);
-		//console.log(WaypointGroupWithSpeed);
+		this.owner.packets.toVision(packet1);
+		//console.log(packet1);
 	}
 
 	moveAns(teleport = false) {
 		// this should be in Movement_Simulation so we can resend if destination will change (following moveable unit)
 		// or following should be made with dash.speedParams.followNetId ?
-		const WaypointGroup = Server.network.createPacket('WaypointGroup', 'LOW_PRIORITY');
-		WaypointGroup.syncId = performance.now();
+		const packet1 = new packets.WaypointGroup();
+		packet1.syncId = performance.now();
 
-		WaypointGroup.netId = 0;
-		WaypointGroup.teleportNetId = this.owner.netId;
+		packet1.netId = 0;
+		packet1.teleportNetId = this.owner.netId;
 
-		WaypointGroup.teleportId = teleport ? this.getNextTeleportId() : 0;
-		WaypointGroup.waypoints = this.waypointsHalt ? [this.owner.position] : [this.owner.position, ...this._waypoints.slice(0, 2)];
+		packet1.teleportId = teleport ? this.getNextTeleportId() : 0;
+		packet1.waypoints = this.waypointsHalt ? [this.owner.position] : [this.owner.position, ...this._waypoints.slice(0, 2)];
 
-		this.owner.packets.toVision(WaypointGroup);
-		//console.log('WaypointGroup', WaypointGroup);
-		//console.log('WaypointGroup.waypoints', WaypointGroup.waypoints);
+		this.owner.packets.toVision(packet1);
+		//console.log('WaypointGroup', packet1);
+		//console.log('WaypointGroup.waypoints', packet1.waypoints);
 		//console.trace();
 	}
 
-};
+}

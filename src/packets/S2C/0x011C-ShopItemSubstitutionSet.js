@@ -1,9 +1,9 @@
-const ExtendedPacket = require('../ExtendedPacket');
+import ExtendedPacket from '../ExtendedPacket.js';
 
 
-module.exports = class ShopItemSubstitutionSet extends ExtendedPacket {
+export default class ShopItemSubstitutionSet extends ExtendedPacket {
 	static struct = {
 		originalItemId: 'uint32',
 		replacementItemId: 'uint32',
-	}
-};
+	};
+}

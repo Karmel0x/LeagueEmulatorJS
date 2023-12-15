@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	Internal: 0x0,
 	Aura: 0x1,
 	CombatEnchancer: 0x2,

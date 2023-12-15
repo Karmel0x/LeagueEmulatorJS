@@ -1,22 +1,22 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
 /**
  * shows blue quest list box on right of the screen
  * max 3 quests per type
  */
-module.exports = class HandleQuestUpdate extends BasePacket {
+export default class HandleQuestUpdate extends BasePacket {
 	static types = {
 		PRIMARY_QUEST: 0,
 		SECONDARY_QUEST: 1,
 		OBJECTIVE: 2,
 		NUM_QUEST_TYPES: 3,
-	}
+	};
 	static commands = {
 		ACTIVATE_QUEST: 0,
 		COMPLETE_QUEST: 1,
 		REMOVE_QUEST: 2,
-	}
+	};
 	static struct = {
 		objective: ['char', 128],
 		icon: ['char', 128],
@@ -30,5 +30,5 @@ module.exports = class HandleQuestUpdate extends BasePacket {
 			success: 4,
 		}],
 		questId: 'uint32',
-	}
-};
+	};
+}

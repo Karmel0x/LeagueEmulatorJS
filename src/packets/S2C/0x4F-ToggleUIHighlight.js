@@ -1,6 +1,6 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class ToggleUIHighlight extends BasePacket {
+export default class ToggleUIHighlight extends BasePacket {
 	static struct = {
 		elementId: 'uint8',
 		elementType: 'uint8',
@@ -9,5 +9,5 @@ module.exports = class ToggleUIHighlight extends BasePacket {
 		bitfield: ['bitfield', {
 			enabled: 1,
 		}],
-	}
-};
+	};
+}

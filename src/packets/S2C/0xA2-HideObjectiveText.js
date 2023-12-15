@@ -1,10 +1,10 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
 /**
  * hide text in border on middle of the screen
  * to show it use ShowObjectiveText
  */
-module.exports = class HideObjectiveText extends BasePacket {
-	
-};
+export default class HideObjectiveText extends BasePacket {
+
+}

@@ -1,11 +1,11 @@
 
-const fs = require('fs');
+import fs from 'fs';
 
-require('../../../src/core/init_utilities');
-const _replayreaders = require('../../_replayreaders');
-const HandlersParse = require('../../../src/core/network/parse');
+import '../../src/core/init_utilities.js';
+import _replayreaders from '../../_replayreaders/index.js';
+import HandlersParse from '../../../src/core/network/parse.js';
 
-const WaypointsDrawer = require('../WaypointsDrawer');
+import WaypointsDrawer from '../WaypointsDrawer.js';
 
 
 let waypointsDrawer = {};

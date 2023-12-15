@@ -1,8 +1,8 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class StartSpawn extends BasePacket {
+export default class StartSpawn extends BasePacket {
 	static struct = {
 		botCountOrder: 'uint8',
 		botCountChaos: 'uint8',
-	}
-};
+	};
+}

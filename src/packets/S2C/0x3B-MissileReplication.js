@@ -1,9 +1,9 @@
-const BasePacket = require('../BasePacket');
-const SVector3 = require('../sharedstruct/SVector3');
-const SCastInfo = require('../sharedstruct/SCastInfo');
+import BasePacket from '../BasePacket.js';
+import SVector3 from '../sharedstruct/SVector3.js';
+import SCastInfo from '../sharedstruct/SCastInfo.js';
 
 
-module.exports = class MissileReplication extends BasePacket {
+export default class MissileReplication extends BasePacket {
 	static struct = {
 		position: SVector3,
 		casterPosition: SVector3,
@@ -20,7 +20,7 @@ module.exports = class MissileReplication extends BasePacket {
 		bitfield: ['bitfield', {
 			bounced: 1,
 		}],
-	}
+	};
 	reader(buffer) {
 		super.reader(buffer);
 		this.castInfo = SCastInfo.reader(buffer);
@@ -29,4 +29,4 @@ module.exports = class MissileReplication extends BasePacket {
 		super.writer(buffer);
 		SCastInfo.writer(buffer, this.castInfo);
 	}
-};
+}

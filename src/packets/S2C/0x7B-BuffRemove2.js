@@ -1,10 +1,10 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class BuffRemove2 extends BasePacket {
+export default class BuffRemove2 extends BasePacket {
 	static struct = {
 		buffSlot: 'uint8',
 		buffNameHash: 'uint32',
 		runTimeRemove: 'float',
-	}
-};
+	};
+}

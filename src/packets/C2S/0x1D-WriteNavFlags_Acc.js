@@ -1,8 +1,8 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class WriteNavFlags_Acc extends BasePacket {
+export default class WriteNavFlags_Acc extends BasePacket {
 	static struct = {
 		syncId: 'int32',
-	}
-};
+	};
+}

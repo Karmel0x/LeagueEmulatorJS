@@ -1,9 +1,9 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class SetFoWStatus extends BasePacket {
+export default class SetFoWStatus extends BasePacket {
 	static struct = {
 		bitfield: ['bitfield', {
 			enabled: 1,
 		}],
-	}
-};
+	};
+}

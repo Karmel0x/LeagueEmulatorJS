@@ -1,10 +1,11 @@
-const _Turret = require('../../../datamethods/characters/_Turret');
+import _Turret from '../../../datamethods/characters/_Turret.js';
+import package1 from './package.js';
 
 /**
  * @abstract
  */
-module.exports = class _Turret_Fountain extends _Turret {
-	static package = require('./package');
+export default class _Turret_Fountain extends _Turret {
+	static package = package1;
 
 	static reward = {
 		globalGold: 100,
@@ -27,4 +28,4 @@ module.exports = class _Turret_Fountain extends _Turret {
 		moveSpeed: 0,
 	};
 
-};
+}

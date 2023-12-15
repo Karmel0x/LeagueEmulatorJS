@@ -1,13 +1,13 @@
 
-const Game = require('../game/initializers/Game');
+import Game from '../game/initializers/Game.js';
 
 
 /**
  * 
- * @param {import('../gameobjects/units/Player')} player 
- * @param {*} packet 
+ * @param {import('../gameobjects/units/Player.js')} player 
+ * @param {typeof import('../packets/C2S/0x16-Ping_Load_Info.js').struct} packet 
  */
-module.exports = (player, packet) => {
+export default (player, packet) => {
 	console.log('handle: C2S.Ping_Load_Info');
 	//console.log(packet);
 

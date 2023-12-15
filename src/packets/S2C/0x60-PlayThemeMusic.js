@@ -1,8 +1,8 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class PlayThemeMusic extends BasePacket {
+export default class PlayThemeMusic extends BasePacket {
 	static struct = {
 		sourceNetId: 'uint32',
 		musicId: 'uint32',
-	}
-};
+	};
+}

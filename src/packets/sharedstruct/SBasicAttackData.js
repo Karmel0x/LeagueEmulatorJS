@@ -1,6 +1,6 @@
-const SVector3 = require('../sharedstruct/SVector3');
+import SVector3 from './SVector3.js';
 
-module.exports = {//SBasicAttackData
+export default {//SBasicAttackData
 	targetNetId: 'uint32',
 	extraTime: 'int8',//(extraTime - 128) / 100.0f
 	missileNextId: 'uint32',

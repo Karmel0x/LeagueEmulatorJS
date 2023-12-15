@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	HQ: 0x0,
 	LOCATION: 0x1,
 	BARRACKS_LANE_R: 0x2,

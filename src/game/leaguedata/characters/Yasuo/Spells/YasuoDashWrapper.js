@@ -1,11 +1,11 @@
 
-const HashString = require("../../../../../functions/HashString");
-const PositionHelper = require("../../../../../gameobjects/extensions/Measure");
-const _Spell = require("../../../../datamethods/spells/_Spell");
+import HashString from '../../../../../functions/HashString.js';
+import PositionHelper from '../../../../../gameobjects/extensions/Measure/index.js';
+import _Spell from '../../../../datamethods/spells/_Spell.js';
 
 
 
-module.exports = class YasuoDashWrapper extends _Spell {
+export default class YasuoDashWrapper extends _Spell {
 	castRange = 475;
 	movingSpell = true;
 
@@ -53,4 +53,4 @@ module.exports = class YasuoDashWrapper extends _Spell {
 	hit(target) {
 		this.owner.combat.attack(target);
 	}
-};
+}

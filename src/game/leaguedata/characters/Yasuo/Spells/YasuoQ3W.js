@@ -1,13 +1,13 @@
 
-const slotId = require('../../../../../constants/slotId');
-const _Spell = require("../../../../datamethods/spells/_Spell");
-const PositionHelper = require("../../../../../gameobjects/extensions/Measure");
+import slotId from '../../../../../constants/slotId.js';
+import _Spell from '../../../../datamethods/spells/_Spell.js';
+import PositionHelper from '../../../../../gameobjects/extensions/Measure/index.js';
 
-const package1 = require('../package');
-const YasuoQ3 = require('./YasuoQ3');
+import package1 from '../package.js';
+import YasuoQ3 from './YasuoQ3.js';
 
 
-module.exports = class YasuoQ3W extends _Spell {
+export default class YasuoQ3W extends _Spell {
 	packageHash = package1.packageHash;
 	spellSlot = slotId.Q;
 	windup = 0;
@@ -41,4 +41,4 @@ module.exports = class YasuoQ3W extends _Spell {
 		//spellData.target = Dummytarget({position: spellData.packet.position});
 
 	}
-};
+}

@@ -1,6 +1,6 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-const ChangeSlotSpellDataType = {
+const ChangeSlotSpellDataType = /** @type {const} */({
 	targetingType: 1,
 	spellName: 2,
 	range: 3,
@@ -8,7 +8,7 @@ const ChangeSlotSpellDataType = {
 	rangeDisplay: 5,
 	iconIndex: 6,
 	offsetTarget: 7,
-};
+});
 
 const ChangeSpellData = {
 	spellSlot: 'uint8',
@@ -18,7 +18,7 @@ const ChangeSpellData = {
 	changeSlotSpellDataType: 'uint32',
 };
 
-module.exports = class ChangeSlotSpellData extends BasePacket {
+export default class ChangeSlotSpellData extends BasePacket {
 	static struct = {
 		changeSpellData: ChangeSpellData,
 	};
@@ -28,26 +28,26 @@ module.exports = class ChangeSlotSpellData extends BasePacket {
 		let changeSpellData = this.changeSpellData;
 
 		if (changeSpellData.changeSlotSpellDataType == ChangeSlotSpellDataType.targetingType) {
-			this.targetingType = buffer.read1('uint8');
+			this.targetingType = buffer.read('uint8');
 		}
 		else if (changeSpellData.changeSlotSpellDataType == ChangeSlotSpellDataType.spellName) {
-			this.spellName = buffer.read1('string0');//buffer.readobj(['char', 128]);
+			this.spellName = buffer.read('string0');//buffer.read(['char', 128]);
 		}
 		else if (changeSpellData.changeSlotSpellDataType == ChangeSlotSpellDataType.range) {
-			this.CastRange = buffer.read1('float');
+			this.CastRange = buffer.read('float');
 		}
 		else if (changeSpellData.changeSlotSpellDataType == ChangeSlotSpellDataType.maxGrowthRange) {
-			this.OverrideMaxCastRange = buffer.read1('float');
+			this.OverrideMaxCastRange = buffer.read('float');
 		}
 		else if (changeSpellData.changeSlotSpellDataType == ChangeSlotSpellDataType.rangeDisplay) {
-			this.OverrideCastRangeDisplay = buffer.read1('float');
+			this.OverrideCastRangeDisplay = buffer.read('float');
 		}
 		else if (changeSpellData.changeSlotSpellDataType == ChangeSlotSpellDataType.iconIndex) {
-			this.iconIndex = buffer.read1('uint8');
+			this.iconIndex = buffer.read('uint8');
 		}
 		else if (changeSpellData.changeSlotSpellDataType == ChangeSlotSpellDataType.offsetTarget) {
-			this.targets_length = buffer.read1('uint8');
-			this.targets = buffer.readobj(['uint32', this.targets_length]);
+			this.targets_length = buffer.read('uint8');
+			this.targets = buffer.read(['uint32', this.targets_length]);
 		}
 	}
 
@@ -73,26 +73,26 @@ module.exports = class ChangeSlotSpellData extends BasePacket {
 		}
 
 		if (changeSpellData.changeSlotSpellDataType == ChangeSlotSpellDataType.targetingType) {
-			buffer.write1('uint8', this.targetingType);
+			buffer.write('uint8', this.targetingType);
 		}
 		else if (changeSpellData.changeSlotSpellDataType == ChangeSlotSpellDataType.spellName) {
-			buffer.write1('string0', this.spellName);//buffer.writeobj(['char', 128], this.spellName);
+			buffer.write('string0', this.spellName);//buffer.write(['char', 128], this.spellName);
 		}
 		else if (changeSpellData.changeSlotSpellDataType == ChangeSlotSpellDataType.range) {
-			buffer.write1('float', this.CastRange);
+			buffer.write('float', this.CastRange);
 		}
 		else if (changeSpellData.changeSlotSpellDataType == ChangeSlotSpellDataType.maxGrowthRange) {
-			buffer.write1('float', this.OverrideMaxCastRange);
+			buffer.write('float', this.OverrideMaxCastRange);
 		}
 		else if (changeSpellData.changeSlotSpellDataType == ChangeSlotSpellDataType.rangeDisplay) {
-			buffer.write1('float', this.OverrideCastRangeDisplay);
+			buffer.write('float', this.OverrideCastRangeDisplay);
 		}
 		else if (changeSpellData.changeSlotSpellDataType == ChangeSlotSpellDataType.iconIndex) {
-			buffer.write1('uint8', this.iconIndex);
+			buffer.write('uint8', this.iconIndex);
 		}
 		else if (changeSpellData.changeSlotSpellDataType == ChangeSlotSpellDataType.offsetTarget) {
-			buffer.write1('uint8', this.targets.length);
-			buffer.writeobj(['uint32', this.targets.length], this.targets);
+			buffer.write('uint8', this.targets.length);
+			buffer.write(['uint32', this.targets.length], this.targets);
 		}
 	}
-};
+}

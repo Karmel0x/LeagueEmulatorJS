@@ -1,8 +1,8 @@
-const ExtendedPacket = require('../ExtendedPacket');
+import ExtendedPacket from '../ExtendedPacket.js';
 
 
-module.exports = class UnitSetPARType extends ExtendedPacket {
+export default class UnitSetPARType extends ExtendedPacket {
 	static struct = {
 		parType: 'uint8',
-	}
-};
+	};
+}

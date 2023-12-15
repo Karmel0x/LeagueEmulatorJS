@@ -1,6 +1,6 @@
-const Hero_Die = require('./0x5E-Hero_Die');
+import Hero_Die from './0x5E-Hero_Die.js';
 
 
-module.exports = class Die extends Hero_Die {
-	
-};
+export default class Die extends Hero_Die {
+
+}

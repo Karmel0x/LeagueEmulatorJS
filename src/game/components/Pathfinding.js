@@ -1,11 +1,13 @@
 
-const { Vector2 } = require('three');
-const Navmeshcppjs = require('../../../../navmeshcppjs');
+import { Vector2 } from 'three';
+import Navmeshcppjs from '../../../../navmeshcppjs/index.js';
 
-const Pathfinding_ScalarAIMesh = require('./Pathfinding_ScalarAIMesh');
+import Server from '../../app/Server.js';
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+
+import Pathfinding_ScalarAIMesh from './Pathfinding_ScalarAIMesh.js';
 const Pathfinding_TerrainEscape = require('./Pathfinding_TerrainEscape.json');
-const Server = require('../../app/Server');
-
 
 Navmeshcppjs.initialize(0);
 
@@ -52,4 +54,4 @@ class Pathfinding extends Navmeshcppjs {
 	}
 }
 
-module.exports = Pathfinding;
+export default Pathfinding;

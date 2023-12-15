@@ -1,8 +1,8 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class IncrementPlayerStat extends BasePacket {
+export default class IncrementPlayerStat extends BasePacket {
 	static struct = {
 		playerNetId: 'uint32',
 		statEvent: 'uint8',
-	}
-};
+	};
+}

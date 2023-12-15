@@ -1,8 +1,8 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class HandleUIHighlight extends BasePacket {
+export default class HandleUIHighlight extends BasePacket {
 	static struct = {
 		uiHighlightCommand: 'uint8',
 		uiElement: 'uint8',
-	}
-};
+	};
+}

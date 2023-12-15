@@ -1,6 +1,6 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class CreateHero extends BasePacket {
+export default class CreateHero extends BasePacket {
 	static struct = {
 		netObjId: 'uint32',
 		clientId: 'int32',
@@ -22,5 +22,5 @@ module.exports = class CreateHero extends BasePacket {
 			Unknown1: 1,
 			Unknown2: 2,
 		}],
-	}
-};
+	};
+}

@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	//sizes: {},
 	minValues: {
 		'int8': -128

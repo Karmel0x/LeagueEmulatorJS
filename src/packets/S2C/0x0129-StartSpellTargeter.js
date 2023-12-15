@@ -1,9 +1,9 @@
-const ExtendedPacket = require('../ExtendedPacket');
+import ExtendedPacket from '../ExtendedPacket.js';
 
 
-module.exports = class StartSpellTargeter extends ExtendedPacket {
+export default class StartSpellTargeter extends ExtendedPacket {
 	static struct = {
 		slot: 'uint32',
 		targetTime: 'float',
-	}
-};
+	};
+}

@@ -1,8 +1,8 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class OnReplication_Acc extends BasePacket {
+export default class OnReplication_Acc extends BasePacket {
 	static struct = {
 		syncId: 'uint32',
-	}
-};
+	};
+}

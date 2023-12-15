@@ -7,7 +7,7 @@ class colors {
 	static blink = "\x1b[5m";
 	static reverse = "\x1b[7m";
 	static hidden = "\x1b[8m";
- 
+
 	static fgBlack = "\x1b[30m";
 	static fgRed = "\x1b[31m";
 	static fgGreen = "\x1b[32m";
@@ -16,7 +16,7 @@ class colors {
 	static fgMagenta = "\x1b[35m";
 	static fgCyan = "\x1b[36m";
 	static fgWhite = "\x1b[37m";
- 
+
 	static bgBlack = "\x1b[40m";
 	static bgRed = "\x1b[41m";
 	static bgGreen = "\x1b[42m";
@@ -27,4 +27,4 @@ class colors {
 	static bgWhite = "\x1b[47m";
 }
 
-module.exports = colors;
+export default colors;

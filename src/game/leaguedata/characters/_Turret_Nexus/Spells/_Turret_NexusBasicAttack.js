@@ -1,11 +1,11 @@
 
-const _Basicattack = require("../../../../datamethods/spells/_Basicattack_");
+import _Basicattack from '../../../../datamethods/spells/_Basicattack_.js';
 
 
 /**
  * @abstract
  */
-module.exports = class _Turret_NexusBasicAttack extends _Basicattack {
+export default class _Turret_NexusBasicAttack extends _Basicattack {
 
 	//castRange = 1200;
 	windupPercent = 22;
@@ -28,4 +28,4 @@ module.exports = class _Turret_NexusBasicAttack extends _Basicattack {
 		this.castInfo._netId = this.owner.netId;
 	}
 
-};
+}

@@ -1,10 +1,10 @@
 
-const slotId = require('../../../../../constants/slotId');
-const _Spell = require("../../../../datamethods/spells/_Spell");
-const package1 = require('../package');
+import slotId from '../../../../../constants/slotId.js';
+import _Spell from '../../../../datamethods/spells/_Spell.js';
+import package1 from '../package.js';
 
 
-module.exports = class YasuoQ3Mis extends _Spell {
+export default class YasuoQ3Mis extends _Spell {
 	packageHash = package1.packageHash;
 	spellSlot = slotId.Qm;
 	windup = 0.35;
@@ -24,4 +24,4 @@ module.exports = class YasuoQ3Mis extends _Spell {
 		//console.log(spellData.missile);
 		spellData.missile.fire(spellData.missile.target);
 	}
-};
+}

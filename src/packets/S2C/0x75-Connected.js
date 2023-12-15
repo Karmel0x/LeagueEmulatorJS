@@ -1,7 +1,7 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class Connected extends BasePacket {
+export default class Connected extends BasePacket {
 	static struct = {
 		clientId: 'int32',
-	}
-};
+	};
+}

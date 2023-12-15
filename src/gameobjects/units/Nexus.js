@@ -1,9 +1,9 @@
 
-const loadingStages = require("../../constants/loadingStages");
-const Server = require('../../app/Server');
+import packets from '../../packets/index.js';
+import loadingStages from '../../constants/loadingStages.js';
 
-const Unit = require('./Unit');
-const Defendable = require('../extensions/combat/Defendable');
+import Unit from './Unit.js';
+import Defendable from '../extensions/combat/Defendable.js';
 
 
 class Nexus extends Unit {
@@ -11,12 +11,10 @@ class Nexus extends Unit {
 	combat;
 
 	/**
-	 * 
-	 * @param {import('../GameObjects').NexusOptions} options
+	 * @param {import('../GameObjects.js').NexusOptions} options
 	 */
-	constructor(options) {
-		super(options);
-		this.options = options;
+	async loader(options) {
+		await super.loader(options);
 
 		this.combat = new Defendable(this);
 
@@ -24,18 +22,25 @@ class Nexus extends Unit {
 	}
 
 	/**
-	 * It sends a packet to everyone says that this building has died
-	 * @param {import("../GameObjects").AttackableUnit} source - The source of the damage.
+	 * @param {import('../GameObjects.js').NexusOptions} options
 	 */
-	accounceDie(source) {
-		const Building_Die = Server.network.createPacket('Building_Die');
-		Building_Die.netId = this.netId;
-		Building_Die.attackerNetId = source.netId;
-		this.packets.toEveryone(Building_Die);
+	constructor(options) {
+		super(options);
 	}
 
 	/**
-	 * @param {import("../GameObjects").AttackableUnit} source - The source of the damage.
+	 * It sends a packet to everyone says that this building has died
+	 * @param {import('../GameObjects.js').AttackableUnit} source - The source of the damage.
+	 */
+	accounceDie(source) {
+		const packet1 = new packets.Building_Die();
+		packet1.netId = this.netId;
+		packet1.attackerNetId = source.netId;
+		this.packets.toEveryone(packet1);
+	}
+
+	/**
+	 * @param {import('../GameObjects.js').AttackableUnit} source - The source of the damage.
 	 */
 	async onDie(source) {
 		this.accounceDie(source);
@@ -43,10 +48,10 @@ class Nexus extends Unit {
 	}
 
 	spawn() {
-		const OnEnterVisibilityClient = Server.network.createPacket('OnEnterVisibilityClient');
-		OnEnterVisibilityClient.netId = this.netId;
-		OnEnterVisibilityClient.isTurret = true;
-		this.packets.toEveryone(OnEnterVisibilityClient, loadingStages.NOT_CONNECTED);
+		const packet1 = new packets.OnEnterVisibilityClient();
+		packet1.netId = this.netId;
+		packet1.isTurret = true;
+		this.packets.toEveryone(packet1, loadingStages.NOT_CONNECTED);
 
 		super.spawn();
 	}
@@ -54,4 +59,4 @@ class Nexus extends Unit {
 }
 
 
-module.exports = Nexus;
+export default Nexus;

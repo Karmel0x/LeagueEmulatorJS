@@ -1,6 +1,6 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class CloseClient extends BasePacket {
-	
-};
+export default class CloseClient extends BasePacket {
+
+}

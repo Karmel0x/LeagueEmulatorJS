@@ -1,22 +1,31 @@
 
-const { Vector2 } = require('three');
-const UnitList = require('../app/UnitList');
-const Server = require('../app/Server');
-const Team = require('../gameobjects/extensions/traits/Team');
+import packets from '../packets/index.js';
+import { Vector2 } from 'three';
+import UnitList from '../app/UnitList.js';
+import Server from '../app/Server.js';
+import Team from '../gameobjects/extensions/traits/Team.js';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
 
 
 /**
- * @typedef {import('../gameobjects/units/Player')} Player
+ * @typedef {import('../gameobjects/units/Player.js')} Player
  */
 
+/**
+ * @typedef commandObject
+ * @property {string} description
+ * @property {string[]} arguments
+ * @property {(player: Player, args: string[]) => void} handler
+ */
+
+/**
+ * @type {Object.<string, commandObject>}
+ */
 const commandList = {
 	'a': {
 		description: 'test command',
 		arguments: [],
-		/**
-		 * @param {Player} player 
-		 * @param {string[]} args 
-		 */
 		handler: function (player, args) {
 			player.packets.chatBoxMessage(...args);
 
@@ -25,15 +34,11 @@ const commandList = {
 	'help': {
 		description: 'shows available admin commands',
 		arguments: [],
-		/**
-		 * @param {Player} player 
-		 * @param {string[]} args 
-		 */
 		handler: function (player, args) {
 
 			let messages = [];
 			for (let commandName in commandList) {
-				let command = commandList[commandName];
+				let command = commandList[/** @type {keyof commandList} */(commandName)];
 
 				let commandLine = '.' + commandName;
 				if (command.arguments && command.arguments.length)
@@ -48,26 +53,24 @@ const commandList = {
 			}
 
 			messages.forEach((message, i) => {
-				const HandleQuestUpdate = Server.network.createPacket('HandleQuestUpdate');
-				HandleQuestUpdate.objective = `admin commands ${i + 1}`;
-				HandleQuestUpdate.tooltip = message.slice(0, 128);
-				HandleQuestUpdate.reward = message.slice(128, 257);
-				HandleQuestUpdate.questType = Math.floor(i / 3);
-				HandleQuestUpdate.questId = i;
-				player.network.sendPacket(HandleQuestUpdate);
+				const packet1 = new packets.HandleQuestUpdate();
+				packet1.objective = `admin commands ${i + 1}`;
+				packet1.tooltip = message.slice(0, 128);
+				packet1.reward = message.slice(128, 257);
+				packet1.questType = Math.floor(i / 3);
+				packet1.questId = i;
+				player.network.sendPacket(packet1);
 			});
 		}
 	},
 	'': {
 		description: 'run last command',
+		arguments: [],
+		handler: function (player, args) { },
 	},
 	'q': {
 		description: 'spawn BLUE and RED minions',
 		arguments: ['minionsAmount'],
-		/**
-		 * @param {Player} player 
-		 * @param {string[]} args 
-		 */
 		handler: function (player, args) {
 			for (let i = parseInt(args[1] || '1'); i > 0; i--) {
 				UnitList.barracks[Team.TEAM_BLUE][0].spawnUnit('Basic');
@@ -79,10 +82,6 @@ const commandList = {
 	'spawnMinion': {
 		description: '',
 		arguments: ['team'],
-		/**
-		 * @param {Player} player 
-		 * @param {string[]} args 
-		 */
 		handler: function (player, args) {
 			let team = (args[1] || player.team.getEnemyTeam());
 			player.packets.chatBoxMessage('spawnMinion', team);
@@ -92,10 +91,6 @@ const commandList = {
 	'qq': {
 		description: 'spawn RED minion and teleport to BLUE base',
 		arguments: ['minionsAmount'],
-		/**
-		 * @param {Player} player 
-		 * @param {string[]} args 
-		 */
 		handler: function (player, args) {
 			for (let i = parseInt(args[1] || '1'); i > 0; i--) {
 				UnitList.barracks[Team.TEAM_RED][0].spawnUnit('Basic').moving.teleport(new Vector2(1000 + (i * 150), 600));
@@ -105,10 +100,6 @@ const commandList = {
 	'qqq': {
 		description: '',
 		arguments: [],
-		/**
-		 * @param {Player} player 
-		 * @param {string[]} args 
-		 */
 		handler: function (player, args) {
 			let characters = [
 				'Basic', 'MechCannon', 'Wizard', 'MechMelee', //'MechRange',
@@ -122,10 +113,6 @@ const commandList = {
 	'start': {
 		description: 'start game (start spawning minions)',
 		arguments: [],
-		/**
-		 * @param {Player} player 
-		 * @param {string[]} args 
-		 */
 		handler: function (player, args) {
 			Server.command_START_GAME = true;
 			player.packets.chatBoxMessage('starting game');
@@ -134,13 +121,9 @@ const commandList = {
 	'ww': {
 		description: 'move all RED minions to x: 10200, y: 13200',
 		arguments: [],
-		/**
-		 * @param {Player} player 
-		 * @param {string[]} args 
-		 */
 		handler: function (player, args) {
 			let pos = new Vector2(10200, 13200);
-			let redMinionUnits = /** @type {import('../gameobjects/units/Minion')[]} */ (UnitList.getUnitsF(Team.TEAM_RED, 'Minion'));
+			let redMinionUnits = /** @type {import('../gameobjects/units/Minion.js').default[]} */ (UnitList.getUnitsF(Team.TEAM_RED, 'Minion'));
 			for (let i = 0, l = redMinionUnits.length; i < l; i++)
 				redMinionUnits[i].moving.move1(pos.clone());
 		},
@@ -156,26 +139,18 @@ const commandList = {
 	'e': {
 		description: 'resend player stats to client',
 		arguments: [],
-		/**
-		 * @param {Player} player 
-		 * @param {string[]} args 
-		 */
 		handler: function (player, args) {
-			const OnReplication = Server.network.createPacket('OnReplication', 'LOW_PRIORITY');
-			//OnReplication.syncId = performance.now();
-			//OnReplication.units = [UnitList.units[0]];
-			OnReplication.units = [player];
-			player.network.sendPacket(OnReplication);
-			//console.log(OnReplication);
+			const packet1 = new packets.OnReplication();
+			//packet1.syncId = performance.now();
+			//packet1.units = [UnitList.units[0]];
+			packet1.units = [player];
+			player.network.sendPacket(packet1);
+			//console.log(packet1);
 		},
 	},
 	'r': {
 		description: `read player stats from '/constants/TestStats.json'`,
 		arguments: [],
-		/**
-		 * @param {Player} player 
-		 * @param {string[]} args 
-		 */
 		handler: function (player, args) {
 			//if (args.length > 1) {
 			//	let stats = JSON.parse(args.join(' '));
@@ -189,10 +164,6 @@ const commandList = {
 	//'debugMode': {
 	//	description: '',
 	//	arguments: [],
-	//	/**
-	//	 * @param {Player} player 
-	//	 * @param {string[]} args 
-	//	 */
 	//	handler: function (player, args) {
 	//		let debugLevel = parseInt(args[1] || '');
 	//		if (isNaN(debugLevel))
@@ -213,10 +184,6 @@ const commandList = {
 	'packetInspector': {
 		description: '',
 		arguments: ['websocket/console/none'],
-		/**
-		 * @param {Player} player 
-		 * @param {string[]} args 
-		 */
 		handler: function (player, args) {
 			Server.logging.changeOptions({
 				packet: Server.logging.output[args[1]] || Server.logging.output.websocket,
@@ -227,10 +194,6 @@ const commandList = {
 	'levelup': {
 		description: 'levelup current player',
 		arguments: ['levelCount'],
-		/**
-		 * @param {Player} player 
-		 * @param {string[]} args 
-		 */
 		handler: function (player, args) {
 			let levelCount = parseInt(args[1] || '1');
 			for (let i = levelCount; i > 0; i--)
@@ -242,10 +205,6 @@ const commandList = {
 	'expup': {
 		description: 'add experience for current player',
 		arguments: ['expAmount'],
-		/**
-		 * @param {Player} player 
-		 * @param {string[]} args 
-		 */
 		handler: function (player, args) {
 			let expCount = parseInt(args[1] || '1');
 			player.progress.expUp(expCount);
@@ -255,10 +214,6 @@ const commandList = {
 	'hp': {
 		description: 'set current player health',
 		arguments: ['hpPercent'],
-		/**
-		 * @param {Player} player 
-		 * @param {string[]} args 
-		 */
 		handler: function (player, args) {
 			let hpPercent = parseInt(args[1] || '100');
 			player.stats.health.current = player.stats.health.total * hpPercent / 100;
@@ -268,15 +223,13 @@ const commandList = {
 	'test': {
 		description: 'levelUp player 5 levels and spawn 22 RED minions in BLUE base',
 		arguments: [],
-		/**
-		 * @param {Player} player 
-		 * @param {string[]} args 
-		 */
 		handler: function (player, args) {
 			for (let i = 22; i > 0; i--) {
 				let unit = UnitList.barracks[Team.TEAM_RED][0].spawnUnit('Basic');
 				//unit.moveLane = () => {};
-				unit.moving.teleport(new Vector2(1000 + (i * 150), 600));
+				unit.once('initialized', () => {
+					unit.moving.teleport(new Vector2(1000 + (i * 150), 600));
+				});
 			}
 
 			for (let i = 5; i > 0; i--)
@@ -286,10 +239,6 @@ const commandList = {
 	'champion': {
 		description: 'switch player champion',
 		arguments: ['championName'],
-		/**
-		 * @param {Player} player 
-		 * @param {string[]} args 
-		 */
 		handler: function (player, args) {
 			let character = args[1] || 'Ezreal';
 			const Champion_ = require('../game/leaguedata/characters/' + character);
@@ -301,10 +250,6 @@ const commandList = {
 	'info': {
 		description: 'print in chat some informations you may need',
 		arguments: ['type'],
-		/**
-		 * @param {Player} player 
-		 * @param {string[]} args 
-		 */
 		handler: function (player, args) {
 			if (!args[1]) {
 				player.packets.chatBoxMessage('possible info types: position, stats');
@@ -328,10 +273,6 @@ const commandList = {
 	'goto': {
 		description: 'teleport to unit',
 		arguments: ['netId'],
-		/**
-		 * @param {Player} player 
-		 * @param {string[]} args 
-		 */
 		handler: function (player, args) {
 			// teleport to unit by netId
 			let netId = parseInt(args[1] || '0');
@@ -345,10 +286,6 @@ const commandList = {
 	'pathfinding': {
 		description: '',
 		arguments: ['on/off'],
-		/**
-		 * @param {Player} player 
-		 * @param {string[]} args 
-		 */
 		handler: function (player, args) {
 			if (!args[1]) {
 				Server.doNotUsePathfinding = !Server.doNotUsePathfinding;
@@ -369,10 +306,6 @@ const commandList = {
 	'setCharacter': {
 		description: '',
 		arguments: ['characterName'],
-		/**
-		 * @param {Player} player 
-		 * @param {string[]} args 
-		 */
 		handler: function (player, args) {
 			player.character = args[1] || 'Ezreal';
 		},
@@ -380,23 +313,15 @@ const commandList = {
 	'SystemMessage': {
 		description: '',
 		arguments: [],
-		/**
-		 * @param {Player} player 
-		 * @param {string[]} args 
-		 */
 		handler: function (player, args) {
-			let packet = Server.network.createPacket('SystemMessage');
-			packet.message = args.join(' ');
-			player.network.sendPacket(packet);
+			let packet1 = new packets.SystemMessage();
+			packet1.message = args.join(' ');
+			player.network.sendPacket(packet1);
 		},
 	},
 	'gold': {
 		description: 'set current player gold',
 		arguments: ['amount'],
-		/**
-		 * @param {Player} player 
-		 * @param {string[]} args 
-		 */
 		handler: function (player, args) {
 			player.progress.gold = parseInt(args[1] || '10000');
 			player.packets.chatBoxMessage(...args);
@@ -405,26 +330,18 @@ const commandList = {
 	'mm': {
 		description: '',
 		arguments: [],
-		/**
-		 * @param {Player} player 
-		 * @param {string[]} args 
-		 */
 		handler: function (player, args) {
-			let packet = Server.network.createPacket('UnitAddGold');
-			//packet.netId = player.netId;
-			packet.targetNetId = player.netId;
-			packet.sourceNetId = player.netId;
-			packet.goldAmount = 111;
-			player.network.sendPacket(packet);
+			let packet1 = new packets.UnitAddGold();
+			//packet1.netId = player.netId;
+			packet1.targetNetId = player.netId;
+			packet1.sourceNetId = player.netId;
+			packet1.goldAmount = 111;
+			player.network.sendPacket(packet1);
 		},
 	},
 	'movespeed': {
 		description: '',
 		arguments: [],
-		/**
-		 * @param {Player} player 
-		 * @param {string[]} args 
-		 */
 		handler: function (player, args) {
 			player.stats.moveSpeed.baseValue = parseInt(args[1] || '500');
 		},
@@ -432,10 +349,6 @@ const commandList = {
 	'wave': {
 		description: '',
 		arguments: [],
-		/**
-		 * @param {Player} player 
-		 * @param {string[]} args 
-		 */
 		handler: function (player, args) {
 			UnitList.barracks[Team.TEAM_BLUE][1]?.spawnWave();
 			UnitList.barracks[Team.TEAM_RED][1]?.spawnWave();
@@ -448,10 +361,10 @@ const commandList = {
 /**
  * 
  * @param {Player} player 
- * @param {*} packet 
+ * @param {typeof import('../packets/COMMUNICATION/0x68-Chat.js').struct} packet 
  * @returns 
  */
-module.exports = (player, packet) => {
+export default (player, packet) => {
 
 	if (packet.msg[0] != '.')
 		return;

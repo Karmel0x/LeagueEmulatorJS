@@ -1,5 +1,5 @@
-const { HashStringNorm } = require("../../../../functions/HashString");
+import HashString from '../../../../functions/HashString.js';
 
-module.exports = {
-	packageHash: HashStringNorm('[Character]Yasuo00'),//3275499062
+export default {
+	packageHash: HashString.HashStringNorm('[Character]Yasuo00'),//3275499062
 };

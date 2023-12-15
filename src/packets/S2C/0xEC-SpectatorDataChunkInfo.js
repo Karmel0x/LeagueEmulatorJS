@@ -1,8 +1,8 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class SpectatorDataChunkInfo extends BasePacket {
+export default class SpectatorDataChunkInfo extends BasePacket {
 	static struct = {
 		startGameChunkId: 'int32',
 		endGameChunkId: 'int32',
-	}
-};
+	};
+}

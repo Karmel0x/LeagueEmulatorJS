@@ -1,7 +1,7 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class PopCharacterData extends BasePacket {
+export default class PopCharacterData extends BasePacket {
 	static struct = {
 		popId: 'uint32',
-	}
-};
+	};
+}

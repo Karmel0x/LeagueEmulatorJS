@@ -1,11 +1,11 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
 /**
  * orange chat message
  */
-module.exports = class DisplayLocalizedTutorialChatText extends BasePacket {
+export default class DisplayLocalizedTutorialChatText extends BasePacket {
 	static struct = {
 		message: 'string0',//128
-	}
-};
+	};
+}

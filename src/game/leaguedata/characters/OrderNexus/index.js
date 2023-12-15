@@ -1,7 +1,7 @@
 
-const _Nexus = require('../_Nexus');
+import _Nexus from '../_Nexus/index.js';
 
 
-module.exports = class OrderNexus extends _Nexus {
+export default class OrderNexus extends _Nexus {
 
-};
+}

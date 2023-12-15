@@ -1,10 +1,10 @@
 
-const loadingStages = require("../../constants/loadingStages");
-const EVENT = require('../../packets/EVENT');
-const Server = require('../../app/Server');
+import packets from '../../packets/index.js';
+import loadingStages from '../../constants/loadingStages.js';
+import EVENT from '../../packets/EVENT.js';
 
-const Unit = require('./Unit');
-const Attackable = require('../extensions/combat/Attackable');
+import Unit from './Unit.js';
+import Attackable from '../extensions/combat/Attackable.js';
 
 
 class Turret extends Unit {
@@ -12,12 +12,10 @@ class Turret extends Unit {
 	combat;
 
 	/**
-	 * 
-	 * @param {import('../GameObjects').TurretOptions} options 
+	 * @param {import('../GameObjects.js').TurretOptions} options 
 	 */
-	constructor(options) {
-		super(options);
-		this.options = options;
+	async loader(options) {
+		await super.loader(options);
 
 		this.combat = new Attackable(this);
 
@@ -25,44 +23,51 @@ class Turret extends Unit {
 	}
 
 	/**
-	 * It sends a packet to everyone that the turret has died
-	 * @param {import("../GameObjects").AttackableUnit} source - The source of the damage.
+	 * @param {import('../GameObjects.js').TurretOptions} options 
 	 */
-	announceDie(source) {
-		const OnEvent = Server.network.createPacket('OnEvent');
-		OnEvent.netId = this.netId;
-		OnEvent.eventId = EVENT.OnTurretDie;
-		OnEvent.eventData = {
-			otherNetId: source.netId
-		};
-		this.packets.toEveryone(OnEvent);
+	constructor(options) {
+		super(options);
 	}
 
 	/**
-	 * @param {import("../GameObjects").AttackableUnit} source
+	 * It sends a packet to everyone that the turret has died
+	 * @param {import('../GameObjects.js').AttackableUnit} source - The source of the damage.
+	 */
+	announceDie(source) {
+		const packet1 = new packets.OnEvent();
+		packet1.netId = this.netId;
+		packet1.eventId = EVENT.OnTurretDie;
+		packet1.eventData = {
+			otherNetId: source.netId
+		};
+		this.packets.toEveryone(packet1);
+	}
+
+	/**
+	 * @param {import('../GameObjects.js').AttackableUnit} source
 	 */
 	async onDie(source) {
 		this.announceDie(source);
 	}
 
 	spawn() {
-		const CreateTurret = Server.network.createPacket('CreateTurret', 'S2C');
-		CreateTurret.netId = this.netId;
-		CreateTurret.netObjId = this.netId;
-		CreateTurret.netNodeId = 0x40;
-		CreateTurret.objectName = this.info.name;
-		CreateTurret.bitfield = {
+		const packet1 = new packets.CreateTurret();
+		packet1.netId = this.netId;
+		packet1.netObjId = this.netId;
+		packet1.netNodeId = 0x40;
+		packet1.objectName = this.info.name;
+		packet1.bitfield = {
 			isTargetable: true,
 		};
-		CreateTurret.isTargetableToTeamSpellFlags = 0x01800000;
-		this.packets.toEveryone(CreateTurret, loadingStages.NOT_CONNECTED);
+		packet1.isTargetableToTeamSpellFlags = 0x01800000;
+		this.packets.toEveryone(packet1, loadingStages.NOT_CONNECTED);
 
 		super.spawn();
 	}
 
 	///**
 	// * Set target for turret to attack
-	// * @param {import("../GameObjects").DefendableUnit} target
+	// * @param {import('../GameObjects.js').DefendableUnit} target
 	// */
 	//setTarget(target) {
 	//	if (this.target === target)
@@ -70,12 +75,12 @@ class Turret extends Unit {
 	//
 	//	this.target = target;
 	//
-	//	const AI_Target = Server.network.createPacket('AI_Target', 'S2C');
-	//	AI_Target.netId = this.netId;
-	//	AI_Target.targetNetId = target.netId;
-	//	this.packets.toEveryone(AI_Target);
+	//	const packet1 = new packets.AI_Target();
+	//	packet1.netId = this.netId;
+	//	packet1.targetNetId = target.netId;
+	//	this.packets.toEveryone(packet1);
 	//}
 }
 
 
-module.exports = Turret;
+export default Turret;

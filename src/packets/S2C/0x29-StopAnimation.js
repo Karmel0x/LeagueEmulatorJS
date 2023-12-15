@@ -1,7 +1,7 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class StopAnimation extends BasePacket {
+export default class StopAnimation extends BasePacket {
 	static struct = {
 		bitfield: ['bitfield', {
 			fade: 1,
@@ -9,5 +9,5 @@ module.exports = class StopAnimation extends BasePacket {
 			stopAll: 4,
 		}],
 		animationName: 'string0',//64
-	}
-};
+	};
+}

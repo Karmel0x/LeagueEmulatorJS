@@ -1,13 +1,13 @@
 
-const Server = require('../../../app/Server');
-const loadingStages = require('../../../constants/loadingStages');
+import Server from '../../../app/Server.js';
+import loadingStages from '../../../constants/loadingStages.js';
 
 
-module.exports = class Network {
+export default class Network {
 
 	/**
 	 * 
-	 * @param {import('../../units/Unit')} owner 
+	 * @param {import('../../units/Unit.js').default} owner 
 	 */
 	constructor(owner) {
 		this.owner = owner;
@@ -64,4 +64,4 @@ module.exports = class Network {
 	//	sendPacket(this.peerNum, packet);
 	//}
 
-};
+}

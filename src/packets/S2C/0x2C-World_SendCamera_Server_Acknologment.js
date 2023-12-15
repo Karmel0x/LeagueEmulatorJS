@@ -1,7 +1,7 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class World_SendCamera_Server_Acknologment extends BasePacket {
+export default class World_SendCamera_Server_Acknologment extends BasePacket {
 	static struct = {
 		syncId: 'uint8',
-	}
-};
+	};
+}

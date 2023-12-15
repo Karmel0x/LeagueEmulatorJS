@@ -1,6 +1,7 @@
 
-const Server = require("../app/Server");
-const loadingStages = require("../constants/loadingStages");
+import packets from '../packets/index.js';
+import Server from '../app/Server.js';
+import loadingStages from '../constants/loadingStages.js';
 
 const MapId = {
 	SummonersRift_Original: 1, // Summoner's Rift / Original Summer variant
@@ -25,32 +26,32 @@ const VersionString = 'Version 4.20.0.315 [PUBLIC]';
 
 /**
  * 
- * @param {import('../gameobjects/units/Player')} player 
- * @param {*} packet 
+ * @param {import('../gameobjects/units/Player.js')} player 
+ * @param {typeof import('../packets/C2S/0xBD-SynchVersion.js').struct} packet 
  */
-module.exports = (player, packet) => {
+export default (player, packet) => {
 	console.log('handle: C2S.SynchVersion');
 	//console.log(packet);
 
 	//if(!packet.version.startsWith(VersionString))
 	//	return console.log('wrong client version', packet.version);
 
-	const SynchVersion = Server.network.createPacket('SynchVersion');
+	const packet1 = new packets.SynchVersion();
 
-	SynchVersion.bitfield = {
+	packet1.bitfield = {
 		versionMatches: true,
 	};
 
-	SynchVersion.mapToLoad = MapId.SummonersRift_Original;
-	SynchVersion.versionString = VersionString;
+	packet1.mapToLoad = MapId.SummonersRift_Original;
+	packet1.versionString = VersionString;
 
-	SynchVersion.playerInfo = [];
+	packet1.playerInfo = [];
 	for (let i = 0; i < 12; i++)
-		SynchVersion.playerInfo.push(Server.players[i] ? Server.players[i].playerInfo : { playerId: -1 });
+		packet1.playerInfo.push(Server.players[i] ? Server.players[i].playerInfo : { playerId: -1 });
 
-	SynchVersion.mapMode = 'CLASSIC';
-	SynchVersion.platformId = 'NA1';
-	SynchVersion.gameFeatures = {//487890
+	packet1.mapMode = 'CLASSIC';
+	packet1.platformId = 'NA1';
+	packet1.gameFeatures = {//487890
 		FoundryOptions: true,
 		EarlyWarningForFOWMissiles: true,
 		ItemUndo: true,
@@ -64,10 +65,10 @@ module.exports = (player, packet) => {
 		DradisSD: true,
 	};
 
-	SynchVersion.enabledDradisMessages = [];
+	packet1.enabledDradisMessages = [];
 	for (let i = 0; i < 19; i++)
-		SynchVersion.enabledDradisMessages[i] = true;
+		packet1.enabledDradisMessages[i] = true;
 
-	player.network.sendPacket(SynchVersion, loadingStages.NOT_CONNECTED);
-	//console.debug(SynchVersion);
+	player.network.sendPacket(packet1, loadingStages.NOT_CONNECTED);
+	//console.debug(packet1);
 };

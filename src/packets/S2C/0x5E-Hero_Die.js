@@ -1,9 +1,9 @@
-const BasePacket = require('../BasePacket');
-const SDeathData = require('../sharedstruct/SDeathData');
+import BasePacket from '../BasePacket.js';
+import SDeathData from '../sharedstruct/SDeathData.js';
 
 
-module.exports = class Hero_Die extends BasePacket {
+export default class Hero_Die extends BasePacket {
 	static struct = {
 		deathData: SDeathData,
-	}
-};
+	};
+}

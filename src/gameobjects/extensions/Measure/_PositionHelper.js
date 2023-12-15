@@ -1,12 +1,12 @@
 
-const { Vector2 } = require("three");
+import { Vector2 } from 'three';
 
 
 /**
- * @typedef {import('../../GameObject')} GameObject
+ * @typedef {import('../../GameObject.js')} GameObject
  */
 
-module.exports = class _PositionHelper {
+export default class _PositionHelper {
 
 	/**
 	 * Get the angle as normalized Vector2 from source to target
@@ -74,4 +74,4 @@ module.exports = class _PositionHelper {
 	getFromNearestToEnd(arrayVector2) {
 		return this.constructor.getFromNearestToEnd(this.gameObject, arrayVector2);
 	}
-};
+}

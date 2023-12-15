@@ -1,10 +1,10 @@
-const _Package = require("../_Package");
+import _Package from '../_Package.js';
 
 
 /**
  * @abstract
  */
-module.exports = class _Character extends _Package {
+export default class _Character extends _Package {
 
 	static spells = {};
 	static stats = {};
@@ -18,4 +18,4 @@ module.exports = class _Character extends _Package {
 		return this.constructor.stats;
 	}
 
-};
+}

@@ -1,17 +1,16 @@
-const { Vector2 } = require('three');
-const PositionHelper = require('../../gameobjects/extensions/Measure');
-const Monster = require('../../gameobjects/units/Monster');
-const UnitList = require('../../app/UnitList');
-const Server = require('../../app/Server');
-const Team = require('../../gameobjects/extensions/traits/Team');
+import { Vector2 } from 'three';
+import PositionHelper from '../../gameobjects/extensions/Measure/index.js';
+import UnitList from '../../app/UnitList.js';
+import Server from '../../app/Server.js';
+import Team from '../../gameobjects/extensions/traits/Team.js';
 
 
 // https://leagueoflegends.fandom.com/wiki/Sight#Sight_Ranges
 const defaultVisionRange = 1350;
 
 /**
- * @typedef {import('../../gameobjects/units/Unit')} Unit
- * @typedef {import('../../gameobjects/missiles/Missile')} Missile
+ * @typedef {import('../../gameobjects/units/Unit.js').default} Unit
+ * @typedef {import('../../gameobjects/missiles/Missile.js').default} Missile
  */
 
 /**
@@ -102,7 +101,7 @@ class MovementSimulation {
 
 	/**
 	 * Actually move unit
-	 * @param {import('../../gameobjects/GameObjects').MovableObject} unit 
+	 * @param {import('../../gameobjects/GameObjects.js').MovableObject} unit 
 	 * @param {number} diff 
 	 * @returns {boolean} hasMoved
 	 */
@@ -147,7 +146,7 @@ class MovementSimulation {
 
 	/**
 	 * Called if unit has moved to call unit movement callbacks
-	 * @param {import('../../gameobjects/GameObjects').MovableObject} unit 
+	 * @param {import('../../gameobjects/GameObjects.js').MovableObject} unit 
 	 * @param {number} diff 
 	 */
 	callbacks(unit, diff) {
@@ -204,7 +203,7 @@ class MovementSimulation {
 
 	/**
 	 * Get unit elapsed time in ms since last movement update
-	 * @param {import('../../gameobjects/GameObjects').MovableObject} unit 
+	 * @param {import('../../gameobjects/GameObjects.js').MovableObject} unit 
 	 * @returns {number}
 	 */
 	unitDiff(unit) {
@@ -233,7 +232,7 @@ class MovementSimulation {
 			this.moved = {};
 
 			// @todo: get only movable units
-			let units = /** @type {import('../../gameobjects/GameObjects').MovableUnit[]} */ (UnitList.getUnits());
+			let units = /** @type {import('../../gameobjects/GameObjects.js').MovableUnit[]} */ (UnitList.getUnits());
 			units.forEach(unit => {
 				if (!unit.moving)
 					return;
@@ -269,4 +268,4 @@ class MovementSimulation {
 }
 
 
-module.exports = MovementSimulation;
+export default MovementSimulation;

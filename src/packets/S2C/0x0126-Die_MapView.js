@@ -1,9 +1,9 @@
-const ExtendedPacket = require('../ExtendedPacket');
-const SDeathData = require('../sharedstruct/SDeathData');
+import ExtendedPacket from '../ExtendedPacket.js';
+import SDeathData from '../sharedstruct/SDeathData.js';
 
 
-module.exports = class Die_MapView extends ExtendedPacket {
+export default class Die_MapView extends ExtendedPacket {
 	static struct = {
 		deathData: SDeathData,
-	}
-};
+	};
+}

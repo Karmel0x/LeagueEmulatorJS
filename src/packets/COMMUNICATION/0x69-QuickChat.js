@@ -1,24 +1,20 @@
 
-const BasePacket = require('../BasePacket');
+import PrimaryPacket from '../PrimaryPacket.js';
 
 
-module.exports = class QuickChat extends BasePacket {
-	static struct_header = {
-		cmd: 'uint8',
-		//netId: 'uint32',
-	}
+export default class QuickChat extends PrimaryPacket {
 	static struct = {
 		clientId: 'int32',
 		messageId: 'int16',
-	}
-	reader(buffer){
+	};
+	reader(buffer) {
 		super.reader(buffer);
 
-		this.extraBytes = buffer.readobj(['uint8', buffer.length - buffer.off]);
+		this.extraBytes = buffer.read(['uint8', buffer.length - buffer.offset]);
 	}
-	writer(buffer){
+	writer(buffer) {
 		super.writer(buffer);
 
-		buffer.writeobj(['uint8', this.extraBytes.length], this.extraBytes);
+		buffer.write(['uint8', this.extraBytes.length], this.extraBytes);
 	}
-};
+}

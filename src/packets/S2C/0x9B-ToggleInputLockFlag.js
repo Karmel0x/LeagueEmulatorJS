@@ -1,7 +1,7 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class ToggleInputLockFlag extends BasePacket {
+export default class ToggleInputLockFlag extends BasePacket {
 	static struct = {
 		inputLockFlags: 'uint32',
-	}
-};
+	};
+}

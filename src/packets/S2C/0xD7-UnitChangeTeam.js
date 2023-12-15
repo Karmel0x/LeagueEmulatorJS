@@ -1,8 +1,8 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class UnitChangeTeam extends BasePacket {
+export default class UnitChangeTeam extends BasePacket {
 	static struct = {
 		unitNetId: 'uint32',
 		team: 'uint32',
-	}
-};
+	};
+}

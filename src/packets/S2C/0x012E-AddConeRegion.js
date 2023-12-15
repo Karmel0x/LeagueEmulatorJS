@@ -1,8 +1,8 @@
-const ExtendedPacket = require('../ExtendedPacket');
-const SVector2 = require('../sharedstruct/SVector2');
+import ExtendedPacket from '../ExtendedPacket.js';
+import SVector2 from '../sharedstruct/SVector2.js';
 
 
-module.exports = class AddConeRegion extends ExtendedPacket {
+export default class AddConeRegion extends ExtendedPacket {
 	static struct = {
 		team: 'uint32',
 		regionType: 'int32',
@@ -25,5 +25,5 @@ module.exports = class AddConeRegion extends ExtendedPacket {
 		coneAngle: 'float',
 		Unknown: 'float',
 		Unknown2: 'float',
-	}
-};
+	};
+}

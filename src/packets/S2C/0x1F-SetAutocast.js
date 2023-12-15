@@ -1,10 +1,10 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
 // packet length should be 9
-module.exports = class SetAutocast extends BasePacket {
+export default class SetAutocast extends BasePacket {
 	static struct = {
 		slot: 'uint8',
 		critSlot: 'uint8',
-	}
-};
+	};
+}

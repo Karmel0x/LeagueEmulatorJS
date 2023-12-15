@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	AutoCast: 0x2,
 	InstantCast: 0x4,
 	PersistThroughDeath: 0x8,

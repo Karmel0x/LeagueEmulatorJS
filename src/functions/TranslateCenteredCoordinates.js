@@ -1,9 +1,12 @@
-const { Vector2 } = require('three');
+import { Vector2 } from 'three';
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+
 const NavigationGrid = require('../constants/NavigationGrid.json');
 // need to verify NavigationGrid.MiddleOfMap
 
 
-module.exports = class TranslateCenteredCoordinates {
+class TranslateCenteredCoordinates {
 	/**
 	 * Convert CenteredCoordinates to waypoints
 	 * @param {Vector2[]} waypointsCC
@@ -27,4 +30,6 @@ module.exports = class TranslateCenteredCoordinates {
 			(waypoint.y - NavigationGrid.MiddleOfMap.y) / 2,
 		));
 	}
-};
+}
+
+export default TranslateCenteredCoordinates;

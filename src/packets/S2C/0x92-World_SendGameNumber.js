@@ -1,6 +1,6 @@
-const World_SendGameNumberC2S = require('../C2S/0x92-World_SendGameNumber');
+import World_SendGameNumberC2S from '../C2S/0x92-World_SendGameNumber.js';
 
 
-module.exports = class World_SendGameNumber extends World_SendGameNumberC2S {
-	
-};
+export default class World_SendGameNumber extends World_SendGameNumberC2S {
+
+}

@@ -1,7 +1,7 @@
-const ExtendedPacket = require('../ExtendedPacket');
+import ExtendedPacket from '../ExtendedPacket.js';
 
 
-module.exports = class UpdateAttackSpeedCapOverrides extends ExtendedPacket {
+export default class UpdateAttackSpeedCapOverrides extends ExtendedPacket {
 	static struct = {
 		bitfield: ['bitfield', {
 			doOverrideMax: 1,
@@ -9,5 +9,5 @@ module.exports = class UpdateAttackSpeedCapOverrides extends ExtendedPacket {
 		}],
 		maxAttackSpeedOverride: 'float',
 		minAttackSpeedOverride: 'float',
-	}
-};
+	};
+}

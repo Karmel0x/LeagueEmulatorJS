@@ -1,7 +1,7 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class UnitApplyDamage extends BasePacket {
+export default class UnitApplyDamage extends BasePacket {
 
     static DamageResultType = {
         invulnerable: 0,
@@ -27,4 +27,4 @@ module.exports = class UnitApplyDamage extends BasePacket {
         targetNetId: 'uint32',
         sourceNetId: 'uint32',
     };
-};
+}

@@ -1,7 +1,7 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class BuffAdd2 extends BasePacket {
+export default class BuffAdd2 extends BasePacket {
 	static struct = {
 		buffSlot: 'uint8',
 		buffType: 'uint8',
@@ -12,5 +12,5 @@ module.exports = class BuffAdd2 extends BasePacket {
 		runningTime: 'float',
 		duration: 'float',
 		casterNetId: 'uint32',
-	}
-};
+	};
+}

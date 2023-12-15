@@ -1,10 +1,18 @@
 
-const slotId = require('../../../../constants/slotId');
-const _Champion = require("../../../datamethods/characters/_Champion");
+import slotId from '../../../../constants/slotId.js';
+import _Champion from '../../../datamethods/characters/_Champion.js';
+import package1 from './package.js';
+
+import EzrealMysticShot from './spells/EzrealMysticShot.js';
+import EzrealEssenceFlux from './spells/EzrealEssenceFlux.js';
+import EzrealArcaneShift from './spells/EzrealArcaneShift.js';
+import EzrealTrueshotBarrage from './spells/EzrealTrueshotBarrage.js';
+
+import EzrealBasicAttack from './spells/EzrealBasicAttack.js';
 
 
-module.exports = class Ezreal extends _Champion {
-	static package = require('./package');
+export default class Ezreal extends _Champion {
+	static package = package1;
 
 	static stats = {
 		health: {
@@ -44,12 +52,12 @@ module.exports = class Ezreal extends _Champion {
 	};
 
 	static spells = {
-		EzrealMysticShot: require('./spells/EzrealMysticShot'),
-		EzrealEssenceFlux: require('./spells/EzrealEssenceFlux'),
-		EzrealArcaneShift: require('./spells/EzrealArcaneShift'),
-		EzrealTrueshotBarrage: require('./spells/EzrealTrueshotBarrage'),
+		EzrealMysticShot,
+		EzrealEssenceFlux,
+		EzrealArcaneShift,
+		EzrealTrueshotBarrage,
 
-		EzrealBasicAttack: require('./spells/EzrealBasicAttack'),
+		EzrealBasicAttack,
 	};
 
 	constructor(parent) {
@@ -64,4 +72,4 @@ module.exports = class Ezreal extends _Champion {
 			[slotId.A]: this.constructor.spells.EzrealBasicAttack,
 		});
 	}
-};
+}

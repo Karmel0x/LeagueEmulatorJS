@@ -1,8 +1,8 @@
-const ExtendedPacket = require('../ExtendedPacket');
+import ExtendedPacket from '../ExtendedPacket.js';
 
 
-module.exports = class UpdateAscended extends ExtendedPacket {
+export default class UpdateAscended extends ExtendedPacket {
 	static struct = {
 		ascendedNetId: 'uint32',
-	}
-};
+	};
+}

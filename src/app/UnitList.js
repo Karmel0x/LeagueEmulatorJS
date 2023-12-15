@@ -1,12 +1,12 @@
 
-//import unitTypes from '../../constants/unitTypes';
+//import unitTypes from '../../constants/unitTypes.js';
 
-const Team = require('../gameobjects/extensions/traits/Team');
+import Team from '../gameobjects/extensions/traits/Team.js';
 
 /**
- * @typedef {import('../gameobjects/units/Unit')} Unit
- * @typedef {import('../gameobjects/missiles/Missile')} Missile
- * @typedef {import('../gameobjects/spawners/Barrack')} Barrack
+ * @typedef {import('../gameobjects/units/Unit.js').default} Unit
+ * @typedef {import('../gameobjects/missiles/Missile.js').default} Missile
+ * @typedef {import('../gameobjects/spawners/Barrack.js').default} Barrack
  */
 
 class UnitList {
@@ -111,4 +111,4 @@ class UnitList {
 	}
 }
 
-module.exports = UnitList;
+export default UnitList;

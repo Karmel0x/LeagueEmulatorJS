@@ -1,9 +1,9 @@
 
-module.exports = class Scoreboard {
+export default class Scoreboard {
 
     /**
      * 
-     * @param {import('../../units/Player')} owner 
+     * @param {import('../../units/Player.js').default} owner 
      */
     constructor(owner) {
         this.owner = owner;
@@ -18,4 +18,4 @@ module.exports = class Scoreboard {
     lastRespawnTime = 0;
     totalRespawnTime = 0;
 
-};
+}

@@ -1,12 +1,12 @@
 
-const slotId = require('../../../../../constants/slotId');
-const Skillshot = require("../../../../../gameobjects/missiles/Skillshot");
-const _Spell = require("../../../../datamethods/spells/_Spell");
-const package1 = require('../package');
-const YasuoQ3Mis = require("./YasuoQ3Mis");
+import slotId from '../../../../../constants/slotId.js';
+import Skillshot from '../../../../../gameobjects/missiles/Skillshot.js';
+import _Spell from '../../../../datamethods/spells/_Spell.js';
+import package1 from '../package.js';
+import YasuoQ3Mis from './YasuoQ3Mis.js';
 
 
-module.exports = class YasuoQ3 extends _Spell {
+export default class YasuoQ3 extends _Spell {
 	packageHash = package1.packageHash;
 	spellSlot = slotId.Qq;
 	windup = 0;
@@ -62,4 +62,4 @@ module.exports = class YasuoQ3 extends _Spell {
 		spellData.missile = skillshot;
 
 	}
-};
+}

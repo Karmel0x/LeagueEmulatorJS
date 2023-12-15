@@ -1,12 +1,13 @@
 
-const _Character = require('../../../datamethods/characters/_Character');
+import _Character from '../../../datamethods/characters/_Character.js';
+//import package1 from './package.js';
 
 
 /**
  * @abstract
  */
-module.exports = class _Nexus extends _Character {
-	//static package = require('./package');
+export default class _Nexus extends _Character {
+	//static package = package1;
 
 	static reward = {
 		gold: 50,
@@ -38,4 +39,4 @@ module.exports = class _Nexus extends _Character {
 		super(parent);
 
 	}
-};
+}

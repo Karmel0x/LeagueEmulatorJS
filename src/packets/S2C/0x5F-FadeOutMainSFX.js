@@ -1,8 +1,8 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class FadeOutMainSFX extends BasePacket {
+export default class FadeOutMainSFX extends BasePacket {
 	static struct = {
 		fadeTime: 'float',
-	}
-};
+	};
+}

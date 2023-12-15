@@ -1,7 +1,7 @@
 
-const _Inhibitor = require('../_Inhibitor');
+import _Inhibitor from '../_Inhibitor/index.js';
 
 
-module.exports = class OrderInhibitor extends _Inhibitor {
+export default class OrderInhibitor extends _Inhibitor {
 
-};
+}

@@ -1,5 +1,5 @@
-const HashString = require("../src/functions/HashString");
-const fs = require('fs');
+import HashString from '../src/functions/HashString.js';
+import fs from 'fs';
 
 const clientPath = 'LOL_CLIENT_PATH';
 let spellHash = {};

@@ -1,4 +1,4 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 const Tooltip = {
 	ownerNetId: 'uint32',
@@ -7,14 +7,14 @@ const Tooltip = {
 	hideFromEnemy: ['uint8', 16],
 };
 
-module.exports = class ToolTipVars extends BasePacket {
+export default class ToolTipVars extends BasePacket {
 	static struct = {
 		tooltips_length: 'uint16',
-	}
+	};
 	reader(buffer) {
 		super.reader(buffer);
 
-		this.tooltips = buffer.readobj([Tooltip, this.tooltips_length]);
+		this.tooltips = buffer.read([Tooltip, this.tooltips_length]);
 	}
 	writer(buffer) {
 		if (!this.tooltips || !this.tooltips.length || this.tooltips.length > 0xFFFF)
@@ -24,6 +24,6 @@ module.exports = class ToolTipVars extends BasePacket {
 
 		super.writer(buffer);
 
-		buffer.writeobj([Tooltip, this.tooltips_length], this.tooltips);
+		buffer.write([Tooltip, this.tooltips_length], this.tooltips);
 	}
-};
+}

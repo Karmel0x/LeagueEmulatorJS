@@ -1,6 +1,6 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class EndSpawn extends BasePacket {
-	
-};
+export default class EndSpawn extends BasePacket {
+
+}

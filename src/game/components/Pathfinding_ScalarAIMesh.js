@@ -43,4 +43,4 @@ class Pathfinding_ScalarAIMesh {
 
 }
 
-module.exports = Pathfinding_ScalarAIMesh;
+export default Pathfinding_ScalarAIMesh;

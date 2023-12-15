@@ -1,13 +1,13 @@
 
-const UnitList = require('../../app/UnitList');
-const Server = require('../../app/Server');
+import packets from '../../packets/index.js';
+import UnitList from '../../app/UnitList.js';
 
-const Unit = require('./Unit');
-const Moving = require('../extensions/traits/Moving');
-const Attackable = require('../extensions/combat/Attackable');
-const { minionsLanePaths } = require('../positions');
-const Filters = require('../extensions/Filters');
-const MovingUnit = require('../extensions/traits/MovingUnit');
+import Unit from './Unit.js';
+import Attackable from '../extensions/combat/Attackable.js';
+import { minionsLanePaths } from '../positions/index.js';
+import Filters from '../extensions/Filters/index.js';
+import MovingUnit from '../extensions/traits/MovingUnit.js';
+import Player from './Player.js';
 
 
 class Minion extends Unit {
@@ -15,12 +15,13 @@ class Minion extends Unit {
 	combat;
 	moving;
 
+	spawner;
+
 	/**
-	 * @param {import('../GameObjects').MinionOptions} options 
+	 * @param {import('../GameObjects.js').MinionOptions} options 
 	 */
-	constructor(options) {
-		super(options);
-		this.options = options;
+	async loader(options) {
+		await super.loader(options);
 
 		this.combat = new Attackable(this);
 		this.moving = new MovingUnit(this);
@@ -29,15 +30,22 @@ class Minion extends Unit {
 		this.initialized();
 
 		this.on('noTargetsInRange', () => {
-			const InstantStop_Attack = Server.network.createPacket('InstantStop_Attack', 'S2C');
-			InstantStop_Attack.netId = this.netId;
-			InstantStop_Attack.flags = {};
-			this.packets.toEveryone(InstantStop_Attack);
+			const packet1 = new packets.InstantStop_Attack();
+			packet1.netId = this.netId;
+			packet1.flags = {};
+			this.packets.toEveryone(packet1);
 
 			this.moveLane();
 		});
 
 		//this.emit('noTargetsInRange');//todo
+	}
+
+	/**
+	 * @param {import('../GameObjects.js').MinionOptions} options 
+	 */
+	constructor(options) {
+		super(options);
 	}
 
 	destructor() {
@@ -89,12 +97,12 @@ class Minion extends Unit {
 	}
 
 	get rewardExp() {
-		let character = this.character.constructor;
+		let character = /** @type {typeof import('../../game/datamethods/characters/_Minion.js')} */ (/** @type {*} */(this.character.constructor));
 		return character.reward.exp;
 	}
 
 	get rewardGold() {
-		let character = this.character.constructor;
+		let character = /** @type {typeof import('../../game/datamethods/characters/_Minion.js')} */ (/** @type {*} */(this.character.constructor));
 		return character.reward.gold + (character.rewardPerLevel.gold * this.level);
 	}
 
@@ -115,8 +123,7 @@ class Minion extends Unit {
 		// Experience from minion deaths is split between all champions within 1400 range.
 		let range = 1400;
 		let enemyUnitsInRange = this.getEnemyUnitsInRange(range);
-		let enemyPlayersInRange = /** @type {import('./Player')[]} */ (Filters.filterByType(enemyUnitsInRange, 'Player'));
-		enemyPlayersInRange = enemyPlayersInRange.filter(v => v != source);
+		let enemyPlayersInRange = enemyUnitsInRange.filter(v => v instanceof Player && v != source);
 
 		let numberOfPlayersToSplitExp = enemyPlayersInRange.length;
 		if (source.type == 'Player')
@@ -144,7 +151,7 @@ class Minion extends Unit {
 
 	/**
 	 * 
-	 * @param {import('../GameObjects').AttackableUnit} source 
+	 * @param {import('../GameObjects.js').AttackableUnit} source 
 	 */
 	onDie(source) {
 		this.onDieRewards(source);
@@ -154,4 +161,4 @@ class Minion extends Unit {
 }
 
 
-module.exports = Minion;
+export default Minion;

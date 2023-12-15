@@ -1,5 +1,5 @@
 
-module.exports = {//STipConfig
+export default {//STipConfig
 	tipId: 'int8',
 	colorId: 'int8',
 	durationId: 'int8',

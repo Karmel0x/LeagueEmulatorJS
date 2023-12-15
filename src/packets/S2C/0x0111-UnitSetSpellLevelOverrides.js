@@ -1,9 +1,9 @@
-const ExtendedPacket = require('../ExtendedPacket');
+import ExtendedPacket from '../ExtendedPacket.js';
 
 
-module.exports = class UnitSetSpellLevelOverrides extends ExtendedPacket {
+export default class UnitSetSpellLevelOverrides extends ExtendedPacket {
 	static struct = {
 		spellMaxLevels: ['uint8', 4],
 		spellUpgradeLevels: [['uint8', 6], 4],
-	}
-};
+	};
+}

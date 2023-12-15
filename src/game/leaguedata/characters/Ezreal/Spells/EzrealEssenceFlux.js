@@ -1,12 +1,12 @@
 
-const slotId = require("../../../../../constants/slotId");
-const HashString = require("../../../../../functions/HashString");
-const PositionHelper = require("../../../../../gameobjects/extensions/Measure");
-const Skillshot = require("../../../../../gameobjects/missiles/Skillshot");
-const _Spell = require("../../../../datamethods/spells/_Spell");
+import slotId from '../../../../../constants/slotId.js';
+import HashString from '../../../../../functions/HashString.js';
+import PositionHelper from '../../../../../gameobjects/extensions/Measure/index.js';
+import Skillshot from '../../../../../gameobjects/missiles/Skillshot.js';
+import _Spell from '../../../../datamethods/spells/_Spell.js';
 
-const package1 = require('../package');
-const EzrealEssenceFluxMissile = require("./EzrealEssenceFluxMissile");
+import package1 from '../package.js';
+import EzrealEssenceFluxMissile from './EzrealEssenceFluxMissile.js';
 
 
 class _Particle {
@@ -33,7 +33,7 @@ class ezreal_bow_yellow extends _Particle {
 	}
 }
 
-module.exports = class EzrealEssenceFlux extends _Spell {
+export default class EzrealEssenceFlux extends _Spell {
 	packageHash = package1.packageHash;
 	spellSlot = slotId.W;
 
@@ -78,4 +78,4 @@ module.exports = class EzrealEssenceFlux extends _Spell {
 		ezreal_bow_yellow.tempOnCast(spellData, this.owner);
 
 	}
-};
+}

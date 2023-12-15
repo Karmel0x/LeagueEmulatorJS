@@ -1,7 +1,7 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class Neutral_Camp_Empty extends BasePacket {
+export default class Neutral_Camp_Empty extends BasePacket {
 	static struct = {
 		killerNetId: 'uint32',
 		campIndex: 'int32',
@@ -10,5 +10,5 @@ module.exports = class Neutral_Camp_Empty extends BasePacket {
 		bitfield: ['bitfield', {
 			doPlayVO: 1,
 		}],
-	}
-};
+	};
+}

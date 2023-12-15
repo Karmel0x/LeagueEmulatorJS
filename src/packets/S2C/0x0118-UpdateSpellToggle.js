@@ -1,11 +1,11 @@
-const ExtendedPacket = require('../ExtendedPacket');
+import ExtendedPacket from '../ExtendedPacket.js';
 
 
-module.exports = class UpdateSpellToggle extends ExtendedPacket {
+export default class UpdateSpellToggle extends ExtendedPacket {
 	static struct = {
 		spellSlot: 'int32',
 		bitfield: ['bitfield', {
 			toggleValue: 1,
 		}],
-	}
-};
+	};
+}

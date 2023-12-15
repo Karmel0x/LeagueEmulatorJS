@@ -1,8 +1,8 @@
-const ExtendedPacket = require('../ExtendedPacket');
-const SVector2 = require('../sharedstruct/SVector2');
+import ExtendedPacket from '../ExtendedPacket.js';
+import SVector2 from '../sharedstruct/SVector2.js';
 
 
-module.exports = class MoveMarker extends ExtendedPacket {
+export default class MoveMarker extends ExtendedPacket {
 	static struct = {
 		position: SVector2,
 		goal: SVector2,
@@ -10,5 +10,5 @@ module.exports = class MoveMarker extends ExtendedPacket {
 		bitfield: ['bitfield', {
 			faceGoalPosition: 1,
 		}],
-	}
-};
+	};
+}

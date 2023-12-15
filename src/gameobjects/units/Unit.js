@@ -1,17 +1,16 @@
 
-const slotId = require('../../constants/slotId');
-const loadingStages = require('../../constants/loadingStages');
-const Server = require('../../app/Server');
-const UnitList = require('../../app/UnitList');
+import slotId from '../../constants/slotId.js';
+import loadingStages from '../../constants/loadingStages.js';
+import Server from '../../app/Server.js';
+import UnitList from '../../app/UnitList.js';
 
-const GameObject = require('../GameObject');
-const PUnit = require('../extensions/packets/Unit');
-const Buffs = require('../extensions/traits/Buffs');
-const Progress = require('../extensions/traits/Progress');
-const Rewards = require('../extensions/traits/Rewards');
-const Stats = require('../extensions/traits/Stats');
-const Team = require('../extensions/traits/Team');
-
+import GameObject from '../GameObject.js';
+import PUnit from '../extensions/packets/Unit.js';
+import Buffs from '../extensions/traits/Buffs.js';
+import Progress from '../extensions/traits/Progress.js';
+import Rewards from '../extensions/traits/Rewards.js';
+import Stats from '../extensions/traits/Stats.js';
+import Team from '../extensions/traits/Team.js';
 
 class Unit extends GameObject {
 
@@ -38,50 +37,37 @@ class Unit extends GameObject {
 	/** @type {Object.<string, *>} */
 	slots = {};
 
-	/** @type {import('../../game/datamethods/characters/_Character') | undefined} */
-	_character;
+	/** @type {import('../../game/datamethods/characters/_Character.js').default | undefined} */
+	character;
 
 	/**
-	 * @returns {import('../../game/datamethods/characters/_Character')}
+	 * @param {string} characterName
 	 */
-	get character() {
-		return /** @type {import('../../game/datamethods/characters/_Character')} */ (this._character);
+	async switchCharacter(characterName) {
+		/** @type {typeof import('../../game/datamethods/characters/_Character.js').default} */
+		let Character = (await import('../../game/leaguedata/characters/' + characterName + '/index.js')).default;
+		if (!Character)
+			return;
+
+		let character = new Character(this);
+		this.character = character;
 	}
 
-	/**
-	 * @todo make this more clear
-	 * @param {import('../../game/datamethods/characters/_Character') | string} char
-	 */
-	set character(char) {
-		if (typeof char == 'string')
-			char = require('../../game/leaguedata/characters/' + char);
-
-		if (typeof char == 'function')
-			char = new char(this);
-
-		this._character = /** @type {import('../../game/datamethods/characters/_Character')} */ (char);
-	}
-
-	/** @type {import('../GameObjects').UnitSpawner | undefined} */
+	/** @type {import('../GameObjects.js').UnitSpawner | undefined} */
 	spawner;
 
 	/**
-	 * @param {import('../GameObjects').UnitOptions} options 
+	 * @param {import('../GameObjects.js').UnitOptions} options 
 	 */
-	constructor(options) {
-		options.spawnPosition = options.spawnPosition || options.spawner?.position;
-		super(options);
-		this.options = options;
-		this.spawner = options.spawner;
-
-		this.character = options.character;
+	async loader(options) {
+		await this.switchCharacter(options.character);
 		this.info = options.info || {};
 
 		this.packets = new PUnit(this);
 		this.buffs = new Buffs(this);
 		this.progress = new Progress(this);
+		this.stats = new Stats(this);
 		this.rewards = new Rewards(this);
-		this.stats = new Stats(this, options.stats || this.character.stats);
 		this.team = new Team(this, options.team, options.num);
 
 		UnitList.append(this);
@@ -90,6 +76,18 @@ class Unit extends GameObject {
 		//console.log(UnitList.units);
 
 		this.update();
+	}
+
+	/**
+	 * @param {import('../GameObjects.js').UnitOptions} options 
+	 */
+	constructor(options) {
+		options.spawnPosition = options.spawnPosition || options.spawner?.position;
+		super(options);
+		this.options = options;
+		this.spawner = options.spawner;
+
+		this.loader(options);
 	}
 
 	destructor() {
@@ -185,11 +183,11 @@ class Unit extends GameObject {
 	/**
 	 * Filter units by team
 	 * @param {Unit[]} targets
-	 * @param {number[] | number} teams (RED/BLUE/NEUTRAL/ALL)
+	 * @param {number[] | number} team (RED/BLUE/NEUTRAL/ALL)
 	 * @returns {Unit[]}
 	 */
-	static filterByTeam(targets, teams = Team.TEAM_MAX) {
-		teams = typeof teams == 'number' ? [teams] : teams;
+	static filterByTeam(targets, team = Team.TEAM_MAX) {
+		let teams = typeof team === 'number' ? [team] : team;
 
 		if (teams.includes(Team.TEAM_MAX))
 			return targets;
@@ -259,7 +257,8 @@ class Unit extends GameObject {
 	 * @returns 
 	 */
 	getAllyUnitsInRange(range, distanceCalcPoint = 'CENTER_TO_CENTER') {
-		return this.measure[distanceCalcPoint].filterByRange(this.getAllyUnits(), range);
+		let measure = this.measure[distanceCalcPoint];
+		return measure.filterByRange(this.getAllyUnits(), range);
 	}
 
 	/**
@@ -268,10 +267,11 @@ class Unit extends GameObject {
 	 * @returns 
 	 */
 	getEnemyUnitsInRange(range, distanceCalcPoint = 'CENTER_TO_CENTER') {
-		return this.measure[distanceCalcPoint].filterByRange(this.getEnemyUnits(), range);
+		let measure = this.measure[distanceCalcPoint];
+		return measure.filterByRange(this.getEnemyUnits(), range);
 	}
 
 }
 
 
-module.exports = Unit;
+export default Unit;

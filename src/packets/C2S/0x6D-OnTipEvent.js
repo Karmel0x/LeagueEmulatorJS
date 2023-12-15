@@ -1,9 +1,9 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class OnTipEvent extends BasePacket {
+export default class OnTipEvent extends BasePacket {
 	static struct = {
 		tipCommand: 'uint8',
 		tipId: 'uint32',
-	}
-};
+	};
+}

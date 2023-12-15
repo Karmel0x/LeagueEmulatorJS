@@ -1,8 +1,8 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class PreloadCharacterData extends BasePacket {
+export default class PreloadCharacterData extends BasePacket {
 	static struct = {
 		skinId: 'int32',
 		skinName: 'string0',//64
-	}
-};
+	};
+}

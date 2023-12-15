@@ -1,10 +1,10 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class SetGreyscaleEnabledWhenDead extends BasePacket {
+export default class SetGreyscaleEnabledWhenDead extends BasePacket {
 	static struct = {
 		bitfield: ['bitfield', {
 			enabled: 1,
 		}],
-	}
-};
+	};
+}

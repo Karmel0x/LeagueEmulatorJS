@@ -1,7 +1,7 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class SpectatorMetaData extends BasePacket {
+export default class SpectatorMetaData extends BasePacket {
 	static struct = {
 		jsonMetaData: 'string',
-	}
-};
+	};
+}

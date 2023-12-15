@@ -1,9 +1,9 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class SyncSimTimeFinal extends BasePacket {
+export default class SyncSimTimeFinal extends BasePacket {
 	static struct = {
 		timeLastClient: 'float',
 		timeRTTLastOverhead: 'float',
 		timeConvergance: 'float',
-	}
-};
+	};
+}

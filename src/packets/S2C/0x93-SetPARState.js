@@ -1,9 +1,9 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class SetPARState extends BasePacket {
+export default class SetPARState extends BasePacket {
 	static struct = {
 		unitNetId: 'uint32',
 		PARState: 'uint32',
-	}
-};
+	};
+}

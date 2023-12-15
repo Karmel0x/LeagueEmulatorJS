@@ -1,5 +1,5 @@
-const BasePacket = require('../BasePacket');
-const SVector2 = require('../sharedstruct/SVector2');
+import BasePacket from '../BasePacket.js';
+import SVector2 from '../sharedstruct/SVector2.js';
 
 const NavFlagCricle = {
 	position: SVector2,
@@ -8,15 +8,15 @@ const NavFlagCricle = {
 };
 
 
-module.exports = class WriteNavFlags extends BasePacket {
+export default class WriteNavFlags extends BasePacket {
 	static struct = {
 		syncId: 'int32',
 		size: 'int16',
-	}
+	};
 	reader(buffer) {
 		super.reader(buffer);
 
-		this.navFlagCricles = buffer.readobj([NavFlagCricle, (this.size / 16)]);
+		this.navFlagCricles = buffer.read([NavFlagCricle, (this.size / 16)]);
 	}
 	writer(buffer) {
 		if (!this.navFlagCricles || !this.navFlagCricles.length)
@@ -26,6 +26,6 @@ module.exports = class WriteNavFlags extends BasePacket {
 
 		super.writer(buffer);
 
-		buffer.writeobj([NavFlagCricle, (this.size / 16)], this.navFlagCricles);
+		buffer.write([NavFlagCricle, (this.size / 16)], this.navFlagCricles);
 	}
-};
+}

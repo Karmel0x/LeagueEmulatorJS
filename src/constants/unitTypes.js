@@ -12,4 +12,4 @@ const unitTypes = {
 unitTypes.ALL = unitTypes.Unit | unitTypes.Player | unitTypes.Minion | unitTypes.Turret | unitTypes.Inhibitor | unitTypes.Nexus;
 
 
-module.exports = unitTypes;
+export default unitTypes;

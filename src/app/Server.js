@@ -1,23 +1,28 @@
 
 /**
- * @typedef {import('../gameobjects/units/Unit')} Unit
- * @typedef {import('../gameobjects/units/Player')} Player
- * @typedef {import('../game/initializers/Teams')} Teams
+ * @typedef {import('../gameobjects/units/Unit.js').default} Unit
+ * @typedef {import('../gameobjects/units/Player.js').default} Player
+ * @typedef {import('../game/initializers/Teams.js').default} Teams
  */
 
 class Server {
     /**
-     * @type {typeof import('../core/Logging')}
+     * @type {typeof import('../core/Logging.js').default}
      */
     static logging;
 
     /**
-     * @type {import('../core/network/Network')}
+     * @type {import('../core/network/Network.js').default}
      */
     static network;
 
     /**
-     * @type {import('../game/components/MovementSimulation')}
+     * @type {Object.<number, Object.<number, typeof import('../packets/BasePacket.js').default>>}
+     */
+    static packets = {};
+
+    /**
+     * @type {import('../game/components/MovementSimulation.js').default}
      */
     static movement;
 
@@ -48,4 +53,4 @@ class Server {
     static players = [];
 }
 
-module.exports = Server;
+export default Server;

@@ -1,10 +1,10 @@
-const ExtendedPacket = require('../ExtendedPacket');
+import ExtendedPacket from '../ExtendedPacket.js';
 
 
-module.exports = class UnitSetSpellPARCost extends ExtendedPacket {
+export default class UnitSetSpellPARCost extends ExtendedPacket {
 	static struct = {
 		costType: 'uint8',
 		spellSlot: 'int32',
 		amount: 'float',
-	}
-};
+	};
+}

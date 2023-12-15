@@ -1,10 +1,10 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class AttachFlexParticle extends BasePacket {
+export default class AttachFlexParticle extends BasePacket {
 	static struct = {
 		netObjId: 'uint32',
 		particleFlexId: 'uint8',
 		cpIndex: 'uint8',
 		particleAttachType: 'uint32',
-	}
-};
+	};
+}

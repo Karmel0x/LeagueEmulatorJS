@@ -1,8 +1,8 @@
-const BuffTypes = require("../../../../constants/BuffTypes");
-const _Spell = require("../../../datamethods/spells/_Spell");
+import BuffTypes from '../../../../constants/BuffTypes.js';
+import _Spell from '../../../datamethods/spells/_Spell.js';
 
 
-module.exports = class SummonerHeal extends _Spell {
+export default class SummonerHeal extends _Spell {
 	summonerSpellKey = 7;
 	summonerSpellName = 'Heal';
 	spellHash = 56930076;
@@ -37,4 +37,4 @@ module.exports = class SummonerHeal extends _Spell {
 		source.stats.moveSpeed.percentBonus -= 30;
 		source.packets.charStats_send();
 	}
-};
+}

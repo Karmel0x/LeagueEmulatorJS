@@ -1,8 +1,8 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class SetFadeOut_Pop extends BasePacket {
+export default class SetFadeOut_Pop extends BasePacket {
 	static struct = {
 		stackId: 'int16',
-	}
-};
+	};
+}

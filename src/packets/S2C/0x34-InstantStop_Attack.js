@@ -1,7 +1,7 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class InstantStop_Attack extends BasePacket {
+export default class InstantStop_Attack extends BasePacket {
 	static struct = {
 		missileNetId: 'uint32',
 		flags: ['bitfield', {
@@ -11,5 +11,5 @@ module.exports = class InstantStop_Attack extends BasePacket {
 			isSummonerSpell: 8,
 			forceDoClient: 16,
 		}],
-	}
-};
+	};
+}

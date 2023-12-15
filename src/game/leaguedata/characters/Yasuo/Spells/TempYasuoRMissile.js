@@ -1,8 +1,8 @@
 
-const _Spell = require("../../../../datamethods/spells/_Spell");
+import _Spell from '../../../../datamethods/spells/_Spell.js';
 
 
-module.exports = class TempYasuoRMissile extends _Spell {
+export default class TempYasuoRMissile extends _Spell {
 	isProjectile = true;
 
 	castInfo = {
@@ -22,4 +22,4 @@ module.exports = class TempYasuoRMissile extends _Spell {
 		spellData.missile.fire(spellData.missile.target);
 	}
 
-};
+}

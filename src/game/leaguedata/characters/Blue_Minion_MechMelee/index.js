@@ -1,12 +1,15 @@
-const _Minion_MechMelee = require("../_Minion_MechMelee");
+import _Minion_MechMelee from '../_Minion_MechMelee/index.js';
+import BasicAttack from './spells/Blue_Minion_MechMeleeBasicAttack.js';
+import BasicAttack2 from './spells/Blue_Minion_MechMeleeBasicAttack2.js';
+import CritAttack from './spells/Blue_Minion_MechMeleeCritAttack.js';
 
 
-module.exports = class Blue_Minion_MechMelee extends _Minion_MechMelee {
+export default class Blue_Minion_MechMelee extends _Minion_MechMelee {
 
 	static spells = {
-		BasicAttack: require('./spells/Blue_Minion_MechMeleeBasicAttack'),
-		BasicAttack2: require('./spells/Blue_Minion_MechMeleeBasicAttack2'),
-		CritAttack: require('./spells/Blue_Minion_MechMeleeCritAttack'),
+		BasicAttack,
+		BasicAttack2,
+		CritAttack,
 	};
 
-};
+}

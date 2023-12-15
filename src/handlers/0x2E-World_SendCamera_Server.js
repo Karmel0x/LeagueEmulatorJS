@@ -1,17 +1,18 @@
-const Server = require("../app/Server");
+
+import packets from '../packets/index.js';
 
 /**
  * 
- * @param {import('../gameobjects/units/Player')} player 
- * @param {*} packet 
+ * @param {import('../gameobjects/units/Player.js')} player 
+ * @param {typeof import('../packets/C2S/0x2E-World_SendCamera_Server.js').struct} packet 
  */
-module.exports = (player, packet) => {
+export default (player, packet) => {
 	//console.log('handle: C2S.World_SendCamera_Server');
 	//console.log(packet);
 
 	{
-		const World_SendCamera_Server_Acknologment = Server.network.createPacket('World_SendCamera_Server_Acknologment');
-		World_SendCamera_Server_Acknologment.syncId = packet.syncId;
-		player.network.sendPacket(World_SendCamera_Server_Acknologment);
+		const packet1 = new packets.World_SendCamera_Server_Acknologment();
+		packet1.syncId = packet.syncId;
+		player.network.sendPacket(packet1);
 	}
 };

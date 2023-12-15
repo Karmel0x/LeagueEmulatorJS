@@ -1,11 +1,15 @@
 {
+  "type": "module",
+  "scripts": {
+    "start": "node src/main"
+  },
   "dependencies": {
-    "three": "^0.153.0",
-    "ws": "^8.13.0"
+    "three": "^0.159.0",
+    "ws": "^8.14.2"
   },
   "devDependencies": {
-    "@types/node": "^20.3.1",
-    "@types/three": "^0.152.1",
-    "@types/ws": "^8.5.5"
+    "@types/node": "^20.10.4",
+    "@types/three": "^0.159.0",
+    "@types/ws": "^8.5.10"
   }
 }

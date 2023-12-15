@@ -1,9 +1,9 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class OnQuestEvent extends BasePacket {
+export default class OnQuestEvent extends BasePacket {
 	static struct = {
 		questEvent: 'uint8',
 		questId: 'uint32',
-	}
-};
+	};
+}

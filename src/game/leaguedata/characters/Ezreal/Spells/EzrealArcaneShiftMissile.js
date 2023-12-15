@@ -1,11 +1,11 @@
 
-const slotId = require("../../../../../constants/slotId");
-const _Spell = require("../../../../datamethods/spells/_Spell");
+import slotId from '../../../../../constants/slotId.js';
+import _Spell from '../../../../datamethods/spells/_Spell.js';
 
-const package1 = require('../package');
+import package1 from '../package.js';
 
 
-module.exports = class EzrealArcaneShiftMissile extends _Spell {
+export default class EzrealArcaneShiftMissile extends _Spell {
 	packageHash = package1.packageHash;
 	spellSlot = slotId.Qq;
 
@@ -14,4 +14,4 @@ module.exports = class EzrealArcaneShiftMissile extends _Spell {
 	onCast(spellData) {
 
 	}
-};
+}

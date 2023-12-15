@@ -1,10 +1,10 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class UpgradeSpellReq extends BasePacket {
+export default class UpgradeSpellReq extends BasePacket {
 	static struct = {
 		slot: 'uint8',
 		bitfield: ['bitfield', {
 			isEvolve: 1,
 		}],
-	}
-};
+	};
+}

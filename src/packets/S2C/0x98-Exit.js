@@ -1,11 +1,11 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 // Disconnected announcement
-module.exports = class Exit extends BasePacket {
+export default class Exit extends BasePacket {
 	static struct = {
 		netObjId: 'uint32',
 		bitfield: ['bitfield', {
 			Unknown: 1,//isAlly?
 		}],
-	}
-};
+	};
+}

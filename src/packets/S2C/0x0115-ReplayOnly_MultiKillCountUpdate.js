@@ -1,9 +1,9 @@
-const ExtendedPacket = require('../ExtendedPacket');
+import ExtendedPacket from '../ExtendedPacket.js';
 
 
-module.exports = class ReplayOnly_MultiKillCountUpdate extends ExtendedPacket {
+export default class ReplayOnly_MultiKillCountUpdate extends ExtendedPacket {
 	static struct = {
 		ownerNetId: 'uint32',
 		multiKillCount: 'uint8',
-	}
-};
+	};
+}

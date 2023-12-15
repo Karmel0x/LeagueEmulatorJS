@@ -1,12 +1,13 @@
 
-const slotId = require('../../../../constants/slotId');
-const _Turret_Inner = require('../_Turret_Inner');
+import slotId from '../../../../constants/slotId.js';
+import _Turret_Inner from '../_Turret_Inner/index.js';
+import ChaosTurretWorm2BasicAttack from './spells/ChaosTurretWorm2BasicAttack.js';
 
 
-module.exports = class ChaosTurretWorm2 extends _Turret_Inner {
+export default class ChaosTurretWorm2 extends _Turret_Inner {
 
 	static spells = {
-		ChaosTurretWorm2BasicAttack: require("./spells/ChaosTurretWorm2BasicAttack"),
+		ChaosTurretWorm2BasicAttack,
 	};
 
 	constructor(parent) {
@@ -16,4 +17,4 @@ module.exports = class ChaosTurretWorm2 extends _Turret_Inner {
 			[slotId.A]: this.constructor.spells.ChaosTurretWorm2BasicAttack,
 		});
 	}
-};
+}

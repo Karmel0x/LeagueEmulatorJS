@@ -1,6 +1,6 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class AddListener extends BasePacket {
-	
-};
+export default class AddListener extends BasePacket {
+
+}

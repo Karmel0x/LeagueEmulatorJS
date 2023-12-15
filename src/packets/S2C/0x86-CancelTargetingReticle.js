@@ -1,10 +1,10 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class CancelTargetingReticle extends BasePacket {
+export default class CancelTargetingReticle extends BasePacket {
 	static struct = {
 		spellSlot: 'uint8',
 		bitfield: ['bitfield', {
 			resetSpecified: 1,
 		}],
-	}
-};
+	};
+}

@@ -1,10 +1,10 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class SetDebugHidden extends BasePacket {
+export default class SetDebugHidden extends BasePacket {
 	static struct = {
 		objectId: 'int32',
 		bitfield: ['bitfield', {
 			Unknown: 1,
 		}],
-	}
-};
+	};
+}

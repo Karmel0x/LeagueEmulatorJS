@@ -1,6 +1,6 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class PopAllCharacterData extends BasePacket {
-	
-};
+export default class PopAllCharacterData extends BasePacket {
+
+}

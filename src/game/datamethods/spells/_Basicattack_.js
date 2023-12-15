@@ -1,14 +1,14 @@
 
-const slotId = require('../../../constants/slotId');
-const _Spell = require("./_Spell");
-const Targetedshot = require("../../../gameobjects/missiles/Targetedshot");
-const Server = require('../../../app/Server');
+import slotId from '../../../constants/slotId.js';
+import _Spell from './_Spell.js';
+import Targetedshot from '../../../gameobjects/missiles/Targetedshot.js';
+import packets from '../../../packets/index.js';
 
 /**
- * @typedef {import('../../../gameobjects/units/Unit')} Unit
+ * @typedef {import('../../../gameobjects/units/Unit.js').default} Unit
  */
 
-module.exports = class _Basicattack extends _Spell {
+export default class _Basicattack extends _Spell {
 	spellSlot = slotId.A;
 	windupPercent = 20;
 	castRange = 0;
@@ -39,8 +39,8 @@ module.exports = class _Basicattack extends _Spell {
 	}
 
 	beginAttackAns(options) {
-		const Basic_Attack_Pos = Server.network.createPacket('Basic_Attack_Pos', 'S2C');
-		Basic_Attack_Pos.netId = this.owner.netId;
+		const packet1 = new packets.Basic_Attack_Pos();
+		packet1.netId = this.owner.netId;
 
 		let targetPosition = {
 			x: options.missile.target.position.x,
@@ -48,24 +48,24 @@ module.exports = class _Basicattack extends _Spell {
 			z: 10,
 		};
 
-		Basic_Attack_Pos.attack = {
+		packet1.attack = {
 			targetNetId: options.missile.target.netId,
 			targetPosition: targetPosition,
 			attackSlot: options.attackSlot,
 			missileNextId: options.missile.netId,
 			extraTime: 127,
 		};
-		Basic_Attack_Pos.position = {
+		packet1.position = {
 			x: this.owner.position.x,
 			y: this.owner.position.y,
 		};
 
-		this.owner.packets.toVision(Basic_Attack_Pos);
+		this.owner.packets.toVision(packet1);
 	}
 
 	nextAttackAns(options) {
-		const Basic_Attack = Server.network.createPacket('Basic_Attack', 'S2C');
-		Basic_Attack.netId = this.owner.netId;
+		const packet1 = new packets.Basic_Attack();
+		packet1.netId = this.owner.netId;
 
 		let targetPosition = {
 			x: options.missile.target.position.x,
@@ -73,7 +73,7 @@ module.exports = class _Basicattack extends _Spell {
 			z: 10,
 		};
 
-		Basic_Attack.attack = {
+		packet1.attack = {
 			targetNetId: options.missile.target.netId,
 			targetPosition: targetPosition,
 			attackSlot: options.attackSlot,
@@ -81,7 +81,7 @@ module.exports = class _Basicattack extends _Spell {
 			extraTime: 127,
 		};
 
-		this.owner.packets.toVision(Basic_Attack);
+		this.owner.packets.toVision(packet1);
 	}
 
 	attackAnsCurrentUnit = 0;//@todo reset it on move?
@@ -97,10 +97,10 @@ module.exports = class _Basicattack extends _Spell {
 
 	/**
 	 * 
-	 * @param {import('../../../gameobjects/GameObjects').AttackableUnit} spawner
-	 * @param {import('../../../gameobjects/GameObjects').DefendableUnit} target
-	 * @param {Object} options
-	 * @returns {Targetedshot}
+	 * @param {import('../../../gameobjects/GameObjects.js').AttackableUnit} spawner
+	 * @param {import('../../../gameobjects/GameObjects.js').DefendableUnit} target
+	 * @param {import('../../../gameobjects/GameObjects.js').BasicAttackOptions} options
+	 * @returns 
 	 */
 	process(spawner, target, options = {}) {
 		options.windupPercent = options.windupPercent || this.windupPercent;
@@ -125,4 +125,4 @@ module.exports = class _Basicattack extends _Spell {
 		if (this.isProjectile)
 			this.spawnProjectileAns(spellData.spellCast.castInfo);
 	}
-};
+}

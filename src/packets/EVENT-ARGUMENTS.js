@@ -1,5 +1,5 @@
 
-const EVENT = require('./EVENT');
+import EVENT from './EVENT.js';
 
 const Args = {
 	Base: {
@@ -137,7 +137,7 @@ const Args = {
 	},
 };
 
-module.exports = {
+export default {
 	[EVENT.OnDelete]: Args.Base,
 	[EVENT.OnSpawn]: Args.Die,
 	[EVENT.OnDie]: Args.Die,

@@ -1,8 +1,8 @@
-const ExtendedPacket = require('../ExtendedPacket');
+import ExtendedPacket from '../ExtendedPacket.js';
 
 
-module.exports = class StopSpellTargeter extends ExtendedPacket {
+export default class StopSpellTargeter extends ExtendedPacket {
 	static struct = {
 		slot: 'uint32',
-	}
-};
+	};
+}

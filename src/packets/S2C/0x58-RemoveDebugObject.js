@@ -1,7 +1,7 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class RemoveDebugObject extends BasePacket {
+export default class RemoveDebugObject extends BasePacket {
 	static struct = {
 		objectId: 'int32',
-	}
-};
+	};
+}

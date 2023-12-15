@@ -1,12 +1,12 @@
 
-module.exports = {
+export default class BinaryHelper {
 	/**
 	 * Convert number to array of bytes
 	 * @param {number} num 
-	 * @param {number} len 4=32bit, 8=64bit
+	 * @param {number} [len] 4=32bit, 8=64bit
 	 * @returns 
 	 */
-	getIntBytes_r: (num, len = 4) => {
+	static getIntBytes_r(num, len = 4) {
 		/** @type {number[]} */
 		let bytes = [];
 		for (; len > 0; --len) {
@@ -14,23 +14,23 @@ module.exports = {
 			num = num >> 8;
 		}
 		return bytes;
-	},
+	}
 
 	/**
 	 * 
 	 * @param {string} binaryArray 
 	 * @returns 
 	 */
-	binaryToByteArray: (binaryArray) => {
+	static binaryToByteArray(binaryArray) {
 		return parseInt(binaryArray.split('').reverse().join(''), 2);
-	},
+	}
 
 	/**
 	 * 
 	 * @param {number[]} array 
 	 * @returns 
 	 */
-	byteArrayToBinary: (array) => {
+	static byteArrayToBinary(array) {
 		/** @type {boolean[]} */
 		let ret = [];
 		array.forEach(v => {
@@ -41,5 +41,5 @@ module.exports = {
 			});
 		});
 		return ret;
-	},
-};
+	}
+}

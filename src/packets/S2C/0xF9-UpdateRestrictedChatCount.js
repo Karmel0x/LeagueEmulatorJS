@@ -1,7 +1,7 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class UpdateRestrictedChatCount extends BasePacket {
+export default class UpdateRestrictedChatCount extends BasePacket {
 	static struct = {
 		count: 'int32',
-	}
-};
+	};
+}

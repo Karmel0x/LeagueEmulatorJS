@@ -1,7 +1,7 @@
 
-const _Turret_FountainBasicAttack = require("../../_Turret_Fountain/spells/_Turret_FountainBasicAttack");
+import _Turret_FountainBasicAttack from '../../_Turret_Fountain/spells/_Turret_FountainBasicAttack.js';
 
 
-module.exports = class ChaosTurretShrineBasicAttack extends _Turret_FountainBasicAttack {
+export default class ChaosTurretShrineBasicAttack extends _Turret_FountainBasicAttack {
 
-};
+}

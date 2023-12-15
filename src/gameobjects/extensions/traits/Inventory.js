@@ -1,7 +1,7 @@
 
-const Server = require("../../../app/Server");
-const ItemList = require("../../../game/leaguedata/Items/ItemList");
-const ItemSpells = require("../../../game/leaguedata/Items/ItemSpells");
+import packets from '../../../packets/index.js';
+import ItemList from '../../../game/leaguedata/Items/ItemList.js';
+import ItemSpells from '../../../game/leaguedata/Items/ItemSpells.js';
 
 
 const ItemSlots = 6;// 0-5
@@ -18,7 +18,7 @@ class UndoHistory {
 		BUILD_ITEM: 2,
 	};
 
-	/** @type {import("../../units/Player")} */
+	/** @type {import("../../units/Player.js").default} */
 	owner;
 	/** @type {Object.<string, *>[]} */
 	history = [];
@@ -35,10 +35,10 @@ class UndoHistory {
 
 	alternateUndoEnable() {
 		const player = this.owner;
-		const SetUndoEnabled = Server.network.createPacket('SetUndoEnabled');
-		SetUndoEnabled.netId = player.netId;
-		SetUndoEnabled.undoStackSize = this.history.length;
-		player.network.sendPacket(SetUndoEnabled);
+		const packet1 = new packets.SetUndoEnabled();
+		packet1.netId = player.netId;
+		packet1.undoStackSize = this.history.length;
+		player.network.sendPacket(packet1);
 	}
 
 	clearUndoHistory() {
@@ -129,7 +129,7 @@ class Inventory {
 	owner;
 
 	/**
-	 * @param {import("../../units/Player")} owner
+	 * @param {import("../../units/Player.js").default} owner
 	 */
 	constructor(owner) {
 		this.owner = owner;
@@ -175,20 +175,20 @@ class Inventory {
 	buyItemAns(slot) {
 		let itemOnSlot = this.items[slot];
 
-		const BuyItemAns = Server.network.createPacket('BuyItemAns');
-		BuyItemAns.netId = this.owner.netId;
-		BuyItemAns.item = {
+		const packet1 = new packets.BuyItemAns();
+		packet1.netId = this.owner.netId;
+		packet1.item = {
 			itemId: itemOnSlot?.id || 0,
 			slot: slot,
 			itemsInSlot: itemOnSlot?.count || 0,
 			spellCharges: 0,
 		};
-		//BuyItemAns.bitfield = {
+		//packet1.bitfield = {
 		//	unk0: true,
 		//	unk3: true,
 		//	unk5: true,
 		//};
-		this.owner.packets.toVision(BuyItemAns);
+		this.owner.packets.toVision(packet1);
 	}
 
 	/**
@@ -278,11 +278,11 @@ class Inventory {
 	 * @param {number} slot2 
 	 */
 	swapItemsAns(slot1, slot2) {
-		const SwapItemAns = Server.network.createPacket('SwapItemAns');
-		SwapItemAns.netId = this.owner.netId;
-		SwapItemAns.sourceSlot = slot1;
-		SwapItemAns.destinationSlot = slot2;
-		this.owner.packets.toVision(SwapItemAns);
+		const packet1 = new packets.SwapItemAns();
+		packet1.netId = this.owner.netId;
+		packet1.sourceSlot = slot1;
+		packet1.destinationSlot = slot2;
+		this.owner.packets.toVision(packet1);
 	}
 
 	/**
@@ -308,12 +308,12 @@ class Inventory {
 	 * @param {number} slot 
 	 */
 	removeItemAns(slot) {
-		const RemoveItemAns = Server.network.createPacket('RemoveItemAns');
-		RemoveItemAns.netId = this.owner.netId;
-		RemoveItemAns.slot = slot;
-		RemoveItemAns.itemsInSlot = this.items[slot].count;
-		//RemoveItemAns.NotifyInventoryChange = false;
-		this.owner.packets.toVision(RemoveItemAns);
+		const packet1 = new packets.RemoveItemAns();
+		packet1.netId = this.owner.netId;
+		packet1.slot = slot;
+		packet1.itemsInSlot = this.items[slot].count;
+		//packet1.NotifyInventoryChange = false;
+		this.owner.packets.toVision(packet1);
 	}
 
 	/**
@@ -392,4 +392,4 @@ class Inventory {
 	}
 }
 
-module.exports = Inventory;
+export default Inventory;

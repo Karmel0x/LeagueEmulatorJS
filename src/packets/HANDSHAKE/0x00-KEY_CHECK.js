@@ -1,10 +1,6 @@
-const BasePacket = require('../BasePacket');
+import PrimaryPacket from '../PrimaryPacket.js';
 
-module.exports = class KEY_CHECK extends BasePacket {
-	static struct_header = {
-		cmd: 'uint8',
-		//netId: 'uint32',
-	};
+export default class KEY_CHECK extends PrimaryPacket {
 	static struct = {
 		partialKey: ['uint8', 3],
 
@@ -14,4 +10,4 @@ module.exports = class KEY_CHECK extends BasePacket {
 		checksum: 'uint64',
 		dummy1: 'uint32',
 	};
-};
+}

@@ -1,10 +1,12 @@
+import reader_json from './json.js';
+import reader_lrpkt from './lrpkt.js';
 
 const readers = {
-	json: require('./json'),
-	lrpkt: require('./lrpkt'),
+	json: reader_json,
+	lrpkt: reader_lrpkt,
 };
 
-module.exports = function (filePath) {
+export default function (filePath) {
 	console.log('_replayreaders', filePath);
 
 	let replayUnpacked = null;
@@ -25,7 +27,7 @@ module.exports = function (filePath) {
 		}
 
 		return packet;
-	})
+	});
 
 	return replayUnpacked;
-};
+}

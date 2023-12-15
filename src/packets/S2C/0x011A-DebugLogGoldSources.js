@@ -1,8 +1,8 @@
-const ExtendedPacket = require('../ExtendedPacket');
+import ExtendedPacket from '../ExtendedPacket.js';
 
 
-module.exports = class DebugLogGoldSources extends ExtendedPacket {
+export default class DebugLogGoldSources extends ExtendedPacket {
 	static struct = {
 		message: 'string0',//512
-	}
-};
+	};
+}

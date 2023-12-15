@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	category: {
 		COMMAND: 0x0,
 		CHARGE: 0x1,

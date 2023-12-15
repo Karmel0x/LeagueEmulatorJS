@@ -1,6 +1,6 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class SpectatorDataChunk extends BasePacket {
+export default class SpectatorDataChunk extends BasePacket {
 	static struct = {
 		chunkId: 'int32',
 		totalSubChunks: 'int32',
@@ -9,15 +9,15 @@ module.exports = class SpectatorDataChunk extends BasePacket {
 		totalSize: 'int32',
 		duration: 'int32',
 		nextChunkId: 'int32',
-	}
-	reader(buffer){
+	};
+	reader(buffer) {
 		super.reader(buffer);
 
-		this.data = buffer.readobj(['uint8', buffer.length - buffer.off]);
+		this.data = buffer.read(['uint8', buffer.length - buffer.offset]);
 	}
-	writer(buffer){
+	writer(buffer) {
 		super.writer(buffer);
 
-		buffer.writeobj(['uint8', this.data.length], this.data);
+		buffer.write(['uint8', this.data.length], this.data);
 	}
-};
+}

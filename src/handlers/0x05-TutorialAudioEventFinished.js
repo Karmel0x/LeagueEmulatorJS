@@ -1,10 +1,10 @@
 
 /**
  * 
- * @param {import('../gameobjects/units/Player')} player 
- * @param {*} packet 
+ * @param {import('../gameobjects/units/Player.js')} player 
+ * @param {typeof import('../packets/C2S/0x05-TutorialAudioEventFinished.js').struct} packet 
  */
-module.exports = (player, packet) => {
+export default (player, packet) => {
 	console.log('handle: C2S.TutorialAudioEventFinished');
 	//console.log(packet);
 

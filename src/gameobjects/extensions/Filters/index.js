@@ -1,6 +1,6 @@
 
 /**
- * @typedef {import('../../GameObject')} GameObject
+ * @typedef {import('../../GameObject.js').default} GameObject
  */
 
 class Filters {
@@ -10,8 +10,8 @@ class Filters {
      * @param {string[] | string} types (Minion/Player/...)
      * @returns {GameObject[]}
      */
-    static filterByType(targets, types) {
-        types = typeof types == 'string' ? [types] : types;
+    static filterByTypeName(targets, types) {
+        types = typeof types === 'string' ? [types] : types;
         return targets.filter(targets => types.includes(targets.type));
     }
 
@@ -20,7 +20,7 @@ class Filters {
      * @param {string[] | string} types (Minion/Player/...)
      */
     static sortByType(targets, types) {
-        types = typeof types == 'string' ? [types] : types;
+        types = typeof types === 'string' ? [types] : types;
         targets.sort((a, b) => {
             return types.indexOf(a.type) - types.indexOf(b.type);
         });
@@ -28,4 +28,4 @@ class Filters {
 
 }
 
-module.exports = Filters;
+export default Filters;

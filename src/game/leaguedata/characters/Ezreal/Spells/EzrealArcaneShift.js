@@ -1,12 +1,12 @@
 
-const _Spell = require("../../../../datamethods/spells/_Spell");
-const EzrealArcaneShiftMissile = require("./EzrealArcaneShiftMissile");
+import _Spell from '../../../../datamethods/spells/_Spell.js';
+import EzrealArcaneShiftMissile from './EzrealArcaneShiftMissile.js';
 
-const package1 = require('../package');
-const slotId = require("../../../../../constants/slotId");
+import package1 from '../package.js';
+import slotId from '../../../../../constants/slotId.js';
 
 
-module.exports = class EzrealArcaneShift extends _Spell {
+export default class EzrealArcaneShift extends _Spell {
 	packageHash = package1.packageHash;
 	spellSlot = slotId.E;
 	movingSpell = true;
@@ -26,4 +26,4 @@ module.exports = class EzrealArcaneShift extends _Spell {
 		this.owner.moving.dashTo(spellData.packet.position, { speed: 1800, range: 400 });
 
 	}
-};
+}

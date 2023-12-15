@@ -1,9 +1,9 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class UpgradeSpellAns extends BasePacket {
+export default class UpgradeSpellAns extends BasePacket {
 	static struct = {
 		slot: 'uint8',
 		spellLevel: 'uint8',
 		skillPoints: 'uint8',
-	}
-};
+	};
+}

@@ -1,10 +1,10 @@
 
-const { Vector2 } = require("three");
-const _PositionHelper = require("./_PositionHelper");
+import { Vector2 } from 'three';
+import _PositionHelper from './_PositionHelper.js';
 
 
 /**
- * @typedef {import('../../GameObject')} GameObject
+ * @typedef {import('../../GameObject.js')} GameObject
  */
 
 class PositionHelper__CENTER_TO_CENTER extends _PositionHelper {
@@ -159,4 +159,4 @@ class PositionHelper__CENTER_TO_CENTER extends _PositionHelper {
 
 }
 
-module.exports = PositionHelper__CENTER_TO_CENTER;
+export default PositionHelper__CENTER_TO_CENTER;

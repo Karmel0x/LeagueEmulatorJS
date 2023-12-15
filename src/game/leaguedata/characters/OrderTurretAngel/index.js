@@ -1,12 +1,13 @@
 
-const slotId = require('../../../../constants/slotId');
-const _Turret_Nexus = require('../_Turret_Nexus');
+import slotId from '../../../../constants/slotId.js';
+import _Turret_Nexus from '../_Turret_Nexus/index.js';
+import OrderTurretAngelBasicAttack from './spells/OrderTurretAngelBasicAttack.js';
 
 
-module.exports = class OrderTurretAngel extends _Turret_Nexus {
+export default class OrderTurretAngel extends _Turret_Nexus {
 
 	static spells = {
-		OrderTurretAngelBasicAttack: require("./spells/OrderTurretAngelBasicAttack"),
+		OrderTurretAngelBasicAttack,
 	};
 
 	constructor(parent) {
@@ -16,4 +17,4 @@ module.exports = class OrderTurretAngel extends _Turret_Nexus {
 			[slotId.A]: this.constructor.spells.OrderTurretAngelBasicAttack,
 		});
 	}
-};
+}

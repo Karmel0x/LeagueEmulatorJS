@@ -1,68 +1,108 @@
 
-module.exports = class BasePacket {
+import PacketReaderWriter from '../core/network/binary-packet-struct/index.js';
+
+export default class BasePacket {
 
 	static baseSize = 10240;
-	static struct_header = {
+	static struct_header = /** @type {Object} */({
 		cmd: 'uint8',
 		netId: 'uint32',
-	};
+	});
 	static struct = {};
 
-	cmd = 0;
-	/** @type {Buffer | undefined} */
-	_buffer = undefined;
+	static id = 0;
+	static channel = 0;
+	static channelName = '';
 
-	constructor(buffer = undefined) {
-		this._buffer = buffer;
+	/**
+	 * 
+	 * @param {PacketReaderWriter} packetReaderWriter 
+	 * @returns 
+	 */
+	static from(packetReaderWriter) {
+		let packet = new this();
+		packet.packetReaderWriter = packetReaderWriter;
+		return packet;
 	}
+
+	/**
+	 * 
+	 * @param {Object & BasePacket} content 
+	 * @returns 
+	 */
+	static new(content) {
+		let packet = new this();
+		Object.assign(this, content);
+		return packet;
+	}
+
+	/** @type {PacketReaderWriter | undefined} */
+	packetReaderWriter = undefined;
+
+	cmd = this.id;
 
 	get id() {
-		return this.constructor.id;
+		let base = /** @type {typeof BasePacket} */(this.constructor);
+		return base.id;
 	}
 	get name() {
-		return this.constructor.name;
+		let base = /** @type {typeof BasePacket} */(this.constructor);
+		return base.name;
 	}
 
 	get channel() {
-		return this.constructor.channel;
+		let base = /** @type {typeof BasePacket} */(this.constructor);
+		return base.channel;
 	}
 	get channelName() {
-		return this.constructor.channelName;
+		let base = /** @type {typeof BasePacket} */(this.constructor);
+		return base.channelName;
 	}
 
 	get baseSize() {
-		return this.constructor.baseSize;
+		let base = /** @type {typeof BasePacket} */(this.constructor);
+		return base.baseSize;
 	}
 	get struct_header() {
-		return this.constructor.struct_header;
+		let base = /** @type {typeof BasePacket} */(this.constructor);
+		return base.struct_header;
 	}
 	get struct() {
-		return this.constructor.struct;
+		let base = /** @type {typeof BasePacket} */(this.constructor);
+		return base.struct;
 	}
 
-	//_buffer = null;
+	/**
+	 * @param {PacketReaderWriter} packetReaderWriter 
+	 */
+	reader(packetReaderWriter) {
+		Object.assign(this, packetReaderWriter.read(this.struct_header));
+		Object.assign(this, packetReaderWriter.read(this.struct));
+	}
 
 	/**
-	 * @param {Buffer} buffer 
+	 * @param {PacketReaderWriter} packetReaderWriter 
 	 */
-	reader(buffer) {
-		Object.assign(this, buffer.readobj(this.struct_header));
-		Object.assign(this, buffer.readobj(this.struct));
+	writer(packetReaderWriter) {
+		packetReaderWriter.write(this.struct_header, this);
+		packetReaderWriter.write(this.struct, this);
 	}
 
 	get content() {
 
-		if (this._buffer) {
-			this.reader(this._buffer);
+		if (this.packetReaderWriter) {
+			this.reader(this.packetReaderWriter);
 
-			if (this._buffer.off != this._buffer.length)
-				console.log('packet structure is incorrect',
-					':', `buffer.off(${this._buffer.off}) != buffer.length(${this._buffer.length})`,
-					':', `${this.constructor.channelName}.${this.constructor.name}`,
-					this._buffer);
+			let { offset, length } = this.packetReaderWriter;
+			if (offset != length) {
+				console.log(
+					`packet structure for ${this.channelName}.${this.name} is incorrect:`,
+					`offset(${offset}) != length(${length})`,
+					this.packetReaderWriter.buffer
+				);
+			}
 
-			//this._buffer = null;
-			delete this._buffer;
+			delete this.packetReaderWriter;
 		}
 
 		return this;
@@ -72,31 +112,14 @@ module.exports = class BasePacket {
 		Object.assign(this, value);
 	}
 
-	/**
-	 * @param {Buffer} buffer 
-	 */
-	writer(buffer) {
-		buffer.writeobj(this.struct_header, this);
-		buffer.writeobj(this.struct, this);
-	}
-
 	get buffer() {
 
-		if (!this._buffer) {
-			this._buffer = Buffer.allocUnsafe(this.baseSize);
-			this.writer(this._buffer);
-
-			if (this._buffer.off != this._buffer.length) {
-				this._buffer = Buffer.concat([this._buffer], this._buffer.off);
-				this._buffer.off = this._buffer.length;
-			}
+		if (!this.packetReaderWriter) {
+			this.packetReaderWriter = PacketReaderWriter.fromSize(this.baseSize);
+			this.writer(this.packetReaderWriter);
 		}
 
-		return this._buffer;
+		return this.packetReaderWriter.buffer.slice(0, this.packetReaderWriter.offset);
 	}
 
-	set buffer(value) {
-		this._buffer = value;
-	}
-
-};
+}

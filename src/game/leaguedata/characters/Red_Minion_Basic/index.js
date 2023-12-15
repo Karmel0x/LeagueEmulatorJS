@@ -1,12 +1,15 @@
-const _Minion_Basic = require("../_Minion_Basic");
+import _Minion_Basic from '../_Minion_Basic/index.js';
+import BasicAttack from './spells/Red_Minion_BasicBasicAttack.js';
+import BasicAttack2 from './spells/Red_Minion_BasicBasicAttack2.js';
+import CritAttack from './spells/Red_Minion_BasicCritAttack.js';
 
 
-module.exports = class Red_Minion_Basic extends _Minion_Basic {
+export default class Red_Minion_Basic extends _Minion_Basic {
 
 	static spells = {
-		BasicAttack: require('./spells/Red_Minion_BasicBasicAttack'),
-		BasicAttack2: require('./spells/Red_Minion_BasicBasicAttack2'),
-		CritAttack: require('./spells/Red_Minion_BasicCritAttack'),
+		BasicAttack,
+		BasicAttack2,
+		CritAttack,
 	};
 
-};
+}

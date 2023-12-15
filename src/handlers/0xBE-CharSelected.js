@@ -1,8 +1,8 @@
 
-const Server = require("../app/Server");
-const loadingStages = require("../constants/loadingStages");
+import packets from '../packets/index.js';
+import loadingStages from '../constants/loadingStages.js';
 
-const Game = require('../game/initializers/Game');
+import Game from '../game/initializers/Game.js';
 
 
 let spawned = false;
@@ -10,16 +10,16 @@ let spawned = false;
 
 /**
  * 
- * @param {import('../gameobjects/units/Player')} player 
- * @param {*} packet 
+ * @param {import('../gameobjects/units/Player.js')} player 
+ * @param {typeof import('../packets/C2S/0xBE-CharSelected.js').struct} packet 
  */
-module.exports = (player, packet) => {
+export default (player, packet) => {
 	console.log('handle: C2S.CharSelected');
 	//console.log(packet);
 
 
-	const StartSpawn = Server.network.createPacket('StartSpawn');
-	player.network.sendPacket(StartSpawn, loadingStages.NOT_CONNECTED);
+	const packet1 = new packets.StartSpawn();
+	player.network.sendPacket(packet1, loadingStages.NOT_CONNECTED);
 
 	if (!spawned) {//temporary here
 		spawned = true;
@@ -28,7 +28,7 @@ module.exports = (player, packet) => {
 
 	player.network.sendReconnectPackets();
 
-	const EndSpawn = Server.network.createPacket('EndSpawn');
-	player.network.sendPacket(EndSpawn, loadingStages.NOT_CONNECTED);
+	const packet2 = new packets.EndSpawn();
+	player.network.sendPacket(packet2, loadingStages.NOT_CONNECTED);
 
 };

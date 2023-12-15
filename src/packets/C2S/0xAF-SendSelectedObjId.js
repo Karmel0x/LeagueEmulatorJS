@@ -1,9 +1,9 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class SendSelectedObjId extends BasePacket {
+export default class SendSelectedObjId extends BasePacket {
 	static struct = {
 		clientId: 'int32',
 		selectedNetId: 'uint32',
-	}
-};
+	};
+}

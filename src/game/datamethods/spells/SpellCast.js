@@ -1,10 +1,10 @@
-const UnitList = require("../../../app/UnitList");
+import UnitList from '../../../app/UnitList.js';
 
 /**
  * Creates Spell Cast Info for _Spell.
  * After it has been created, spell shouldn't be cancelled
  */
-module.exports = class SpellCast {
+export default class SpellCast {
 
 
 	get spell() {
@@ -61,12 +61,9 @@ module.exports = class SpellCast {
 	}
 
 	/**
-	 * 
-	 * @param {Object} args0
-	 * @param {SpellCast} args0.spellCast
-	 * @param {_Spell} args0.spell
-	 * @param {Missile} args0.missile
-	 * @param {Unit | GameObject | Dummytarget} [args0.target=args0.missile.target] (must have a position, may have netId)
+	 *
+	 * @param {Object} options
+	 * @param {import("../../../gameobjects/GameObjects.js").SpellData} options.spellData
 	 */
 	constructor(options) {
 
@@ -74,4 +71,4 @@ module.exports = class SpellCast {
 		this.spellData = options.spellData;
 
 	}
-};
+}

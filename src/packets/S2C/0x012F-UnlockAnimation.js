@@ -1,8 +1,8 @@
-const ExtendedPacket = require('../ExtendedPacket');
+import ExtendedPacket from '../ExtendedPacket.js';
 
 
-module.exports = class UnlockAnimation extends ExtendedPacket {
+export default class UnlockAnimation extends ExtendedPacket {
 	static struct = {
 		animationName: 'string0',//64
-	}
-};
+	};
+}

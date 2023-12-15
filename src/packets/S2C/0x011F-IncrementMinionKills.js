@@ -1,8 +1,8 @@
-const ExtendedPacket = require('../ExtendedPacket');
+import ExtendedPacket from '../ExtendedPacket.js';
 
 
-module.exports = class IncrementMinionKills extends ExtendedPacket {
+export default class IncrementMinionKills extends ExtendedPacket {
 	static struct = {
 		playerNetId: 'uint32',
-	}
-};
+	};
+}

@@ -1,10 +1,10 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class FadeMinions extends BasePacket {
+export default class FadeMinions extends BasePacket {
 	static struct = {
 		team: 'uint8',
 		fadeAmount: 'float',
 		fadeTime: 'float',
-	}
-};
+	};
+}

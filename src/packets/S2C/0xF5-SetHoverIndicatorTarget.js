@@ -1,8 +1,8 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class SetHoverIndicatorTarget extends BasePacket {
+export default class SetHoverIndicatorTarget extends BasePacket {
 	static struct = {
 		targetNetId: 'uint32',
-	}
-};
+	};
+}

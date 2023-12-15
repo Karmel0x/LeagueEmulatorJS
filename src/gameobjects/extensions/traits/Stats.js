@@ -1,19 +1,19 @@
 
-const { IStat, IStatLevelable, IStatStateable } = require('./IStat');
+import { IStat, IStatLevelable, IStatStateable } from './IStat.js';
 
 
-module.exports = class Stats {
+export default class Stats {
 
 	/**
-	 * @type {import('../../GameObjects').StatsStatsOptions}
+	 * @type {import('../../GameObjects.js').StatsStatsOptions}
 	 */
 	base;
 
 	/**
-	 * @param {import('../../units/Unit')} owner 
-	 * @param {import('../../GameObjects').StatsStatsOptions} stats 
+	 * @param {import('../../units/Unit.js').default} owner 
+	 * @param {import('../../GameObjects.js').StatsStatsOptions} stats 
 	 */
-	constructor(owner, stats) {
+	constructor(owner, stats = {}) {
 		this.owner = owner;
 
 		stats = stats || owner.character?.constructor.stats || {};
@@ -100,4 +100,4 @@ module.exports = class Stats {
 		this.increase(stats);
 		return () => this.decrease(stats);
 	}
-};
+}

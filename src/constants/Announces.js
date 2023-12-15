@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	WELCOME_TO_SR: 0x77,
 	THIRY_SECONDS_TO_MINIONS_SPAWN: 0x78,
 	MINIONS_HAVE_SPAWNED: 0x7F,

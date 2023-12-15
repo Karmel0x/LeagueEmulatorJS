@@ -1,8 +1,8 @@
-const ExtendedPacket = require('../ExtendedPacket');
-const ChangeSlotSpellData = require('./0x17-ChangeSlotSpellData');
+import ExtendedPacket from '../ExtendedPacket.js';
+import ChangeSlotSpellData from './0x17-ChangeSlotSpellData.js';
 
 
-module.exports = class ChangeSlotSpellData_OwnerOnly extends ChangeSlotSpellData {
+export default class ChangeSlotSpellData_OwnerOnly extends ChangeSlotSpellData {
 	static struct_header = ExtendedPacket.struct_header;
 
-};
+}

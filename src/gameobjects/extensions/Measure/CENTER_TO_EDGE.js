@@ -1,9 +1,9 @@
 
-const PositionHelper__CENTER_TO_CENTER = require("./CENTER_TO_CENTER");
+import PositionHelper__CENTER_TO_CENTER from './CENTER_TO_CENTER.js';
 
 
 /**
- * @typedef {import('../../GameObject')} GameObject
+ * @typedef {import('../../GameObject.js')} GameObject
  */
 
 class PositionHelper__CENTER_TO_EDGE extends PositionHelper__CENTER_TO_CENTER {
@@ -21,4 +21,4 @@ class PositionHelper__CENTER_TO_EDGE extends PositionHelper__CENTER_TO_CENTER {
 
 }
 
-module.exports = PositionHelper__CENTER_TO_EDGE;
+export default PositionHelper__CENTER_TO_EDGE;

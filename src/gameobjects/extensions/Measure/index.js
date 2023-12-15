@@ -1,8 +1,8 @@
 
-const PositionHelper__CENTER_TO_CENTER = require("./CENTER_TO_CENTER");
-const PositionHelper__CENTER_TO_EDGE = require("./CENTER_TO_EDGE");
-const PositionHelper__EDGE_TO_CENTER = require("./EDGE_TO_CENTER");
-const PositionHelper__EDGE_TO_EDGE = require("./EDGE_TO_EDGE");
+import PositionHelper__CENTER_TO_CENTER from './CENTER_TO_CENTER.js';
+import PositionHelper__CENTER_TO_EDGE from './CENTER_TO_EDGE.js';
+import PositionHelper__EDGE_TO_CENTER from './EDGE_TO_CENTER.js';
+import PositionHelper__EDGE_TO_EDGE from './EDGE_TO_EDGE.js';
 
 
 class Measure extends PositionHelper__CENTER_TO_CENTER {
@@ -37,4 +37,4 @@ class Measure extends PositionHelper__CENTER_TO_CENTER {
 	}
 }
 
-module.exports = Measure;
+export default Measure;

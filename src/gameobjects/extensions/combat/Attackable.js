@@ -1,24 +1,24 @@
 
-const slotId = require("../../../constants/slotId");
-const UnitList = require("../../../app/UnitList");
-const Server = require("../../../app/Server");
-const Defendable = require("./Defendable");
-const Filters = require("../Filters");
+import packets from '../../../packets/index.js';
+import slotId from '../../../constants/slotId.js';
+import UnitList from '../../../app/UnitList.js';
+import Defendable from './Defendable.js';
+import Filters from '../Filters/index.js';
 
 
 /**
- * @typedef {import('../../units/Unit')} Unit
+ * @typedef {import('../../units/Unit.js').default} Unit
  */
 
 /**
  * Trait for units that can attack
  * @depends IStatOwner, ISpellable
  */
-module.exports = class Attackable extends Defendable {
+export default class Attackable extends Defendable {
 
 	/**
 	 * 
-	 * @param {import("../../GameObjects").AttackableUnit} owner 
+	 * @param {import("../../GameObjects.js").AttackableUnit} owner 
 	 */
 	constructor(owner) {
 		super(owner);
@@ -40,7 +40,7 @@ module.exports = class Attackable extends Defendable {
 
 	/**
 	 * 
-	 * @param {import("../../GameObjects").DefendableUnit} target 
+	 * @param {import("../../GameObjects.js").DefendableUnit} target 
 	 */
 	attack(target) {
 
@@ -70,7 +70,7 @@ module.exports = class Attackable extends Defendable {
 		if (!targetNetId)
 			return console.log('unit does not exist', targetNetId);
 
-		let target = /** @type {import("../../GameObjects").DefendableUnit} */ (UnitList.unitsNetId[targetNetId]);
+		let target = /** @type {import("../../GameObjects.js").DefendableUnit} */ (UnitList.unitsNetId[targetNetId]);
 		return this.attack(target);
 	}
 
@@ -117,7 +117,7 @@ module.exports = class Attackable extends Defendable {
 
 		let filters = this.owner.measure;
 		filters.sortByDistance(unitsInRange);
-		unitsInRange = Filters.filterByType(unitsInRange, this.attackTargetUnitTypesOrder);
+		unitsInRange = Filters.filterByTypeName(unitsInRange, this.attackTargetUnitTypesOrder);
 		Filters.sortByType(unitsInRange, this.attackTargetUnitTypesOrder);
 		return unitsInRange[0];
 	}
@@ -161,19 +161,19 @@ module.exports = class Attackable extends Defendable {
 
 		this.attackTarget = target;
 
-		//const AI_TargetHero = Server.network.createPacket('AI_TargetHero');
-		//AI_TargetHero.netId = this.netId;
-		//AI_TargetHero.targetNetId = target.netId;
-		//this.packets.toEveryone(AI_TargetHero);
+		//const packet1 = new packets.AI_TargetHero();
+		//packet1.netId = this.netId;
+		//packet1.targetNetId = target.netId;
+		//this.packets.toEveryone(packet1);
 	}
 
 	//FaceDirection() {
-	//	const FaceDirection = Server.network.createPacket('FaceDirection');
-	//	FaceDirection.netId = this.netId;
-	//	FaceDirection.flags = { doLerpTime: true };
-	//	FaceDirection.direction = new Vector3(-0.93, 0, -0.35);
-	//	FaceDirection.lerpTime = 0.08;
-	//	this.packets.toEveryone(FaceDirection, loadingStages.NOT_CONNECTED);
+	//	const packet1 = new packets.FaceDirection();
+	//	packet1.netId = this.netId;
+	//	packet1.flags = { doLerpTime: true };
+	//	packet1.direction = new Vector3(-0.93, 0, -0.35);
+	//	packet1.lerpTime = 0.08;
+	//	this.packets.toEveryone(packet1, loadingStages.NOT_CONNECTED);
 	//}
 
 	canFollowTarget(target) {
@@ -208,23 +208,23 @@ module.exports = class Attackable extends Defendable {
 		this.setAttackTarget(target);
 		let casted = await this.owner.slots[slotId.A].cast({ target });
 		if (casted) {
-			//const InstantStop_Attack = Server.network.createPacket('InstantStop_Attack');
-			//InstantStop_Attack.netId = this.netId;
-			//InstantStop_Attack.flags = {
+			//const packet1 = new packets.InstantStop_Attack();
+			//packet1.netId = this.netId;
+			//packet1.flags = {
 			//	keepAnimating: true,
 			//};
-			//this.owner.packets.toEveryone(InstantStop_Attack);
+			//this.owner.packets.toEveryone(packet1);
 
-			const UnitSetLookAt = Server.network.createPacket('UnitSetLookAt');
-			UnitSetLookAt.netId = this.owner.netId;
-			UnitSetLookAt.lookAtType = UnitSetLookAt.constructor.LookAtType.Unit;
-			UnitSetLookAt.targetPosition = {
+			const packet1 = new packets.UnitSetLookAt();
+			packet1.netId = this.owner.netId;
+			packet1.lookAtType = packet1.constructor.LookAtType.Unit;
+			packet1.targetPosition = {
 				x: target.position.x,
 				y: target.position.y,
 				z: 10,
 			};
-			UnitSetLookAt.targetNetId = target.netId;
-			this.owner.packets.toEveryone(UnitSetLookAt);
+			packet1.targetNetId = target.netId;
+			this.owner.packets.toEveryone(packet1);
 
 			this.owner.emit('afterBasicAttack');
 		}
@@ -243,4 +243,4 @@ module.exports = class Attackable extends Defendable {
 		}
 	}
 
-};
+}

@@ -1,10 +1,10 @@
 
-const loadingStages = require("../../constants/loadingStages");
-const EVENT = require('../../packets/EVENT');
-const Server = require('../../app/Server');
+import packets from '../../packets/index.js';
+import loadingStages from '../../constants/loadingStages.js';
+import EVENT from '../../packets/EVENT.js';
 
-const Unit = require('./Unit');
-const Defendable = require('../extensions/combat/Defendable');
+import Unit from './Unit.js';
+import Defendable from '../extensions/combat/Defendable.js';
 
 
 class Inhibitor extends Unit {
@@ -12,12 +12,10 @@ class Inhibitor extends Unit {
 	combat;
 
 	/**
-	 * 
-	 * @param {import('../GameObjects').InhibitorOptions} options
+	 * @param {import('../GameObjects.js').InhibitorOptions} options
 	 */
-	constructor(options) {
-		super(options);
-		this.options = options;
+	async loader(options) {
+		await super.loader(options);
 
 		this.combat = new Defendable(this);
 
@@ -25,36 +23,43 @@ class Inhibitor extends Unit {
 	}
 
 	/**
-	 * It sends a packet to everyone that the inhibitor has died
-	 * @param {import("../GameObjects").AttackableUnit} source - The source of the damage.
+	 * @param {import('../GameObjects.js').InhibitorOptions} options
 	 */
-	announceDie(source) {
-		const OnEvent = Server.network.createPacket('OnEvent');
-		OnEvent.netId = this.netId;
-		OnEvent.eventId = EVENT.OnDampenerDie;
-		OnEvent.eventData = {
-			otherNetId: source.netId
-		};
-		this.packets.toEveryone(OnEvent);
-
-		const Building_Die = Server.network.createPacket('Building_Die');
-		Building_Die.netId = this.netId;
-		Building_Die.attackerNetId = source.netId;
-		this.packets.toEveryone(Building_Die);
+	constructor(options) {
+		super(options);
 	}
 
 	/**
-	 * @param {import("../GameObjects").AttackableUnit} source - The source of the damage.
+	 * It sends a packet to everyone that the inhibitor has died
+	 * @param {import('../GameObjects.js').AttackableUnit} source - The source of the damage.
+	 */
+	announceDie(source) {
+		const packet1 = new packets.OnEvent();
+		packet1.netId = this.netId;
+		packet1.eventId = EVENT.OnDampenerDie;
+		packet1.eventData = {
+			otherNetId: source.netId
+		};
+		this.packets.toEveryone(packet1);
+
+		const packet2 = new packets.Building_Die();
+		packet2.netId = this.netId;
+		packet2.attackerNetId = source.netId;
+		this.packets.toEveryone(packet2);
+	}
+
+	/**
+	 * @param {import('../GameObjects.js').AttackableUnit} source - The source of the damage.
 	 */
 	async onDie(source) {
 		this.announceDie(source);
 	}
 
 	spawn() {
-		const OnEnterVisibilityClient = Server.network.createPacket('OnEnterVisibilityClient');
-		OnEnterVisibilityClient.netId = this.netId;
-		OnEnterVisibilityClient.isTurret = true;
-		this.packets.toEveryone(OnEnterVisibilityClient, loadingStages.NOT_CONNECTED);
+		const packet1 = new packets.OnEnterVisibilityClient();
+		packet1.netId = this.netId;
+		packet1.isTurret = true;
+		this.packets.toEveryone(packet1, loadingStages.NOT_CONNECTED);
 
 		super.spawn();
 	}
@@ -62,4 +67,4 @@ class Inhibitor extends Unit {
 }
 
 
-module.exports = Inhibitor;
+export default Inhibitor;

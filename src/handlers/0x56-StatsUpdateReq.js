@@ -1,16 +1,16 @@
 
 /**
  * 
- * @param {import('../gameobjects/units/Player')} player 
- * @param {*} packet 
+ * @param {import('../gameobjects/units/Player.js')} player 
+ * @param {typeof import('../packets/C2S/0x56-StatsUpdateReq.js').struct} packet 
  */
-module.exports = (player, packet) => {
+export default (player, packet) => {
 	console.log('handle: C2S.StatsUpdateReq');
 	//console.log(packet);
 
 
-	//const StatsUpdateReq? = Server.network.createPacket('StatsUpdateReq?');
-	//player.network.sendPacket(StatsUpdateReq?);
+	//const packet1 = new packets.StatsUpdateReq?();
+	//player.network.sendPacket(packet1?);
 
 	//player.network.loadingStage = true;
 };

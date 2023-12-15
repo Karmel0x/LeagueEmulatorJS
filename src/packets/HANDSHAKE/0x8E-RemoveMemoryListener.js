@@ -1,6 +1,6 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class RemoveMemoryListener extends BasePacket {
-	
-};
+export default class RemoveMemoryListener extends BasePacket {
+
+}

@@ -1,7 +1,7 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class PlayVOCommand extends BasePacket {
+export default class PlayVOCommand extends BasePacket {
 	static struct = {
 		commandId: 'uint32',
 		targetId: 'uint32',
@@ -9,5 +9,5 @@ module.exports = class PlayVOCommand extends BasePacket {
 			highlightPlayerIcon: 1,
 			fromPing: 2,
 		}],
-	}
-};
+	};
+}

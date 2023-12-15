@@ -1,6 +1,6 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class TeamBalanceStatus extends BasePacket {
+export default class TeamBalanceStatus extends BasePacket {
 	static struct = {
 		surrenderReason: 'uint8',
 		forVote: 'uint8',
@@ -9,5 +9,5 @@ module.exports = class TeamBalanceStatus extends BasePacket {
 		goldGranted: 'float',
 		experienceGranted: 'int32',
 		towersGranted: 'int32',
-	}
-};
+	};
+}

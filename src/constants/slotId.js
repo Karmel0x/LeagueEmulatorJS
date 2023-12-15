@@ -1,5 +1,5 @@
 
-module.exports = {
+export default {
 	// spells (4) 0-3
 	Q: 0,
 	W: 1,

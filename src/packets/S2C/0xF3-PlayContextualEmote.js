@@ -1,9 +1,9 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class PlayContextualEmote extends BasePacket {
+export default class PlayContextualEmote extends BasePacket {
 	static struct = {
 		contextualEmoteId: 'uint8',
 		hashedParam: 'uint32',
 		contextualEmoteFlags: 'uint8',
-	}
-};
+	};
+}

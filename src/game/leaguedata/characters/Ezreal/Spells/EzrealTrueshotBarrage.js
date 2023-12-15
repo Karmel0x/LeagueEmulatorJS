@@ -1,14 +1,14 @@
 
-const Skillshot = require("../../../../../gameobjects/missiles/Skillshot");
-const _Spell = require("../../../../datamethods/spells/_Spell");
-const PositionHelper = require("../../../../../gameobjects/extensions/Measure");
-const HashString = require("../../../../../functions/HashString");
+import Skillshot from '../../../../../gameobjects/missiles/Skillshot.js';
+import _Spell from '../../../../datamethods/spells/_Spell.js';
+import PositionHelper from '../../../../../gameobjects/extensions/Measure/index.js';
+import HashString from '../../../../../functions/HashString.js';
 
-const package1 = require('../package');
-const slotId = require("../../../../../constants/slotId");
+import package1 from '../package.js';
+import slotId from '../../../../../constants/slotId.js';
 
 
-module.exports = class EzrealTrueshotBarrage extends _Spell {
+export default class EzrealTrueshotBarrage extends _Spell {
 	packageHash = package1.packageHash;
 	spellSlot = slotId.R;
 
@@ -62,4 +62,4 @@ module.exports = class EzrealTrueshotBarrage extends _Spell {
 
 		await Promise.wait(windup * 1000 / 2);
 	}
-};
+}

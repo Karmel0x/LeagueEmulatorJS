@@ -1,8 +1,8 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class FX_Kill extends BasePacket {
+export default class FX_Kill extends BasePacket {
 	static struct = {
 		netObjId: 'uint32',
-	}
-};
+	};
+}

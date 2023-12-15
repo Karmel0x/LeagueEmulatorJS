@@ -1,10 +1,10 @@
 
-const loadingStages = require('../../../constants/loadingStages');
-const TranslateCenteredCoordinates = require('../../../functions/TranslateCenteredCoordinates');
-const UnitList = require('../../../app/UnitList');
-const Server = require('../../../app/Server');
-const Team = require('../traits/Team');
-const PUnit = require('./Unit');
+import packets from '../../../packets/index.js';
+import loadingStages from '../../../constants/loadingStages.js';
+import TranslateCenteredCoordinates from '../../../functions/TranslateCenteredCoordinates.js';
+import UnitList from '../../../app/UnitList.js';
+import Team from '../traits/Team.js';
+import PUnit from './Unit.js';
 
 const createHeroDeath = {
 	Alive: 0,
@@ -13,12 +13,12 @@ const createHeroDeath = {
 };
 
 
-module.exports = class PPlayer extends PUnit {
+export default class PPlayer extends PUnit {
 
 	owner;
 	/**
 	 * 
-	 * @param {import("../../units/Player")} owner 
+	 * @param {import("../../units/Player.js").default} owner 
 	 */
 	constructor(owner) {
 		super(owner);
@@ -32,80 +32,80 @@ module.exports = class PPlayer extends PUnit {
 	CreateHero(dest) {
 		//todo
 
-		const CreateHero = Server.network.createPacket('CreateHero');
-		//CreateHero.netId = this.netId;
-		CreateHero.netObjId = this.owner.netId;
-		CreateHero.clientId = this.owner.clientId;
-		CreateHero.netNodeId = 0;//0x40;
-		CreateHero.skinId = 0;
-		CreateHero.objectName = 'Test';
-		CreateHero.skinName = this.owner.character.model;
+		const packet1 = new packets.CreateHero();
+		//packet1.netId = this.netId;
+		packet1.netObjId = this.owner.netId;
+		packet1.clientId = this.owner.clientId;
+		packet1.netNodeId = 0;//0x40;
+		packet1.skinId = 0;
+		packet1.objectName = 'Test';
+		packet1.skinName = this.owner.character.model;
 
-		CreateHero.bitfield = {
+		packet1.bitfield = {
 			teamIsOrder: this.owner.team.id == Team.TEAM_BLUE,
 			isBot: false
 		};
-		CreateHero.createHeroDeath = createHeroDeath.Alive;
-		CreateHero.spawnPosIndex = this.owner.team.num;//2;
+		packet1.createHeroDeath = createHeroDeath.Alive;
+		packet1.spawnPosIndex = this.owner.team.num;//2;
 
-		dest.sendPacket(CreateHero, loadingStages.NOT_CONNECTED);
+		dest.sendPacket(packet1, loadingStages.NOT_CONNECTED);
 	}
 
 	AvatarInfo_Server(dest) {
 		//todo
-		const AvatarInfo_Server = Server.network.createPacket('AvatarInfo_Server');
-		AvatarInfo_Server.netId = this.owner.netId;
-		AvatarInfo_Server.itemIds = [
+		const packet1 = new packets.AvatarInfo_Server();
+		packet1.netId = this.owner.netId;
+		packet1.itemIds = [
 			0,
 			0x147d, 0x147d, 0x147d, 0x147d, 0x147d, 0x147d, 0x147d, 0x147d, 0x147d,
 			0x14c5, 0x14c5, 0x14c5, 0x14c5, 0x14c5, 0x14c5, 0x14c5, 0x14c5, 0x14c5,
 			0x14a9, 0x14a9, 0x14a9, 0x14a9, 0x14a9, 0x14a9, 0x14a9, 0x14a9, 0x14a9,
 			0x14d7, 0x14d7
 		];
-		AvatarInfo_Server.summonerIds = [0x0364af1c, 0x06496ea8];
-		AvatarInfo_Server.summonerIds2 = AvatarInfo_Server.summonerIds;
+		packet1.summonerIds = [0x0364af1c, 0x06496ea8];
+		packet1.summonerIds2 = packet1.summonerIds;
 
-		dest.sendPacket(AvatarInfo_Server, loadingStages.NOT_CONNECTED);
+		dest.sendPacket(packet1, loadingStages.NOT_CONNECTED);
 	}
 
 	chatBoxMessage() {
 		let message = Array.prototype.slice.call(arguments).join(' ');
 
-		const Chat = Server.network.createPacket('Chat', 'COMMUNICATION');
-		Chat.netId = this.owner.netId;
-		Chat.msg = message;
-		this.owner.packets.toSelf(Chat);
-		console.debug(Chat);
+		const packet1 = new packets.Chat();
+		packet1.netId = this.owner.netId;
+		packet1.msg = message;
+		this.owner.packets.toSelf(packet1);
+		console.debug(packet1);
 	}
 
 	SetCooldown(slot, cooldown = 0) {//return;
-		const SetCooldown = Server.network.createPacket('SetCooldown', 'S2C');
-		SetCooldown.netId = this.owner.netId;
-		SetCooldown.slot = slot;
-		SetCooldown.bitfield = {
+		const packet1 = new packets.SetCooldown();
+		packet1.netId = this.owner.netId;
+		packet1.slot = slot;
+		packet1.bitfield = {
 			playVOWhenCooldownReady: false,
 			isSummonerSpell: false,
 		};
-		SetCooldown.cooldown = cooldown;
-		SetCooldown.maxCooldownForDisplay = cooldown;
-		this.owner.packets.toSelf(SetCooldown);
-		//console.log(SetCooldown);
+		packet1.cooldown = cooldown;
+		packet1.maxCooldownForDisplay = cooldown;
+		this.owner.packets.toSelf(packet1);
+		//console.log(packet1);
 	}
 
 	// 497252 = root
 	AddParticleTarget(packageHash, effectNameHash, boneNameHash = 497252, target = undefined) {
-		const FX_Create_Group = Server.network.createPacket('FX_Create_Group', 'S2C');
-		FX_Create_Group.netId = 0;//this.netId;
-		FX_Create_Group.FXCreateGroupData = [];
-		FX_Create_Group.FXCreateGroupData[0] = {
+		const packet1 = new packets.FX_Create_Group();
+		packet1.netId = 0;//this.netId;
+		packet1.FXCreateGroupData = [];
+		packet1.FXCreateGroupData[0] = {
 			packageHash: packageHash,
 			effectNameHash: effectNameHash,
 			flags: 32,
 			targetBoneNameHash: 0,
 			boneNameHash: boneNameHash,
 		};
-		FX_Create_Group.FXCreateGroupData[0].FXCreateData = [];
-		FX_Create_Group.FXCreateGroupData[0].FXCreateData[0] = {
+		packet1.FXCreateGroupData[0].FXCreateData = [];
+		packet1.FXCreateGroupData[0].FXCreateData[0] = {
 			targetNetId: target?.netId || 0,//this.netId,
 			netAssignedNetId: ++UnitList.lastNetId,//?
 			casterNetId: 0,//this.netId,
@@ -120,21 +120,21 @@ module.exports = class PPlayer extends PUnit {
 		targetPositionCC.z = 0;// don't know if it's necessary to set z
 		ownerPositionCC.z = 50;
 
-		FX_Create_Group.FXCreateGroupData[0].FXCreateData[0].position = ownerPositionCC;
-		FX_Create_Group.FXCreateGroupData[0].FXCreateData[0].ownerPosition = ownerPositionCC;
-		FX_Create_Group.FXCreateGroupData[0].FXCreateData[0].targetPosition = targetPositionCC;
+		packet1.FXCreateGroupData[0].FXCreateData[0].position = ownerPositionCC;
+		packet1.FXCreateGroupData[0].FXCreateData[0].ownerPosition = ownerPositionCC;
+		packet1.FXCreateGroupData[0].FXCreateData[0].targetPosition = targetPositionCC;
 
-		FX_Create_Group.FXCreateGroupData[0].FXCreateData[0].orientationVector = {
+		packet1.FXCreateGroupData[0].FXCreateData[0].orientationVector = {
 			x: 0,
 			y: 0,
 			z: 0,
 		};
 
-		FX_Create_Group.FXCreateGroupData[0].count = FX_Create_Group.FXCreateGroupData[0].FXCreateData.length;
-		FX_Create_Group.count = FX_Create_Group.FXCreateGroupData.length;
+		packet1.FXCreateGroupData[0].count = packet1.FXCreateGroupData[0].FXCreateData.length;
+		packet1.count = packet1.FXCreateGroupData.length;
 
-		this.owner.packets.toVision(FX_Create_Group);
-		//console.log(FX_Create_Group);
-		//console.log(FX_Create_Group.FXCreateGroupData[0].FXCreateData);
+		this.owner.packets.toVision(packet1);
+		//console.log(packet1);
+		//console.log(packet1.FXCreateGroupData[0].FXCreateData);
 	}
-};
+}

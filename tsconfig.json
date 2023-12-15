@@ -1,5 +1,6 @@
 {
 	"compilerOptions": {
+		"target": "ESNext",
 		"noEmit": true,
 		"allowJs": true,
 		"checkJs": true,
@@ -8,10 +9,13 @@
 		//"declarationDir": "types",
 		//"emitDeclarationOnly": true,
 		//"declarationMap": true,
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
 		"resolveJsonModule": true,
 		"esModuleInterop": true
 	},
 	"include": [
-		"src"
+		"src/main.js",
+		"src/**/*.d.ts",
 	]
 }

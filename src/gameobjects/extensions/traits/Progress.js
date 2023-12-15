@@ -1,4 +1,4 @@
-const Server = require("../../../app/Server");
+import UnitAddGold from '../../../packets/S2C/0x22-UnitAddGold.js';
 
 const spellLevelMax = [5, 5, 5, 3];
 const ExpCurve = [
@@ -14,11 +14,11 @@ const ExpCurve = [
 /**
  * Trait for units that can be leveled up
  */
-module.exports = class Progress {
+export default class Progress {
 
 	/**
 	 * 
-	 * @param {import('../../units/Unit')} owner 
+	 * @param {import('../../units/Unit.js').default} owner 
 	 */
 	constructor(owner) {
 		this.owner = owner;
@@ -28,6 +28,7 @@ module.exports = class Progress {
 	expTotal = 0;
 	level = 1;
 	gold = 10000;
+	goldTotal = 10000;
 
 	evolvePoints = 0;
 	evolvePointsF = [false, false, false, false];
@@ -43,11 +44,11 @@ module.exports = class Progress {
 	goldUp(amount, source = 0) {
 		this.gold += amount;
 
-		let packet = Server.network.createPacket('UnitAddGold');
-		packet.sourceNetId = source.netId || source;
-		packet.targetNetId = this.owner.netId;
-		packet.goldAmount = amount;
-		this.owner.network?.sendPacket(packet);
+		let packet1 = new UnitAddGold();
+		packet1.sourceNetId = source.netId || source;
+		packet1.targetNetId = this.owner.netId;
+		packet1.goldAmount = amount;
+		this.owner.network?.sendPacket(packet1);
 		//this.owner.packets.charStats_send();
 
 		console.log('goldUp', amount);
@@ -65,10 +66,10 @@ module.exports = class Progress {
 			this.levelUp(false);
 		}
 
-		//let packet = Server.network.createPacket('UnitAddEXP');
-		//packet.targetNetId = this.owner.netId;
-		//packet.expAmount = amount;
-		//this.sendPacket(packet);
+		//let packet1 = new UnitAddGold();
+		//packet1.targetNetId = this.owner.netId;
+		//packet1.expAmount = amount;
+		//this.sendPacket(packet1);
 		this.owner.packets.charStats_send();
 
 		console.log('expUp', amount);
@@ -127,4 +128,4 @@ module.exports = class Progress {
 		this.owner.packets.charStats_send();
 	}
 
-};
+}

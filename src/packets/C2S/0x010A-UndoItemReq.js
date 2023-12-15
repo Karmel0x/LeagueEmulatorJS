@@ -1,6 +1,6 @@
-const ExtendedPacket = require('../ExtendedPacket');
+import ExtendedPacket from '../ExtendedPacket.js';
 
 
-module.exports = class UndoItemReq extends ExtendedPacket {
-	
-};
+export default class UndoItemReq extends ExtendedPacket {
+
+}

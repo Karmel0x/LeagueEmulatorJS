@@ -1,8 +1,8 @@
-const BasePacket = require('../BasePacket');
-const SVector2 = require('../sharedstruct/SVector2');
+import BasePacket from '../BasePacket.js';
+import SVector2 from '../sharedstruct/SVector2.js';
 
 
-module.exports = class AddRegion extends BasePacket {
+export default class AddRegion extends BasePacket {
 	static struct = {
 		team: 'uint32',
 		regionType: 'int32',
@@ -22,5 +22,5 @@ module.exports = class AddRegion extends BasePacket {
 			revealStealth: 4,
 		}],
 		baseRadius: 'float',
-	}
-};
+	};
+}

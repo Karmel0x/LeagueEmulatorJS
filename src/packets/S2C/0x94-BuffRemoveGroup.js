@@ -1,4 +1,4 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 const BuffRemoveGroupEntry = {
 	ownerNetId: 'uint32',
@@ -6,15 +6,15 @@ const BuffRemoveGroupEntry = {
 	runTimeRemove: 'float',
 };
 
-module.exports = class BuffRemoveGroup extends BasePacket {
+export default class BuffRemoveGroup extends BasePacket {
 	static struct = {
 		buffNameHash: 'uint32',
 		count: 'uint8',
-	}
+	};
 	reader(buffer) {
 		super.reader(buffer);
 
-		this.entries = buffer.readobj([BuffRemoveGroupEntry, this.count]);
+		this.entries = buffer.read([BuffRemoveGroupEntry, this.count]);
 	}
 	writer(buffer) {
 		if (!this.entries || !this.entries.length || this.entries.length > 0xFF)
@@ -24,6 +24,6 @@ module.exports = class BuffRemoveGroup extends BasePacket {
 
 		super.writer(buffer);
 
-		buffer.writeobj([BuffRemoveGroupEntry, this.count], this.entries);
+		buffer.write([BuffRemoveGroupEntry, this.count], this.entries);
 	}
-};
+}

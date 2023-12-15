@@ -1,11 +1,11 @@
 
-const slotId = require("../../../../../constants/slotId");
-const _Spell = require("../../../../datamethods/spells/_Spell");
+import slotId from '../../../../../constants/slotId.js';
+import _Spell from '../../../../datamethods/spells/_Spell.js';
 
-const package1 = require('../package');
+import package1 from '../package.js';
 
 
-module.exports = class EzrealMysticShotMissile extends _Spell {
+export default class EzrealMysticShotMissile extends _Spell {
 	packageHash = package1.packageHash;
 	isProjectile = true;
 	spellSlot = slotId.Qm;
@@ -26,4 +26,4 @@ module.exports = class EzrealMysticShotMissile extends _Spell {
 		spellData.missile.fire(spellData.missile.target);
 	}
 
-};
+}

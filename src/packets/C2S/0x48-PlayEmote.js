@@ -1,7 +1,7 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class PlayEmote extends BasePacket {
+export default class PlayEmote extends BasePacket {
 	static struct = {
 		emoteId: 'uint8',
-	}
-};
+	};
+}

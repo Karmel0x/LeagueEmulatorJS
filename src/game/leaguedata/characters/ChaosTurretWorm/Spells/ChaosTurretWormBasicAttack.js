@@ -1,7 +1,7 @@
 
-const _Turret_OuterBasicAttack = require("../../_Turret_Outer/spells/_Turret_OuterBasicAttack");
+import _Turret_OuterBasicAttack from '../../_Turret_Outer/spells/_Turret_OuterBasicAttack.js';
 
 
-module.exports = class ChaosTurretWormBasicAttack extends _Turret_OuterBasicAttack {
+export default class ChaosTurretWormBasicAttack extends _Turret_OuterBasicAttack {
 
-};
+}

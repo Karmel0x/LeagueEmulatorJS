@@ -1,30 +1,31 @@
 
-const fs = require('fs');
-require("../../src/core/BufferExtend");
-const Server = require('../../src/app/Server');
+import fs from 'fs';
+import Server from '../../src/app/Server.js';
+import PacketReaderWriter, { Types } from '../../src/core/network/binary-packet-struct/index.js';
 Server.packetLengthWarning = 50000;
 
 
-module.exports = function (filePath) {
+export default function (filePath) {
     let f = fs.readFileSync(filePath);
+    let packetReaderWriter = PacketReaderWriter.from(f);
 
-    let header = f.readobj({
+    let header = packetReaderWriter.read({
         magic: ['char', 4],
         size: 'uint32',
         pad: ['char', 8],
     });
 
-    f.readobj(['char', header.size]); // json Match Data
+    packetReaderWriter.read(['char', header.size]);
 
     let readPacketChunk = (f) => {
-        let packet = f.readobj({
+        let packet = f.read({
             size: 'uint32',
             time: 'float',
             channel: 'uint8',
             reserved: ['uint8', 3],
         });
 
-        let data = f.readobj(['uint8', packet.size]);
+        let data = f.read(['uint8', packet.size]);
 
         return {
             Time: packet.time,
@@ -36,15 +37,15 @@ module.exports = function (filePath) {
 
     let packets = [];
 
-    while (f.off < f.length) {
-        if (f.read1('uint8') == 'p'.charCodeAt(0))
-            if (f.read1('uint8') == 'k'.charCodeAt(0))
-                if (f.read1('uint8') == 't'.charCodeAt(0))
-                    if (f.read1('uint8') == 0x00) {
-                        let packet = readPacketChunk(f);
+    while (packetReaderWriter.offset < f.length) {
+        if (packetReaderWriter.read(Types.uint8) == 'p'.charCodeAt(0))
+            if (packetReaderWriter.read(Types.uint8) == 'k'.charCodeAt(0))
+                if (packetReaderWriter.read(Types.uint8) == 't'.charCodeAt(0))
+                    if (packetReaderWriter.read(Types.uint8) == 0x00) {
+                        let packet = readPacketChunk(packetReaderWriter);
                         packets.push(packet);
                     }
     }
 
     return packets;
-};
+}

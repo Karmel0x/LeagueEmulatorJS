@@ -1,8 +1,8 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class OnRespawnPointEvent extends BasePacket {
+export default class OnRespawnPointEvent extends BasePacket {
 	static struct = {
 		respawnPointEvent: 'uint8',
 		respawnPointUiId: 'uint8',
-	}
-};
+	};
+}

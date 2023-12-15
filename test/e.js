@@ -1,4 +1,4 @@
-const { Vector2 } = require("three");
+import { Vector2 } from 'three';
 
 let q = new Vector2(1000, 1000);
 let w = new Vector2(100, 100);

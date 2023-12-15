@@ -1,14 +1,14 @@
 
-const Network = require('../Network');
-const enet = require('../../../../../enetcppjs');
+import Network from '../Network.js';
+import enet from '../../../../../enetcppjs/index.js';
 
 
 class NetworkEnet extends Network {
 
 	async netLoop() {
 		for (; ;) {
-			let msg = enet.netLoop();
-			if (typeof msg.type == 'undefined') {//no packets atm
+			let msg = enet.netLoop_arrayBuffer();
+			if (typeof msg.type === 'undefined') {//no packets atm
 				await Promise.wait(1);//don't overload cpu
 				continue;
 			}
@@ -21,22 +21,21 @@ class NetworkEnet extends Network {
 
 	listen() {
 		let enetInitialize = enet.initialize(this.port, this.host, this.blowfishKey);
-		enetInitialize = Boolean(enetInitialize);
 
 		console.log('enetInitialize:', enetInitialize);
 		if (!enetInitialize)
-			return false;
+			throw new Error('enetInitialize failed');
 
 		this.netLoop();
-		return true;
 	}
 
 	/**
 	 * @param {PacketMessage} msg 
 	 */
 	sendPacketMsg(msg) {
-		enet.sendPacket(msg.peerNum, msg.buffer, msg.channel);
+		//console.log(msg);
+		enet.sendPacket2(msg.peerNum, msg.buffer, msg.channel);
 	}
 }
 
-module.exports = NetworkEnet;
+export default NetworkEnet;

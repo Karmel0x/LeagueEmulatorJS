@@ -1,7 +1,7 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class EndOfGameEvent extends BasePacket {
+export default class EndOfGameEvent extends BasePacket {
 	static struct = {
 		teamIsOrder: 'bool',
-	}
-};
+	};
+}

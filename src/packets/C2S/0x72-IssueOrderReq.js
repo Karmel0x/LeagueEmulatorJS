@@ -1,6 +1,6 @@
-const BasePacket = require('../BasePacket');
-const SVector2 = require('../sharedstruct/SVector2');
-const CMovementDataNormal = require('../sharedstruct/CMovementDataNormal');
+import BasePacket from '../BasePacket.js';
+import SVector2 from '../sharedstruct/SVector2.js';
+import CMovementDataNormal from '../sharedstruct/CMovementDataNormal.js';
 
 // something is different in BatchPacket
 //const Vector2c = {
@@ -13,7 +13,7 @@ const CMovementDataNormal = require('../sharedstruct/CMovementDataNormal');
 /**
  * Request move
  */
-module.exports = class IssueOrderReq extends BasePacket {
+export default class IssueOrderReq extends BasePacket {
 	static types = {
 		ORDER_NONE: 0,
 		HOLD: 1,
@@ -31,12 +31,12 @@ module.exports = class IssueOrderReq extends BasePacket {
 		ATTACKTERRAIN_SUSTAINED: 13,
 		ATTACKTERRAIN_ONCE: 14,
 		CASTSPELL: 15,
-	}
+	};
 	static struct = {
 		orderType: 'uint8',
 		position: SVector2,
 		targetNetId: 'uint32',
-	}
+	};
 	reader(buffer) {
 		super.reader(buffer);
 
@@ -48,4 +48,4 @@ module.exports = class IssueOrderReq extends BasePacket {
 		if (this.movementData)
 			CMovementDataNormal.writer(buffer, this.movementData);
 	}
-};
+}

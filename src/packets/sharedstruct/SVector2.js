@@ -1,5 +1,5 @@
 
-module.exports = {//SVector2
+export default {//SVector2
 	x: 'float',
 	y: 'float',
 };

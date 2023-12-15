@@ -1,7 +1,7 @@
-const BasePacket = require('../BasePacket');
-const SConnectionInfo = require('../sharedstruct/SConnectionInfo');
+import BasePacket from '../BasePacket.js';
+import SConnectionInfo from '../sharedstruct/SConnectionInfo.js';
 
 
-module.exports = class Ping_Load_Info extends BasePacket {
+export default class Ping_Load_Info extends BasePacket {
 	static struct = SConnectionInfo;
-};
+}

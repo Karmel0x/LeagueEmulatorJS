@@ -1,12 +1,12 @@
 
-const GameObject = require("../GameObject");
+import GameObject from '../GameObject.js';
 
 
 class Dummytarget extends GameObject {
 
 	/**
 	 * 
-	 * @param {import('../GameObjects').DummytargetOptions} options 
+	 * @param {import('../GameObjects.js').DummytargetOptions} options 
 	 */
 	constructor(options) {
 		super(options);
@@ -14,4 +14,4 @@ class Dummytarget extends GameObject {
 	}
 }
 
-module.exports = Dummytarget;
+export default Dummytarget;

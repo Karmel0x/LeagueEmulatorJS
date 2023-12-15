@@ -1,10 +1,10 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class World_LockCamera_Server extends BasePacket {
+export default class World_LockCamera_Server extends BasePacket {
 	static struct = {
 		bitfield: ['bitfield', {
 			locked: 1,
 		}],
 		clientId: 'int32',
-	}
-};
+	};
+}

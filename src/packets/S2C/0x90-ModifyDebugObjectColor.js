@@ -1,8 +1,8 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class ModifyDebugObjectColor extends BasePacket {
+export default class ModifyDebugObjectColor extends BasePacket {
 	static struct = {
 		objectId: 'int32',
 		color: 'uint32',
-	}
-};
+	};
+}

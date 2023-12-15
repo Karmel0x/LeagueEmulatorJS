@@ -1,19 +1,20 @@
 
-const Server = require("../app/Server");
-const loadingStages = require("../constants/loadingStages");
+import packets from '../packets/index.js';
+import Server from '../app/Server.js';
+import loadingStages from '../constants/loadingStages.js';
 
 /**
  * 
  * @param {number} peerNum 
- * @param {typeof import('../packets/HANDSHAKE/0x00-KEY_CHECK').struct} packet 
+ * @param {typeof import('../packets/HANDSHAKE/0x00-KEY_CHECK.js').struct} packet 
  */
-module.exports = (peerNum, packet) => {
+export default (peerNum, packet) => {
 	console.log('handle: HANDSHAKE.KEY_CHECK');
 	console.log(packet);
 
 	//todo:checks
 	let player = Server.players.find(
-		player => player.summoner.id == packet.playerId
+		p => p.summoner.id == packet.playerId
 	);
 
 	if (!player)
@@ -23,21 +24,21 @@ module.exports = (peerNum, packet) => {
 	player.network.peerNum = peerNum;
 
 	{
-		const KEY_CHECK = Server.network.createPacket('KEY_CHECK', 'HANDSHAKE');
-		KEY_CHECK.content = {
+		const packet1 = new packets.KEY_CHECK();
+		packet1.content = {
 			partialKey: [0x2A, 0x00, 0xFF],
 			clientId: player.clientId,
 			playerId: player.summoner.id,
 		};
-		player.network.sendPacket(KEY_CHECK, loadingStages.NOT_CONNECTED);
+		player.network.sendPacket(packet1, loadingStages.NOT_CONNECTED);
 		player.network.loadingStage = loadingStages.LOADING;
 	}
 	//{
-	//	const World_SendGameNumber = Server.network.createPacket('World_SendGameNumber');
-	//	//World_SendGameNumber.netId = ;
-	//	World_SendGameNumber.gameId = 1;
-	//	World_SendGameNumber.summonerName = 'Coquinounet';
-	//	player.network.sendPacket(World_SendGameNumber);
+	//	const packet1 = new packets.World_SendGameNumber();
+	//	//packet1.netId = ;
+	//	packet1.gameId = 1;
+	//	packet1.summonerName = 'Coquinounet';
+	//	player.network.sendPacket(packet1);
 	//}
 
 };

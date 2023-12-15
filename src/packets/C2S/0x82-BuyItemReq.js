@@ -1,8 +1,8 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class BuyItemReq extends BasePacket {
+export default class BuyItemReq extends BasePacket {
 	static struct = {
 		itemId: 'uint32',
-	}
-};
+	};
+}

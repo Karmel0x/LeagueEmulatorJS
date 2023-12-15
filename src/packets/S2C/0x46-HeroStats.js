@@ -1,4 +1,4 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 /**
  * @todo
@@ -90,9 +90,9 @@ const ChampionStats = {
 	unk12: 'int32',
 };
 
-module.exports = class HeroStats extends BasePacket {
+export default class HeroStats extends BasePacket {
 	static struct = {
 		size: 'int32',
 		data: ChampionStats,//['uint8', 'size|-4'],
-	}
-};
+	};
+}

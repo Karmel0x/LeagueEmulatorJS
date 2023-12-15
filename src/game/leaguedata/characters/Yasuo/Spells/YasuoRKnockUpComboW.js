@@ -1,10 +1,10 @@
 
-const PositionHelper = require("../../../../../gameobjects/extensions/Measure");
-const _Spell = require("../../../../datamethods/spells/_Spell");
-const YasuoRDummySpell = require("./YasuoRDummySpell");
+import PositionHelper from '../../../../../gameobjects/extensions/Measure/index.js';
+import _Spell from '../../../../datamethods/spells/_Spell.js';
+import YasuoRDummySpell from './YasuoRDummySpell.js';
 
 
-module.exports = class YasuoRKnockUpComboW extends _Spell {
+export default class YasuoRKnockUpComboW extends _Spell {
 	castRange = 1200;
 
 	static childSpellList = [
@@ -17,4 +17,4 @@ module.exports = class YasuoRKnockUpComboW extends _Spell {
 
 		spellData.anglePosition = PositionHelper.anglePosition(spellData.packet, this.owner);
 	}
-};
+}

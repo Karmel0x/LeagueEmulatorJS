@@ -1,8 +1,8 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class ForceCreateMissile extends BasePacket {
+export default class ForceCreateMissile extends BasePacket {
 	static struct = {
 		missileNetId: 'uint32',
-	}
-};
+	};
+}

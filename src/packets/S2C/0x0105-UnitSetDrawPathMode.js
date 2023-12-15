@@ -1,10 +1,10 @@
-const ExtendedPacket = require('../ExtendedPacket');
+import ExtendedPacket from '../ExtendedPacket.js';
 
 
-module.exports = class UnitSetDrawPathMode extends ExtendedPacket {
+export default class UnitSetDrawPathMode extends ExtendedPacket {
 	static struct = {
 		targetNetId: 'uint32',
 		drawPathMode: 'uint8',
 		updateRate: 'float',
-	}
-};
+	};
+}

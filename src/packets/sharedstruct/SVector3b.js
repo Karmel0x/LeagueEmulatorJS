@@ -1,5 +1,5 @@
 
-module.exports = {//SVector3b
+export default {//SVector3b
 	x: 'int16',
 	z: 'float',
 	y: 'int16',

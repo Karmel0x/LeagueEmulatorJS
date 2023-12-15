@@ -1,16 +1,16 @@
 
-const slotId = require('../../../constants/slotId');
-const Attackable = require('./Attackable');
+import slotId from '../../../constants/slotId.js';
+import Attackable from './Attackable.js';
 
 
 /**
  * Trait for units that can use spells
  */
-module.exports = class Spellable extends Attackable {
+export default class Spellable extends Attackable {
 
 	/**
 	 * 
-	 * @param {import('../../GameObjects').SpellableUnit} owner 
+	 * @param {import('../../GameObjects.js').SpellableUnit} owner 
 	 */
 	constructor(owner) {
 		super(owner);
@@ -43,4 +43,4 @@ module.exports = class Spellable extends Attackable {
 		this.owner.slots[slot]?.cast({ packet });
 	}
 
-};
+}

@@ -1,7 +1,7 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class TutorialAudioEventFinished extends BasePacket {
+export default class TutorialAudioEventFinished extends BasePacket {
 	static struct = {
 		audioEventNetId: 'uint32',
-	}
-};
+	};
+}

@@ -1,9 +1,9 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 /**
  * Used for dominion game mode
  */
-module.exports = class IncrementPlayerScore extends BasePacket {
+export default class IncrementPlayerScore extends BasePacket {
 	static struct = {
 		playerNetId: 'uint32',
 		scoreCategory: 'uint8',
@@ -13,5 +13,5 @@ module.exports = class IncrementPlayerScore extends BasePacket {
 		}],
 		pointValue: 'float',
 		totalPointValue: 'float',
-	}
-};
+	};
+}

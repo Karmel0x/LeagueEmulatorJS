@@ -1,8 +1,8 @@
-const ExtendedPacket = require('../ExtendedPacket');
+import ExtendedPacket from '../ExtendedPacket.js';
 
 
-module.exports = class UnitSetMaxLevelOverride extends ExtendedPacket {
+export default class UnitSetMaxLevelOverride extends ExtendedPacket {
 	static struct = {
 		maxLevelOverride: 'uint8',
-	}
-};
+	};
+}

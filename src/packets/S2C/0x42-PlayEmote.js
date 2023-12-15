@@ -1,6 +1,6 @@
-const PlayEmoteC2S = require('../C2S/0x48-PlayEmote');
+import PlayEmoteC2S from '../C2S/0x48-PlayEmote.js';
 
 
-module.exports = class PlayEmote extends PlayEmoteC2S {
-	
-};
+export default class PlayEmote extends PlayEmoteC2S {
+
+}

@@ -1,11 +1,11 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class ResumePacket extends BasePacket {
+export default class ResumePacket extends BasePacket {
 	static struct = {
 		clientId: 'uint8',
 		bitfield: ['bitfield', {
 			delayed: 1,
 		}],
-	}
-};
+	};
+}

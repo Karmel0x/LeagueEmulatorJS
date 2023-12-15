@@ -1,9 +1,9 @@
 
-const _Spell = require("../../../../datamethods/spells/_Spell");
+import _Spell from '../../../../datamethods/spells/_Spell.js';
 
 
-module.exports = class YasuoW extends _Spell {
+export default class YasuoW extends _Spell {
 	onCast(spellData) {
 
 	}
-};
+}

@@ -1,6 +1,6 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class CheatLogGoldSources extends BasePacket {
-	
-};
+export default class CheatLogGoldSources extends BasePacket {
+
+}

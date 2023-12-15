@@ -1,10 +1,6 @@
-const BasePacket = require('../BasePacket');
+import PrimaryPacket from '../PrimaryPacket.js';
 
-module.exports = class TeamRosterUpdate extends BasePacket {
-	static struct_header = {
-		cmd: 'uint8',
-		//netId: 'uint32',
-	}
+export default class TeamRosterUpdate extends PrimaryPacket {
 	static struct = {
 		blueMax: 'uint32',
 		redMax: 'uint32',
@@ -14,5 +10,5 @@ module.exports = class TeamRosterUpdate extends BasePacket {
 		//dummy2: ['char', 144],
 		currentBlue: 'uint32',
 		currentRed: 'uint32',
-	}
-};
+	};
+}

@@ -1,6 +1,6 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class BotAI extends BasePacket {
+export default class BotAI extends BasePacket {
 	static struct = {
 		aiName: ['char', 64],
 		aiStrategy: ['char', 64],
@@ -11,5 +11,5 @@ module.exports = class BotAI extends BasePacket {
 			1: ['char', 64],
 			2: 'string0',//64
 		},
-	}
-};
+	};
+}

@@ -1,6 +1,6 @@
 
-const enet = require('../../../enetcppjs');
-//const handlers = require('../../src/core/handlers');
+import enet from '../../../enetcppjs/index.js';
+//import handlers from '../../src/core/handlers.js';
 
 
 async function init_network(handlers = null) {
@@ -12,7 +12,7 @@ async function init_network(handlers = null) {
 	let q = {};
 	for (; ;) {
 		q = enet.netLoop();
-		if (typeof q.type == 'undefined') {//no packets atm
+		if (typeof q.type === 'undefined') {//no packets atm
 			await Promise.wait(1);//don't overload cpu
 			continue;
 		}
@@ -23,4 +23,4 @@ async function init_network(handlers = null) {
 	}
 }
 
-module.exports = init_network;
+export default init_network;

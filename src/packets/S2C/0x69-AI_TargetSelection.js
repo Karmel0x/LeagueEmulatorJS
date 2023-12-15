@@ -1,7 +1,7 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class AI_TargetSelection extends BasePacket {
+export default class AI_TargetSelection extends BasePacket {
 	static struct = {
 		targetNetIds: ['uint32', 5],
-	}
-};
+	};
+}

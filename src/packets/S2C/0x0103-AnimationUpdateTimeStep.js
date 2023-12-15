@@ -1,9 +1,9 @@
-const ExtendedPacket = require('../ExtendedPacket');
+import ExtendedPacket from '../ExtendedPacket.js';
 
 
-module.exports = class AnimationUpdateTimeStep extends ExtendedPacket {
+export default class AnimationUpdateTimeStep extends ExtendedPacket {
 	static struct = {
 		updateTimeStep: 'float',
 		animationName: 'string0',//64
-	}
-};
+	};
+}

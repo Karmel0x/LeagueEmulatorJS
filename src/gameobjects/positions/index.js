@@ -1,8 +1,8 @@
-const { Vector2 } = require('three');
-const Team = require('../extensions/traits/Team');
+import { Vector2 } from 'three';
+import Team from '../extensions/traits/Team.js';
 
-/** @type {Object<number, Object<number, import('../GameObjects').NexusOptions>>} */
-const nexuses = {
+/** @type {Object<number, Object<number, import('../GameObjects.js').NexusOptions>>} */
+export const nexuses = {
     [Team.TEAM_BLUE]: {
         0: { netId: 0xFFF97DB5, position: { x: 1131.728, y: 1426.288 }, info: { name: 'HQ_T1' }, character: 'OrderNexus' }//4294540725
     },
@@ -11,7 +11,7 @@ const nexuses = {
     },
 };
 
-const inhibitors = {
+export const inhibitors = {
     [Team.TEAM_BLUE]: {
         0: { netId: 0xFFD23C3E, position: { x: 823.7, y: 3361.6 }, info: { name: 'Barracks_T1_R1' }, character: 'OrderInhibitor' },//4291968062
         1: { netId: 0xFF4A20F1, position: { x: 2785.5, y: 2958.2 }, info: { name: 'Barracks_T1_C1' }, character: 'OrderInhibitor' },//4283048177
@@ -24,7 +24,7 @@ const inhibitors = {
     },
 };
 
-const turrets = {
+export const turrets = {
     [Team.TEAM_BLUE]: {
         0: { position: { x: 10097.618, y: 808.733 }, info: { name: 'Turret_T1_R_03_A' }, character: 'OrderTurretNormal2' },//outer
         1: { position: { x: 6512.527, y: 1262.615 }, info: { name: 'Turret_T1_R_02_A' }, character: 'OrderTurretNormal' },//inner
@@ -62,7 +62,7 @@ const turrets = {
 };
 
 /** @type {{[team: number]: {[num: number]: {position: {x: number, y: number}, rotation: number}}}} */
-const players = {
+export const players = {
     [Team.TEAM_BLUE]: {
         0: { position: { x: 25.9, y: 280 }, rotation: 0 },
         1: { position: { x: 25.9, y: 280 }, rotation: 0 },
@@ -82,7 +82,7 @@ const players = {
 };
 
 
-const barracks = {//0xFF000000 | Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(m.BarracksName));//{x: 1533.0, y: 1321.0}
+export const barracks = {//0xFF000000 | Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(m.BarracksName));//{x: 1533.0, y: 1321.0}
     [Team.TEAM_BLUE]: {
         0: { netId: 0xFFEB364C, position: { x: 917.7302, y: 1720.3623 }, info: { name: '__P_Order_Spawn_Barracks__L01' } },//0x42EB364C//,Z:140.0677
         1: { netId: 0xFFB77171, position: { x: 1418.3711, y: 1686.375 }, info: { name: '__P_Order_Spawn_Barracks__C01' } },//0x49B77171//,Z:134.7595
@@ -96,7 +96,7 @@ const barracks = {//0xFF000000 | Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(m
 };
 
 // @todo correct positions, rotations
-const jungleCamps = {
+export const jungleCamps = {
     [Team.TEAM_NEUTRAL]: {
         1: {
             type: 'Camp', name: 'blue_blue', monsters: [
@@ -195,7 +195,7 @@ const jungleCamps = {
     }
 };
 
-const minionsLanePaths = {
+export const minionsLanePaths = {
     [Team.TEAM_BLUE]: [
         [
             new Vector2(917, 1725),
@@ -264,14 +264,4 @@ const minionsLanePaths = {
             new Vector2(1418, 1686)
         ],
     ],
-};
-
-module.exports = {
-    nexuses,
-    inhibitors,
-    turrets,
-    players,
-    barracks,
-    jungleCamps,
-    minionsLanePaths,
 };

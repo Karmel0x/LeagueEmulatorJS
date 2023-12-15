@@ -1,56 +1,63 @@
-const BasePacket = require("../../packets/BasePacket");
-const ExtendedPacket = require("../../packets/ExtendedPacket");
-const packets = require("./packets");
+import PrimaryPacket from '../../packets/PrimaryPacket.js';
+import BasePacket from '../../packets/BasePacket.js';
+import ExtendedPacket from '../../packets/ExtendedPacket.js';
+import PacketReaderWriter from './binary-packet-struct/index.js';
+
+import '../../packets/index.js';
+import Server from '../../app/Server.js';
 
 
 /**
- * @param {Buffer} buffer 
- * @param {Object} channel packets[channel]
+ * @param {number} channel packets[channel]
  * @param {number} cmd packets[channel][cmd]
- * @returns {Object}
+ * @param {PacketReaderWriter} packetReaderWriter 
+ * @returns 
  */
-function parseBody(buffer, channel, cmd) {
-	let pkt = {};
-	if (typeof packets[channel] == 'undefined' || typeof packets[channel][cmd] == 'undefined') {
-		pkt.error = ['packet not defined', {
-			channel,
-			cmd,
-			channelName: packets[channel]?.name,
-			cmdName: packets[channel]?.[cmd]?.name,
-			channelHex: (channel && channel.toString ? channel.toString(16) : ''),
-			cmdHex: (cmd && cmd.toString ? cmd.toString(16) : ''),
-		}];
-		console.log(pkt.error, buffer);
-		return pkt;
+export function readPacket(channel, cmd, packetReaderWriter) {
+	let channelPackets = Server.packets[channel];
+	if (!channelPackets) {
+		console.log('channel not defined', channel, cmd, '(', channel.toString(16), cmd.toString(16), ')');
+		return;
 	}
 
-	pkt = new packets[channel][cmd](buffer);
-	pkt.cmd = cmd;
-	return pkt.content;
+	let Packet = channelPackets[cmd];
+	if (!Packet) {
+		console.log('packet not defined', channel, cmd, '(', channel.toString(16), cmd.toString(16), ')');
+		return;
+	}
+
+	let packet = Packet.from(packetReaderWriter);
+	return packet.content;
 }
 
 /**
  * @param {PacketMessage} packet
- * @returns {Object}
+ * @returns 
  */
-function parsePacket(packet) {
-	packet.buffer.off = 0;
-	let pkt = packet.buffer.readobj(BasePacket.struct_header);
+export function parsePacket(packet) {
+	const packetReaderWriter = PacketReaderWriter.from(packet.buffer);
+	let head = /** @type {Object.<string, any>} */ (packetReaderWriter.read(PrimaryPacket.struct_header));
 
-	if (pkt.cmd == 0xFE) {
-		packet.buffer.off = 0;
-		pkt = packet.buffer.readobj(ExtendedPacket.struct_header);
-	}
-	if (pkt.cmd == 0xFF) {
-		packet.buffer.off = 0;
-		return pkt;
+	if (head.cmd == 0xFE) {
+		packetReaderWriter.offset = 0;
+		head = packetReaderWriter.read(ExtendedPacket.struct_header);
 	}
 
-	packet.buffer.off = 0;
-	pkt = parseBody(packet.buffer, packet.channel, pkt.cmd);
+	if (head.cmd == 0xFF) {
+		// @todo BatchPacket
+		packetReaderWriter.offset = 0;
+		return;
+	}
 
-	packet.buffer.off = 0;
-	return pkt;
+	try {
+		packetReaderWriter.offset = 0;
+		let content = readPacket(packet.channel, head.cmd, packetReaderWriter);
+
+		return content;
+	}
+	catch (e) {
+		console.log('error parsing packet on offset', packetReaderWriter.offset, e);
+		console.log('packet', packet);
+		return;
+	}
 }
-
-module.exports = { parseBody, parsePacket };

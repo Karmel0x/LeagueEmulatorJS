@@ -1,19 +1,21 @@
-import { Vector2 } from "three";
-import _Character from "../game/datamethods/characters/_Character";
-import Barrack from "./spawners/Barrack";
-import JungleCamp from "./spawners/JungleCamp";
-import Unit from "./units/Unit";
-import Dummytarget from "./missiles/Dummytarget";
-import Inhibitor from "./units/Inhibitor";
-import Nexus from "./units/Nexus";
-import Minion from "./units/Minion";
-import Turret from "./units/Turret";
-import Player from "./units/Player";
-import Monster from "./units/Monster";
-import Missile from "./missiles/Missile";
-import Skillshot from "./missiles/Skillshot";
-import Targetedshot from "./missiles/Targetedshot";
-import Fountain from "./spawners/Fountain";
+import { Vector2 } from 'three';
+import _Character from '../game/datamethods/characters/_Character.js';
+import Barrack from './spawners/Barrack.js';
+import JungleCamp from './spawners/JungleCamp.js';
+import Unit from './units/Unit.js';
+import Dummytarget from './missiles/Dummytarget.js';
+import Inhibitor from './units/Inhibitor.js';
+import Nexus from './units/Nexus.js';
+import Minion from './units/Minion.js';
+import Turret from './units/Turret.js';
+import Player from './units/Player.js';
+import Monster from './units/Monster.js';
+import Missile from './missiles/Missile.js';
+import Skillshot from './missiles/Skillshot.js';
+import Targetedshot from './missiles/Targetedshot.js';
+import Fountain from './spawners/Fountain.js';
+import _Spell from '../game/datamethods/spells/_Spell.js';
+import SpellCast from '../game/datamethods/spells/SpellCast.js';
 
 type UnitSpawner = Barrack | JungleCamp | Fountain;
 type MissileSpawner = AttackableUnit;
@@ -74,7 +76,7 @@ type StatsStatsOptions = {
 
 type UnitOptions = GameObjectOptions & {
     spawner?: UnitSpawner;
-    character: string | _Character;
+    character: string;
     team?: number;
     num?: number;
     info?: object;
@@ -111,17 +113,26 @@ type TurretOptions = UnitOptions & {
 // -------------------- spawners --------------------
 
 type SpawnerOptions = GameObjectOptions & {
-
+    team: number;
+    num?: number;
 };
 
 type BarrackOptions = SpawnerOptions & {
-    team: number;
-    num: number;
+
 };
 
 type JungleCampOptions = SpawnerOptions & {
-    team: string;
     monsters: MonsterOptions[];
+};
+
+type BuilderOptions = SpawnerOptions & {
+    nexuses: NexusOptions[];
+    inhibitors: InhibitorOptions[];
+    turrets: TurretOptions[];
+};
+
+type FountainOptions = SpawnerOptions & {
+    players: PlayerOptions[];
 };
 
 // -------------------- missiles --------------------
@@ -147,6 +158,19 @@ type SkillshotOptions = MissileOptions & {
 
 type TargetedshotOptions = MissileOptions & {
 
+};
+
+type BasicAttackOptions = TargetedshotOptions & {
+    windupPercent?: number;
+    attackSlot?: number;
+};
+
+type SpellData = {
+    packet: Object;
+    spell?: _Spell;
+    target?: DefendableUnit | number;
+    movingSpell?: boolean;
+    spellCast?: SpellCast;
 };
 
 // --------------------  --------------------

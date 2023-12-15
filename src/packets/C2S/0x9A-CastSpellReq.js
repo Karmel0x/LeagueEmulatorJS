@@ -1,8 +1,8 @@
-const BasePacket = require('../BasePacket');
-const SVector2 = require('../sharedstruct/SVector2');
+import BasePacket from '../BasePacket.js';
+import SVector2 from '../sharedstruct/SVector2.js';
 
 
-module.exports = class CastSpellReq extends BasePacket {
+export default class CastSpellReq extends BasePacket {
 	static struct = {
 		bitfield: ['bitfield', {
 			isSummonerSpellBook: 1,
@@ -12,5 +12,5 @@ module.exports = class CastSpellReq extends BasePacket {
 		position: SVector2,
 		endPosition: SVector2,
 		targetNetId: 'uint32',
-	}
-};
+	};
+}

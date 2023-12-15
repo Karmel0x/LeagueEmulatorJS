@@ -1,33 +1,33 @@
 
-const { Vector2 } = require("three");
-const UnitList = require("../app/UnitList");
-const Server = require("../app/Server");
-const Team = require("../gameobjects/extensions/traits/Team");
+import packets from '../packets/index.js';
+import { Vector2 } from 'three';
+import UnitList from '../app/UnitList.js';
+import Team from '../gameobjects/extensions/traits/Team.js';
 
 
 /**
  * 
- * @param {import('../gameobjects/units/Player')} player 
- * @param {*} packet 
+ * @param {import('../gameobjects/units/Player.js')} player 
+ * @param {typeof import('../packets/C2S/0x57-MapPing.js').struct} packet 
  */
-module.exports = (player, packet) => {
+export default (player, packet) => {
 	console.log('handle: C2S.MapPing');
 	//console.log(packet);
 
 
 	{
-		const MapPing = Server.network.createPacket('MapPing');
-		MapPing.position = packet.position;
-		MapPing.targetNetId = packet.targetNetId;
-		MapPing.sourceNetId = player.netId;
-		MapPing.pingCategory = packet.pingCategory;
-		MapPing.bitfield = {//0xFB
+		const packet1 = new packets.MapPing();
+		packet1.position = packet.position;
+		packet1.targetNetId = packet.targetNetId;
+		packet1.sourceNetId = player.netId;
+		packet1.pingCategory = packet.pingCategory;
+		packet1.bitfield = {//0xFB
 			playAudio: true,
 			showChat: true,
 			pingThrottled: false,
 			playVO: true,
 		};
-		player.packets.toTeam(MapPing);
+		player.packets.toTeam(packet1);
 	}
 
 	//test

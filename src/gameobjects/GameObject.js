@@ -1,8 +1,8 @@
 
-const { EventEmitter } = require('node:events');
-const { Vector2 } = require("three");
-const UnitList = require('../app/UnitList');
-const Measure = require('./extensions/Measure');
+import { EventEmitter } from 'node:events';
+import { Vector2 } from 'three';
+import UnitList from '../app/UnitList.js';
+import Measure from './extensions/Measure/index.js';
 
 
 /**
@@ -10,7 +10,7 @@ const Measure = require('./extensions/Measure');
  * can be extended to units or missiles or anything else that needs to be able to take actions
  * this class should contain only the most basic values
  */
-module.exports = class GameObject extends EventEmitter {
+export default class GameObject extends EventEmitter {
 
 	netId = 0;
 	options;
@@ -28,7 +28,7 @@ module.exports = class GameObject extends EventEmitter {
 	}
 
 	/**
-	 * @param {import('./GameObjects').GameObjectOptions} options 
+	 * @param {import('./GameObjects.js').GameObjectOptions} options 
 	 */
 	constructor(options) {
 		super();
@@ -57,4 +57,4 @@ module.exports = class GameObject extends EventEmitter {
 		return this.position.distanceTo(target.position || target);
 	}
 
-};
+}

@@ -1,6 +1,6 @@
-const BasePacket = require('../BasePacket');
-const SVector3 = require('../sharedstruct/SVector3');
-const SVector3b = require('../sharedstruct/SVector3b');
+import BasePacket from '../BasePacket.js';
+import SVector3 from '../sharedstruct/SVector3.js';
+import SVector3b from '../sharedstruct/SVector3b.js';
 
 
 const FXCreateData = {
@@ -26,18 +26,18 @@ const FXCreateGroupData = {
 	count: 'uint8',
 };
 
-module.exports = class FX_Create_Group extends BasePacket {
+export default class FX_Create_Group extends BasePacket {
 	static struct = {
 		count: 'uint8',
 		//FXCreateGroupData: [FXCreateGroupData, 1],//'count'
-	}
+	};
 	reader(buffer) {
 		super.reader(buffer);
 
 		this.FXCreateGroupData = [];
 		for (let i = 0; i < this.count; i++) {
-			this.FXCreateGroupData[i] = buffer.readobj(FXCreateGroupData);
-			this.FXCreateGroupData[i].FXCreateData = buffer.readobj([FXCreateData, this.FXCreateGroupData[i].count]);
+			this.FXCreateGroupData[i] = buffer.read(FXCreateGroupData);
+			this.FXCreateGroupData[i].FXCreateData = buffer.read([FXCreateData, this.FXCreateGroupData[i].count]);
 		}
 	}
 	writer(buffer) {
@@ -49,12 +49,12 @@ module.exports = class FX_Create_Group extends BasePacket {
 		super.writer(buffer);
 
 		for (let i = 0; i < this.count; i++) {
-			buffer.writeobj(FXCreateGroupData, this.FXCreateGroupData[i]);
+			buffer.write(FXCreateGroupData, this.FXCreateGroupData[i]);
 			if (!this.FXCreateGroupData[i].FXCreateData || !this.FXCreateGroupData[i].FXCreateData.length || this.FXCreateGroupData[i].FXCreateData.length > 0xFF)
 				continue;
 
 			this.FXCreateGroupData[i].count = this.FXCreateGroupData[i].FXCreateData.length;
-			buffer.writeobj([FXCreateData, this.FXCreateGroupData[i].count], this.FXCreateGroupData[i].FXCreateData);
+			buffer.write([FXCreateData, this.FXCreateGroupData[i].count], this.FXCreateGroupData[i].FXCreateData);
 		}
 	}
-};
+}

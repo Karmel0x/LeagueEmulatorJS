@@ -1,11 +1,12 @@
-const BasePacket = require('../BasePacket');
-const CMovementDataNormal = require('../sharedstruct/CMovementDataNormal');
+import BasePacket from '../BasePacket.js';
+import CMovementDataNormal from '../sharedstruct/CMovementDataNormal.js';
 
-module.exports = class WaypointGroup extends BasePacket {
+export default class WaypointGroup extends BasePacket {
 	static struct = {
 		syncId: 'int32',
 		count: 'int16',
-	}
+	};
+
 	writer(buffer) {
 		this.syncId = this.syncId || performance.now();
 		this.movementData = this.movementData || [this];
@@ -22,4 +23,4 @@ module.exports = class WaypointGroup extends BasePacket {
 		for (let i = 0; i < this.count; i++)
 			this.movementData[i] = CMovementDataNormal.reader(buffer);
 	}
-};
+}

@@ -1,23 +1,23 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class LineMissileHitList extends BasePacket {
+export default class LineMissileHitList extends BasePacket {
 	static struct = {
 		targets_length: 'int16',
-	}
-	reader(buffer){
+	};
+	reader(buffer) {
 		super.reader(buffer);
-		
-		this.targets = buffer.readobj(['uint32', this.targets_length]);
+
+		this.targets = buffer.read(['uint32', this.targets_length]);
 	}
-	writer(buffer){
-		if(!this.targets || !this.targets.length || this.targets.length > 0x7FFF)
+	writer(buffer) {
+		if (!this.targets || !this.targets.length || this.targets.length > 0x7FFF)
 			return;
 
 		this.targets_length = this.targets.length;
-		
+
 		super.writer(buffer);
-		
-		buffer.writeobj(['uint32', this.targets_length], this.targets);
+
+		buffer.write(['uint32', this.targets_length], this.targets);
 	}
-};
+}

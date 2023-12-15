@@ -1,9 +1,9 @@
-const ExtendedPacket = require('../ExtendedPacket');
+import ExtendedPacket from '../ExtendedPacket.js';
 
 
-module.exports = class SetFadeOut extends ExtendedPacket {
+export default class SetFadeOut extends ExtendedPacket {
 	static struct = {
 		fadeTime: 'float',
 		fadeTargetValue: 'float',
-	}
-};
+	};
+}

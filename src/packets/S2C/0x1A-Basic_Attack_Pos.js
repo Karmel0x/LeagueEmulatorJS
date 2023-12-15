@@ -1,11 +1,11 @@
-const BasePacket = require('../BasePacket');
-const SBasicAttackData = require('../sharedstruct/SBasicAttackData');
-const SVector2 = require('../sharedstruct/SVector2');
+import BasePacket from '../BasePacket.js';
+import SBasicAttackData from '../sharedstruct/SBasicAttackData.js';
+import SVector2 from '../sharedstruct/SVector2.js';
 
 
-module.exports = class Basic_Attack_Pos extends BasePacket {
+export default class Basic_Attack_Pos extends BasePacket {
 	static struct = {
 		attack: SBasicAttackData,
 		position: SVector2,
-	}
-};
+	};
+}

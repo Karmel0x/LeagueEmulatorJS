@@ -1,9 +1,9 @@
-const ExtendedPacket = require('../ExtendedPacket');
+import ExtendedPacket from '../ExtendedPacket.js';
 
 
-module.exports = class BuffUpdateNumCounter extends ExtendedPacket {
+export default class BuffUpdateNumCounter extends ExtendedPacket {
 	static struct = {
 		buffSlot: 'uint8',
 		counter: 'int32',
-	}
-};
+	};
+}

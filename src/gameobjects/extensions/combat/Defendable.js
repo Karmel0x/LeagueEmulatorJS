@@ -1,17 +1,18 @@
 
-const Server = require("../../../app/Server");
-const Team = require("../traits/Team");
+import packets from '../../../packets/index.js';
+import Server from '../../../app/Server.js';
+import Team from '../traits/Team.js';
 
 /**
  * Trait for units that can be attacked
  * @depends IStatOwner
  */
-module.exports = class Defendable {
+export default class Defendable {
 	owner;
 
 	/**
 	 * 
-	 * @param {import("../../GameObjects").DefendableUnit} owner 
+	 * @param {import("../../GameObjects.js").DefendableUnit} owner 
 	 */
 	constructor(owner) {
 		this.owner = owner;
@@ -19,22 +20,22 @@ module.exports = class Defendable {
 
 	/**
 	 * 
-	 * @param {import("../../GameObjects").AttackableUnit} source 
+	 * @param {import("../../GameObjects.js").AttackableUnit} source 
 	 * @param {Object} damage
 	 * @param {number} [damage.resultType]
 	 * @param {number} [damage.type]
 	 * @param {number} [damage.amount]
 	 */
 	UnitApplyDamage(source, damage) {
-		const UnitApplyDamage = Server.network.createPacket('UnitApplyDamage');
-		UnitApplyDamage.netId = this.owner.netId;
-		UnitApplyDamage.damageResultType = damage.resultType || UnitApplyDamage.constructor.DamageResultType.normal;
-		UnitApplyDamage.unk1 = 125;
-		UnitApplyDamage.damageType = damage.type || UnitApplyDamage.constructor.DamageType.mixed;
-		UnitApplyDamage.damage = damage.amount || 0;
-		UnitApplyDamage.targetNetId = this.owner.netId;
-		UnitApplyDamage.sourceNetId = source.netId;
-		this.owner.packets.toEveryone(UnitApplyDamage);
+		const packet1 = new packets.UnitApplyDamage();
+		packet1.netId = this.owner.netId;
+		packet1.damageResultType = damage.resultType || UnitApplyDamage.DamageResultType.normal;
+		packet1.unk1 = 125;
+		packet1.damageType = damage.type || UnitApplyDamage.DamageType.mixed;
+		packet1.damage = damage.amount || 0;
+		packet1.targetNetId = this.owner.netId;
+		packet1.sourceNetId = source.netId;
+		this.owner.packets.toEveryone(packet1);
 	}
 
 	damageReductionFromArmor() {
@@ -43,7 +44,7 @@ module.exports = class Defendable {
 
 	/**
 	 * 
-	 * @param {import("../../GameObjects").AttackableUnit} source 
+	 * @param {import("../../GameObjects.js").AttackableUnit} source 
 	 * @param {Object} dmg
 	 * @param {number} dmg.ad
 	 */
@@ -72,7 +73,7 @@ module.exports = class Defendable {
 
 	/**
 	 * 
-	 * @param {import("../../GameObjects").AttackableUnit} source 
+	 * @param {import("../../GameObjects.js").AttackableUnit} source 
 	 */
 	die(source) {
 		this.owner.stats.health.current = 0;
@@ -105,4 +106,4 @@ module.exports = class Defendable {
 		this.heal(this.owner.stats.health.total * hpPercent / 100);
 	}
 
-};
+}

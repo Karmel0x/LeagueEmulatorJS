@@ -1,15 +1,15 @@
-const Team = require("../extensions/traits/Team");
-const { nexuses, inhibitors, turrets } = require("../positions");
-const Inhibitor = require("../units/Inhibitor");
-const Nexus = require("../units/Nexus");
-const Turret = require("../units/Turret");
-const Spawner = require("./Spawner");
+import Team from '../extensions/traits/Team.js';
+import { nexuses, inhibitors, turrets } from '../positions/index.js';
+import Inhibitor from '../units/Inhibitor.js';
+import Nexus from '../units/Nexus.js';
+import Turret from '../units/Turret.js';
+import Spawner from './Spawner.js';
 
 
 /**
  * building spawner (nexus, turret, inhibitor)
  */
-module.exports = class Builder extends Spawner {
+export default class Builder extends Spawner {
 
     static spawnAll() {
         new Builder({
@@ -31,6 +31,9 @@ module.exports = class Builder extends Spawner {
         });
     }
 
+    /**
+     * @param {import('../GameObjects.js').BuilderOptions} options
+     */
     constructor(options) {
         super(options);
 
@@ -41,7 +44,7 @@ module.exports = class Builder extends Spawner {
 
     /**
      * 
-     * @param {Object<number, import('../GameObjects').NexusOptions>} spawnList
+     * @param {Object<number, import('../GameObjects.js').NexusOptions>} spawnList
      */
     spawnNexuses(spawnList) {
 
@@ -61,7 +64,7 @@ module.exports = class Builder extends Spawner {
 
     /**
      * 
-     * @param {Object<number, import('../GameObjects').InhibitorOptions>} spawnList
+     * @param {Object<number, import('../GameObjects.js').InhibitorOptions>} spawnList
      */
     spawnInhibitors(spawnList) {
 
@@ -81,7 +84,7 @@ module.exports = class Builder extends Spawner {
     }
     /**
      * 
-     * @param {Object<number, import('../GameObjects').TurretOptions>} spawnList
+     * @param {Object<number, import('../GameObjects.js').TurretOptions>} spawnList
      */
     spawnTurrets(spawnList) {
 
@@ -99,4 +102,4 @@ module.exports = class Builder extends Spawner {
         }
     }
 
-};
+}

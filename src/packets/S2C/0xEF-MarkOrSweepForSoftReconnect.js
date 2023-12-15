@@ -1,9 +1,9 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class MarkOrSweepForSoftReconnect extends BasePacket {
+export default class MarkOrSweepForSoftReconnect extends BasePacket {
 	static struct = {
 		bitfield: ['bitfield', {
 			Unknown: 1,
 		}],
-	}
-};
+	};
+}

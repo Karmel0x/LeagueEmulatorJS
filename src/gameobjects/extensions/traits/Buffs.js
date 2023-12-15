@@ -1,17 +1,18 @@
-const Server = require("../../../app/Server");
+
+import packets from '../../../packets/index.js';
 
 /**
- * @typedef {import('../../../game/datamethods/spells/_Spell')} _Spell
+ * @typedef {import('../../../game/datamethods/spells/_Spell.js')} _Spell
  */
 
 /**
  * Trait for units that can be buffed
  */
-module.exports = class Buffs {
+export default class Buffs {
 
 	/**
 	 * 
-	 * @param {import('../../units/Unit')} owner 
+	 * @param {import('../../units/Unit.js').default} owner 
 	 */
 	constructor(owner) {
 		this.owner = owner;
@@ -23,18 +24,18 @@ module.exports = class Buffs {
 	 * @param {_Spell} spellObject 
 	 */
 	addBuffAns(spellObject) {
-		const BuffAdd2 = Server.network.createPacket('BuffAdd2', 'S2C');
-		BuffAdd2.netId = this.owner.netId;
-		BuffAdd2.buffSlot = spellObject.buffSlot;
-		BuffAdd2.buffType = spellObject.buff.buffType;
-		BuffAdd2.count = 1;
-		BuffAdd2.isHidden = 0;
-		BuffAdd2.buffNameHash = spellObject.spellHash;
-		BuffAdd2.packageHash = spellObject.packageHash;
-		BuffAdd2.runningTime = 0;
-		BuffAdd2.duration = spellObject.buff.duration;
-		BuffAdd2.casterNetId = this.owner.netId;
-		this.owner.packets.toVision(BuffAdd2);
+		const packet1 = new packets.BuffAdd2();
+		packet1.netId = this.owner.netId;
+		packet1.buffSlot = spellObject.buffSlot;
+		packet1.buffType = spellObject.buff.buffType;
+		packet1.count = 1;
+		packet1.isHidden = 0;
+		packet1.buffNameHash = spellObject.spellHash;
+		packet1.packageHash = spellObject.packageHash;
+		packet1.runningTime = 0;
+		packet1.duration = spellObject.buff.duration;
+		packet1.casterNetId = this.owner.netId;
+		this.owner.packets.toVision(packet1);
 	}
 
 	/**
@@ -43,12 +44,12 @@ module.exports = class Buffs {
 	 * @param {_Spell} spellObject 
 	 */
 	removeBuffAns(spellObject) {
-		const BuffRemove2 = Server.network.createPacket('BuffRemove2', 'S2C');
-		BuffRemove2.netId = this.owner.netId;
-		BuffRemove2.buffSlot = spellObject.buffSlot;
-		BuffRemove2.buffNameHash = spellObject.spellHash;
-		BuffRemove2.runTimeRemove = 0;
-		this.owner.packets.toVision(BuffRemove2);
+		const packet1 = new packets.BuffRemove2();
+		packet1.netId = this.owner.netId;
+		packet1.buffSlot = spellObject.buffSlot;
+		packet1.buffNameHash = spellObject.spellHash;
+		packet1.runTimeRemove = 0;
+		this.owner.packets.toVision(packet1);
 	}
 
 	buffs = {};
@@ -119,4 +120,4 @@ module.exports = class Buffs {
 		return !!this.buffs[spell];
 	}
 
-};
+}

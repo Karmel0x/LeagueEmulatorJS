@@ -1,4 +1,4 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 const UpdateLevelPropData = {//todo
 	stringParam1: ['char', 64],
@@ -12,8 +12,8 @@ const UpdateLevelPropData = {//todo
 	byteParam3: 'uint8',
 };
 
-module.exports = class UpdateLevelProp extends BasePacket {
+export default class UpdateLevelProp extends BasePacket {
 	static struct = {
 		updateLevelPropData: UpdateLevelPropData,
-	}
-};
+	};
+}

@@ -1,11 +1,11 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class SetShopEnabled extends BasePacket {
+export default class SetShopEnabled extends BasePacket {
 	static struct = {
 		bitfield: ['bitfield', {
 			enabled: 1,
 			forceEnabled: 2,
 		}],
-	}
-};
+	};
+}

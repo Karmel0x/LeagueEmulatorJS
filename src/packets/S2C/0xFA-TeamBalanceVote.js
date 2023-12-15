@@ -1,6 +1,6 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class TeamBalanceVote extends BasePacket {
+export default class TeamBalanceVote extends BasePacket {
 	static struct = {
 		bitfield: ['bitfield', {
 			voteYes: 1,
@@ -15,5 +15,5 @@ module.exports = class TeamBalanceVote extends BasePacket {
 		goldGranted: 'float',
 		experienceGranted: 'int32',
 		towersGranted: 'int32',
-	}
-};
+	};
+}

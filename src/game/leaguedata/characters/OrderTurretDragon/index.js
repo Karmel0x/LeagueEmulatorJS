@@ -1,12 +1,13 @@
 
-const slotId = require('../../../../constants/slotId');
-const _Turret_Inhibitor = require('../_Turret_Inhibitor');
+import slotId from '../../../../constants/slotId.js';
+import _Turret_Inhibitor from '../_Turret_Inhibitor/index.js';
+import OrderTurretDragonBasicAttack from './spells/OrderTurretDragonBasicAttack.js';
 
 
-module.exports = class OrderTurretDragon extends _Turret_Inhibitor {
+export default class OrderTurretDragon extends _Turret_Inhibitor {
 
 	static spells = {
-		OrderTurretDragonBasicAttack: require("./spells/OrderTurretDragonBasicAttack"),
+		OrderTurretDragonBasicAttack,
 	};
 
 	constructor(parent) {
@@ -16,4 +17,4 @@ module.exports = class OrderTurretDragon extends _Turret_Inhibitor {
 			[slotId.A]: this.constructor.spells.OrderTurretDragonBasicAttack,
 		});
 	}
-};
+}

@@ -1,7 +1,7 @@
 
-const _Turret_InhibitorBasicAttack = require("../../_Turret_Inhibitor/spells/_Turret_InhibitorBasicAttack");
+import _Turret_InhibitorBasicAttack from '../../_Turret_Inhibitor/spells/_Turret_InhibitorBasicAttack.js';
 
 
-module.exports = class ChaosTurretGiantBasicAttack extends _Turret_InhibitorBasicAttack {
+export default class ChaosTurretGiantBasicAttack extends _Turret_InhibitorBasicAttack {
 
-};
+}

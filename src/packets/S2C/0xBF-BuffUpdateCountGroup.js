@@ -1,4 +1,4 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
 const BuffUpdateCountGroupEntry = {
@@ -8,16 +8,16 @@ const BuffUpdateCountGroupEntry = {
 	count: 'uint8',
 };
 
-module.exports = class BuffUpdateCountGroup extends BasePacket {
+export default class BuffUpdateCountGroup extends BasePacket {
 	static struct = {
 		duration: 'float',
 		runningTime: 'float',
 		count: 'uint8',
-	}
+	};
 	reader(buffer) {
 		super.reader(buffer);
 
-		this.entries = buffer.readobj([BuffUpdateCountGroupEntry, this.count]);
+		this.entries = buffer.read([BuffUpdateCountGroupEntry, this.count]);
 	}
 	writer(buffer) {
 		//if(!this.entries || !this.entries.length || this.entries.length > 0xFF)
@@ -27,6 +27,6 @@ module.exports = class BuffUpdateCountGroup extends BasePacket {
 
 		super.writer(buffer);
 
-		buffer.writeobj([BuffUpdateCountGroupEntry, this.count], this.entries);
+		buffer.write([BuffUpdateCountGroupEntry, this.count], this.entries);
 	}
-};
+}

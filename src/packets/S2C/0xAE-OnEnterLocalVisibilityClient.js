@@ -1,35 +1,35 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
 /**
  * SET_HEALTH
  */
-module.exports = class OnEnterLocalVisibilityClient extends BasePacket {
+export default class OnEnterLocalVisibilityClient extends BasePacket {
 	static struct = {
 
-	}
+	};
 	//todo: check what packets is
 	reader(buffer) {
 		super.reader(buffer);
 
 		this.packets = [];
 
-		let totalSize = buffer.read1('uint16');// & 0x1FFF
+		let totalSize = buffer.read('uint16');// & 0x1FFF
 		for (; totalSize > 0;) {
-			let packetSize = buffer.read1('uint16');
+			let packetSize = buffer.read('uint16');
 			totalSize -= 2;
 
-			let packetData = buffer.readobj(['uint8', packetSize]);
+			let packetData = buffer.read(['uint8', packetSize]);
 			totalSize -= packetSize;
 
 			this.packets.push(packetData);
 		}
 
-		if (buffer.off >= buffer.length)
+		if (buffer.offset >= buffer.length)
 			return;
 
-		this.health = buffer.read1('float');
-		this.currentHealth = buffer.read1('float');
+		this.health = buffer.read('float');
+		this.currentHealth = buffer.read('float');
 	}
 	writer(buffer) {
 		super.writer(buffer);
@@ -42,21 +42,21 @@ module.exports = class OnEnterLocalVisibilityClient extends BasePacket {
 			let packetSize = this.packets[i].length;
 			totalSize += packetSize;
 		}
-		buffer.write1('uint16', totalSize);// & 0x1FFF
+		buffer.write('uint16', totalSize);// & 0x1FFF
 
 		for (let i = 0; this.packets.length < i; i++) {
 			let packetSize = this.packets[i].length;
-			buffer.write1('uint16', packetSize);
+			buffer.write('uint16', packetSize);
 
-			buffer.writeobj(['uint8', packetSize], this.packets[i]);
+			buffer.write(['uint8', packetSize], this.packets[i]);
 		}
 
 		if (!this.health)
 			return;
 
-		buffer.writeobj({
+		buffer.write({
 			health: 'float',
 			currentHealth: 'float',
 		}, this);
 	}
-};
+}

@@ -1,19 +1,21 @@
-const Server = require("../app/Server");
+
+import packets from '../packets/index.js';
+
 
 /**
  * 
- * @param {import('../gameobjects/units/Player')} player 
- * @param {*} packet 
+ * @param {import('../gameobjects/units/Player.js')} player 
+ * @param {typeof import('../packets/C2S/0x48-PlayEmote.js').struct} packet 
  */
-module.exports = (player, packet) => {
+export default (player, packet) => {
 	console.log('handle: C2S.PlayEmote');
 	//console.log(packet);
 
 	{
-		const PlayEmote = Server.network.createPacket('PlayEmote');
-		PlayEmote.netId = player.netId;
-		PlayEmote.emoteId = packet.emoteId;
-		player.packets.toVision(PlayEmote);
+		const packet1 = new packets.PlayEmote();
+		packet1.netId = player.netId;
+		packet1.emoteId = packet.emoteId;
+		player.packets.toVision(packet1);
 	}
 
 };

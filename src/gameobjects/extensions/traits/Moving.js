@@ -1,9 +1,9 @@
 
-const { Vector2 } = require('three');
-const Pathfinding = require("../../../game/components/Pathfinding");
-const { IStat } = require("./IStat");
-const PositionHelper = require("../Measure");
-const Server = require('../../../app/Server');
+import { Vector2 } from 'three';
+import Pathfinding from '../../../game/components/Pathfinding.js';
+import { IStat } from './IStat.js';
+import PositionHelper from '../Measure/index.js';
+import Server from '../../../app/Server.js';
 
 
 //const ACTIONS = {
@@ -17,11 +17,11 @@ const Server = require('../../../app/Server');
 /**
  * Trait for units that can move
  */
-module.exports = class Moving {
+export default class Moving {
 	owner;
 	/**
 	 * 
-	 * @param {import('../../GameObjects').MovableObject} owner 
+	 * @param {import('../../GameObjects.js').MovableObject} owner 
 	 * @param {number} [speed]
 	 */
 	constructor(owner, speed) {
@@ -38,7 +38,7 @@ module.exports = class Moving {
 	waypointsHalt = false;
 	sentWaypointsType = -1;
 	sentWaypoint = new Vector2();
-	/** @type {import('../../GameObject') | undefined} */
+	/** @type {import('../../GameObject.js') | undefined} */
 	followUnit = undefined;
 	moveTime = 0;
 
@@ -218,24 +218,24 @@ module.exports = class Moving {
 
 	sendDebugData(trace, movementData) {
 		//if(!this.owner.packets.chatBoxMessage)
-		return;
-
-		let message = trace + ' ' + performance.now();
-
-		let dist = this.waypoints[0].distanceTo(movementData.waypoints[0]);
-		let dist2 = this.waypoints[1] ? this.waypoints[0].distanceTo(this.waypoints[1]) : '';
-		let dist3 = this.waypoints[1] ? movementData.waypoints[0].distanceTo(this.waypoints[1]) : '';
-
-		message += "\n";
-		message += dist + ' / ' + dist2 + ' / ' + dist3;
-
-		message += "\n";
-		message += JSON.stringify(this.waypoints);
-
-		message += "\n";
-		message += JSON.stringify(movementData.waypoints);
-
-		this.owner.packets.chatBoxMessage(message);
+		//	return;
+		//
+		//let message = trace + ' ' + performance.now();
+		//
+		//let dist = this.waypoints[0].distanceTo(movementData.waypoints[0]);
+		//let dist2 = this.waypoints[1] ? this.waypoints[0].distanceTo(this.waypoints[1]) : '';
+		//let dist3 = this.waypoints[1] ? movementData.waypoints[0].distanceTo(this.waypoints[1]) : '';
+		//
+		//message += "\n";
+		//message += dist + ' / ' + dist2 + ' / ' + dist3;
+		//
+		//message += "\n";
+		//message += JSON.stringify(this.waypoints);
+		//
+		//message += "\n";
+		//message += JSON.stringify(movementData.waypoints);
+		//
+		//this.owner.packets.chatBoxMessage(message);
 	}
 
 	move0(packet) {
@@ -280,7 +280,7 @@ module.exports = class Moving {
 		} else {
 			movementData.position = this.owner.position;
 			movementData.forward = { x: 0, y: 0 };
-		};
+		}
 
 		return movementData;
 	}
@@ -297,7 +297,7 @@ module.exports = class Moving {
 
 	/**
 	 * @todo remove cancelSpell, make clearing reachDestination for this type of actions ?
-	 * @param {Vector2 | import('../../GameObject')} target | target.position
+	 * @param {Vector2 | import('../../GameObject.js')} target | target.position
 	 * @param {Function} reachDestinationCallback 
 	 * @param {number} range 
 	 */
@@ -315,8 +315,8 @@ module.exports = class Moving {
 	/**
 	 * 
 	 * @param {number} range 
-	 * @param {import('../../GameObject')} target 
-	 * @param {Function} reachDestinationCallback 
+	 * @param {import('../../GameObject.js')} target 
+	 * @param {() => undefined} reachDestinationCallback 
 	 * @returns 
 	 */
 	inRangeOrFollow(range, target, reachDestinationCallback) {
@@ -335,4 +335,4 @@ module.exports = class Moving {
 
 		return true;
 	}
-};
+}

@@ -1,9 +1,28 @@
 
-const slotId = require('../../../../constants/slotId');
-const _Champion = require("../../../datamethods/characters/_Champion");
+import slotId from '../../../../constants/slotId.js';
+import _Champion from '../../../datamethods/characters/_Champion.js';
+import package1 from './package.js';
 
-module.exports = class Yasuo extends _Champion {
-	static package = require('./package');
+//import YasuoQW from './spells/YasuoQW.js';
+//import YasuoQ from './spells/YasuoQ.js';
+//import YasuoQDamage from './spells/YasuoQDamage.js';
+
+//import YasuoQ2W from './spells/YasuoQ2W.js';
+//import YasuoQ2 from './spells/YasuoQ2.js';
+
+import YasuoQ3W from './spells/YasuoQ3W.js';
+import YasuoQ3 from './spells/YasuoQ3.js';
+import YasuoQ3Mis from './spells/YasuoQ3Mis.js';
+
+import YasuoWMovingWall from './spells/YasuoWMovingWall.js';
+import YasuoDashWrapper from './spells/YasuoDashWrapper.js';
+import YasuoRKnockUpComboW from './spells/YasuoRKnockUpComboW.js';
+
+import YasuoBasicAttack from './spells/YasuoBasicAttack.js';
+
+
+export default class Yasuo extends _Champion {
+	static package = package1;
 
 	static stats = {
 		health: {
@@ -37,26 +56,23 @@ module.exports = class Yasuo extends _Champion {
 	};
 
 	static spells = {
-		//// Yasuo Q
-		//YasuoQW: require('./spells/YasuoQW'),
-		//YasuoQ: require('./spells/YasuoQ'),
-		//YasuoQDamage: require('./spells/YasuoQDamage'),
-		//
-		//// Yasuo Q2
-		//YasuoQ2W: require('./spells/YasuoQ2W'),
-		//YasuoQ2: require('./spells/YasuoQ2'),
 
-		// Yasuo Q3
-		YasuoQ3W: require('./spells/YasuoQ3W'),
-		YasuoQ3: require('./spells/YasuoQ3'),
-		YasuoQ3Mis: require('./spells/YasuoQ3Mis'),
+		//YasuoQW,
+		//YasuoQ,
+		//YasuoQDamage,
 
+		//YasuoQ2W,
+		//YasuoQ2,
 
-		YasuoWMovingWall: require('./spells/YasuoWMovingWall'),
-		YasuoDashWrapper: require('./spells/YasuoDashWrapper'),
-		YasuoRKnockUpComboW: require('./spells/YasuoRKnockUpComboW'),
+		YasuoQ3W,
+		YasuoQ3,
+		YasuoQ3Mis,
 
-		YasuoBasicAttack: require('./spells/YasuoBasicAttack'),
+		YasuoWMovingWall,
+		YasuoDashWrapper,
+		YasuoRKnockUpComboW,
+
+		YasuoBasicAttack,
 		//[slotId.BasicAttack2]: require('./spells/YasuoBasicAttack2'),
 		//[slotId.BasicAttack3]: require('./spells/YasuoBasicAttack3'),
 		//[slotId.BasicAttack4]: require('./spells/YasuoBasicAttack4'),
@@ -97,4 +113,4 @@ module.exports = class Yasuo extends _Champion {
 	//	//[slotId.CritAttack4]: require('./spells/YasuoCritAttack4'),
 	//};
 
-};
+}

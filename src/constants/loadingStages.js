@@ -6,4 +6,4 @@ const loadingStages = {
 	IN_GAME: 3,
 };
 
-module.exports = loadingStages;
+export default loadingStages;

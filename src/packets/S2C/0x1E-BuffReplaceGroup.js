@@ -1,4 +1,4 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 const SBuffInGroupReplace = {
 	ownerNetId: 'uint32',
@@ -6,26 +6,26 @@ const SBuffInGroupReplace = {
 	slot: 'uint8',
 };
 
+/**
+ * @typedef {Object} TBuffInGroupReplace
+ * @property {number} ownerNetId
+ * @property {number} casterNetId
+ * @property {number} slot
+ */
 
-module.exports = class BuffReplaceGroup extends BasePacket {
+
+export default class BuffReplaceGroup extends BasePacket {
 	static struct = {
 		runningTime: 'float',
 		duration: 'float',
-		numInGroup: 'uint8',
-	}
-	reader(buffer){
-		super.reader(buffer);
+		entries: ['array', SBuffInGroupReplace],
+	};
 
-		this.entries = buffer.readobj([SBuffInGroupReplace, this.numInGroup]);
-	}
-	writer(buffer){
-		//if(!this.entries || !this.entries.length || this.entries.length > 0xFF)
-		//	return;
+	data = {
+		runningTime: 0,
+		duration: 0,
+		/** @type {TBuffInGroupReplace[]} */
+		entries: [],
+	};
 
-		this.numInGroup = this.entries.length;
-
-		super.writer(buffer);
-
-		buffer.writeobj([SBuffInGroupReplace, this.numInGroup], this.entries);
-	}
-};
+}

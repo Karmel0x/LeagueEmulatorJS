@@ -1,9 +1,9 @@
-const ExtendedPacket = require('../ExtendedPacket');
+import ExtendedPacket from '../ExtendedPacket.js';
 
 
-module.exports = class NeutralMinionTimerUpdate extends ExtendedPacket {
+export default class NeutralMinionTimerUpdate extends ExtendedPacket {
 	static struct = {
 		typeHash: 'int32',
 		expire: 'float',
-	}
-};
+	};
+}

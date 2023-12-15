@@ -1,10 +1,10 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
 /**
  * spawning crystal above nexus
  * @todo send it on game start/client load
  */
-module.exports = class SwitchNexusesToOnIdleParticles extends BasePacket {
-	
-};
+export default class SwitchNexusesToOnIdleParticles extends BasePacket {
+
+}

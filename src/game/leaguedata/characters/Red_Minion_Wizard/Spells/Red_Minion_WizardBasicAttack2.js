@@ -1,7 +1,7 @@
 
-const _Basicattack = require("../../../../datamethods/spells/_Basicattack_");
+import _Basicattack from '../../../../datamethods/spells/_Basicattack_.js';
 
 
-module.exports = class Red_Minion_WizardBasicAttack2 extends _Basicattack {
+export default class Red_Minion_WizardBasicAttack2 extends _Basicattack {
 
-};
+}

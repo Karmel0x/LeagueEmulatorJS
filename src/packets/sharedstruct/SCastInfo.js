@@ -1,5 +1,5 @@
 
-const SVector3 = require('../sharedstruct/SVector3');
+import SVector3 from '../sharedstruct/SVector3.js';
 
 
 const target = {
@@ -46,13 +46,13 @@ const SCastInfo_struct2 = {
 	ammoRechargeTime: 'float',
 };
 
-module.exports = {//SCastInfo
+export default {//SCastInfo
 	reader: (buffer) => {
 		let obj = {};
 
-		Object.assign(obj, buffer.readobj(SCastInfo_struct));
-		obj.target = buffer.readobj([target, obj.targetCount]);
-		Object.assign(obj, buffer.readobj(SCastInfo_struct2));
+		Object.assign(obj, buffer.read(SCastInfo_struct));
+		obj.target = buffer.read([target, obj.targetCount]);
+		Object.assign(obj, buffer.read(SCastInfo_struct2));
 
 		return obj;
 	},
@@ -60,8 +60,8 @@ module.exports = {//SCastInfo
 		source.targetCount = source.target.length;
 		source.size = 102 + (source.targetCount * 5);
 
-		buffer.writeobj(SCastInfo_struct, source);
-		buffer.writeobj([target, source.targetCount], source.target);
-		buffer.writeobj(SCastInfo_struct2, source);
+		buffer.write(SCastInfo_struct, source);
+		buffer.write([target, source.targetCount], source.target);
+		buffer.write(SCastInfo_struct2, source);
 	}
 };

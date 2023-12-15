@@ -1,13 +1,15 @@
 
-const { Vector2 } = require('three');
-const IssueOrderReq = require('../packets/C2S/0x72-IssueOrderReq');
-const Server = require('../app/Server');
+import { Vector2 } from 'three';
+import IssueOrderReq from '../packets/C2S/0x72-IssueOrderReq.js';
+import Server from '../app/Server.js';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
 
-
-let waypointsDrawer = null;
+/** @type {WaypointsDrawer | undefined} */
+let waypointsDrawer = undefined;
 try {
 	require('canvas');
-	const WaypointsDrawer = require('../tools/pathfinding/WaypointsDrawer');
+	const WaypointsDrawer = require('../tools/pathfinding/WaypointsDrawer.js');
 	waypointsDrawer = new WaypointsDrawer();
 } catch (e) {
 	//console.log(e);
@@ -16,10 +18,10 @@ try {
 
 /**
  * 
- * @param {import('../gameobjects/units/Player')} player 
- * @param {*} packet 
+ * @param {import('../gameobjects/units/Player.js')} player 
+ * @param {typeof import('../packets/C2S/0x72-IssueOrderReq.js').struct} packet 
  */
-module.exports = (player, packet) => {
+export default (player, packet) => {
 	//console.log('handle: C2S.IssueOrderReq');
 	//console.log(packet);
 	//console.log('position', packet.position, 'waypoints', packet.movementData.waypoints);

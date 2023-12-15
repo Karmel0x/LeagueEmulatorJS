@@ -1,7 +1,7 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class SynchSimTime extends BasePacket {
+export default class SynchSimTime extends BasePacket {
 	static struct = {
 		synchTime: 'float',
-	}
-};
+	};
+}

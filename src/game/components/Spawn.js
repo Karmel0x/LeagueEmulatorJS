@@ -1,6 +1,6 @@
-const Server = require("../../app/Server");
-const UnitList = require("../../app/UnitList");
-const Team = require("../../gameobjects/extensions/traits/Team");
+import Server from '../../app/Server.js';
+import UnitList from '../../app/UnitList.js';
+import Team from '../../gameobjects/extensions/traits/Team.js';
 
 /**
  * 
@@ -52,7 +52,7 @@ async function wait_spawnMinions() {
 //}
 
 
-module.exports = async () => {
+export default async () => {
 
 	wait_spawnMinions();
 

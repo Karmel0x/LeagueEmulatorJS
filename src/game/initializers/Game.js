@@ -1,24 +1,27 @@
 
-const loadingStages = require('../../constants/loadingStages');
+import packets from '../../packets/index.js';
+import loadingStages from '../../constants/loadingStages.js';
+import playersConfig from '../../constants/playersConfig.js';
+
+import Barrack from '../../gameobjects/spawners/Barrack.js';
+import JungleCamp from '../../gameobjects/spawners/JungleCamp.js';
+import UnitList from '../../app/UnitList.js';
+import Server from '../../app/Server.js';
+import Team from '../../gameobjects/extensions/traits/Team.js';
+import Fountain from '../../gameobjects/spawners/Fountain.js';
+import Builder from '../../gameobjects/spawners/Builder.js';
+
+import Spawn from '../components/Spawn.js';
+import MovementSimulation from '../components/MovementSimulation.js';
+
 const GameComponents = {
-	Spawn: require('../components/Spawn'),
-	//Fountain: require('../components/Fountain'),
-	MovementSimulation: require('../components/MovementSimulation'),
+	Spawn,
+	MovementSimulation,
 };
-const playersConfig = require('../../constants/playersConfig');
 
-const Inhibitor = require("../../gameobjects/units/Inhibitor");
-const Nexus = require("../../gameobjects/units/Nexus");
-const Turret = require("../../gameobjects/units/Turret");
-const Barrack = require("../../gameobjects/spawners/Barrack");
-const Player = require("../../gameobjects/units/Player");
-const JungleCamp = require('../../gameobjects/spawners/JungleCamp');
-const UnitList = require('../../app/UnitList');
-const Server = require('../../app/Server');
-const Team = require('../../gameobjects/extensions/traits/Team');
-const Fountain = require('../../gameobjects/spawners/Fountain');
-const Builder = require('../../gameobjects/spawners/Builder');
-
+/**
+ * @typedef {import('../../gameobjects/units/Player.js')} Player
+ */
 
 class Game {
 	// STAGE client opened ==========================================================
@@ -27,20 +30,20 @@ class Game {
 	 * Send packet to client about loading state and ping
 	 * it's just answer to C2S.Ping_Load_Info
 	 * @param {Player} player 
-	 * @param {typeof import('../../packets/C2S/0x16-Ping_Load_Info').struct} packet request packet
+	 * @param {typeof import('../../packets/C2S/0x16-Ping_Load_Info.js').struct} packet request packet
 	 */
 	static Ping_Load_Info(player, packet) {
-		const Ping_Load_Info = Server.network.createPacket('Ping_Load_Info', 'LOW_PRIORITY');
-		Ping_Load_Info.clientId = player.clientId;
-		Ping_Load_Info.playerId = player.summoner.id;
-		Ping_Load_Info.percentage = packet.percentage;
-		Ping_Load_Info.ETA = packet.ETA;
-		Ping_Load_Info.count = packet.count;
-		Ping_Load_Info.ping = packet.ping;
-		Ping_Load_Info.bitfield = {
+		const packet1 = new packets.Ping_Load_Info();
+		packet1.clientId = player.clientId;
+		packet1.playerId = player.summoner.id;
+		packet1.percentage = packet.percentage;
+		packet1.ETA = packet.ETA;
+		packet1.count = packet.count;
+		packet1.ping = packet.ping;
+		packet1.bitfield = {
 			ready: packet.bitfield.ready,
 		};
-		Server.teams[Team.TEAM_MAX].sendPacket(Ping_Load_Info, loadingStages.NOT_CONNECTED);
+		Server.teams[Team.TEAM_MAX].sendPacket(packet1, loadingStages.NOT_CONNECTED);
 	}
 
 	/**
@@ -48,26 +51,26 @@ class Game {
 	 * @param {Player} player 
 	 */
 	static TeamRosterUpdate(player) {
-		const TeamRosterUpdate = Server.network.createPacket('TeamRosterUpdate', 'LOADING_SCREEN');
-		TeamRosterUpdate.blueMax = 6;
-		TeamRosterUpdate.redMax = 6;
-		TeamRosterUpdate.teamBlue_playerIds = [];
-		TeamRosterUpdate.teamRed_playerIds = [];
+		const packet1 = new packets.TeamRosterUpdate();
+		packet1.blueMax = 6;
+		packet1.redMax = 6;
+		packet1.teamBlue_playerIds = [];
+		packet1.teamRed_playerIds = [];
 
 		let bluePlayersUnits = /** @type {Player[]} */ (UnitList.getUnitsF(Team.TEAM_BLUE, 'Player'));
 		for (let i = 0, l = bluePlayersUnits.length; i < l; i++) {
 			let player2 = bluePlayersUnits[i];
-			TeamRosterUpdate.teamBlue_playerIds.push(player2.summoner.id);
+			packet1.teamBlue_playerIds.push(player2.summoner.id);
 		}
 		let redPlayersUnits = /** @type {Player[]} */ (UnitList.getUnitsF(Team.TEAM_RED, 'Player'));
 		for (let i = 0, l = redPlayersUnits.length; i < l; i++) {
 			let player2 = redPlayersUnits[i];
-			TeamRosterUpdate.teamRed_playerIds.push(player2.summoner.id);
+			packet1.teamRed_playerIds.push(player2.summoner.id);
 		}
 
-		TeamRosterUpdate.currentBlue = TeamRosterUpdate.teamBlue_playerIds.length;
-		TeamRosterUpdate.currentRed = TeamRosterUpdate.teamRed_playerIds.length;
-		Server.teams[Team.TEAM_MAX].sendPacket(TeamRosterUpdate, loadingStages.NOT_CONNECTED);
+		packet1.currentBlue = packet1.teamBlue_playerIds.length;
+		packet1.currentRed = packet1.teamRed_playerIds.length;
+		Server.teams[Team.TEAM_MAX].sendPacket(packet1, loadingStages.NOT_CONNECTED);
 	}
 
 	/**
@@ -75,11 +78,11 @@ class Game {
 	 * @param {Player} player 
 	 */
 	static RequestRename(player) {
-		const RequestRename = Server.network.createPacket('RequestRename', 'LOADING_SCREEN');
-		RequestRename.playerId = player.summoner.id;
-		RequestRename.skinId = 0;
-		RequestRename.playerName = 'Test';
-		Server.teams[Team.TEAM_MAX].sendPacket(RequestRename, loadingStages.NOT_CONNECTED);
+		const packet1 = new packets.RequestRename();
+		packet1.playerId = player.summoner.id;
+		packet1.skinId = 0;
+		packet1.playerName = 'Test';
+		Server.teams[Team.TEAM_MAX].sendPacket(packet1, loadingStages.NOT_CONNECTED);
 	}
 
 	/**
@@ -87,11 +90,11 @@ class Game {
 	 * @param {Player} player 
 	 */
 	static RequestReskin(player) {
-		const RequestReskin = Server.network.createPacket('RequestReskin', 'LOADING_SCREEN');
-		RequestReskin.playerId = player.summoner.id;
-		RequestReskin.skinId = 0;
-		RequestReskin.skinName = player.character.model;
-		Server.teams[Team.TEAM_MAX].sendPacket(RequestReskin, loadingStages.NOT_CONNECTED);
+		const packet1 = new packets.RequestReskin();
+		packet1.playerId = player.summoner.id;
+		packet1.skinId = 0;
+		packet1.skinName = player.character.model;
+		Server.teams[Team.TEAM_MAX].sendPacket(packet1, loadingStages.NOT_CONNECTED);
 	}
 
 	/**
@@ -110,11 +113,11 @@ class Game {
 	 * Send packet to client to start game (switch from loading screen to game)
 	 */
 	static StartGame() {
-		const StartGame = Server.network.createPacket('StartGame');
-		StartGame.bitfield = {
+		const packet1 = new packets.StartGame();
+		packet1.bitfield = {
 			enablePause: true,
 		};
-		Server.teams[Team.TEAM_MAX].sendPacket(StartGame, loadingStages.NOT_CONNECTED);
+		Server.teams[Team.TEAM_MAX].sendPacket(packet1, loadingStages.NOT_CONNECTED);
 	}
 
 	/**
@@ -122,14 +125,14 @@ class Game {
 	 * @param {number} time 
 	 */
 	static SynchSimTime(time = 0) {
-		const SynchSimTime = Server.network.createPacket('SynchSimTime');
-		SynchSimTime.synchTime = time;
-		Server.teams[Team.TEAM_MAX].sendPacket(SynchSimTime, loadingStages.NOT_CONNECTED);
+		const packet1 = new packets.SynchSimTime();
+		packet1.synchTime = time;
+		Server.teams[Team.TEAM_MAX].sendPacket(packet1, loadingStages.NOT_CONNECTED);
 	}
 	static SyncMissionStartTime(time = 0) {
-		const SyncMissionStartTime = Server.network.createPacket('SyncMissionStartTime');
-		SyncMissionStartTime.startTime = time;
-		Server.teams[Team.TEAM_MAX].sendPacket(SyncMissionStartTime, loadingStages.NOT_CONNECTED);
+		const packet1 = new packets.SyncMissionStartTime();
+		packet1.startTime = time;
+		Server.teams[Team.TEAM_MAX].sendPacket(packet1, loadingStages.NOT_CONNECTED);
 	}
 
 	/**
@@ -167,8 +170,8 @@ class Game {
 	}
 
 	static async run() {
-		const SwitchNexusesToOnIdleParticles = Server.network.createPacket('SwitchNexusesToOnIdleParticles');
-		Server.teams[Team.TEAM_MAX].sendPacket(SwitchNexusesToOnIdleParticles);
+		const packet1 = new packets.SwitchNexusesToOnIdleParticles();
+		Server.teams[Team.TEAM_MAX].sendPacket(packet1);
 
 		GameComponents.Spawn();
 		//GameComponents.Fountain();//instead of component, create perma buff for fountain turret
@@ -248,4 +251,4 @@ class Game {
 	}
 }
 
-module.exports = Game;
+export default Game;

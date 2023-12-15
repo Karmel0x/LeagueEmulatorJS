@@ -1,5 +1,5 @@
-const BasePacket = require('../BasePacket');
-const SVector3 = require('../sharedstruct/SVector3');
+import BasePacket from '../BasePacket.js';
+import SVector3 from '../sharedstruct/SVector3.js';
 
 
 /**
@@ -7,12 +7,12 @@ const SVector3 = require('../sharedstruct/SVector3');
  * may be usefull to prevent leaving specific area
  * ex. prevent leaving spawn or new mordekaiser ult
  */
-module.exports = class SetCircularMovementRestriction extends BasePacket {
+export default class SetCircularMovementRestriction extends BasePacket {
 	static struct = {
 		center: SVector3,
 		radius: 'float',
 		bitfield: ['bitfield', {
 			restrictCamera: 1,
 		}],
-	}
-};
+	};
+}

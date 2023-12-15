@@ -1,21 +1,17 @@
 
-const { Vector2 } = require('three');
-
-const GameObject = require('../GameObject');
-const IMovable = require('../extensions/traits/Moving');
-const UnitList = require('../../app/UnitList');
-const Server = require('../../app/Server');
-const Moving = require('../extensions/traits/Moving');
-const { IStat } = require('../extensions/traits/IStat');
+import GameObject from '../GameObject.js';
+import UnitList from '../../app/UnitList.js';
+import Moving from '../extensions/traits/Moving.js';
+import { IStat } from '../extensions/traits/IStat.js';
 
 /**
- * @typedef {import('../../gameobjects/units/Unit')} Unit
+ * @typedef {import('../../gameobjects/units/Unit.js').default} Unit
  */
 
 /**
  * @abstract
  */
-class Missile extends GameObject {
+export default class Missile extends GameObject {
 
 	spawner;
 	moving;
@@ -52,7 +48,7 @@ class Missile extends GameObject {
 
 	/**
 	 * 
-	 * @param {import('../GameObjects').MissileOptions} options 
+	 * @param {import('../GameObjects.js').MissileOptions} options 
 	 */
 	constructor(options) {
 		options.spawnPosition = options.spawnPosition || options.spawner?.position;
@@ -78,10 +74,10 @@ class Missile extends GameObject {
 
 	/**
 	 * @todo move windup somewhere else?
-	 * @param {import('../GameObjects').GameTarget|number|undefined} target
+	 * @param {import('../GameObjects.js').GameTarget|number|undefined} target
 	 */
 	async fire(target, windupPercent = 0) {
-		target = typeof target == 'number' ? UnitList.unitsNetId[target] : target;
+		target = typeof target === 'number' ? UnitList.unitsNetId[target] : target;
 		if (!target)
 			return console.log('Missile.fire:target is not a unit', target);
 
@@ -121,7 +117,7 @@ class Missile extends GameObject {
 	/**
 	 * Called when the missile reaches its destination (hit the target)
 	 * @abstract
-	 * @param {import('../GameObjects').GameTarget} target 
+	 * @param {import('../GameObjects.js').GameTarget} target 
 	 */
 	reachedDest(target) {
 		// override
@@ -132,7 +128,7 @@ class Missile extends GameObject {
 
 	/**
 	 * 
-	 * @param {import('../GameObjects').GameTarget} target 
+	 * @param {import('../GameObjects.js').GameTarget} target 
 	 * @returns 
 	 */
 	fly(target) {
@@ -144,6 +140,3 @@ class Missile extends GameObject {
 	}
 
 }
-
-
-module.exports = Missile;

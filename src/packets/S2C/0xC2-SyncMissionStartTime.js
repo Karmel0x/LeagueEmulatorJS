@@ -1,7 +1,7 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class SyncMissionStartTime extends BasePacket {
+export default class SyncMissionStartTime extends BasePacket {
 	static struct = {
 		startTime: 'float',
-	}
-};
+	};
+}

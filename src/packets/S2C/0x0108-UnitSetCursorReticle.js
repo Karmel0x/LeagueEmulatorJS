@@ -1,9 +1,9 @@
-const ExtendedPacket = require('../ExtendedPacket');
+import ExtendedPacket from '../ExtendedPacket.js';
 
 
-module.exports = class UnitSetCursorReticle extends ExtendedPacket {
+export default class UnitSetCursorReticle extends ExtendedPacket {
 	static struct = {
 		radius: 'float',
 		secondaryRadius: 'float',
-	}
-};
+	};
+}

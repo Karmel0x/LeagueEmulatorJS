@@ -1,7 +1,7 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class SetCooldown extends BasePacket {
+export default class SetCooldown extends BasePacket {
 	static struct = {
 		slot: 'uint8',
 		bitfield: ['bitfield', {
@@ -10,5 +10,5 @@ module.exports = class SetCooldown extends BasePacket {
 		}],
 		cooldown: 'float',
 		maxCooldownForDisplay: 'float',
-	}
-};
+	};
+}

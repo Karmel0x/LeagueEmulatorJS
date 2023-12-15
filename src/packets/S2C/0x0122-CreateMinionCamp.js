@@ -1,8 +1,8 @@
-const ExtendedPacket = require('../ExtendedPacket');
-const SVector3 = require('../sharedstruct/SVector3');
+import ExtendedPacket from '../ExtendedPacket.js';
+import SVector3 from '../sharedstruct/SVector3.js';
 
 
-module.exports = class CreateMinionCamp extends ExtendedPacket {
+export default class CreateMinionCamp extends ExtendedPacket {
 	static struct = {
 		position: SVector3,
 		minimapIcon: ['char', 64],
@@ -11,5 +11,5 @@ module.exports = class CreateMinionCamp extends ExtendedPacket {
 		sideTeamId: 'uint8',
 		timerType: 'int32',
 		expire: 'float',
-	}
-};
+	};
+}

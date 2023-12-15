@@ -1,7 +1,7 @@
-const Team = require("../gameobjects/extensions/traits/Team");
+import Team from '../gameobjects/extensions/traits/Team.js';
 
-/** @type {import("../gameobjects/GameObjects").PlayerConfig[]} */
-module.exports = [
+/** @type {import("../gameobjects/GameObjects.js").PlayerConfig[]} */
+export default [
 	{
 		summoner: {
 			id: 1,

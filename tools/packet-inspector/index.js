@@ -12,14 +12,12 @@
 let replayDir = '../LeagueEmulatorJS_replays/';
 
 
-require('../../src/core/init_utilities')();
-const { server, wss } = require('./init_client-server');
-const fs = require('fs');
+import '../../src/core/init_utilities.js';
+import { server, wss } from './init_client-server.js';
+import fs from 'fs';
 
-require("../../src/core/BufferExtend");
-
-const packetParser = require('./packetParser');
-const _replayreaders = require('../_replayreaders');
+import packetParser from './packetParser.js';
+import _replayreaders from '../_replayreaders/index.js';
 
 
 let replayUnpacked;
@@ -76,11 +74,11 @@ wss.onMessage = (ws, data) => {
 	//    enet.sendPacket(0, buffer, replayUnpacked[i].Channel);
 	//}
 	//else if(res.cmd == 'sendpacket_type'){
-	//	const KEY_CHECK = createPacket(res.name, res.channel);
-	//	KEY_CHECK.partialKey = [ 0x2A, 0x00, 0xFF ];
-	//	KEY_CHECK.clientId = 0;
-	//	KEY_CHECK.playerId = 1;
-	//	sendPacket(0, KEY_CHECK);
+	//	const packet11 = createPacket(res.name, res.channel);
+	//	packet11.partialKey = [ 0x2A, 0x00, 0xFF ];
+	//	packet11.clientId = 0;
+	//	packet11.playerId = 1;
+	//	sendPacket(0, packet11);
 	//}
 	else if (res.cmd == 'loadreplaylist') {
 		let replayList = fs.readdirSync(replayDir).filter((value) => {
@@ -162,4 +160,4 @@ wss.onMessage = (ws, data) => {
 		}
 	}
 
-}
+};

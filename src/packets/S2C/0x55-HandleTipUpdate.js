@@ -1,10 +1,10 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
 /**
  * blue tip on right side of the screen
  */
-module.exports = class HandleTipUpdate extends BasePacket {
+export default class HandleTipUpdate extends BasePacket {
 	static commads = {
 		ACTIVATE_TIP: 0,
 		REMOVE_TIP: 1,
@@ -13,12 +13,12 @@ module.exports = class HandleTipUpdate extends BasePacket {
 		ACTIVATE_TIP_DIALOGUE: 4,
 		ENABLE_TIP_DIALOGUE_EVENTS: 5,
 		DISABLE_TIP_DIALOGUE_EVENTS: 6,
-	}
+	};
 	static struct = {
 		tipText: ['char', 128],
 		tipTitle: ['char', 128],
 		tipImagePath: ['char', 128],
 		tipCommand: 'uint8',
 		tipId: 'uint32',
-	}
-};
+	};
+}

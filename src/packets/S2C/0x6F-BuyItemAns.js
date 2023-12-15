@@ -1,13 +1,13 @@
-const BasePacket = require('../BasePacket');
-const SItemPacket = require('../sharedstruct/SItemPacket');
+import BasePacket from '../BasePacket.js';
+import SItemPacket from '../sharedstruct/SItemPacket.js';
 
 
-module.exports = class BuyItemAns extends BasePacket {
+export default class BuyItemAns extends BasePacket {
 	static struct = {
 		item: SItemPacket,
 		bitfield: ['bitfield', {
 			unk: 1 << 0,
 			unk2: 1 << 1,
 		}],
-	}
-};
+	};
+}

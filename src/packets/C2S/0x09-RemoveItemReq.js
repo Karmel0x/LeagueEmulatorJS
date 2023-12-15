@@ -1,11 +1,11 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class RemoveItemReq extends BasePacket {
+export default class RemoveItemReq extends BasePacket {
 	static struct = {
 		slot: 'uint8',
 		bitfield: ['bitfield', {
 			sell: 1,
 		}],
-	}
-};
+	};
+}

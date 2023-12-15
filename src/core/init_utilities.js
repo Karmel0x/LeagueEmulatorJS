@@ -24,6 +24,3 @@ Number.prototype.getRandom = function (min, max) {
 };
 
 Promise.wait = (ms) => new Promise(resolve => setTimeout(() => resolve(), ms));
-
-
-module.exports = () => { };

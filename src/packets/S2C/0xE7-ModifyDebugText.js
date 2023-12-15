@@ -1,7 +1,7 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class ModifyDebugText extends BasePacket {
+export default class ModifyDebugText extends BasePacket {
 	static struct = {
 		text: 'string',
-	}
-};
+	};
+}

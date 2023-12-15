@@ -1,5 +1,5 @@
 
-module.exports = {//SDeathData
+export default {//SDeathData
 	bitfield: ['bitfield', {
 		becomeZombie: 1,
 	}],

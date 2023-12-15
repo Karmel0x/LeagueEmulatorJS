@@ -1,30 +1,30 @@
-const Team = require("../extensions/traits/Team");
-const Player = require("../units/Player");
-const Spawner = require("./Spawner");
-const { players } = require("../positions");
+import Team from '../extensions/traits/Team.js';
+import Player from '../units/Player.js';
+import Spawner from './Spawner.js';
+import { players } from '../positions/index.js';
 
 
 /**
  * player spawner
  */
-module.exports = class Fountain extends Spawner {
+export default class Fountain extends Spawner {
 
     /** @type {Fountain[]} */
     static spawners = [];
 
     /**
      * 
-     * @param {import("../GameObjects").PlayerConfig[]} players 
+     * @param {import('../GameObjects.js').PlayerConfig[]} players 
      */
     static spawnAll(players) {
-        Fountain.spawners.push(new Fountain({
+        this.spawners.push(new Fountain({
             team: Team.TEAM_BLUE,
             num: 0,
             spawnPosition: { x: 25.9, y: 280 },
             players: players.filter(p => p.match.team === Team.TEAM_BLUE),
         }));
 
-        Fountain.spawners.push(new Fountain({
+        this.spawners.push(new Fountain({
             team: Team.TEAM_RED,
             num: 0,
             spawnPosition: { x: 13948, y: 14202 },
@@ -32,6 +32,9 @@ module.exports = class Fountain extends Spawner {
         }));
     }
 
+    /**
+     * @param {import('../GameObjects.js').FountainOptions} options
+     */
     constructor(options) {
         super(options);
 
@@ -40,7 +43,7 @@ module.exports = class Fountain extends Spawner {
 
     /**
      * 
-     * @param {import("../GameObjects").PlayerConfig[]} playersConfig 
+     * @param {import('../GameObjects.js').PlayerConfig[]} playersConfig 
      */
     spawnPlayers(playersConfig) {
 
@@ -114,4 +117,4 @@ module.exports = class Fountain extends Spawner {
 
     }
 
-};
+}

@@ -1,10 +1,10 @@
-const BasePacket = require('../BasePacket');
-const STipConfig = require('../sharedstruct/STipConfig');
+import BasePacket from '../BasePacket.js';
+import STipConfig from '../sharedstruct/STipConfig.js';
 
-module.exports = class ClientReady extends BasePacket {
+export default class ClientReady extends BasePacket {
 	static struct = {
 		dummy1: ['char', 4],
 		tipConfig: STipConfig,
 		dummy2: ['char', 8],
-	}
-};
+	};
+}

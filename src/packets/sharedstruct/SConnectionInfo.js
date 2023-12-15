@@ -1,4 +1,8 @@
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+
 const config = require('../../constants/config.json');
+
 
 let SConnectionInfo = {
 	clientId: 'int32',
@@ -15,4 +19,4 @@ if (config.Version >= 4.18) {
 	}];
 }
 
-module.exports = SConnectionInfo;
+export default SConnectionInfo;

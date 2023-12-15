@@ -1,20 +1,21 @@
 
-const Server = require("../../app/Server");
-const loadingStages = require("../../constants/loadingStages");
-const Team = require("../extensions/traits/Team");
-const { jungleCamps } = require("../positions");
-const Monster = require("../units/Monster");
-const Spawner = require("./Spawner");
+import packets from '../../packets/index.js';
+import Server from '../../app/Server.js';
+import loadingStages from '../../constants/loadingStages.js';
+import Team from '../extensions/traits/Team.js';
+import { jungleCamps } from '../positions/index.js';
+import Monster from '../units/Monster.js';
+import Spawner from './Spawner.js';
 
 
 /**
  * monster spawner
  */
-module.exports = class JungleCamp extends Spawner {
+export default class JungleCamp extends Spawner {
 
 	/**
 	 * 
-	 * @param {import('../GameObjects').JungleCampOptions} options 
+	 * @param {import('../GameObjects.js').JungleCampOptions} options 
 	 */
 	constructor(options) {
 		super(options);
@@ -35,23 +36,23 @@ module.exports = class JungleCamp extends Spawner {
 	}
 
 	notifyCreate() {
-		const CreateMinionCamp = Server.network.createPacket('CreateMinionCamp');
-		CreateMinionCamp.position = this.position;
-		CreateMinionCamp.campIndex = this.team.num;
-		Server.teams[Team.TEAM_MAX].sendPacket(CreateMinionCamp, loadingStages.LOADING);
+		const packet1 = new packets.CreateMinionCamp();
+		packet1.position = this.position;
+		packet1.campIndex = this.team.num;
+		Server.teams[Team.TEAM_MAX].sendPacket(packet1, loadingStages.LOADING);
 	}
 
 	notifyActivate() {
-		const ActivateMinionCamp = Server.network.createPacket('ActivateMinionCamp');
-		ActivateMinionCamp.position = this.position;
-		ActivateMinionCamp.campIndex = this.team.num;
-		Server.teams[Team.TEAM_MAX].sendPacket(ActivateMinionCamp, loadingStages.LOADING);
+		const packet1 = new packets.ActivateMinionCamp();
+		packet1.position = this.position;
+		packet1.campIndex = this.team.num;
+		Server.teams[Team.TEAM_MAX].sendPacket(packet1, loadingStages.LOADING);
 	}
 
 	notifyDeactivate() {
-		const Neutral_Camp_Empty = Server.network.createPacket('Neutral_Camp_Empty');
-		Neutral_Camp_Empty.campIndex = this.team.num;
-		Server.teams[Team.TEAM_MAX].sendPacket(Neutral_Camp_Empty, loadingStages.LOADING);
+		const packet1 = new packets.Neutral_Camp_Empty();
+		packet1.campIndex = this.team.num;
+		Server.teams[Team.TEAM_MAX].sendPacket(packet1, loadingStages.LOADING);
 	}
 
 	/**
@@ -75,4 +76,4 @@ module.exports = class JungleCamp extends Spawner {
 			}
 		}
 	}
-};
+}

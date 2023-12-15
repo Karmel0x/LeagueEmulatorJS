@@ -1,21 +1,21 @@
 
-const HandlersParse = require('../../src/core/network/parse');
-const BatchPacket = require('../../src/packets/BatchPacket');
-const BasePacket = require('../../src/packets/BasePacket');
-const packets = require('../../src/core/network/packets');
+import { parsePacket } from '../../src/core/network/parse.js';
+import BatchPacket from '../../src/packets/BatchPacket.js';
+import BasePacket from '../../src/packets/BasePacket.js';
+import Server from '../../src/app/Server.js';
 
 
 let packetId = 0;
 
 function findChannelIdByPacketId(packetId) {
-	for (let channelId in packets) {
-		if (packets[channelId][packetId])
+	for (let channelId in Server.packets) {
+		if (Server.packets[channelId][packetId])
 			return channelId;
 	}
 	return null;
 }
 
-function packetParser(packet1) {
+export default function packetParser(packet1) {
 
 	let buffer;
 	if (packet1.Bytes || packet1.BytesB64)
@@ -33,25 +33,28 @@ function packetParser(packet1) {
 	packet1.Channel = packet1.Channel || findChannelIdByPacketId(buffer.readUInt8(0));
 
 	let bytes = buffer.toString('hex').match(/../g)?.join(' ') || '';
-	let parsed = HandlersParse.parsePacket({
+	let parsed = parsePacket({
 		channel: packet1.Channel,
 		buffer: buffer,
 	});
+
+	if (!parsed)
+		parsed = {};
 
 	if (parsed.cmd == 0x95)//Ping_Load_Info
 		return false;
 
 	if (parsed.cmd == 0xFF) {
-		buffer.off = 0;
-		let batchPackets = new BatchPacket();
-		batchPackets.reader(buffer);//console.log(batchPackets);
-		parsed = batchPackets;
+		//buffer.offset = 0;
+		//let batchPackets = new BatchPacket();
+		//batchPackets.reader(buffer);//console.log(batchPackets);
+		//parsed = batchPackets;
 	}
 
 	let parsedStr = '';
 	try {
 		parsedStr = JSON.stringify(parsed, (key, value) =>
-			typeof value == "bigint" ? value.toString() + "n" : value, 2);
+			typeof value === "bigint" ? value.toString() + "n" : value, 2);
 	} catch (e) { }
 
 	let packetData = {
@@ -67,6 +70,4 @@ function packetParser(packet1) {
 	};
 
 	return packetData;
-};
-
-module.exports = packetParser;
+}

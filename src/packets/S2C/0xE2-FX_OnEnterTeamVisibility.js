@@ -1,10 +1,10 @@
-const BasePacket = require('../BasePacket');
-const SVector3 = require('../sharedstruct/SVector3');
+import BasePacket from '../BasePacket.js';
+import SVector3 from '../sharedstruct/SVector3.js';
 
 
-module.exports = class FX_OnEnterTeamVisibility extends BasePacket {
+export default class FX_OnEnterTeamVisibility extends BasePacket {
 	static struct = {
 		netObjId: 'uint32',
 		visibilityTeam: 'uint8',
-	}
-};
+	};
+}

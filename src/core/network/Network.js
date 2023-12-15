@@ -1,17 +1,15 @@
 
-const packets = require('./packets');
-const handlers = require('../../handlers');
-const parse = require('./parse');
-const UnitList = require('../../app/UnitList');
-const Server = require('../../app/Server');
-const Team = require('../../gameobjects/extensions/traits/Team');
-require('../BufferExtend');
+import handlers from '../../handlers/index.js';
+import * as parse from './parse.js';
+import UnitList from '../../app/UnitList.js';
+import Server from '../../app/Server.js';
+import Team from '../../gameobjects/extensions/traits/Team.js';
 
 
 /**
- * @typedef {import('../../packets/BasePacket')} BasePacket
- * @typedef {import('../../gameobjects/units/Player')} Player
- * @typedef {import('../../gameobjects/units/Unit')} Unit
+ * @typedef {import('../../packets/BasePacket.js').default} BasePacket
+ * @typedef {import('../../gameobjects/units/Player.js').default} Player
+ * @typedef {import('../../gameobjects/units/Unit.js').default} Unit
  */
 
 class Network {
@@ -54,7 +52,6 @@ class Network {
 	 * @param {PacketMessage} msg 
 	 */
 	onPacketReceived(msg) {
-		msg.peerNum = msg.peerNum || msg.peer_num;// todo
 		this.handlePackets(msg);
 	}
 
@@ -67,31 +64,37 @@ class Network {
 	}
 
 
+	///**
+	// * Create packet instance to pass to sendPacket
+	// * @param {string} packetName 
+	// * @param {string} channel (S2C/C2S/...)
+	// * @returns 
+	// */
+	//static createPacket(packetName, channel = 'S2C') {
+	//	const ChannelPackets = packets[channel];
+	//	if (!ChannelPackets) {
+	//		console.log('channel is not yet implemented', channel);
+	//		return {};
+	//	}
+	//
+	//	const Packet = ChannelPackets[packetName];
+	//	if (!Packet) {
+	//		console.log('packet is not yet implemented', channel, packetName);
+	//		return {};
+	//	}
+	//
+	//	let packet = /** @type {BasePacket} */ (new Packet());
+	//	packet.cmd = Packet.id;
+	//
+	//	return packet;
+	//}
+
 	/**
-	 * Create packet instance to pass to sendPacket
-	 * @param {string} packetName 
-	 * @param {string} channel (S2C/C2S/...)
-	 * @returns 
+	 * 
+	 * @param {number} peerNum 
+	 * @param {number} channel 
+	 * @param {ArrayBuffer} buffer 
 	 */
-	static createPacket(packetName, channel = 'S2C') {
-		const ChannelPackets = packets[channel];
-		if (!ChannelPackets) {
-			console.log('channel is not yet implemented', channel);
-			return {};
-		}
-
-		const Packet = ChannelPackets[packetName];
-		if (!Packet) {
-			console.log('packet is not yet implemented', channel, packetName);
-			return {};
-		}
-
-		let packet = /** @type {BasePacket} */ (new Packet());
-		packet.cmd = Packet.id;
-
-		return packet;
-	}
-
 	static sendPacketS(peerNum, channel, buffer) {
 		//console.log('sendPacketS', peerNum, buffer, channel);
 		Server.network.sendPacketMsg({ peerNum, buffer, channel });
@@ -104,7 +107,7 @@ class Network {
 	 */
 	static sendPacketM(peerNums, packet) {
 		this.logPackets(packet, peerNums);
-		console.debug('peer:', peerNums, 'sent:', (packet.channelName || packets[packet.channel]?.name || packet.channel) + '.' + (packet.name || packets[packet.channel]?.[packet.buffer.readUint8(0)]?.name || packet.buffer.readUint8(0)));
+		console.debug('peer:', peerNums, 'sent:', `${packet.channelName}.${packet.name}`, 'size:', packet.buffer.byteLength);
 		//console.debug(packet, packet.buffer);
 
 		peerNums.forEach((peerNum) => {
@@ -134,7 +137,7 @@ class Network {
 		/** @type {number[]} */
 		let peerNums = [];
 		players.forEach((player) => {
-			if (typeof player.network.peerNum == 'undefined' || player.network.peerNum < 0)
+			if (typeof player.network.peerNum === 'undefined' || player.network.peerNum < 0)
 				return;
 
 			peerNums.push(player.network.peerNum);
@@ -143,34 +146,34 @@ class Network {
 		this.sendPacket(peerNums, packet);
 	}
 
-	/**
-	 * 
-	 * @param {string} packetName 
-	 * @param {string} channel 
-	 * @returns 
-	 */
-	createPacket(packetName, channel = 'S2C') {
-		return this.constructor.createPacket(packetName, channel);
-	}
+	///**
+	// * 
+	// * @param {string} packetName 
+	// * @param {string} channel 
+	// * @returns 
+	// */
+	//createPacket(packetName, channel = 'S2C') {
+	//	return this.constructor.createPacket(packetName, channel);
+	//}
 
 	/**
 	 * 
 	 * @param {number[]} peerNums 
 	 * @param {*} packet 
-	 * @returns 
 	 */
 	sendPacket(peerNums, packet) {
-		return this.constructor.sendPacket(peerNums, packet);
+		const constructor = /** @type {typeof Network} */ (/** @type {any} */ (this.constructor));
+		constructor.sendPacket(peerNums, packet);
 	}
 
 	/**
 	 * 
 	 * @param {Player[]} players 
 	 * @param {*} packet 
-	 * @returns 
 	 */
 	sendPacketP(players, packet) {
-		return this.constructor.sendPacketP(players, packet);
+		const constructor = /** @type {typeof Network} */ (/** @type {any} */ (this.constructor));
+		constructor.sendPacketP(players, packet);
 	}
 
 
@@ -181,7 +184,7 @@ class Network {
 	static logPackets(packet, peerNums = []) {
 		Server.logging.packet({
 			channel: packet.channel || 0,
-			bytes: packet.buffer.toString('hex'),
+			bytes: Buffer.from(packet.buffer).toString('hex'),
 			time: Math.round(performance.now()),
 			packet: packet.packet || packet,
 			peerNums: peerNums,
@@ -204,8 +207,20 @@ class Network {
 		}
 
 		let packet = parse.parsePacket(msg);
-		this.constructor.logPackets({ ...msg, packet }, ['C2S', msg.peerNum]);
-		console.debug('peer:', msg.peerNum, 'recv:', (packets[msg.channel]?.name || msg.channel || 0) + '.' + (packets[msg.channel]?.[packet.cmd]?.name || packet.cmd || ''));
+
+		const constructor = /** @type {typeof Network} */ (/** @type {any} */ (this.constructor));
+		//@ts-ignore
+		constructor.logPackets({ ...msg, packet }, ['C2S', msg.peerNum]);
+
+		if (!packet)
+			return;
+
+		console.debug(
+			'peer:', msg.peerNum,
+			'recv:', packet.channelName + '.' + packet.name,
+			//'(' + msg.channel + '.' + packet.id + ')',
+			//'(' + msg.channel.toString(16) + '.' + packet.id.toString(16) + ')'
+		);
 		//console.log('packet:', packet);
 
 		try {
@@ -215,6 +230,7 @@ class Network {
 
 			handler(player, packet);
 		} catch (e) {
+			//@ts-ignore
 			console.log(e.stack);
 		}
 
@@ -222,4 +238,4 @@ class Network {
 
 }
 
-module.exports = Network;
+export default Network;

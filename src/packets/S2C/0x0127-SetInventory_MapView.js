@@ -1,6 +1,6 @@
-const SetInventory = require('./0x010C-SetInventory');
+import SetInventory from './0x010C-SetInventory.js';
 
 
-module.exports = class SetInventory_MapView extends SetInventory {
+export default class SetInventory_MapView extends SetInventory {
 
-};
+}

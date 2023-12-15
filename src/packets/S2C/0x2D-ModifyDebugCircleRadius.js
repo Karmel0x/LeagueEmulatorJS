@@ -1,8 +1,8 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class ModifyDebugCircleRadius extends BasePacket {
+export default class ModifyDebugCircleRadius extends BasePacket {
 	static struct = {
 		objectId: 'int32',
 		radius: 'float',
-	}
-};
+	};
+}

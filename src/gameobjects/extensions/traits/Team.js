@@ -2,7 +2,7 @@
 /**
  * Trait for units which has team
  */
-module.exports = class Team {
+export default class Team {
 
 	static TEAM_UNKNOWN = 0;
 	static TEAM_BLUE = 100;
@@ -13,7 +13,7 @@ module.exports = class Team {
 	static TEAM_MAX = 400;
 
 	/**
-	 * @param {import("../../units/Unit")} owner
+	 * @param {import("../../units/Unit.js").default} owner
 	 * @param {number} [teamId]
 	 * @param {number} [num]
 	 */
@@ -68,4 +68,4 @@ module.exports = class Team {
 	getEnemyTeam() {
 		return Team.getEnemyTeam(this.id);
 	}
-};
+}

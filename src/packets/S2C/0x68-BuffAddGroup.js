@@ -1,4 +1,4 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 const SBuffInGroupAdd = {
 	ownerNetId: 'uint32',
@@ -9,7 +9,7 @@ const SBuffInGroupAdd = {
 };
 
 
-module.exports = class BuffAddGroup extends BasePacket {
+export default class BuffAddGroup extends BasePacket {
 	static struct = {
 		buffType: 'uint8',
 		buffNameHash: 'uint32',
@@ -17,20 +17,20 @@ module.exports = class BuffAddGroup extends BasePacket {
 		runningTime: 'float',
 		duration: 'float',
 		numInGroup: 'uint8',
-	}
-	reader(buffer){
+	};
+	reader(buffer) {
 		super.reader(buffer);
 
-		this.entries = buffer.readobj([SBuffInGroupAdd, this.numInGroup]);
+		this.entries = buffer.read([SBuffInGroupAdd, this.numInGroup]);
 	}
-	writer(buffer){
+	writer(buffer) {
 		//if(!this.entries || !this.entries.length || this.entries.length > 0xFF)
 		//	return;
 
 		this.numInGroup = this.entries.length;
-		
+
 		super.writer(buffer);
 
-		buffer.writeobj([SBuffInGroupAdd, this.numInGroup], this.entries);
+		buffer.write([SBuffInGroupAdd, this.numInGroup], this.entries);
 	}
-};
+}

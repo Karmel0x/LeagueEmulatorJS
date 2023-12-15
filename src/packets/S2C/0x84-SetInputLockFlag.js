@@ -1,11 +1,11 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class SetInputLockFlag extends BasePacket {
+export default class SetInputLockFlag extends BasePacket {
 	static struct = {
 		inputLockFlags: 'uint32',
 		bitfield: ['bitfield', {
 			value: 1,
 		}],
-	}
-};
+	};
+}

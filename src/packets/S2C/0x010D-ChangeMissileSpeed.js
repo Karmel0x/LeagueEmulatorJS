@@ -1,9 +1,9 @@
-const ExtendedPacket = require('../ExtendedPacket');
+import ExtendedPacket from '../ExtendedPacket.js';
 
 
-module.exports = class ChangeMissileSpeed extends ExtendedPacket {
+export default class ChangeMissileSpeed extends ExtendedPacket {
 	static struct = {
 		speed: 'float',
 		delay: 'float',
-	}
-};
+	};
+}

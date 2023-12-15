@@ -1,7 +1,7 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class ReattachFollowerObject extends BasePacket {
+export default class ReattachFollowerObject extends BasePacket {
 	static struct = {
 		newOwnerId: 'uint32',
-	}
-};
+	};
+}

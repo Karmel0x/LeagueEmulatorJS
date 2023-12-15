@@ -1,5 +1,5 @@
-const BasePacket = require('../BasePacket');
-const STipConfig = require('../sharedstruct/STipConfig');
+import BasePacket from '../BasePacket.js';
+import STipConfig from '../sharedstruct/STipConfig.js';
 
 const SPlayerInfo = {
 	playerId: 'int64',
@@ -18,7 +18,7 @@ const SPlayerInfo = {
 	enemyBadgeId: 'uint8',
 };
 
-module.exports = class SynchVersion extends BasePacket {
+export default class SynchVersion extends BasePacket {
 	static struct = {
 		bitfield: ['bitfield', {
 			versionMatches: 1,
@@ -82,5 +82,5 @@ module.exports = class SynchVersion extends BasePacket {
 		}],
 		disabledItems: ['uint32', 64],
 		enabledDradisMessages: ['bool', 19],
-	}
-};
+	};
+}

@@ -1,19 +1,19 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 const TeleportData = {
 	teleportNetId: 'uint32',
 	teleportId: 'uint8',
 };
 
-module.exports = class Waypoint_Acc extends BasePacket {
+export default class Waypoint_Acc extends BasePacket {
 	static struct = {
 		syncId: 'int32',
 		teleportCount: 'uint8',
-	}
+	};
 	reader(buffer) {
 		super.reader(buffer);
 
-		this.teleport = buffer.readobj([TeleportData, this.teleportCount]);
+		this.teleport = buffer.read([TeleportData, this.teleportCount]);
 	}
 	writer(buffer) {
 		this.teleport = this.teleport || [];
@@ -21,6 +21,6 @@ module.exports = class Waypoint_Acc extends BasePacket {
 
 		super.writer(buffer);
 
-		buffer.writeobj([TeleportData, this.teleportCount], this.teleport);
+		buffer.write([TeleportData, this.teleportCount], this.teleport);
 	}
-};
+}

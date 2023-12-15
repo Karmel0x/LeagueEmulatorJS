@@ -1,10 +1,10 @@
 
-const PositionHelper = require('../extensions/Measure');
-const Dummytarget = require('./Dummytarget');
-const Missile = require('./Missile');
+import PositionHelper from '../extensions/Measure/index.js';
+import Dummytarget from './Dummytarget.js';
+import Missile from './Missile.js';
 
 /**
- * @typedef {import('../../gameobjects/units/Unit')} Unit
+ * @typedef {import('../../gameobjects/units/Unit.js').default} Unit
  * @typedef {import('three').Vector2} Vector2
  */
 
@@ -12,7 +12,7 @@ class Skillshot extends Missile {
 
 	/**
 	 * @todo
-	 * @param {import('../GameObjects').AttackableUnit} spawner
+	 * @param {import('../GameObjects.js').AttackableUnit} spawner
 	 * @param {Vector2} targetPosition
 	 * @param {Object} options
 	 * @returns 
@@ -52,7 +52,7 @@ class Skillshot extends Missile {
 
 	/**
 	 * 
-	 * @param {import('../GameObjects').SkillshotOptions} options 
+	 * @param {import('../GameObjects.js').SkillshotOptions} options 
 	 */
 	constructor(options) {
 		super(options);
@@ -65,4 +65,4 @@ class Skillshot extends Missile {
 }
 
 
-module.exports = Skillshot;
+export default Skillshot;

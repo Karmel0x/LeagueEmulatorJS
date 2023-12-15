@@ -1,9 +1,9 @@
-const BasePacket = require('../BasePacket');
-const SItemPacket = require('../sharedstruct/SItemPacket');
+import BasePacket from '../BasePacket.js';
+import SItemPacket from '../sharedstruct/SItemPacket.js';
 
 
-module.exports = class SetItem extends BasePacket {
+export default class SetItem extends BasePacket {
 	static struct = {
 		item: SItemPacket,
-	}
-};
+	};
+}

@@ -4,11 +4,11 @@
  * Trait for units that will reward on die
  * @mixin
  */
-module.exports = class Rewards {
+export default class Rewards {
 
 	/**
 	 * 
-	 * @param {import('../../units/Unit')} owner 
+	 * @param {import('../../units/Unit.js').default} owner 
 	 */
 	constructor(owner) {
 		this.owner = owner;
@@ -17,4 +17,4 @@ module.exports = class Rewards {
 	get rewardExp() { }
 	get rewardGold() { }
 
-};
+}

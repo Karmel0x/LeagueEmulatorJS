@@ -18,6 +18,6 @@ const ItemSpells = {
 
 		}
 	}
-}
+};
 
-module.exports = ItemSpells;
+export default ItemSpells;

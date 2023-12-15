@@ -1,9 +1,9 @@
-const BasePacket = require('../BasePacket');
-const SVector3 = require('../sharedstruct/SVector3');
+import BasePacket from '../BasePacket.js';
+import SVector3 from '../sharedstruct/SVector3.js';
 
-module.exports = class ChangeMissileTarget extends BasePacket {
+export default class ChangeMissileTarget extends BasePacket {
 	static struct = {
 		targetNetId: 'uint32',
 		targetPosition: SVector3,
-	}
-};
+	};
+}

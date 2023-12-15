@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	PREGAME: 0x0,
 	SPAWN: 0x1,
 	GAMELOOP: 0x2,

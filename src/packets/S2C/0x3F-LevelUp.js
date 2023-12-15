@@ -1,9 +1,9 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class LevelUp extends BasePacket {
+export default class LevelUp extends BasePacket {
 	static struct = {
 		level: 'uint8',
 		aveliablePoints: 'uint8',
-	}
-};
+	};
+}

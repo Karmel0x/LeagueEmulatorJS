@@ -1,9 +1,9 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class LockCamera extends BasePacket {
+export default class LockCamera extends BasePacket {
 	static struct = {
 		bitfield: ['bitfield', {
 			lock: 1,
 		}],
-	}
-};
+	};
+}

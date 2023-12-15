@@ -1,7 +1,7 @@
 
-const _Turret_NexusBasicAttack = require("../../_Turret_Nexus/spells/_Turret_NexusBasicAttack");
+import _Turret_NexusBasicAttack from '../../_Turret_Nexus/spells/_Turret_NexusBasicAttack.js';
 
 
-module.exports = class OrderTurretAngelBasicAttack extends _Turret_NexusBasicAttack {
+export default class OrderTurretAngelBasicAttack extends _Turret_NexusBasicAttack {
 
-};
+}

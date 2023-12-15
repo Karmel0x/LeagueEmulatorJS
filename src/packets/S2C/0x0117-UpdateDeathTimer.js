@@ -1,8 +1,8 @@
-const ExtendedPacket = require('../ExtendedPacket');
+import ExtendedPacket from '../ExtendedPacket.js';
 
 
-module.exports = class UpdateDeathTimer extends ExtendedPacket {
+export default class UpdateDeathTimer extends ExtendedPacket {
 	static struct = {
 		deathDuration: 'float',
-	}
-};
+	};
+}

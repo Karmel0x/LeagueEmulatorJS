@@ -1,4 +1,4 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 const Talent = {
 	hash: 'uint32',
@@ -6,7 +6,7 @@ const Talent = {
 };
 
 
-module.exports = class AvatarInfo_Server extends BasePacket {
+export default class AvatarInfo_Server extends BasePacket {
 	static struct = {
 		itemIds: ['uint32', 30],
 		summonerIds: ['uint32', 2],
@@ -14,5 +14,5 @@ module.exports = class AvatarInfo_Server extends BasePacket {
 		talents: [Talent, 80],
 		level: 'uint8',
 		wardSkin: 'uint8',
-	}
-};
+	};
+}

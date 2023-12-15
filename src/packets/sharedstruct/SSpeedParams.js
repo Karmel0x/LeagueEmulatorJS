@@ -1,8 +1,8 @@
 
-const SVector2 = require('./SVector2');
+import SVector2 from './SVector2.js';
 
 
-module.exports = {//SSpeedParams
+export default {//SSpeedParams
 	pathSpeedOverride: 'float',
 	parabolicGravity: 'float',
 	parabolicStartPoint: SVector2,

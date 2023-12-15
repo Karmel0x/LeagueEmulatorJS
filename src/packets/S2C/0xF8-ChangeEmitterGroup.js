@@ -1,10 +1,10 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class ChangeEmitterGroup extends BasePacket {
+export default class ChangeEmitterGroup extends BasePacket {
 	static struct = {
 		groupName: ['char', 256],
 		operationData: 'int32',
 		groupOperation: 'int32',
-	}
-};
+	};
+}

@@ -1,6 +1,6 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class MessageToClient extends BasePacket {
+export default class MessageToClient extends BasePacket {
 	static struct = {
 		bubbleDelay: 'float',
 		slotNumber: 'int32',
@@ -8,5 +8,5 @@ module.exports = class MessageToClient extends BasePacket {
 		colorIndex: 'uint8',
 		floatTextType: 'uint32',
 		message: 'string_',
-	}
-};
+	};
+}

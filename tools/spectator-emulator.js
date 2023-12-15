@@ -6,7 +6,7 @@
 // Example replay: https://github.com/Karmel0x/LeagueEmulatorJS/files/6702341/Ezreal.zip
 // then run this with `node tools/spectator-emulator` and lol client with `runLol.bat`
 
-const _replayreaders = require('./_replayreaders');
+import _replayreaders from './_replayreaders/index.js';
 let replayUnpacked = _replayreaders(process.argv[2] || '../../LeagueEmulatorJS_replays/LOL-REPLAY.rlp.json');
 
 // or if you just want packets in hex, uncomment these lines and run `node spectator-emulator > LOL-REPLAY.txt`
@@ -16,11 +16,12 @@ let replayUnpacked = _replayreaders(process.argv[2] || '../../LeagueEmulatorJS_r
 //}
 //return;
 
-const enetLib = require('../src/core/network/libs/enet');
-//const handlers = require('../src/core/handlers');
-const BasePacket = require('../src/packets/BasePacket');
-const Server = require('../src/app/Server');
-require("../src/core/BufferExtend");
+import enetLib from '../src/core/network/libs/enet.js';
+//import handlers from '../src/core/handlers.js';
+import BasePacket from '../src/packets/BasePacket.js';
+import Server from '../src/app/Server.js';
+
+import '../src/core/init_utilities.js';
 
 
 async function start_spectator() {
@@ -55,8 +56,8 @@ async function start_spectator() {
 
 let _init_network_handler = false;
 function init_network_handler(q) {
-	let obj1 = q.buffer.readobj(BasePacket.struct_header);
-	q.buffer.off = 0;
+	let obj1 = q.buffer.read(BasePacket.struct_header);
+	q.buffer.offset = 0;
 	if (obj1.cmd == 0x00) {
 		let keyExchangePacket = '00 2a 00 ff 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00';
 		keyExchangePacket = keyExchangePacket.split(' ').join('');
@@ -69,8 +70,6 @@ function init_network_handler(q) {
 		start_spectator();
 	}
 }
-
-require('../src/core/init_utilities')();
 
 enetLib.logPackets = () => { };
 

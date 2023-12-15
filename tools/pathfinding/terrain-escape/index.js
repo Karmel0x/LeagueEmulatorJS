@@ -1,6 +1,6 @@
 
-const { Vector2 } = require('three');
-const unwalkable_grid = require('./unwalkable_grid.json');
+import { Vector2 } from 'three';
+import unwalkable_grid from './unwalkable_grid.json.js';
 
 unwalkable_grid.forEach((point, x) => {
 	point.forEach((unwalkable, y) => {

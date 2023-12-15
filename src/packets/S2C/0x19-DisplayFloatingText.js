@@ -1,6 +1,6 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class DisplayFloatingText extends BasePacket {
+export default class DisplayFloatingText extends BasePacket {
 	static types = {
 		invulnerable: 0,
 		special: 1,
@@ -37,5 +37,5 @@ module.exports = class DisplayFloatingText extends BasePacket {
 		floatTextType: 'uint32',
 		param: 'int32',
 		message: 'string0',//128
-	}
-};
+	};
+}

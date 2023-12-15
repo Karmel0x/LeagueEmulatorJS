@@ -1,8 +1,8 @@
-const ExtendedPacket = require('../ExtendedPacket');
+import ExtendedPacket from '../ExtendedPacket.js';
 
 
-module.exports = class SetUndoEnabled extends ExtendedPacket {
+export default class SetUndoEnabled extends ExtendedPacket {
 	static struct = {
 		undoStackSize: 'uint8',
-	}
-};
+	};
+}

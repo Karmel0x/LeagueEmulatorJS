@@ -1,10 +1,10 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class UnitAddGold extends BasePacket {
+export default class UnitAddGold extends BasePacket {
 	static struct = {
 		targetNetId: 'uint32',
 		sourceNetId: 'uint32',
 		goldAmount: 'float',
-	}
-};
+	};
+}

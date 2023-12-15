@@ -1,8 +1,8 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class ReplaceObjectiveText extends BasePacket {
+export default class ReplaceObjectiveText extends BasePacket {
 	static struct = {
 		messageId: 'string0',//128
-	}
-};
+	};
+}

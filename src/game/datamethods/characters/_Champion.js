@@ -1,6 +1,6 @@
-const _Character = require("./_Character");
+import _Character from './_Character.js';
 
 
-module.exports = class _Champion extends _Character {
+export default class _Champion extends _Character {
 
-};
+}

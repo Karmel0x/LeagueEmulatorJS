@@ -1,24 +1,24 @@
 
-const _tests = require("./_tests");
+import _tests from './_tests.js';
 
 
 class testName extends _tests {
-	
+
 	// ms time which test shall not exceed
 	static expectedIterationTime = 1;
 
-	static async prepareTest(){
+	static async prepareTest() {
 		// optionally prepare test here
 		return true;
 	}
 
-	static async processTest(){
+	static async processTest() {
 		// run functionality to test here
 		return true;
 	}
-	
+
 };
 
 
 testName.singleTestMaybe();
-module.exports = testName;
+export default testName;

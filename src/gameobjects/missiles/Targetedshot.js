@@ -1,16 +1,16 @@
 
-const { Vector2 } = require('three');
-const Missile = require('./Missile');
+import { Vector2 } from 'three';
+import Missile from './Missile.js';
 
 /**
- * @typedef {import('../../gameobjects/units/Unit')} Unit
+ * @typedef {import('../../gameobjects/units/Unit.js').default} Unit
  */
 
 class Targetedshot extends Missile {
 
 	/**
 	 * 
-	 * @param {import('../GameObjects').TargetedshotOptions} options 
+	 * @param {import('../GameObjects.js').TargetedshotOptions} options 
 	 */
 	constructor(options) {
 		super(options);
@@ -19,7 +19,7 @@ class Targetedshot extends Missile {
 
 	/**
 	 * @override
-	 * @param {import('../GameObjects').DefendableUnit} target
+	 * @param {import('../GameObjects.js').DefendableUnit} target
 	 */
 	reachedDest(target) {
 		console.log('Targetedshot.reachedDest');
@@ -32,4 +32,4 @@ class Targetedshot extends Missile {
 }
 
 
-module.exports = Targetedshot;
+export default Targetedshot;

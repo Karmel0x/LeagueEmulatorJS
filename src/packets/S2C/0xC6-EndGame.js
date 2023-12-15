@@ -1,10 +1,10 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class EndGame extends BasePacket {
+export default class EndGame extends BasePacket {
 	static struct = {
 		bitfield: ['bitfield', {
 			isTeamOrderWin: 1,
 		}],
-	}
-};
+	};
+}

@@ -1,9 +1,9 @@
 // note that these functions are just for development, mostly used for hash spell names
 // it's not heavy but for better optimization we should pre generate all possible hashes
-const fs = require('fs');
+import fs from 'fs';
 
 
-module.exports = class HashString {
+export default class HashString {
 	/**
 	 * Hash string with sdbm hash algorithm
 	 * @param {string} path 
@@ -26,10 +26,22 @@ module.exports = class HashString {
 
 		return hash;
 	}
+
+	/**
+	 * 
+	 * @param {string} section 
+	 * @param {string} name 
+	 * @returns 
+	 */
 	static HashStringSdbm(section, name) {
 		return HashString.HashStringNorm(section + '*' + name);
 	}
 
+	/**
+	 * 
+	 * @param {string} str 
+	 * @returns 
+	 */
 	static HashStringNorm(str) {
 		str = str.toLowerCase();
 
@@ -42,19 +54,30 @@ module.exports = class HashString {
 		return hash;
 	}
 
+	/** @type {Object.<string, number>} */
 	static HashStringObject_cache = {};
+
+	/**
+	 * 
+	 * @param {Object.<string, number>} obj 
+	 * @param {boolean} norm 
+	 */
 	static HashStringObject(obj, norm = false) {
 		for (let i in obj) {
 			if (obj[i])
 				continue;
 
-			if (HashString.HashStringObject_cache[i]) {
-				obj[i] == HashString.HashStringObject_cache[i];
+			if (this.HashStringObject_cache[i]) {
+				obj[i] == this.HashStringObject_cache[i];
 				continue;
 			}
 
-			obj[i] = (norm ? HashString.HashStringNorm : HashString.HashString)(i);
-			HashString.HashStringObject_cache[i] = obj[i];
+			if (norm)
+				obj[i] = this.HashStringNorm(i);
+			else
+				obj[i] = this.HashString(i);
+
+			this.HashStringObject_cache[i] = obj[i];
 
 			let fd = i + ': ' + obj[i] + ',\n';
 			let fn = '../HashString.txt';
@@ -64,4 +87,4 @@ module.exports = class HashString {
 
 		}
 	}
-};
+}

@@ -1,9 +1,9 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class SetSpellData extends BasePacket {
+export default class SetSpellData extends BasePacket {
 	static struct = {
 		objectNetId: 'uint32',
 		hashedSpellName: 'uint32',
 		spellSlot: 'uint8',
-	}
-};
+	};
+}

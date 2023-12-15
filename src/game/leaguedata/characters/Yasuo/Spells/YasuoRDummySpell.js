@@ -1,11 +1,11 @@
 
-const _Spell = require("../../../../datamethods/spells/_Spell");
-const TempYasuoRMissile = require("./TempYasuoRMissile");
-const Skillshot = require("../../../../../gameobjects/missiles/Skillshot");
-const slotId = require("../../../../../constants/slotId");
+import _Spell from '../../../../datamethods/spells/_Spell.js';
+import TempYasuoRMissile from './TempYasuoRMissile.js';
+import Skillshot from '../../../../../gameobjects/missiles/Skillshot.js';
+import slotId from '../../../../../constants/slotId.js';
 
 
-module.exports = class YasuoRDummySpell extends _Spell {
+export default class YasuoRDummySpell extends _Spell {
 
 	spellSlot = slotId.Qm;
 
@@ -55,4 +55,4 @@ module.exports = class YasuoRDummySpell extends _Spell {
 
 		spellData.missile = skillshot;
 	}
-};
+}

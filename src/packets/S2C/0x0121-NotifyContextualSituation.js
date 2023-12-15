@@ -1,8 +1,8 @@
-const ExtendedPacket = require('../ExtendedPacket');
+import ExtendedPacket from '../ExtendedPacket.js';
 
 
-module.exports = class NotifyContextualSituation extends ExtendedPacket {
+export default class NotifyContextualSituation extends ExtendedPacket {
 	static struct = {
 		situationNameHash: 'uint32',
-	}
-};
+	};
+}

@@ -1,14 +1,19 @@
 
-const http = require('http');
-const fs = require('fs');
-const WebSocket = require('ws');
+import http from 'http';
+import fs from 'fs';
+import WebSocket, { WebSocketServer } from 'ws';
+
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 WebSocket.prototype.sendJson = function (data) {
 	data = JSON.stringify(data);
 	this.send(data);
 };
 
-let server = http.createServer((req, res) => {
+export const server = http.createServer((req, res) => {
 	let url = req.url;
 	if (!url) {
 		res.writeHead(400);
@@ -55,7 +60,7 @@ let server = http.createServer((req, res) => {
 });
 
 
-let wss = new WebSocket.Server({ noServer: true });
+export const wss = new WebSocketServer({ noServer: true });
 
 wss.sendToAll = function (data) {
 	for (let client of wss.clients) {
@@ -63,16 +68,17 @@ wss.sendToAll = function (data) {
 		//	continue;
 
 		client.send(data);
-	};
-}
+	}
+};
+
 wss.sendJsonToAll = function (data) {
 	for (let client of wss.clients) {
 		//if(client === ws || client.readyState !== WebSocket.OPEN)
 		//	continue;
 
 		client.sendJson(data);
-	};
-}
+	}
+};
 
 wss.on('connection', (ws) => {
 	ws.on('message', (data) => wss.onMessage(ws, data));
@@ -93,5 +99,3 @@ server.on('upgrade', function upgrade(request, socket, head) {
 
 server.listen(80, '127.0.0.1');
 console.log('To start inspecting packets open your browser at: http://127.0.0.1/');
-
-module.exports = { server, wss };

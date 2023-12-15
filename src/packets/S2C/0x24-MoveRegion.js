@@ -1,10 +1,10 @@
-const BasePacket = require('../BasePacket');
-const SVector2 = require('../sharedstruct/SVector2');
+import BasePacket from '../BasePacket.js';
+import SVector2 from '../sharedstruct/SVector2.js';
 
 
-module.exports = class MoveRegion extends BasePacket {
+export default class MoveRegion extends BasePacket {
 	static struct = {
 		regionNetId: 'uint32',
 		position: SVector2,
-	}
-};
+	};
+}

@@ -1,10 +1,12 @@
 
-const slotId = require("../../../../constants/slotId");
-const _Monster = require("../../../datamethods/characters/_Monster");
+import slotId from '../../../../constants/slotId.js';
+import _Monster from '../../../datamethods/characters/_Monster.js';
+import package1 from './package.js';
+import BasicAttack from './spells/BasicAttack.js';
 
 
-module.exports = class Wraith extends _Monster {
-	static package = require('./package');
+export default class Wraith extends _Monster {
+	static package = package1;
 
 	static reward = {
 		gold: 35,
@@ -46,7 +48,7 @@ module.exports = class Wraith extends _Monster {
 	};
 
 	static spells = {
-		BasicAttack: require('./spells/BasicAttack'),
+		BasicAttack,
 	};
 
 	constructor(parent) {
@@ -56,4 +58,4 @@ module.exports = class Wraith extends _Monster {
 			[slotId.A]: this.constructor.spells.BasicAttack,
 		});
 	}
-};
+}

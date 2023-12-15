@@ -1,6 +1,6 @@
-const SwapItemReq = require("../C2S/0x20-SwapItemReq");
+import SwapItemReq from '../C2S/0x20-SwapItemReq.js';
 
 
-module.exports = class SwapItemAns extends SwapItemReq {
-	
-};
+export default class SwapItemAns extends SwapItemReq {
+
+}

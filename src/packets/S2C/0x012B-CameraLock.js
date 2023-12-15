@@ -1,7 +1,7 @@
-const ExtendedPacket = require('../ExtendedPacket');
+import ExtendedPacket from '../ExtendedPacket.js';
 
 
-module.exports = class CameraLock extends ExtendedPacket {
+export default class CameraLock extends ExtendedPacket {
 	static struct = {
 		bitfield: ['bitfield', {
 			Unknown: 1,
@@ -12,5 +12,5 @@ module.exports = class CameraLock extends ExtendedPacket {
 		bitfield2: ['bitfield', {
 			Unknown: 1,
 		}],
-	}
-};
+	};
+}

@@ -6,24 +6,30 @@
 // then open chrome browser and go to `chrome://inspect`
 // or use Visual Studio Code debugger
 
-const WebSocket = require("ws");
+import WebSocket from 'ws';
 
 
 class Logging {
 	static output = {
-		none: () => { },
+		/** @param {any[]} args */
+		none: (...args) => { },
+
 		console: console.debug,
-		websocket() {
+
+		/** @param {any[]} args */
+		websocket(...args) {
 			if (!Logging.ws)
 				return;
 
 			Logging.ws.send(JSON.stringify({
 				cmd: 'logging',
-				data: arguments,
+				data: args,
 			}));
 		},
-		file() {
-			//fs.appendFileSync('../LeagueEmulatorJS_log.json', JSON.stringify(arguments) + ",\n");
+
+		/** @param {any[]} args */
+		file(...args) {
+			//fs.appendFileSync('../LeagueEmulatorJS_log.json', JSON.stringify(args) + ",\n");
 		}
 	};
 
@@ -39,22 +45,23 @@ class Logging {
 	static _packet = Logging.output.none;
 
 	/**
-	 * @arguments printable arguments
+	 * @param {any[]} args printable arguments
 	 */
-	static debug() {
+	static debug(...args) {
 		//Logging._debug(arguments.callee.caller.name, ...arguments);
-		Logging._debug(...arguments);
+		Logging._debug(...args);
 	}
 
 	/**
-	 * @arguments printable arguments (packet ({channel, bytes, time}))
+	 * @param {any[]} args printable arguments (packet ({channel, bytes, time}))
 	 */
-	static packet() {
+	static packet(...args) {
+
 		if (Logging._packet == Logging.output.none)
 			return;
 
 		if (Logging._packet == Logging.output.console)
-			return Logging._packet(...arguments);
+			return Logging._packet(...args);
 
 		// send packet to packet-inspector with websocket
 		if (Logging._packet == Logging.output.websocket) {
@@ -64,10 +71,10 @@ class Logging {
 			Logging.ws.send(JSON.stringify({
 				cmd: 'addpacketforall',
 				data: {
-					channel: arguments[0].channel || '',
-					bytes: arguments[0].bytes || '',
-					time: arguments[0].time || '',
-					peerNums: arguments[0].peerNums || [],
+					channel: args[0].channel || '',
+					bytes: args[0].bytes || '',
+					time: args[0].time || '',
+					peerNums: args[0].peerNums || [],
 				},
 			}));
 		}
@@ -77,12 +84,13 @@ class Logging {
 
 	/**
 	 * Set where log should output (none/console/websocket/file)
-	 * @param {{log?: Function, warn?: Function, error?: Function, debug?: Function, packet?: Function}} options
+	 * @param {{log?: () => {}, warn?: () => {}, error?: () => {}, debug?: () => {}, packet?: () => {}}} options
 	 */
 	static changeOptions(options) {
 		this.options = options;
 
 		for (let key in options) {
+			//@ts-ignore
 			if (options[key] == Logging.output.websocket) {
 				try {
 					this.ws = new WebSocket('ws://127.0.0.1/ws');
@@ -107,4 +115,4 @@ class Logging {
 	}
 }
 
-module.exports = Logging;
+export default Logging;

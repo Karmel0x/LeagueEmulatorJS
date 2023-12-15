@@ -1,9 +1,9 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
 
-module.exports = class Building_Die extends BasePacket {
+export default class Building_Die extends BasePacket {
 	static struct = {
 		attackerNetId: 'uint32',
 		lastHeroNetId: 'uint32',
-	}
-};
+	};
+}

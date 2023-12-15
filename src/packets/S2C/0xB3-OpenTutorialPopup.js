@@ -1,7 +1,7 @@
-const BasePacket = require('../BasePacket');
+import BasePacket from '../BasePacket.js';
 
-module.exports = class OpenTutorialPopup extends BasePacket {
+export default class OpenTutorialPopup extends BasePacket {
 	static struct = {
 		messageId: 'string0',//128
-	}
-};
+	};
+}

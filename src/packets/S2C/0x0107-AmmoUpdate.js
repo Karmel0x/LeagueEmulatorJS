@@ -1,7 +1,7 @@
-const ExtendedPacket = require('../ExtendedPacket');
+import ExtendedPacket from '../ExtendedPacket.js';
 
 
-module.exports = class AmmoUpdate extends ExtendedPacket {
+export default class AmmoUpdate extends ExtendedPacket {
 	static struct = {
 		isSummonerSpell: 'bool',
 		spellSlot: 'int32',
@@ -9,5 +9,5 @@ module.exports = class AmmoUpdate extends ExtendedPacket {
 		maxAmmo: 'int32',
 		ammoRecharge: 'float',
 		ammoRechargeTotalTime: 'float',
-	}
-};
+	};
+}

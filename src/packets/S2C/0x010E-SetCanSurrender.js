@@ -1,10 +1,10 @@
-const ExtendedPacket = require('../ExtendedPacket');
+import ExtendedPacket from '../ExtendedPacket.js';
 
 
-module.exports = class SetCanSurrender extends ExtendedPacket {
+export default class SetCanSurrender extends ExtendedPacket {
 	static struct = {
 		bitfield: ['bitfield', {
 			canSurrender: 1,
 		}],
-	}
-};
+	};
+}

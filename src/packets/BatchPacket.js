@@ -1,24 +1,29 @@
 
-const packets = require('../core/network/packets');
-const Types = require('../constants/Types');
-const { getIntBytes_r } = require("../functions/BinaryHelper");
-const { parsePacket } = require('../core/network/parse');
+import Server from '../app/Server.js';
+import Types from '../constants/Types.js';
+import BinaryHelper from '../functions/BinaryHelper.js';
+import { parsePacket } from '../core/network/parse.js';
 
 
-module.exports = class BatchPacket {
+export default class BatchPacket {
 	static channel = 3;//S2C
 
 	static findPacketById(packetId) {
-		for (let channelId in packets) {
-			if (packets[channelId][packetId])
-				return packets[channelId][packetId];
+		for (let channelId in Server.packets) {
+			let channelPackets = Server.packets[channelId];
+			if (channelPackets[packetId])
+				return channelPackets[packetId];
 		}
 		return null;
 	}
 
+	/**
+	 * 
+	 * @param {Buffer} buffer 
+	 */
 	reader(buffer) {
-		this.cmd = buffer.read1('uint8');
-		this.packets_length = buffer.read1('uint8');
+		this.cmd = buffer.read('uint8');
+		this.packets_length = buffer.read('uint8');
 		this.parsedPackets = [];
 
 		if (this.packets_length < 1 || buffer.length < 3)
@@ -26,32 +31,30 @@ module.exports = class BatchPacket {
 
 		let packets = [];
 
-		let packet = {};
-		{
-			packet = {
-				packetSize: buffer.read1('uint8') - 5,
-				cmd: buffer.read1('uint8'),
-				netId: buffer.read1('uint32'),
-			};
+		let packet = {
+			packetSize: buffer.read('uint8') - 5,
+			cmd: buffer.read('uint8'),
+			netId: buffer.read('uint32'),
+		};
 
-			let packetData = buffer.readobj(['uint8', packet.packetSize]);
-			//console.log({packet, c: packet.cmd.toString(16), data: Buffer.from(packetData)});
-			let buffer2 = Buffer.from([].concat(packet.cmd, getIntBytes_r(packet.netId), packetData));
-			packets.push(buffer2);
-		}
+		let packetData = buffer.read(['uint8', packet.packetSize]);
+		//console.log({packet, c: packet.cmd.toString(16), data: Buffer.from(packetData)});
+		let buffer2 = Buffer.from([].concat(packet.cmd, BinaryHelper.getIntBytes_r(packet.netId), packetData));
+		packets.push(buffer2);
+
 		for (let i = 1; i < this.packets_length; i++) {
-			let bitfield = buffer.read1('uint8');
+			let bitfield = buffer.read('uint8');
 			let packetSize = (bitfield >> 2);
 
 			packet = {
-				cmd: ((bitfield & 1) == 0) ? buffer.read1('uint8') : packet.cmd,
-				netId: ((bitfield & 2) == 0) ? buffer.read1('uint32') : (packet.netId + buffer.read1('int8')),
-				packetSize: (packetSize == 63) ? buffer.read1('uint8') : packetSize,
+				cmd: ((bitfield & 1) == 0) ? buffer.read('uint8') : packet.cmd,
+				netId: ((bitfield & 2) == 0) ? buffer.read('uint32') : (packet.netId + buffer.read('int8')),
+				packetSize: (packetSize == 63) ? buffer.read('uint8') : packetSize,
 			};
 
-			let packetData = buffer.readobj(['uint8', packet.packetSize]);
+			let packetData = buffer.read(['uint8', packet.packetSize]);
 			//console.log({bitfield, packet, c: packet.cmd.toString(16), b: [(packetSize == 63), ((bitfield & 1) == 0), ((bitfield & 2) != 0)], data: Buffer.from(packetData)});
-			let buffer2 = Buffer.from([].concat(packet.cmd, getIntBytes_r(packet.netId), packetData));
+			let buffer2 = Buffer.from([].concat(packet.cmd, BinaryHelper.getIntBytes_r(packet.netId), packetData));
 			packets.push(buffer2);
 		}
 
@@ -70,8 +73,8 @@ module.exports = class BatchPacket {
 
 	writer(buffer) {
 		this.cmd = 0xFF;
-		buffer.write1('uint8', this.cmd);
-		buffer.write1('uint8', this.packets.length);
+		buffer.write('uint8', this.cmd);
+		buffer.write('uint8', this.packets.length);
 
 		if (this.packets.length < 1)
 			return;
@@ -95,7 +98,7 @@ module.exports = class BatchPacket {
 				netId: this.packets[0].buffer.readUint32(1),
 			};
 
-			buffer.write1('uint8', packet.packetSize);
+			buffer.write('uint8', packet.packetSize);
 			buffer = Buffer.concat([buffer, this.packets[0].buffer]);
 		}
 		for (let i = 1; i < this.packets.length; i++) {
@@ -122,20 +125,20 @@ module.exports = class BatchPacket {
 			else
 				bitfield |= 63 << 2;
 
-			buffer.write1('uint8', bitfield);
+			buffer.write('uint8', bitfield);
 
 			if ((bitfield & 1) == 0)
-				buffer.write1('uint8', packet2.cmd);
+				buffer.write('uint8', packet2.cmd);
 
 			if ((bitfield & 2) == 0)
-				buffer.write1('uint32', packet2.netId)
+				buffer.write('uint32', packet2.netId);
 			else
-				buffer.write1('int8', (packet.netId - packet2.netId));
+				buffer.write('int8', (packet.netId - packet2.netId));
 
 			if ((bitfield >> 2) == 63)
-				buffer.write1('uint8', packet2.packetSize);
+				buffer.write('uint8', packet2.packetSize);
 
 			buffer = Buffer.concat([buffer, this.packets[i].buffer.slice(5)]);
 		}
 	}
-};
+}
