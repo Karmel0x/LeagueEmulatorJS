@@ -5,13 +5,52 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
+			"name": "Launch via NPM",
+			"request": "launch",
+			"runtimeArgs": [
+				"run-script",
+				"dev"
+			],
+			"runtimeExecutable": "npm",
+			"skipFiles": [
+				"<node_internals>/**"
+			],
+			"type": "node"
+		},
+		{
+			"name": "Launch via BAT",
+			"request": "launch",
+			"runtimeArgs": [
+				"/c",
+				"runServer"
+			],
+			"runtimeExecutable": "cmd",
+			"skipFiles": [
+				"<node_internals>/**"
+			],
+			"type": "node"
+		},
+		{
+			"command": "npm run dev",
+			"name": "npm run dev",
+			"request": "launch",
+			"type": "node-terminal"
+		},
+		{
 			"type": "node",
 			"request": "launch",
 			"name": "Launch Program",
 			"skipFiles": [
 				"<node_internals>/**"
 			],
-			"program": "${workspaceFolder}\\src\\main.js"
+			"runtimeArgs": [
+				"--enable-source-maps"
+			],
+			"program": "${workspaceFolder}/src/main.ts",
+			"sourceMaps": true,
+			"outFiles": [
+				"${workspaceFolder}/dist/**/*.js"
+			]
 		}
 	]
 }

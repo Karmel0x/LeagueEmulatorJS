@@ -98,7 +98,7 @@ function readShapeListJson() {
 			id: 'polygon-' + freeDraw.shapeCounter,
 			type: 'polygon',
 			points: points
-		}
+		};
 	});
 	shapes.forEach(shape => freeDraw.addShape(shape).finish());
 	refreshShapeList();

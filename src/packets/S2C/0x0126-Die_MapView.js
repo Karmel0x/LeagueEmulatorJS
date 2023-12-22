@@ -1,9 +1,0 @@
-const ExtendedPacket = require('../ExtendedPacket');
-const SDeathData = require('../sharedstruct/SDeathData');
-
-
-module.exports = class Die_MapView extends ExtendedPacket {
-	static struct = {
-		deathData: SDeathData,
-	}
-};

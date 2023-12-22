@@ -1,9 +1,8 @@
 //
 //// need some changes in enetcppjs to make it working...
 //
-//const enet = require('../src/core/enet');
-////const handlers = require('../src/core/handlers');
-//const packets = require('../src/core/packets');
+//import enet from '../src/core/enet';
+////import handlers from '../src/core/handlers';
 //require("../src/core/BufferExtend");
 //
 //
@@ -16,7 +15,7 @@
 //	//let q = {};
 //	//for (; ;) {
 //	//	q = enet.netLoop();
-//	//	if (typeof q.type == 'undefined') {//no packets atm
+//	//	if (typeof q.type === 'undefined') {//no packets atm
 //	//		await Promise.wait(1);//don't overload cpu
 //	//		continue;
 //	//	}

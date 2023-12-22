@@ -1,6 +1,0 @@
-module.exports = {
-	PHYSICAL: 0x0,
-	MAGIC: 0x1,
-	TRUE: 0x2,
-	MIXED: 0x3,
-};

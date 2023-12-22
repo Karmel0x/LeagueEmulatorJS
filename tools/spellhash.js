@@ -1,4 +1,4 @@
-const HashString = require("../src/functions/HashString");
+import HashString from '../src/functions/HashString';
 
 
 const spellHash = {

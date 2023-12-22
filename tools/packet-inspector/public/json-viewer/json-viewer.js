@@ -9,7 +9,7 @@ let JSONViewer = (function (document) {
 	function JSONViewer() {
 		this._dom_container = document.createElement("pre");
 		this._dom_container.classList.add("json-viewer");
-	};
+	}
 
 	/**
 	 * Visualise JSON object.
@@ -197,7 +197,7 @@ let JSONViewer = (function (document) {
 			// simple values
 			outputParent.appendChild(createSimpleViewOf(value, isDate));
 		}
-	};
+	}
 
 	/**
 	 * Create simple value (no object/array).
@@ -224,7 +224,7 @@ let JSONViewer = (function (document) {
 		spanEl.textContent = asText;
 
 		return spanEl;
-	};
+	}
 
 	/**
 	 * Create items count element.
@@ -238,7 +238,7 @@ let JSONViewer = (function (document) {
 		itemsCount.innerHTML = _getItemsTitle(count);
 
 		return itemsCount;
-	};
+	}
 
 	/**
 	 * Create clickable link.
@@ -253,7 +253,7 @@ let JSONViewer = (function (document) {
 		linkEl.innerHTML = title || "";
 
 		return linkEl;
-	};
+	}
 
 	/**
 	 * Get correct items title for count.
@@ -265,7 +265,7 @@ let JSONViewer = (function (document) {
 		let itemsTxt = count > 1 || count === 0 ? "items" : "item";
 
 		return (count + " " + itemsTxt);
-	};
+	}
 
 	return JSONViewer;
 })(document);

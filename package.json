@@ -1,11 +1,21 @@
 {
+  "scripts": {
+    "dev": "node .esbuild.mjs && node --enable-source-maps dist/main",
+    "dev1": "node --enable-source-maps dist/main",
+    "dev2": "ts-node -T src/main",
+    "watch": "node .esbuild.mjs --watch",
+    "build": "node .esbuild.mjs",
+    "packets-inspector": "ts-node -T tools/packet-inspector"
+  },
   "dependencies": {
-    "three": "^0.153.0",
-    "ws": "^8.13.0"
+    "three": "^0.159.0",
+    "ws": "^8.15.1"
   },
   "devDependencies": {
-    "@types/node": "^20.3.1",
-    "@types/three": "^0.152.1",
-    "@types/ws": "^8.5.5"
+    "@types/node": "^20.10.4",
+    "@types/three": "^0.159.0",
+    "@types/ws": "^8.5.10",
+    "esbuild": "0.19.9",
+    "esbuild-runner": "^2.2.2"
   }
 }
