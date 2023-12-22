@@ -1,11 +1,11 @@
 
 import fs from 'fs';
 
-import '../../src/core/init_utilities.js';
-import _replayreaders from '../../_replayreaders/index.js';
-import HandlersParse from '../../../src/core/network/parse.js';
+import '../../src/core/init_utilities';
+import _replayreaders from '../../_replayreaders/index';
+import HandlersParse from '../../../src/core/network/parse';
 
-import WaypointsDrawer from '../WaypointsDrawer.js';
+import WaypointsDrawer from '../WaypointsDrawer';
 
 
 let waypointsDrawer = {};

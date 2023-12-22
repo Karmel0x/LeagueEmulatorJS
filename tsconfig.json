@@ -1,21 +1,20 @@
 {
 	"compilerOptions": {
-		"target": "ESNext",
 		"noEmit": true,
 		"allowJs": true,
 		"checkJs": true,
 		"strict": true,
-		//"declaration": true,
-		//"declarationDir": "types",
-		//"emitDeclarationOnly": true,
-		//"declarationMap": true,
+		"target": "ESNext",
 		"module": "NodeNext",
 		"moduleResolution": "NodeNext",
 		"resolveJsonModule": true,
-		"esModuleInterop": true
+		"esModuleInterop": true,
+		"sourceMap": true,
+		"skipLibCheck": true,
+		"outDir": "dist"
 	},
 	"include": [
-		"src/main.js",
+		"src/main.ts",
 		"src/**/*.d.ts",
 	]
 }

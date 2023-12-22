@@ -16,7 +16,7 @@ interface PromiseConstructor {
 
 // -------------------- Network --------------------
 
-type PacketMessage = {
+export type PacketMessage = {
     peerNum: number;
     channel: number;
     //buffer: Buffer;

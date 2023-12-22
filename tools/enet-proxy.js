@@ -1,8 +1,8 @@
 //
 //// need some changes in enetcppjs to make it working...
 //
-//import enet from '../src/core/enet.js';
-////import handlers from '../src/core/handlers.js';
+//import enet from '../src/core/enet';
+////import handlers from '../src/core/handlers';
 //require("../src/core/BufferExtend");
 //
 //

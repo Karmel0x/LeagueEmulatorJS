@@ -1,7 +1,7 @@
 
 import fs from 'fs';
-import '../../src/core/init_utilities.js';
-import channels from '../../src/packets/channels.js';
+import '../../src/core/init_utilities';
+import channels from '../../src/packets/channels';
 
 let packetEnum = `{
 	PKT_Dummy = 0x0,

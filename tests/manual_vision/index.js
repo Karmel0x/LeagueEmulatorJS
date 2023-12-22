@@ -1,14 +1,14 @@
 //
-//import _tests from '../_tests.js';
-//import colors from '../_colors.js';
+//import _tests from '../_tests';
+//import colors from '../_colors';
 //import { Vector2 } from 'three';
 //
-//import Server from './_env.js';
-//import MovementSimulation from '../../game/components/MovementSimulation.js';
+//import Server from './_env';
+//import MovementSimulation from '../../game/components/MovementSimulation';
 //
-//import ExtendWTraits from '../../core/ExtendWTraits.js';
-//import Unit from '../../gameobjects/units/Unit.js';
-//import IMovable from '../../gameobjects/traits/IMovable.js';
+//import ExtendWTraits from '../../core/ExtendWTraits';
+//import Unit from '../../gameobjects/units/Unit';
+//import IMovable from '../../gameobjects/traits/IMovable';
 //
 //
 //class TestsMovableUnit extends ExtendWTraits(Unit, IMovable) { }

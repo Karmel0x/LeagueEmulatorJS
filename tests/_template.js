@@ -1,5 +1,5 @@
 
-import _tests from './_tests.js';
+import _tests from './_tests';
 
 
 class testName extends _tests {

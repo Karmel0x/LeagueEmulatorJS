@@ -1,6 +1,6 @@
 
 import { Vector2 } from 'three';
-import unwalkable_grid from './unwalkable_grid.json.js';
+import unwalkable_grid from './unwalkable_grid.json';
 
 unwalkable_grid.forEach((point, x) => {
 	point.forEach((unwalkable, y) => {

@@ -1,5 +1,5 @@
-import colors from './_colors.js';
-import Server from './manual_vision/_env.js';
+import colors from './_colors';
+import Server from './manual_vision/_env';
 
 class _tests {
 
@@ -9,7 +9,6 @@ class _tests {
 	 * function to prepare test
 	 * for example, functionality that will run one time on program start
 	 * @abstract
-	 * @returns
 	 */
 	static async prepareTest() {
 		return true;
@@ -19,7 +18,6 @@ class _tests {
 	 * the actual functionality of the test
 	 * should return true to pass
 	 * @abstract
-	 * @returns
 	 */
 	static async processTest() {
 		return false;
@@ -31,7 +29,6 @@ class _tests {
 
 	/**
 	 * measuring method
-	 * @param {number} iterations 
 	 */
 	static async test(iterations = 1) {
 		this._iterations = iterations;

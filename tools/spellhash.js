@@ -1,4 +1,4 @@
-import HashString from '../src/functions/HashString.js';
+import HashString from '../src/functions/HashString';
 
 
 const spellHash = {
