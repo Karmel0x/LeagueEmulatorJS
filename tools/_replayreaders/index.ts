@@ -1,35 +1,56 @@
 import reader_json from './json';
 import reader_lrpkt from './lrpkt';
+import { ReplayFileReader, ReplayRecord } from './replay-reader';
 
 const readers = {
 	json: reader_json,
 	lrpkt: reader_lrpkt,
 };
 
-export default function (filePath) {
-	console.log('_replayreaders', filePath);
+export default function (filePath: string) {
+	let ext = filePath.split('.').pop();
+	if (!ext)
+		throw new Error('unknown replay file extension');
 
-	let replayUnpacked: any[];
-	if (filePath.endsWith('.json')) {
-		replayUnpacked = readers['json'](filePath);
-	}
-	else if (filePath.endsWith('.lrpkt')) {
-		replayUnpacked = readers['lrpkt'](filePath);
-	}
-	else
-		throw new Error('Unknown replay file extension');
+	let reader = readers[ext as keyof typeof readers];
+	if (!reader)
+		throw new Error('unknown replay file extension');
 
-	replayUnpacked.map((packet) => {
+	let replay: ReturnType<ReplayFileReader> = reader(filePath);
 
-		if (!packet.BytesBuffer) {
-			if (packet.Bytes || packet.BytesB64)
-				packet.BytesBuffer = Buffer.from(packet.Bytes || packet.BytesB64, 'base64');
-			else if (packet.BytesHex)
-				packet.BytesBuffer = Buffer.from(packet.BytesHex.split(' ').join('').split('-').join(''), 'hex');
+	let replay2 = replay.map((record, i) => {
+		let data: ArrayBuffer | Buffer | undefined = undefined;
+		if (record.data)
+			data = record.data;
+		else if (record.dataBase64)
+			data = Buffer.from(record.dataBase64, 'base64');
+		else if (record.dataHex)
+			data = Buffer.from(record.dataHex.split(' ').join('').split('-').join(''), 'hex');
+
+		if (!data) {
+			//throw new Error(`invalid data in record ${i}`);
+			console.log(`invalid data in record ${i}`);
+			return;
 		}
 
-		return packet;
+		if (data instanceof Buffer)
+			data = data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength);
+
+		return {
+			time: record.time,
+			peerNums: record.peerNums,
+			data,
+			channel: record.channel,
+		} as ReplayRecord;
 	});
 
-	return replayUnpacked;
+	let replay3 = replay2.filter(Boolean) as ReplayRecord[];
+
+	if (replay3.every(v => v.time < 10 * 1000)) {
+		replay3.forEach(v => {
+			v.time *= 1000;
+		});
+	}
+
+	return replay3;
 }

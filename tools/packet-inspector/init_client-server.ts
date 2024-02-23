@@ -1,16 +1,7 @@
 
 import http from 'http';
 import fs from 'fs';
-import WebSocket, { WebSocketServer } from 'ws';
-
-//import { dirname } from 'path';
-//import { fileURLToPath } from 'url';
-//const __dirname = dirname(fileURLToPath(import.meta.url));
-
-WebSocket.prototype.sendJson = function (data) {
-	data = JSON.stringify(data);
-	this.send(data);
-};
+import * as exws from './extended-web-socket';
 
 export const server = http.createServer((req, res) => {
 	let url = req.url;
@@ -31,6 +22,7 @@ export const server = http.createServer((req, res) => {
 		res.end('403 Forbidden');
 		return;
 	}
+
 	if (!fs.existsSync(__dirname + '/public' + url)) {
 		res.writeHead(404);
 		res.end('404 Not Found');
@@ -52,6 +44,8 @@ export const server = http.createServer((req, res) => {
 			mime = 'text/css';
 		else if (url.match(/\.js$/))
 			mime = 'text/javascript';
+		else if (url.match(/\.json$/))
+			mime = 'application/json';
 
 		res.writeHead(200, { 'Content-Type': mime });
 		res.end(data);
@@ -59,30 +53,7 @@ export const server = http.createServer((req, res) => {
 });
 
 
-export const wss = new WebSocketServer({ noServer: true });
-
-wss.sendToAll = function (data) {
-	for (let client of wss.clients) {
-		//if(client === ws || client.readyState !== WebSocket.OPEN)
-		//	continue;
-
-		client.send(data);
-	}
-};
-
-wss.sendJsonToAll = function (data) {
-	for (let client of wss.clients) {
-		//if(client === ws || client.readyState !== WebSocket.OPEN)
-		//	continue;
-
-		client.sendJson(data);
-	}
-};
-
-wss.on('connection', (ws) => {
-	ws.on('message', (data) => wss.onMessage(ws, data));
-});
-
+export const wss = new exws.WebSocketServer({ noServer: true });
 
 server.on('upgrade', function upgrade(request, socket, head) {
 	console.log(request.url);

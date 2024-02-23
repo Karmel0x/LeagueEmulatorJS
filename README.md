@@ -10,10 +10,10 @@ At the moment, it ~~does not support multiplayer~~ and there is no game flow yet
 ```
 # download and install git (optional) - https://git-scm.com/download
 # download and install nodejs - https://nodejs.org/en/download/
-git clone https://github.com/Karmel0x/enetcppjs
-git clone https://github.com/Karmel0x/navmeshcppjs
 git clone https://github.com/Karmel0x/LeagueEmulatorJS
 cd LeagueEmulatorJS
+git clone https://github.com/Karmel0x/enetcppjs
+git clone https://github.com/Karmel0x/navmeshcppjs
 npm install
 npm run dev
 ```
@@ -26,7 +26,7 @@ npm run dev
 # Tools
 ### Packet inspector
 ```
-# download replay from /issues/2 and put to ../LeagueEmulatorJS_replays/
-node tools/packet-inspector
+# download replay from /issues/2 and put to ./temp/replays/
+npm run pi
 # open browser at http://127.0.0.1/
 ```

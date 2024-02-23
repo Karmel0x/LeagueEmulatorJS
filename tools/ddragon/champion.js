@@ -1,5 +1,5 @@
 // downloading champion stats from riot api: https://developer.riotgames.com/docs/lol#data-dragon
-// run with `node tools/ddragon/champion > ../LeagueEmulatorJS_ExternalData/Champion_Stats.json`
+// run with `node tools/ddragon/champion > ../external-data/Champion_Stats.json`
 
 import http from 'http';
 

@@ -1,21 +1,15 @@
 {
-  "scripts": {
-    "dev": "node .esbuild.mjs && node --enable-source-maps dist/main",
-    "dev1": "node --enable-source-maps dist/main",
-    "dev2": "ts-node -T src/main",
-    "watch": "node .esbuild.mjs --watch",
-    "build": "node .esbuild.mjs",
-    "packets-inspector": "ts-node -T tools/packet-inspector"
-  },
-  "dependencies": {
-    "three": "^0.159.0",
-    "ws": "^8.15.1"
-  },
-  "devDependencies": {
-    "@types/node": "^20.10.4",
-    "@types/three": "^0.159.0",
-    "@types/ws": "^8.5.10",
-    "esbuild": "0.19.9",
-    "esbuild-runner": "^2.2.2"
-  }
+    "dependencies": {
+        "@workspace/enetcppjs": "./enetcppjs",
+        "@workspace/network": "./network",
+        "@workspace/packets": "./packets",
+        "@workspace/navmeshcppjs": "./navmeshcppjs",
+        "@workspace/gamedata": "./gamedata",
+        "@workspace/gameserver": "./gameserver",
+        "@workspace/tools": "./tools"
+    },
+    "scripts": {
+        "dev": "cd gameserver && ts-node -T src/main",
+        "pi": "cd tools && ts-node -T packet-inspector"
+    }
 }

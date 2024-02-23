@@ -1,0 +1,22 @@
+{
+  "name": "gameserver",
+  "main": "src/main.js",
+  "scripts": {
+    "dev": "ts-node -T src/main",
+    "watch": "node .esbuild.cjs --watch",
+    "build": "node .esbuild.cjs",
+    "dev2": "node .esbuild.cjs && node --enable-source-maps dist/main"
+  },
+  "dependencies": {
+    "three": "^0.161.0",
+    "ws": "^8.16.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.19",
+    "@types/three": "^0.161.2",
+    "@types/ws": "^8.5.10",
+    "esbuild": "0.20.1",
+    "esbuild-runner": "^2.2.2",
+    "typed-emitter": "^2.1.0"
+  }
+}

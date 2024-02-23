@@ -15,7 +15,8 @@
 			"skipFiles": [
 				"<node_internals>/**"
 			],
-			"type": "node"
+			"type": "node",
+			"cwd": "${workspaceFolder}/gameserver"
 		},
 		{
 			"name": "Launch via BAT",
@@ -28,13 +29,15 @@
 			"skipFiles": [
 				"<node_internals>/**"
 			],
-			"type": "node"
+			"type": "node",
+			"cwd": "${workspaceFolder}/gameserver"
 		},
 		{
 			"command": "npm run dev",
 			"name": "npm run dev",
 			"request": "launch",
-			"type": "node-terminal"
+			"type": "node-terminal",
+			"cwd": "${workspaceFolder}/gameserver"
 		},
 		{
 			"type": "node",
@@ -50,7 +53,8 @@
 			"sourceMaps": true,
 			"outFiles": [
 				"${workspaceFolder}/dist/**/*.js"
-			]
+			],
+			"cwd": "${workspaceFolder}/gameserver"
 		}
 	]
 }

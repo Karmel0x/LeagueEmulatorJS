@@ -1,0 +1,16 @@
+{
+  "name": "tools",
+  "scripts": {
+    "pi": "ts-node -T packet-inspector"
+  },
+  "dependencies": {
+    "three": "^0.161.0",
+    "ws": "^8.16.0",
+    "canvas": "^2.11.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.19",
+    "@types/three": "^0.161.2",
+    "@types/ws": "^8.5.10"
+  }
+}

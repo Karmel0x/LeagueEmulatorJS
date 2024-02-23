@@ -105,3 +105,6 @@ dist
 
 
 package-lock.json
+
+enetcppjs/
+navmeshcppjs/
