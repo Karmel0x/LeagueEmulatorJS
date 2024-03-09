@@ -1,7 +1,8 @@
 
 import { SlotId } from '@workspace/gameserver/src/constants/slot-id';
-import _Champion from '@workspace/gameserver/src/game/datamethods/characters/_Champion';
+import _Hero from '@workspace/gameserver/src/game/basedata/characters/hero';
 import package1 from './package';
+import type AttackableUnit from '@workspace/gameserver/src/gameobjects/units/attackable-unit';
 
 //import YasuoQW from './spells/YasuoQW';
 //import YasuoQ from './spells/YasuoQ';
@@ -21,7 +22,7 @@ import YasuoRKnockUpComboW from './spells/YasuoRKnockUpComboW';
 import YasuoBasicAttack from './spells/YasuoBasicAttack';
 
 
-export default class Yasuo extends _Champion {
+export default class Yasuo extends _Hero {
 	static package = package1;
 
 	static stats = {
@@ -83,16 +84,20 @@ export default class Yasuo extends _Champion {
 		//[SlotId.CritAttack4]: require('./spells/YasuoCritAttack4'),
 	};
 
-	constructor(parent) {
-		super(parent);
+	get base() {
+		return this.constructor as typeof Yasuo;
+	}
+
+	constructor(owner: AttackableUnit) {
+		super(owner);
 
 		this.createOnSlots({
-			[SlotId.Q]: this.constructor.spells.YasuoQ3W,
-			[SlotId.W]: this.constructor.spells.YasuoWMovingWall,
-			[SlotId.E]: this.constructor.spells.YasuoDashWrapper,
-			[SlotId.R]: this.constructor.spells.YasuoRKnockUpComboW,
+			[SlotId.Q]: this.base.spells.YasuoQ3W,
+			[SlotId.W]: this.base.spells.YasuoWMovingWall,
+			[SlotId.E]: this.base.spells.YasuoDashWrapper,
+			[SlotId.R]: this.base.spells.YasuoRKnockUpComboW,
 
-			[SlotId.A]: this.constructor.spells.YasuoBasicAttack,
+			[SlotId.A]: this.base.spells.YasuoBasicAttack,
 		});
 	}
 

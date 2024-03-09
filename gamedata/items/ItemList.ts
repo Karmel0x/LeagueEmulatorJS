@@ -1,6 +1,7 @@
+import _Item from '@workspace/gameserver/src/game/basedata/item';
 
 const ItemList = {
-	1001: class Item { //Boots of Speed		
+	1001: class Item extends _Item { //Boots of Speed
 		id = 1001;
 		static goldCost = 325;
 		static stats = {
@@ -9,15 +10,15 @@ const ItemList = {
 			}
 		};
 	},
-	1004: class Item { //Faerie Charm		
+	1004: class Item extends _Item { //Faerie Charm
 		id = 1004;
 		static goldCost = 180;
 	},
-	1006: class Item { //Rejuvenation Bead		
+	1006: class Item extends _Item { //Rejuvenation Bead
 		id = 1006;
 		static goldCost = 180;
 	},
-	1011: class Item { //Giant's Belt		
+	1011: class Item extends _Item { //Giant's Belt
 		id = 1011;
 		static goldCost = 1000;
 		static stats = {
@@ -26,7 +27,7 @@ const ItemList = {
 			}
 		};
 	},
-	1018: class Item { //Cloak of Agility		
+	1018: class Item extends _Item { //Cloak of Agility
 		id = 1018;
 		static goldCost = 730;
 		static stats = {
@@ -35,7 +36,7 @@ const ItemList = {
 			}
 		};
 	},
-	1026: class Item { //Blasting Wand		
+	1026: class Item extends _Item { //Blasting Wand
 		id = 1026;
 		static goldCost = 860;
 		static stats = {
@@ -44,7 +45,7 @@ const ItemList = {
 			}
 		};
 	},
-	1027: class Item { //Sapphire Crystal		
+	1027: class Item extends _Item { //Sapphire Crystal
 		id = 1027;
 		static goldCost = 400;
 		static stats = {
@@ -53,7 +54,7 @@ const ItemList = {
 			}
 		};
 	},
-	1028: class Item { //Ruby Crystal		
+	1028: class Item extends _Item { //Ruby Crystal
 		id = 1028;
 		static goldCost = 400;
 		static stats = {
@@ -62,7 +63,7 @@ const ItemList = {
 			}
 		};
 	},
-	1029: class Item { //Cloth armor		
+	1029: class Item extends _Item { //Cloth armor
 		id = 1029;
 		static goldCost = 300;
 		static stats = {
@@ -71,7 +72,7 @@ const ItemList = {
 			}
 		};
 	},
-	1031: class Item { //Chain Vest		
+	1031: class Item extends _Item { //Chain Vest
 		id = 1031;
 		static goldCost = 750;
 		static from = [1029];
@@ -81,7 +82,7 @@ const ItemList = {
 			}
 		};
 	},
-	1033: class Item { //Null-Magic Mantle		
+	1033: class Item extends _Item { //Null-Magic Mantle
 		id = 1033;
 		static goldCost = 500;
 		static stats = {
@@ -90,7 +91,7 @@ const ItemList = {
 			}
 		};
 	},
-	1036: class Item { //Long Sword		
+	1036: class Item extends _Item { //Long Sword
 		id = 1036;
 		static goldCost = 360;
 		static stats = {
@@ -99,7 +100,7 @@ const ItemList = {
 			}
 		};
 	},
-	1037: class Item { //Pickaxe		
+	1037: class Item extends _Item { //Pickaxe
 		id = 1037;
 		static goldCost = 875;
 		static stats = {
@@ -108,7 +109,7 @@ const ItemList = {
 			}
 		};
 	},
-	1038: class Item { //B. F. Sword		
+	1038: class Item extends _Item { //B. F. Sword
 		id = 1038;
 		static goldCost = 1550;
 		static stats = {
@@ -117,11 +118,11 @@ const ItemList = {
 			}
 		};
 	},
-	1039: class Item { //Hunter's Machete		
+	1039: class Item extends _Item { //Hunter's Machete
 		id = 1039;
 		static goldCost = 400;
 	},
-	1042: class Item { //Dagger		
+	1042: class Item extends _Item { //Dagger
 		id = 1042;
 		static goldCost = 450;
 		static stats = {
@@ -130,7 +131,7 @@ const ItemList = {
 			}
 		};
 	},
-	1043: class Item { //Recurve Bow		
+	1043: class Item extends _Item { //Recurve Bow
 		id = 1043;
 		static goldCost = 900;
 		static stats = {
@@ -139,7 +140,7 @@ const ItemList = {
 			}
 		};
 	},
-	1051: class Item { //Brawler's Gloves		
+	1051: class Item extends _Item { //Brawler's Gloves
 		id = 1051;
 		static goldCost = 400;
 		static stats = {
@@ -148,7 +149,7 @@ const ItemList = {
 			}
 		};
 	},
-	1052: class Item { //Amplifying Tome		
+	1052: class Item extends _Item { //Amplifying Tome
 		id = 1052;
 		static goldCost = 435;
 		static stats = {
@@ -157,7 +158,7 @@ const ItemList = {
 			}
 		};
 	},
-	1053: class Item { //Vampiric Scepter		
+	1053: class Item extends _Item { //Vampiric Scepter
 		id = 1053;
 		static goldCost = 800;
 		static from = [1036];
@@ -170,7 +171,7 @@ const ItemList = {
 			}
 		};
 	},
-	1054: class Item { //Doran's Shield		
+	1054: class Item extends _Item { //Doran's Shield
 		id = 1054;
 		static goldCost = 440;
 		static stats = {
@@ -182,7 +183,7 @@ const ItemList = {
 			}
 		};
 	},
-	1055: class Item { //Doran's Blade		
+	1055: class Item extends _Item { //Doran's Blade
 		id = 1055;
 		static goldCost = 440;
 		static stats = {
@@ -197,7 +198,7 @@ const ItemList = {
 			}
 		};
 	},
-	1056: class Item { //Doran's Ring		
+	1056: class Item extends _Item { //Doran's Ring
 		id = 1056;
 		static goldCost = 400;
 		static stats = {
@@ -212,7 +213,7 @@ const ItemList = {
 			}
 		};
 	},
-	1058: class Item { //Needlessly Large Rod		
+	1058: class Item extends _Item { //Needlessly Large Rod
 		id = 1058;
 		static goldCost = 1600;
 		static stats = {
@@ -221,7 +222,7 @@ const ItemList = {
 			}
 		};
 	},
-	1062: class Item { //Prospector's Blade		
+	1062: class Item extends _Item { //Prospector's Blade
 		id = 1062;
 		static goldCost = 950;
 		static stats = {
@@ -233,7 +234,7 @@ const ItemList = {
 			}
 		};
 	},
-	1063: class Item { //Prospector's Ring		
+	1063: class Item extends _Item { //Prospector's Ring
 		id = 1063;
 		static goldCost = 950;
 		static stats = {
@@ -245,7 +246,7 @@ const ItemList = {
 			}
 		};
 	},
-	1074: class Item { //Doran's Shield (Showdown)		
+	1074: class Item extends _Item { //Doran's Shield (Showdown)
 		id = 1074;
 		static goldCost = 440;
 		static stats = {
@@ -257,7 +258,7 @@ const ItemList = {
 			}
 		};
 	},
-	1075: class Item { //Doran's Blade (Showdown)		
+	1075: class Item extends _Item { //Doran's Blade (Showdown)
 		id = 1075;
 		static goldCost = 440;
 		static stats = {
@@ -272,7 +273,7 @@ const ItemList = {
 			}
 		};
 	},
-	1076: class Item { //Doran's Ring (Showdown)		
+	1076: class Item extends _Item { //Doran's Ring (Showdown)
 		id = 1076;
 		static goldCost = 400;
 		static stats = {
@@ -287,77 +288,77 @@ const ItemList = {
 			}
 		};
 	},
-	1080: class Item { //Spirit Stone		
+	1080: class Item extends _Item { //Spirit Stone
 		id = 1080;
 		static goldCost = 775;
 		static from = [1039, 1004, 1006];
 	},
-	2003: class Item { //Health Potion		
+	2003: class Item extends _Item { //Health Potion
 		id = 2003;
 		static goldCost = 35;
 		isConsumable = true;
 		static isStackable = true;
 		stacks = 5;
 	},
-	2004: class Item { //Mana Potion		
+	2004: class Item extends _Item { //Mana Potion
 		id = 2004;
 		static goldCost = 35;
 		isConsumable = true;
 		static isStackable = true;
 		stacks = 5;
 	},
-	2009: class Item { //Total Biscuit of Rejuvenation		
+	2009: class Item extends _Item { //Total Biscuit of Rejuvenation
 		id = 2009;
 		static goldCost = 0;
 	},
-	2010: class Item { //Total Biscuit of Rejuvenation		
+	2010: class Item extends _Item { //Total Biscuit of Rejuvenation
 		id = 2010;
 		static goldCost = 35;
 		static isStackable = true;
 		stacks = 5;
 	},
-	2037: class Item { //Elixir of Fortitude		
+	2037: class Item extends _Item { //Elixir of Fortitude
 		id = 2037;
 		static goldCost = 350;
 		isConsumable = true;
 		static isStackable = true;
 		stacks = 3;
 	},
-	2039: class Item { //Elixir of Brilliance		
+	2039: class Item extends _Item { //Elixir of Brilliance
 		id = 2039;
 		static goldCost = 250;
 		isConsumable = true;
 		static isStackable = true;
 		stacks = 3;
 	},
-	2040: class Item { //Ichor of Rage		
+	2040: class Item extends _Item { //Ichor of Rage
 		id = 2040;
 		static goldCost = 500;
 		isConsumable = true;
 		static isStackable = true;
 		stacks = 3;
 	},
-	2041: class Item { //Crystalline Flask		
+	2041: class Item extends _Item { //Crystalline Flask
 		id = 2041;
 		static goldCost = 345;
 		isConsumable = true;
 		active = true;
 	},
-	2043: class Item { //Vision Ward		
+	2043: class Item extends _Item { //Vision Ward
 		id = 2043;
 		static goldCost = 100;
 		isConsumable = true;
 		static isStackable = true;
 		stacks = 2;
 	},
-	2044: class Item { //Stealth Ward		
+	2044: class Item extends _Item { //Stealth Ward
 		id = 2044;
 		static goldCost = 75;
 		isConsumable = true;
 		static isStackable = true;
 		stacks = 3;
 	},
-	2045: class Item { //Ruby Sightstone		
+	2045: class Item extends _Item { //Ruby Sightstone
 		id = 2045;
 		static goldCost = 1600;
 		static from = [2049, 1028];
@@ -368,19 +369,19 @@ const ItemList = {
 			}
 		};
 	},
-	2047: class Item { //Oracle's Extract		
+	2047: class Item extends _Item { //Oracle's Extract
 		id = 2047;
 		static goldCost = 250;
 		isConsumable = true;
 	},
-	2048: class Item { //Ichor of Illumination		
+	2048: class Item extends _Item { //Ichor of Illumination
 		id = 2048;
 		static goldCost = 500;
 		isConsumable = true;
 		static isStackable = true;
 		stacks = 3;
 	},
-	2049: class Item { //Sightstone		
+	2049: class Item extends _Item { //Sightstone
 		id = 2049;
 		static goldCost = 800;
 		static from = [1028];
@@ -391,12 +392,12 @@ const ItemList = {
 			}
 		};
 	},
-	2050: class Item { //Explorer's Ward		
+	2050: class Item extends _Item { //Explorer's Ward
 		id = 2050;
 		static goldCost = 0;
 		isConsumable = true;
 	},
-	2051: class Item { //Guardian's Horn		
+	2051: class Item extends _Item { //Guardian's Horn
 		id = 2051;
 		static goldCost = 1025;
 		static from = [1006, 1028];
@@ -407,11 +408,11 @@ const ItemList = {
 			}
 		};
 	},
-	2052: class Item { //Poro-Snax		
+	2052: class Item extends _Item { //Poro-Snax
 		id = 2052;
 		static goldCost = 0;
 	},
-	2053: class Item { //Raptor Cloak		
+	2053: class Item extends _Item { //Raptor Cloak
 		id = 2053;
 		static goldCost = 1000;
 		static from = [1006, 1029];
@@ -421,27 +422,27 @@ const ItemList = {
 			}
 		};
 	},
-	2137: class Item { //Elixir of Ruin		
+	2137: class Item extends _Item { //Elixir of Ruin
 		id = 2137;
 		static goldCost = 400;
 		isConsumable = true;
 	},
-	2138: class Item { //Elixir of Iron		
+	2138: class Item extends _Item { //Elixir of Iron
 		id = 2138;
 		static goldCost = 400;
 		isConsumable = true;
 	},
-	2139: class Item { //Elixir of Sorcery		
+	2139: class Item extends _Item { //Elixir of Sorcery
 		id = 2139;
 		static goldCost = 400;
 		isConsumable = true;
 	},
-	2140: class Item { //Elixir of Wrath		
+	2140: class Item extends _Item { //Elixir of Wrath
 		id = 2140;
 		static goldCost = 400;
 		isConsumable = true;
 	},
-	3001: class Item { //Abyssal Scepter		
+	3001: class Item extends _Item { //Abyssal Scepter
 		id = 3001;
 		static goldCost = 2440;
 		static from = [1026, 1033, 1033];
@@ -454,7 +455,7 @@ const ItemList = {
 			}
 		};
 	},
-	3003: class Item { //Archangel's Staff		
+	3003: class Item extends _Item { //Archangel's Staff
 		id = 3003;
 		static goldCost = 2700;
 		static from = [3070, 1026];
@@ -467,7 +468,7 @@ const ItemList = {
 			}
 		};
 	},
-	3004: class Item { //Manamune		
+	3004: class Item extends _Item { //Manamune
 		id = 3004;
 		static goldCost = 2200;
 		static from = [3070, 1037];
@@ -480,7 +481,7 @@ const ItemList = {
 			}
 		};
 	},
-	3005: class Item { //Atma's Impaler		
+	3005: class Item extends _Item { //Atma's Impaler
 		id = 3005;
 		static goldCost = 2250;
 		static from = [1031, 3093];
@@ -493,7 +494,7 @@ const ItemList = {
 			}
 		};
 	},
-	3006: class Item { //Berserker's Greaves		
+	3006: class Item extends _Item { //Berserker's Greaves
 		id = 3006;
 		static goldCost = 1000;
 		static from = [1001, 1042];
@@ -506,7 +507,7 @@ const ItemList = {
 			}
 		};
 	},
-	3007: class Item { //Archangel's Staff (Crystal Scar)		
+	3007: class Item extends _Item { //Archangel's Staff (Crystal Scar)
 		id = 3007;
 		static goldCost = 2700;
 		static from = [3073, 1026];
@@ -519,7 +520,7 @@ const ItemList = {
 			}
 		};
 	},
-	3008: class Item { //Manamune (Crystal Scar)		
+	3008: class Item extends _Item { //Manamune (Crystal Scar)
 		id = 3008;
 		static goldCost = 2200;
 		static from = [3073, 1037];
@@ -532,7 +533,7 @@ const ItemList = {
 			}
 		};
 	},
-	3009: class Item { //Boots of Swiftness		
+	3009: class Item extends _Item { //Boots of Swiftness
 		id = 3009;
 		static goldCost = 1000;
 		static from = [1001];
@@ -542,7 +543,7 @@ const ItemList = {
 			}
 		};
 	},
-	3010: class Item { //Catalyst the Protector		
+	3010: class Item extends _Item { //Catalyst the Protector
 		id = 3010;
 		static goldCost = 1200;
 		static from = [1028, 1027];
@@ -555,7 +556,7 @@ const ItemList = {
 			}
 		};
 	},
-	3020: class Item { //Sorcerer's Shoes		
+	3020: class Item extends _Item { //Sorcerer's Shoes
 		id = 3020;
 		static goldCost = 1100;
 		static from = [1001];
@@ -565,7 +566,7 @@ const ItemList = {
 			}
 		};
 	},
-	3022: class Item { //Frozen Mallet		
+	3022: class Item extends _Item { //Frozen Mallet
 		id = 3022;
 		static goldCost = 3300;
 		static from = [1028, 1011, 1037];
@@ -578,7 +579,7 @@ const ItemList = {
 			}
 		};
 	},
-	3023: class Item { //Twin Shadows		
+	3023: class Item extends _Item { //Twin Shadows
 		id = 3023;
 		static goldCost = 2400;
 		static from = [3108, 3113];
@@ -592,7 +593,7 @@ const ItemList = {
 			}
 		};
 	},
-	3024: class Item { //Glacial Shroud		
+	3024: class Item extends _Item { //Glacial Shroud
 		id = 3024;
 		static goldCost = 950;
 		static from = [1027, 1029];
@@ -605,7 +606,7 @@ const ItemList = {
 			}
 		};
 	},
-	3025: class Item { //Iceborn Gauntlet		
+	3025: class Item extends _Item { //Iceborn Gauntlet
 		id = 3025;
 		static goldCost = 2900;
 		static from = [3057, 3024];
@@ -621,7 +622,7 @@ const ItemList = {
 			}
 		};
 	},
-	3026: class Item { //Guardian Angel		
+	3026: class Item extends _Item { //Guardian Angel
 		id = 3026;
 		static goldCost = 2750;
 		static from = [1033, 1031];
@@ -634,7 +635,7 @@ const ItemList = {
 			}
 		};
 	},
-	3027: class Item { //Rod of Ages		
+	3027: class Item extends _Item { //Rod of Ages
 		id = 3027;
 		static goldCost = 2800;
 		static from = [3010, 1026];
@@ -650,7 +651,7 @@ const ItemList = {
 			}
 		};
 	},
-	3028: class Item { //Chalice of Harmony		
+	3028: class Item extends _Item { //Chalice of Harmony
 		id = 3028;
 		static goldCost = 1000;
 		static from = [1004, 1033, 1004];
@@ -660,7 +661,7 @@ const ItemList = {
 			}
 		};
 	},
-	3029: class Item { //Rod of Ages (Crystal Scar)		
+	3029: class Item extends _Item { //Rod of Ages (Crystal Scar)
 		id = 3029;
 		static goldCost = 2800;
 		static from = [3010, 1026];
@@ -673,7 +674,7 @@ const ItemList = {
 			}
 		};
 	},
-	3031: class Item { //Infinity Edge		
+	3031: class Item extends _Item { //Infinity Edge
 		id = 3031;
 		static goldCost = 3800;
 		static from = [1038, 1037, 1018];
@@ -686,7 +687,7 @@ const ItemList = {
 			}
 		};
 	},
-	3035: class Item { //Last Whisper		
+	3035: class Item extends _Item { //Last Whisper
 		id = 3035;
 		static goldCost = 2300;
 		static from = [1037, 1036];
@@ -696,7 +697,7 @@ const ItemList = {
 			}
 		};
 	},
-	3040: class Item { //Seraph's Embrace		
+	3040: class Item extends _Item { //Seraph's Embrace
 		id = 3040;
 		static goldCost = 2700;
 		static from = [3003];
@@ -710,7 +711,7 @@ const ItemList = {
 			}
 		};
 	},
-	3041: class Item { //Mejai's Soulstealer		
+	3041: class Item extends _Item { //Mejai's Soulstealer
 		id = 3041;
 		static goldCost = 1400;
 		static from = [1052];
@@ -720,7 +721,7 @@ const ItemList = {
 			}
 		};
 	},
-	3042: class Item { //Muramana		
+	3042: class Item extends _Item { //Muramana
 		id = 3042;
 		static goldCost = 2200;
 		static from = [3004];
@@ -733,7 +734,7 @@ const ItemList = {
 			}
 		};
 	},
-	3043: class Item { //Muramana		
+	3043: class Item extends _Item { //Muramana
 		id = 3043;
 		static goldCost = 2200;
 		static from = [3008];
@@ -746,7 +747,7 @@ const ItemList = {
 			}
 		};
 	},
-	3044: class Item { //Phage		
+	3044: class Item extends _Item { //Phage
 		id = 3044;
 		static goldCost = 1325;
 		static from = [1028, 1036];
@@ -759,7 +760,7 @@ const ItemList = {
 			}
 		};
 	},
-	3046: class Item { //Phantom Dancer		
+	3046: class Item extends _Item { //Phantom Dancer
 		id = 3046;
 		static goldCost = 2800;
 		static from = [1018, 3086, 1042];
@@ -775,7 +776,7 @@ const ItemList = {
 			}
 		};
 	},
-	3047: class Item { //Ninja Tabi		
+	3047: class Item extends _Item { //Ninja Tabi
 		id = 3047;
 		static goldCost = 1000;
 		static from = [1001, 1029];
@@ -788,7 +789,7 @@ const ItemList = {
 			}
 		};
 	},
-	3048: class Item { //Seraph's Embrace		
+	3048: class Item extends _Item { //Seraph's Embrace
 		id = 3048;
 		static goldCost = 2700;
 		static from = [3007];
@@ -802,7 +803,7 @@ const ItemList = {
 			}
 		};
 	},
-	3050: class Item { //Zeke's Herald		
+	3050: class Item extends _Item { //Zeke's Herald
 		id = 3050;
 		static goldCost = 2450;
 		static from = [3067, 1053];
@@ -812,7 +813,7 @@ const ItemList = {
 			}
 		};
 	},
-	3056: class Item { //Ohmwrecker		
+	3056: class Item extends _Item { //Ohmwrecker
 		id = 3056;
 		static goldCost = 2600;
 		static from = [2053, 3067];
@@ -826,7 +827,7 @@ const ItemList = {
 			}
 		};
 	},
-	3057: class Item { //Sheen		
+	3057: class Item extends _Item { //Sheen
 		id = 3057;
 		static goldCost = 1200;
 		static from = [1027, 1052];
@@ -839,7 +840,7 @@ const ItemList = {
 			}
 		};
 	},
-	3060: class Item { //Banner of Command		
+	3060: class Item extends _Item { //Banner of Command
 		id = 3060;
 		static goldCost = 3000;
 		static from = [3105, 3108];
@@ -856,7 +857,7 @@ const ItemList = {
 			}
 		};
 	},
-	3065: class Item { //Spirit Visage		
+	3065: class Item extends _Item { //Spirit Visage
 		id = 3065;
 		static goldCost = 2750;
 		static from = [3211, 3067];
@@ -869,7 +870,7 @@ const ItemList = {
 			}
 		};
 	},
-	3067: class Item { //Kindlegem		
+	3067: class Item extends _Item { //Kindlegem
 		id = 3067;
 		static goldCost = 850;
 		static from = [1028];
@@ -879,7 +880,7 @@ const ItemList = {
 			}
 		};
 	},
-	3068: class Item { //Sunfire Cape		
+	3068: class Item extends _Item { //Sunfire Cape
 		id = 3068;
 		static goldCost = 2600;
 		static from = [1031, 1011];
@@ -892,13 +893,13 @@ const ItemList = {
 			}
 		};
 	},
-	3069: class Item { //Talisman of Ascension		
+	3069: class Item extends _Item { //Talisman of Ascension
 		id = 3069;
 		static goldCost = 2100;
 		static from = [3096, 3114];
 		active = true;
 	},
-	3070: class Item { //Tear of the Goddess		
+	3070: class Item extends _Item { //Tear of the Goddess
 		id = 3070;
 		static goldCost = 720;
 		static from = [1027, 1004];
@@ -908,7 +909,7 @@ const ItemList = {
 			}
 		};
 	},
-	3071: class Item { //The Black Cleaver		
+	3071: class Item extends _Item { //The Black Cleaver
 		id = 3071;
 		static goldCost = 3000;
 		static from = [3134, 1028];
@@ -921,7 +922,7 @@ const ItemList = {
 			}
 		};
 	},
-	3072: class Item { //The Bloodthirster		
+	3072: class Item extends _Item { //The Bloodthirster
 		id = 3072;
 		static goldCost = 3500;
 		static from = [1053, 1038];
@@ -931,7 +932,7 @@ const ItemList = {
 			}
 		};
 	},
-	3073: class Item { //Tear of the Goddess (Crystal Scar)		
+	3073: class Item extends _Item { //Tear of the Goddess (Crystal Scar)
 		id = 3073;
 		static goldCost = 720;
 		static from = [1027, 1004];
@@ -941,7 +942,7 @@ const ItemList = {
 			}
 		};
 	},
-	3074: class Item { //Ravenous Hydra (Melee Only)		
+	3074: class Item extends _Item { //Ravenous Hydra (Melee Only)
 		id = 3074;
 		static goldCost = 3300;
 		static from = [3077, 1053];
@@ -955,7 +956,7 @@ const ItemList = {
 			}
 		};
 	},
-	3075: class Item { //Thornmail		
+	3075: class Item extends _Item { //Thornmail
 		id = 3075;
 		static goldCost = 2100;
 		static from = [1029, 1031];
@@ -965,7 +966,7 @@ const ItemList = {
 			}
 		};
 	},
-	3077: class Item { //Tiamat (Melee Only)		
+	3077: class Item extends _Item { //Tiamat (Melee Only)
 		id = 3077;
 		static goldCost = 1900;
 		static from = [1037, 1036, 1006, 1006];
@@ -976,7 +977,7 @@ const ItemList = {
 			}
 		};
 	},
-	3078: class Item { //Trinity Force		
+	3078: class Item extends _Item { //Trinity Force
 		id = 3078;
 		static goldCost = 3703;
 		static from = [3086, 3057, 3044];
@@ -1004,7 +1005,7 @@ const ItemList = {
 			}
 		};
 	},
-	3082: class Item { //Warden's Mail		
+	3082: class Item extends _Item { //Warden's Mail
 		id = 3082;
 		static goldCost = 1050;
 		static from = [1029, 1029];
@@ -1014,7 +1015,7 @@ const ItemList = {
 			}
 		};
 	},
-	3083: class Item { //Warmog's armor		
+	3083: class Item extends _Item { //Warmog's armor
 		id = 3083;
 		static goldCost = 2500;
 		static from = [3801, 1011, 3801];
@@ -1024,7 +1025,7 @@ const ItemList = {
 			}
 		};
 	},
-	3084: class Item { //Overlord's Bloodmail		
+	3084: class Item extends _Item { //Overlord's Bloodmail
 		id = 3084;
 		static goldCost = 2455;
 		static from = [1011, 1028];
@@ -1034,7 +1035,7 @@ const ItemList = {
 			}
 		};
 	},
-	3085: class Item { //Runaan's Hurricane (Ranged Only)		
+	3085: class Item extends _Item { //Runaan's Hurricane (Ranged Only)
 		id = 3085;
 		static goldCost = 2400;
 		static from = [1042, 1043, 1042];
@@ -1044,7 +1045,7 @@ const ItemList = {
 			}
 		};
 	},
-	3086: class Item { //Zeal		
+	3086: class Item extends _Item { //Zeal
 		id = 3086;
 		static goldCost = 1100;
 		static from = [1051, 1042];
@@ -1060,7 +1061,7 @@ const ItemList = {
 			}
 		};
 	},
-	3087: class Item { //Statikk Shiv		
+	3087: class Item extends _Item { //Statikk Shiv
 		id = 3087;
 		static goldCost = 2500;
 		static from = [3086, 3093];
@@ -1076,7 +1077,7 @@ const ItemList = {
 			}
 		};
 	},
-	3089: class Item { //Rabadon's Deathcap		
+	3089: class Item extends _Item { //Rabadon's Deathcap
 		id = 3089;
 		static goldCost = 3300;
 		static from = [1026, 1058];
@@ -1086,7 +1087,7 @@ const ItemList = {
 			}
 		};
 	},
-	3090: class Item { //Wooglet's Witchcap		
+	3090: class Item extends _Item { //Wooglet's Witchcap
 		id = 3090;
 		static goldCost = 3540;
 		static from = [3191, 1026, 1052];
@@ -1100,7 +1101,7 @@ const ItemList = {
 			}
 		};
 	},
-	3091: class Item { //Wit's End		
+	3091: class Item extends _Item { //Wit's End
 		id = 3091;
 		static goldCost = 2600;
 		static from = [1043, 1033, 1042];
@@ -1113,7 +1114,7 @@ const ItemList = {
 			}
 		};
 	},
-	3092: class Item { //Frost Queen's Claim		
+	3092: class Item extends _Item { //Frost Queen's Claim
 		id = 3092;
 		static goldCost = 2200;
 		static from = [3098, 3108];
@@ -1124,7 +1125,7 @@ const ItemList = {
 			}
 		};
 	},
-	3093: class Item { //Avarice Blade		
+	3093: class Item extends _Item { //Avarice Blade
 		id = 3093;
 		static goldCost = 800;
 		static from = [1051];
@@ -1134,13 +1135,13 @@ const ItemList = {
 			}
 		};
 	},
-	3096: class Item { //Nomad's Medallion		
+	3096: class Item extends _Item { //Nomad's Medallion
 		id = 3096;
 		static goldCost = 865;
 		static from = [3301];
 		active = true;
 	},
-	3097: class Item { //Targon's Brace		
+	3097: class Item extends _Item { //Targon's Brace
 		id = 3097;
 		static goldCost = 865;
 		static from = [3302];
@@ -1150,7 +1151,7 @@ const ItemList = {
 			}
 		};
 	},
-	3098: class Item { //Frostfang		
+	3098: class Item extends _Item { //Frostfang
 		id = 3098;
 		static goldCost = 865;
 		static from = [3303];
@@ -1161,7 +1162,7 @@ const ItemList = {
 			}
 		};
 	},
-	3100: class Item { //Lich Bane		
+	3100: class Item extends _Item { //Lich Bane
 		id = 3100;
 		static goldCost = 3000;
 		static from = [3057, 3113];
@@ -1177,7 +1178,7 @@ const ItemList = {
 			}
 		};
 	},
-	3101: class Item { //Stinger		
+	3101: class Item extends _Item { //Stinger
 		id = 3101;
 		static goldCost = 1250;
 		static from = [1042, 1042];
@@ -1187,7 +1188,7 @@ const ItemList = {
 			}
 		};
 	},
-	3102: class Item { //Banshee's Veil		
+	3102: class Item extends _Item { //Banshee's Veil
 		id = 3102;
 		static goldCost = 2750;
 		static from = [3211, 1028];
@@ -1200,7 +1201,7 @@ const ItemList = {
 			}
 		};
 	},
-	3104: class Item { //Lord Van Damm's Pillager		
+	3104: class Item extends _Item { //Lord Van Damm's Pillager
 		id = 3104;
 		static goldCost = 3800;
 		static from = [3122, 1037, 1018];
@@ -1213,7 +1214,7 @@ const ItemList = {
 			}
 		};
 	},
-	3105: class Item { //Aegis of the Legion		
+	3105: class Item extends _Item { //Aegis of the Legion
 		id = 3105;
 		static goldCost = 1900;
 		static from = [1028, 1033, 1006];
@@ -1226,7 +1227,7 @@ const ItemList = {
 			}
 		};
 	},
-	3106: class Item { //Madred's Razors		
+	3106: class Item extends _Item { //Madred's Razors
 		id = 3106;
 		static goldCost = 450;
 		static from = [1042];
@@ -1236,7 +1237,7 @@ const ItemList = {
 			}
 		};
 	},
-	3108: class Item { //Fiendish Codex		
+	3108: class Item extends _Item { //Fiendish Codex
 		id = 3108;
 		static goldCost = 820;
 		static from = [1052];
@@ -1246,7 +1247,7 @@ const ItemList = {
 			}
 		};
 	},
-	3110: class Item { //Frozen Heart		
+	3110: class Item extends _Item { //Frozen Heart
 		id = 3110;
 		static goldCost = 2450;
 		static from = [3082, 3024];
@@ -1259,7 +1260,7 @@ const ItemList = {
 			}
 		};
 	},
-	3111: class Item { //Mercury's Treads		
+	3111: class Item extends _Item { //Mercury's Treads
 		id = 3111;
 		static goldCost = 1200;
 		static from = [1001, 1033];
@@ -1272,7 +1273,7 @@ const ItemList = {
 			}
 		};
 	},
-	3112: class Item { //Orb of Winter		
+	3112: class Item extends _Item { //Orb of Winter
 		id = 3112;
 		static goldCost = 2210;
 		static from = [1006, 1006, 1033, 1033];
@@ -1282,7 +1283,7 @@ const ItemList = {
 			}
 		};
 	},
-	3113: class Item { //Aether Wisp		
+	3113: class Item extends _Item { //Aether Wisp
 		id = 3113;
 		static goldCost = 950;
 		static from = [1052];
@@ -1292,12 +1293,12 @@ const ItemList = {
 			}
 		};
 	},
-	3114: class Item { //Forbidden Idol		
+	3114: class Item extends _Item { //Forbidden Idol
 		id = 3114;
 		static goldCost = 600;
 		static from = [1004, 1004];
 	},
-	3115: class Item { //Nashor's Tooth		
+	3115: class Item extends _Item { //Nashor's Tooth
 		id = 3115;
 		static goldCost = 2920;
 		static from = [3101, 3108];
@@ -1310,7 +1311,7 @@ const ItemList = {
 			}
 		};
 	},
-	3116: class Item { //Rylai's Crystal Scepter		
+	3116: class Item extends _Item { //Rylai's Crystal Scepter
 		id = 3116;
 		static goldCost = 2900;
 		static from = [1026, 1052, 1011];
@@ -1323,7 +1324,7 @@ const ItemList = {
 			}
 		};
 	},
-	3117: class Item { //Boots of Mobility		
+	3117: class Item extends _Item { //Boots of Mobility
 		id = 3117;
 		static goldCost = 800;
 		static from = [1001];
@@ -1333,7 +1334,7 @@ const ItemList = {
 			}
 		};
 	},
-	3122: class Item { //Wicked Hatchet		
+	3122: class Item extends _Item { //Wicked Hatchet
 		id = 3122;
 		static goldCost = 1200;
 		static from = [1051, 1036];
@@ -1346,7 +1347,7 @@ const ItemList = {
 			}
 		};
 	},
-	3123: class Item { //Executioner's Calling		
+	3123: class Item extends _Item { //Executioner's Calling
 		id = 3123;
 		static goldCost = 1900;
 		static from = [3093, 1036];
@@ -1359,7 +1360,7 @@ const ItemList = {
 			}
 		};
 	},
-	3124: class Item { //Guinsoo's Rageblade		
+	3124: class Item extends _Item { //Guinsoo's Rageblade
 		id = 3124;
 		static goldCost = 2600;
 		static from = [1026, 1037];
@@ -1372,7 +1373,7 @@ const ItemList = {
 			}
 		};
 	},
-	3128: class Item { //Deathfire Grasp		
+	3128: class Item extends _Item { //Deathfire Grasp
 		id = 3128;
 		static goldCost = 3100;
 		static from = [1058, 3108];
@@ -1383,13 +1384,13 @@ const ItemList = {
 			}
 		};
 	},
-	3131: class Item { //Sword of the Divine		
+	3131: class Item extends _Item { //Sword of the Divine
 		id = 3131;
 		static goldCost = 2150;
 		static from = [1043, 1042];
 		active = true;
 	},
-	3134: class Item { //The Brutalizer		
+	3134: class Item extends _Item { //The Brutalizer
 		id = 3134;
 		static goldCost = 1337;
 		static from = [1036, 1036];
@@ -1399,7 +1400,7 @@ const ItemList = {
 			}
 		};
 	},
-	3135: class Item { //Void Staff		
+	3135: class Item extends _Item { //Void Staff
 		id = 3135;
 		static goldCost = 2295;
 		static from = [1026, 1052];
@@ -1409,7 +1410,7 @@ const ItemList = {
 			}
 		};
 	},
-	3136: class Item { //Haunting Guise		
+	3136: class Item extends _Item { //Haunting Guise
 		id = 3136;
 		static goldCost = 1485;
 		static from = [1028, 1052];
@@ -1422,7 +1423,7 @@ const ItemList = {
 			}
 		};
 	},
-	3137: class Item { //Dervish Blade		
+	3137: class Item extends _Item { //Dervish Blade
 		id = 3137;
 		static goldCost = 2700;
 		static from = [3140, 3101];
@@ -1436,7 +1437,7 @@ const ItemList = {
 			}
 		};
 	},
-	3139: class Item { //Mercurial Scimitar		
+	3139: class Item extends _Item { //Mercurial Scimitar
 		id = 3139;
 		static goldCost = 3700;
 		static from = [1038, 3140];
@@ -1450,7 +1451,7 @@ const ItemList = {
 			}
 		};
 	},
-	3140: class Item { //Quicksilver Sash		
+	3140: class Item extends _Item { //Quicksilver Sash
 		id = 3140;
 		static goldCost = 1250;
 		static from = [1033];
@@ -1461,7 +1462,7 @@ const ItemList = {
 			}
 		};
 	},
-	3141: class Item { //Sword of the Occult		
+	3141: class Item extends _Item { //Sword of the Occult
 		id = 3141;
 		static goldCost = 1400;
 		static from = [1036];
@@ -1471,7 +1472,7 @@ const ItemList = {
 			}
 		};
 	},
-	3142: class Item { //Youmuu's Ghostblade		
+	3142: class Item extends _Item { //Youmuu's Ghostblade
 		id = 3142;
 		static goldCost = 2700;
 		static from = [3093, 3134];
@@ -1485,7 +1486,7 @@ const ItemList = {
 			}
 		};
 	},
-	3143: class Item { //Randuin's Omen		
+	3143: class Item extends _Item { //Randuin's Omen
 		id = 3143;
 		static goldCost = 2850;
 		static from = [3082, 1011];
@@ -1499,7 +1500,7 @@ const ItemList = {
 			}
 		};
 	},
-	3144: class Item { //Bilgewater Cutlass		
+	3144: class Item extends _Item { //Bilgewater Cutlass
 		id = 3144;
 		static goldCost = 1400;
 		static from = [1036, 1053];
@@ -1513,7 +1514,7 @@ const ItemList = {
 			}
 		};
 	},
-	3145: class Item { //Hextech Revolver		
+	3145: class Item extends _Item { //Hextech Revolver
 		id = 3145;
 		static goldCost = 1200;
 		static from = [1052, 1052];
@@ -1523,7 +1524,7 @@ const ItemList = {
 			}
 		};
 	},
-	3146: class Item { //Hextech Gunblade		
+	3146: class Item extends _Item { //Hextech Gunblade
 		id = 3146;
 		static goldCost = 3400;
 		static from = [3144, 3145];
@@ -1540,7 +1541,7 @@ const ItemList = {
 			}
 		};
 	},
-	3151: class Item { //Liandry's Torment		
+	3151: class Item extends _Item { //Liandry's Torment
 		id = 3151;
 		static goldCost = 2900;
 		static from = [3136, 1052];
@@ -1553,7 +1554,7 @@ const ItemList = {
 			}
 		};
 	},
-	3152: class Item { //Will of the Ancients		
+	3152: class Item extends _Item { //Will of the Ancients
 		id = 3152;
 		static goldCost = 2500;
 		static from = [3145, 3108];
@@ -1563,7 +1564,7 @@ const ItemList = {
 			}
 		};
 	},
-	3153: class Item { //Blade of the Ruined King		
+	3153: class Item extends _Item { //Blade of the Ruined King
 		id = 3153;
 		static goldCost = 3200;
 		static from = [1042, 3144, 1042];
@@ -1580,7 +1581,7 @@ const ItemList = {
 			}
 		};
 	},
-	3154: class Item { //Wriggle's Lantern		
+	3154: class Item extends _Item { //Wriggle's Lantern
 		id = 3154;
 		static goldCost = 1475;
 		static from = [3106, 1036, 1042];
@@ -1594,7 +1595,7 @@ const ItemList = {
 			}
 		};
 	},
-	3155: class Item { //Hexdrinker		
+	3155: class Item extends _Item { //Hexdrinker
 		id = 3155;
 		static goldCost = 1450;
 		static from = [1036, 1033];
@@ -1607,7 +1608,7 @@ const ItemList = {
 			}
 		};
 	},
-	3156: class Item { //Maw of Malmortius		
+	3156: class Item extends _Item { //Maw of Malmortius
 		id = 3156;
 		static goldCost = 3200;
 		static from = [3155, 1037];
@@ -1620,7 +1621,7 @@ const ItemList = {
 			}
 		};
 	},
-	3157: class Item { //Zhonya's Hourglass		
+	3157: class Item extends _Item { //Zhonya's Hourglass
 		id = 3157;
 		static goldCost = 3300;
 		static from = [3191, 1058];
@@ -1634,7 +1635,7 @@ const ItemList = {
 			}
 		};
 	},
-	3158: class Item { //Ionian Boots of Lucidity		
+	3158: class Item extends _Item { //Ionian Boots of Lucidity
 		id = 3158;
 		static goldCost = 1000;
 		static from = [1001];
@@ -1644,7 +1645,7 @@ const ItemList = {
 			}
 		};
 	},
-	3159: class Item { //Grez's Spectral Lantern		
+	3159: class Item extends _Item { //Grez's Spectral Lantern
 		id = 3159;
 		static goldCost = 1440;
 		static from = [3106, 1036, 1042];
@@ -1658,7 +1659,7 @@ const ItemList = {
 			}
 		};
 	},
-	3160: class Item { //Feral Flare		
+	3160: class Item extends _Item { //Feral Flare
 		id = 3160;
 		static goldCost = 1800;
 		static from = [3154];
@@ -1671,7 +1672,7 @@ const ItemList = {
 			}
 		};
 	},
-	3165: class Item { //Morellonomicon		
+	3165: class Item extends _Item { //Morellonomicon
 		id = 3165;
 		static goldCost = 2100;
 		static from = [3108, 3114];
@@ -1681,31 +1682,31 @@ const ItemList = {
 			}
 		};
 	},
-	3166: class Item { //Bonetooth Necklace		
+	3166: class Item extends _Item { //Bonetooth Necklace
 		id = 3166;
 		static goldCost = 0;
 		static isTrinket = true;
 		active = true;
 	},
-	3167: class Item { //Bonetooth Necklace		
+	3167: class Item extends _Item { //Bonetooth Necklace
 		id = 3167;
 		static goldCost = 0;
 		static isTrinket = true;
 		active = true;
 	},
-	3168: class Item { //Bonetooth Necklace		
+	3168: class Item extends _Item { //Bonetooth Necklace
 		id = 3168;
 		static goldCost = 0;
 		static isTrinket = true;
 		active = true;
 	},
-	3169: class Item { //Bonetooth Necklace		
+	3169: class Item extends _Item { //Bonetooth Necklace
 		id = 3169;
 		static goldCost = 0;
 		static isTrinket = true;
 		active = true;
 	},
-	3170: class Item { //Moonflair Spellblade		
+	3170: class Item extends _Item { //Moonflair Spellblade
 		id = 3170;
 		static goldCost = 2620;
 		static from = [3191, 1033];
@@ -1721,13 +1722,13 @@ const ItemList = {
 			}
 		};
 	},
-	3171: class Item { //Bonetooth Necklace		
+	3171: class Item extends _Item { //Bonetooth Necklace
 		id = 3171;
 		static goldCost = 0;
 		static isTrinket = true;
 		active = true;
 	},
-	3172: class Item { //Zephyr		
+	3172: class Item extends _Item { //Zephyr
 		id = 3172;
 		static goldCost = 2850;
 		static from = [3101, 1037];
@@ -1743,7 +1744,7 @@ const ItemList = {
 			}
 		};
 	},
-	3174: class Item { //Athene's Unholy Grail		
+	3174: class Item extends _Item { //Athene's Unholy Grail
 		id = 3174;
 		static goldCost = 2700;
 		static from = [3108, 3028];
@@ -1756,14 +1757,14 @@ const ItemList = {
 			}
 		};
 	},
-	3175: class Item { //Head of Kha'Zix		
+	3175: class Item extends _Item { //Head of Kha'Zix
 		id = 3175;
 		static goldCost = 0;
 		static isTrinket = true;
 		static from = [3169];
 		active = true;
 	},
-	3180: class Item { //Odyn's Veil		
+	3180: class Item extends _Item { //Odyn's Veil
 		id = 3180;
 		static goldCost = 2500;
 		static from = [1033, 3010];
@@ -1777,7 +1778,7 @@ const ItemList = {
 			}
 		};
 	},
-	3181: class Item { //Sanguine Blade		
+	3181: class Item extends _Item { //Sanguine Blade
 		id = 3181;
 		static goldCost = 2275;
 		static from = [1037, 1053];
@@ -1790,7 +1791,7 @@ const ItemList = {
 			}
 		};
 	},
-	3184: class Item { //Entropy		
+	3184: class Item extends _Item { //Entropy
 		id = 3184;
 		static goldCost = 2700;
 		static from = [3044, 1037];
@@ -1804,7 +1805,7 @@ const ItemList = {
 			}
 		};
 	},
-	3185: class Item { //The Lightbringer		
+	3185: class Item extends _Item { //The Lightbringer
 		id = 3185;
 		static goldCost = 2280;
 		static from = [3122, 1018];
@@ -1818,7 +1819,7 @@ const ItemList = {
 			}
 		};
 	},
-	3187: class Item { //Hextech Sweeper		
+	3187: class Item extends _Item { //Hextech Sweeper
 		id = 3187;
 		static goldCost = 2130;
 		static from = [3024, 3067];
@@ -1832,7 +1833,7 @@ const ItemList = {
 			}
 		};
 	},
-	3188: class Item { //Blackfire Torch		
+	3188: class Item extends _Item { //Blackfire Torch
 		id = 3188;
 		static goldCost = 2650;
 		static from = [1026, 3108];
@@ -1843,7 +1844,7 @@ const ItemList = {
 			}
 		};
 	},
-	3190: class Item { //Locket of the Iron Solari		
+	3190: class Item extends _Item { //Locket of the Iron Solari
 		id = 3190;
 		static goldCost = 2800;
 		static from = [3105, 3067];
@@ -1857,7 +1858,7 @@ const ItemList = {
 			}
 		};
 	},
-	3191: class Item { //Seeker's Armguard		
+	3191: class Item extends _Item { //Seeker's Armguard
 		id = 3191;
 		static goldCost = 1200;
 		static from = [1029, 1052];
@@ -1870,7 +1871,7 @@ const ItemList = {
 			}
 		};
 	},
-	3196: class Item { //The Hex Core mk-1		
+	3196: class Item extends _Item { //The Hex Core mk-1
 		id = 3196;
 		static goldCost = 1000;
 		static from = [3200];
@@ -1883,7 +1884,7 @@ const ItemList = {
 			}
 		};
 	},
-	3197: class Item { //The Hex Core mk-2		
+	3197: class Item extends _Item { //The Hex Core mk-2
 		id = 3197;
 		static goldCost = 2000;
 		static from = [3196];
@@ -1896,7 +1897,7 @@ const ItemList = {
 			}
 		};
 	},
-	3198: class Item { //Perfect Hex Core		
+	3198: class Item extends _Item { //Perfect Hex Core
 		id = 3198;
 		static goldCost = 3000;
 		static from = [3197];
@@ -1909,11 +1910,11 @@ const ItemList = {
 			}
 		};
 	},
-	3200: class Item { //Prototype Hex Core		
+	3200: class Item extends _Item { //Prototype Hex Core
 		id = 3200;
 		static goldCost = 0;
 	},
-	3204: class Item { //Quill Coat		
+	3204: class Item extends _Item { //Quill Coat
 		id = 3204;
 		static goldCost = 775;
 		static from = [1039, 1029];
@@ -1924,7 +1925,7 @@ const ItemList = {
 			}
 		};
 	},
-	3205: class Item { //Quill Coat		
+	3205: class Item extends _Item { //Quill Coat
 		id = 3205;
 		static goldCost = 775;
 		static from = [1039, 1029];
@@ -1935,7 +1936,7 @@ const ItemList = {
 			}
 		};
 	},
-	3206: class Item { //Spirit of the Spectral Wraith		
+	3206: class Item extends _Item { //Spirit of the Spectral Wraith
 		id = 3206;
 		static goldCost = 2075;
 		static from = [1080, 3108];
@@ -1945,7 +1946,7 @@ const ItemList = {
 			}
 		};
 	},
-	3207: class Item { //Spirit of the Ancient Golem		
+	3207: class Item extends _Item { //Spirit of the Ancient Golem
 		id = 3207;
 		static goldCost = 2075;
 		static from = [3205, 3067];
@@ -1959,7 +1960,7 @@ const ItemList = {
 			}
 		};
 	},
-	3208: class Item { //Spirit of the Ancient Golem		
+	3208: class Item extends _Item { //Spirit of the Ancient Golem
 		id = 3208;
 		static goldCost = 2075;
 		static from = [3204, 3067];
@@ -1973,7 +1974,7 @@ const ItemList = {
 			}
 		};
 	},
-	3209: class Item { //Spirit of the Elder Lizard		
+	3209: class Item extends _Item { //Spirit of the Elder Lizard
 		id = 3209;
 		static goldCost = 2075;
 		static from = [1080, 1036, 1036];
@@ -1983,7 +1984,7 @@ const ItemList = {
 			}
 		};
 	},
-	3211: class Item { //Spectre's Cowl		
+	3211: class Item extends _Item { //Spectre's Cowl
 		id = 3211;
 		static goldCost = 1200;
 		static from = [1028, 1033];
@@ -1996,7 +1997,7 @@ const ItemList = {
 			}
 		};
 	},
-	3222: class Item { //Mikael's Crucible		
+	3222: class Item extends _Item { //Mikael's Crucible
 		id = 3222;
 		static goldCost = 2450;
 		static from = [3028, 3114];
@@ -2007,7 +2008,7 @@ const ItemList = {
 			}
 		};
 	},
-	3250: class Item { //Enchantment: Homeguard		
+	3250: class Item extends _Item { //Enchantment: Homeguard
 		id = 3250;
 		static goldCost = 1475;
 		static from = [3006];
@@ -2020,7 +2021,7 @@ const ItemList = {
 			}
 		};
 	},
-	3251: class Item { //Enchantment: Captain		
+	3251: class Item extends _Item { //Enchantment: Captain
 		id = 3251;
 		static goldCost = 1600;
 		static from = [3006];
@@ -2033,7 +2034,7 @@ const ItemList = {
 			}
 		};
 	},
-	3252: class Item { //Enchantment: Furor		
+	3252: class Item extends _Item { //Enchantment: Furor
 		id = 3252;
 		static goldCost = 1475;
 		static from = [3006];
@@ -2046,7 +2047,7 @@ const ItemList = {
 			}
 		};
 	},
-	3253: class Item { //Enchantment: Distortion		
+	3253: class Item extends _Item { //Enchantment: Distortion
 		id = 3253;
 		static goldCost = 1475;
 		static from = [3006];
@@ -2059,7 +2060,7 @@ const ItemList = {
 			}
 		};
 	},
-	3254: class Item { //Enchantment: Alacrity		
+	3254: class Item extends _Item { //Enchantment: Alacrity
 		id = 3254;
 		static goldCost = 1475;
 		static from = [3006];
@@ -2072,7 +2073,7 @@ const ItemList = {
 			}
 		};
 	},
-	3255: class Item { //Enchantment: Homeguard		
+	3255: class Item extends _Item { //Enchantment: Homeguard
 		id = 3255;
 		static goldCost = 1575;
 		static from = [3020];
@@ -2082,7 +2083,7 @@ const ItemList = {
 			}
 		};
 	},
-	3256: class Item { //Enchantment: Captain		
+	3256: class Item extends _Item { //Enchantment: Captain
 		id = 3256;
 		static goldCost = 1700;
 		static from = [3020];
@@ -2092,7 +2093,7 @@ const ItemList = {
 			}
 		};
 	},
-	3257: class Item { //Enchantment: Furor		
+	3257: class Item extends _Item { //Enchantment: Furor
 		id = 3257;
 		static goldCost = 1575;
 		static from = [3020];
@@ -2102,7 +2103,7 @@ const ItemList = {
 			}
 		};
 	},
-	3258: class Item { //Enchantment: Distortion		
+	3258: class Item extends _Item { //Enchantment: Distortion
 		id = 3258;
 		static goldCost = 1575;
 		static from = [3020];
@@ -2112,7 +2113,7 @@ const ItemList = {
 			}
 		};
 	},
-	3259: class Item { //Enchantment: Alacrity		
+	3259: class Item extends _Item { //Enchantment: Alacrity
 		id = 3259;
 		static goldCost = 1575;
 		static from = [3020];
@@ -2122,7 +2123,7 @@ const ItemList = {
 			}
 		};
 	},
-	3260: class Item { //Enchantment: Homeguard		
+	3260: class Item extends _Item { //Enchantment: Homeguard
 		id = 3260;
 		static goldCost = 1475;
 		static from = [3047];
@@ -2135,7 +2136,7 @@ const ItemList = {
 			}
 		};
 	},
-	3261: class Item { //Enchantment: Captain		
+	3261: class Item extends _Item { //Enchantment: Captain
 		id = 3261;
 		static goldCost = 1600;
 		static from = [3047];
@@ -2148,7 +2149,7 @@ const ItemList = {
 			}
 		};
 	},
-	3262: class Item { //Enchantment: Furor		
+	3262: class Item extends _Item { //Enchantment: Furor
 		id = 3262;
 		static goldCost = 1475;
 		static from = [3047];
@@ -2161,7 +2162,7 @@ const ItemList = {
 			}
 		};
 	},
-	3263: class Item { //Enchantment: Distortion		
+	3263: class Item extends _Item { //Enchantment: Distortion
 		id = 3263;
 		static goldCost = 1475;
 		static from = [3047];
@@ -2174,7 +2175,7 @@ const ItemList = {
 			}
 		};
 	},
-	3264: class Item { //Enchantment: Alacrity		
+	3264: class Item extends _Item { //Enchantment: Alacrity
 		id = 3264;
 		static goldCost = 1475;
 		static from = [3047];
@@ -2187,7 +2188,7 @@ const ItemList = {
 			}
 		};
 	},
-	3265: class Item { //Enchantment: Homeguard		
+	3265: class Item extends _Item { //Enchantment: Homeguard
 		id = 3265;
 		static goldCost = 1675;
 		static from = [3111];
@@ -2200,7 +2201,7 @@ const ItemList = {
 			}
 		};
 	},
-	3266: class Item { //Enchantment: Captain		
+	3266: class Item extends _Item { //Enchantment: Captain
 		id = 3266;
 		static goldCost = 1800;
 		static from = [3111];
@@ -2213,7 +2214,7 @@ const ItemList = {
 			}
 		};
 	},
-	3267: class Item { //Enchantment: Furor		
+	3267: class Item extends _Item { //Enchantment: Furor
 		id = 3267;
 		static goldCost = 1675;
 		static from = [3111];
@@ -2226,7 +2227,7 @@ const ItemList = {
 			}
 		};
 	},
-	3268: class Item { //Enchantment: Distortion		
+	3268: class Item extends _Item { //Enchantment: Distortion
 		id = 3268;
 		static goldCost = 1675;
 		static from = [3111];
@@ -2239,7 +2240,7 @@ const ItemList = {
 			}
 		};
 	},
-	3269: class Item { //Enchantment: Alacrity		
+	3269: class Item extends _Item { //Enchantment: Alacrity
 		id = 3269;
 		static goldCost = 1675;
 		static from = [3111];
@@ -2252,7 +2253,7 @@ const ItemList = {
 			}
 		};
 	},
-	3270: class Item { //Enchantment: Homeguard		
+	3270: class Item extends _Item { //Enchantment: Homeguard
 		id = 3270;
 		static goldCost = 1275;
 		static from = [3117];
@@ -2262,7 +2263,7 @@ const ItemList = {
 			}
 		};
 	},
-	3271: class Item { //Enchantment: Captain		
+	3271: class Item extends _Item { //Enchantment: Captain
 		id = 3271;
 		static goldCost = 1400;
 		static from = [3117];
@@ -2272,7 +2273,7 @@ const ItemList = {
 			}
 		};
 	},
-	3272: class Item { //Enchantment: Furor		
+	3272: class Item extends _Item { //Enchantment: Furor
 		id = 3272;
 		static goldCost = 1275;
 		static from = [3117];
@@ -2282,7 +2283,7 @@ const ItemList = {
 			}
 		};
 	},
-	3273: class Item { //Enchantment: Distortion		
+	3273: class Item extends _Item { //Enchantment: Distortion
 		id = 3273;
 		static goldCost = 1275;
 		static from = [3117];
@@ -2292,7 +2293,7 @@ const ItemList = {
 			}
 		};
 	},
-	3274: class Item { //Enchantment: Alacrity		
+	3274: class Item extends _Item { //Enchantment: Alacrity
 		id = 3274;
 		static goldCost = 1275;
 		static from = [3117];
@@ -2302,7 +2303,7 @@ const ItemList = {
 			}
 		};
 	},
-	3275: class Item { //Enchantment: Homeguard		
+	3275: class Item extends _Item { //Enchantment: Homeguard
 		id = 3275;
 		static goldCost = 1475;
 		static from = [3158];
@@ -2312,7 +2313,7 @@ const ItemList = {
 			}
 		};
 	},
-	3276: class Item { //Enchantment: Captain		
+	3276: class Item extends _Item { //Enchantment: Captain
 		id = 3276;
 		static goldCost = 1600;
 		static from = [3158];
@@ -2322,7 +2323,7 @@ const ItemList = {
 			}
 		};
 	},
-	3277: class Item { //Enchantment: Furor		
+	3277: class Item extends _Item { //Enchantment: Furor
 		id = 3277;
 		static goldCost = 1475;
 		static from = [3158];
@@ -2332,7 +2333,7 @@ const ItemList = {
 			}
 		};
 	},
-	3278: class Item { //Enchantment: Distortion		
+	3278: class Item extends _Item { //Enchantment: Distortion
 		id = 3278;
 		static goldCost = 1475;
 		static from = [3158];
@@ -2342,7 +2343,7 @@ const ItemList = {
 			}
 		};
 	},
-	3279: class Item { //Enchantment: Alacrity		
+	3279: class Item extends _Item { //Enchantment: Alacrity
 		id = 3279;
 		static goldCost = 1475;
 		static from = [3158];
@@ -2352,7 +2353,7 @@ const ItemList = {
 			}
 		};
 	},
-	3280: class Item { //Enchantment: Homeguard		
+	3280: class Item extends _Item { //Enchantment: Homeguard
 		id = 3280;
 		static goldCost = 1475;
 		static from = [3009];
@@ -2362,7 +2363,7 @@ const ItemList = {
 			}
 		};
 	},
-	3281: class Item { //Enchantment: Captain		
+	3281: class Item extends _Item { //Enchantment: Captain
 		id = 3281;
 		static goldCost = 1600;
 		static from = [3009];
@@ -2372,7 +2373,7 @@ const ItemList = {
 			}
 		};
 	},
-	3282: class Item { //Enchantment: Furor		
+	3282: class Item extends _Item { //Enchantment: Furor
 		id = 3282;
 		static goldCost = 1475;
 		static from = [3009];
@@ -2382,7 +2383,7 @@ const ItemList = {
 			}
 		};
 	},
-	3283: class Item { //Enchantment: Distortion		
+	3283: class Item extends _Item { //Enchantment: Distortion
 		id = 3283;
 		static goldCost = 1475;
 		static from = [3009];
@@ -2392,7 +2393,7 @@ const ItemList = {
 			}
 		};
 	},
-	3284: class Item { //Enchantment: Alacrity		
+	3284: class Item extends _Item { //Enchantment: Alacrity
 		id = 3284;
 		static goldCost = 1475;
 		static from = [3009];
@@ -2402,7 +2403,7 @@ const ItemList = {
 			}
 		};
 	},
-	3290: class Item { //Twin Shadows		
+	3290: class Item extends _Item { //Twin Shadows
 		id = 3290;
 		static goldCost = 2400;
 		static from = [3108, 3113];
@@ -2416,11 +2417,11 @@ const ItemList = {
 			}
 		};
 	},
-	3301: class Item { //Ancient Coin		
+	3301: class Item extends _Item { //Ancient Coin
 		id = 3301;
 		static goldCost = 365;
 	},
-	3302: class Item { //Relic Shield		
+	3302: class Item extends _Item { //Relic Shield
 		id = 3302;
 		static goldCost = 365;
 		static stats = {
@@ -2429,7 +2430,7 @@ const ItemList = {
 			}
 		};
 	},
-	3303: class Item { //Spellthief's Edge		
+	3303: class Item extends _Item { //Spellthief's Edge
 		id = 3303;
 		static goldCost = 365;
 		static stats = {
@@ -2438,59 +2439,59 @@ const ItemList = {
 			}
 		};
 	},
-	3340: class Item { //Warding Totem (Trinket)		
+	3340: class Item extends _Item { //Warding Totem (Trinket)
 		id = 3340;
 		static goldCost = 0;
 		static isTrinket = true;
 		active = true;
 	},
-	3341: class Item { //Sweeping Lens (Trinket)		
+	3341: class Item extends _Item { //Sweeping Lens (Trinket)
 		id = 3341;
 		static goldCost = 0;
 		static isTrinket = true;
 		active = true;
 	},
-	3342: class Item { //Scrying Orb (Trinket)		
+	3342: class Item extends _Item { //Scrying Orb (Trinket)
 		id = 3342;
 		static goldCost = 0;
 		static isTrinket = true;
 		active = true;
 	},
-	3345: class Item { //Soul Anchor (Trinket)		
+	3345: class Item extends _Item { //Soul Anchor (Trinket)
 		id = 3345;
 		static goldCost = 0;
 		static isTrinket = true;
 		active = true;
 	},
-	3361: class Item { //Greater Stealth Totem (Trinket)		
+	3361: class Item extends _Item { //Greater Stealth Totem (Trinket)
 		id = 3361;
 		static goldCost = 475;
 		static isTrinket = true;
 		static from = [3340];
 		active = true;
 	},
-	3362: class Item { //Greater Vision Totem (Trinket)		
+	3362: class Item extends _Item { //Greater Vision Totem (Trinket)
 		id = 3362;
 		static goldCost = 475;
 		static isTrinket = true;
 		static from = [3340];
 		active = true;
 	},
-	3363: class Item { //Farsight Orb (Trinket)		
+	3363: class Item extends _Item { //Farsight Orb (Trinket)
 		id = 3363;
 		static goldCost = 475;
 		static isTrinket = true;
 		static from = [3342];
 		active = true;
 	},
-	3364: class Item { //Oracle's Lens (Trinket)		
+	3364: class Item extends _Item { //Oracle's Lens (Trinket)
 		id = 3364;
 		static goldCost = 475;
 		static isTrinket = true;
 		static from = [3341];
 		active = true;
 	},
-	3401: class Item { //Face of the Mountain		
+	3401: class Item extends _Item { //Face of the Mountain
 		id = 3401;
 		static goldCost = 2200;
 		static from = [3097, 3067];
@@ -2500,161 +2501,161 @@ const ItemList = {
 			}
 		};
 	},
-	3405: class Item { //Bonetooth Necklace		
+	3405: class Item extends _Item { //Bonetooth Necklace
 		id = 3405;
 		static goldCost = 0;
 		static isTrinket = true;
 		active = true;
 	},
-	3406: class Item { //Bonetooth Necklace		
+	3406: class Item extends _Item { //Bonetooth Necklace
 		id = 3406;
 		static goldCost = 0;
 		static isTrinket = true;
 		active = true;
 	},
-	3407: class Item { //Bonetooth Necklace		
+	3407: class Item extends _Item { //Bonetooth Necklace
 		id = 3407;
 		static goldCost = 0;
 		static isTrinket = true;
 		active = true;
 	},
-	3408: class Item { //Bonetooth Necklace		
+	3408: class Item extends _Item { //Bonetooth Necklace
 		id = 3408;
 		static goldCost = 0;
 		static isTrinket = true;
 		active = true;
 	},
-	3409: class Item { //Bonetooth Necklace		
+	3409: class Item extends _Item { //Bonetooth Necklace
 		id = 3409;
 		static goldCost = 0;
 		static isTrinket = true;
 		active = true;
 	},
-	3410: class Item { //Head of Kha'Zix		
+	3410: class Item extends _Item { //Head of Kha'Zix
 		id = 3410;
 		static goldCost = 0;
 		static isTrinket = true;
 		static from = [3169];
 		active = true;
 	},
-	3411: class Item { //Bonetooth Necklace		
+	3411: class Item extends _Item { //Bonetooth Necklace
 		id = 3411;
 		static goldCost = 0;
 		static isTrinket = true;
 		active = true;
 	},
-	3412: class Item { //Bonetooth Necklace		
+	3412: class Item extends _Item { //Bonetooth Necklace
 		id = 3412;
 		static goldCost = 0;
 		static isTrinket = true;
 		active = true;
 	},
-	3413: class Item { //Bonetooth Necklace		
+	3413: class Item extends _Item { //Bonetooth Necklace
 		id = 3413;
 		static goldCost = 0;
 		static isTrinket = true;
 		active = true;
 	},
-	3414: class Item { //Bonetooth Necklace		
+	3414: class Item extends _Item { //Bonetooth Necklace
 		id = 3414;
 		static goldCost = 0;
 		static isTrinket = true;
 		active = true;
 	},
-	3415: class Item { //Bonetooth Necklace		
+	3415: class Item extends _Item { //Bonetooth Necklace
 		id = 3415;
 		static goldCost = 0;
 		static isTrinket = true;
 		active = true;
 	},
-	3416: class Item { //Head of Kha'Zix		
+	3416: class Item extends _Item { //Head of Kha'Zix
 		id = 3416;
 		static goldCost = 0;
 		static isTrinket = true;
 		static from = [3169];
 		active = true;
 	},
-	3417: class Item { //Bonetooth Necklace		
+	3417: class Item extends _Item { //Bonetooth Necklace
 		id = 3417;
 		static goldCost = 0;
 		static isTrinket = true;
 		active = true;
 	},
-	3418: class Item { //Bonetooth Necklace		
+	3418: class Item extends _Item { //Bonetooth Necklace
 		id = 3418;
 		static goldCost = 0;
 		static isTrinket = true;
 		active = true;
 	},
-	3419: class Item { //Bonetooth Necklace		
+	3419: class Item extends _Item { //Bonetooth Necklace
 		id = 3419;
 		static goldCost = 0;
 		static isTrinket = true;
 		active = true;
 	},
-	3420: class Item { //Bonetooth Necklace		
+	3420: class Item extends _Item { //Bonetooth Necklace
 		id = 3420;
 		static goldCost = 0;
 		static isTrinket = true;
 		active = true;
 	},
-	3421: class Item { //Bonetooth Necklace		
+	3421: class Item extends _Item { //Bonetooth Necklace
 		id = 3421;
 		static goldCost = 0;
 		static isTrinket = true;
 		active = true;
 	},
-	3422: class Item { //Head of Kha'Zix		
+	3422: class Item extends _Item { //Head of Kha'Zix
 		id = 3422;
 		static goldCost = 0;
 		static isTrinket = true;
 		static from = [3169];
 		active = true;
 	},
-	3450: class Item { //Bonetooth Necklace		
+	3450: class Item extends _Item { //Bonetooth Necklace
 		id = 3450;
 		static goldCost = 0;
 		static isTrinket = true;
 		active = true;
 	},
-	3451: class Item { //Bonetooth Necklace		
+	3451: class Item extends _Item { //Bonetooth Necklace
 		id = 3451;
 		static goldCost = 0;
 		static isTrinket = true;
 		active = true;
 	},
-	3452: class Item { //Bonetooth Necklace		
+	3452: class Item extends _Item { //Bonetooth Necklace
 		id = 3452;
 		static goldCost = 0;
 		static isTrinket = true;
 		active = true;
 	},
-	3453: class Item { //Bonetooth Necklace		
+	3453: class Item extends _Item { //Bonetooth Necklace
 		id = 3453;
 		static goldCost = 0;
 		static isTrinket = true;
 		active = true;
 	},
-	3454: class Item { //Bonetooth Necklace		
+	3454: class Item extends _Item { //Bonetooth Necklace
 		id = 3454;
 		static goldCost = 0;
 		static isTrinket = true;
 		active = true;
 	},
-	3455: class Item { //Head of Kha'Zix		
+	3455: class Item extends _Item { //Head of Kha'Zix
 		id = 3455;
 		static goldCost = 0;
 		static isTrinket = true;
 		static from = [3169];
 		active = true;
 	},
-	3460: class Item { //Golden Transcendence		
+	3460: class Item extends _Item { //Golden Transcendence
 		id = 3460;
 		static goldCost = 0;
 		static isTrinket = true;
 		active = true;
 	},
-	3504: class Item { //Ardent Censer		
+	3504: class Item extends _Item { //Ardent Censer
 		id = 3504;
 		static goldCost = 2100;
 		static from = [3114, 3113];
@@ -2664,7 +2665,7 @@ const ItemList = {
 			}
 		};
 	},
-	3508: class Item { //Essence Reaver		
+	3508: class Item extends _Item { //Essence Reaver
 		id = 3508;
 		static goldCost = 3200;
 		static from = [1053, 1038];
@@ -2677,112 +2678,112 @@ const ItemList = {
 			}
 		};
 	},
-	3599: class Item { //The Black Spear		
+	3599: class Item extends _Item { //The Black Spear
 		id = 3599;
 		static goldCost = 0;
 		active = true;
 	},
-	3706: class Item { //Stalker's Blade		
+	3706: class Item extends _Item { //Stalker's Blade
 		id = 3706;
 		static goldCost = 750;
 		static from = [1039];
 	},
-	3707: class Item { //Enchantment: Warrior		
+	3707: class Item extends _Item { //Enchantment: Warrior
 		id = 3707;
 		static goldCost = 2250;
 		static from = [3706, 3134];
 	},
-	3708: class Item { //Enchantment: Magus		
+	3708: class Item extends _Item { //Enchantment: Magus
 		id = 3708;
 		static goldCost = 2250;
 		static from = [3706, 3108];
 	},
-	3709: class Item { //Enchantment: Juggernaut		
+	3709: class Item extends _Item { //Enchantment: Juggernaut
 		id = 3709;
 		static goldCost = 2250;
 		static from = [3706, 3067, 1028];
 	},
-	3710: class Item { //Enchantment: Devourer		
+	3710: class Item extends _Item { //Enchantment: Devourer
 		id = 3710;
 		static goldCost = 2250;
 		static from = [3706, 1042, 1042];
 	},
-	3711: class Item { //Poacher's Knife		
+	3711: class Item extends _Item { //Poacher's Knife
 		id = 3711;
 		static goldCost = 750;
 		static from = [1039];
 	},
-	3713: class Item { //Ranger's Trailblazer		
+	3713: class Item extends _Item { //Ranger's Trailblazer
 		id = 3713;
 		static goldCost = 750;
 		static from = [1039];
 	},
-	3714: class Item { //Enchantment: Warrior		
+	3714: class Item extends _Item { //Enchantment: Warrior
 		id = 3714;
 		static goldCost = 2250;
 		static from = [3715, 3134];
 	},
-	3715: class Item { //Skirmisher's Sabre		
+	3715: class Item extends _Item { //Skirmisher's Sabre
 		id = 3715;
 		static goldCost = 750;
 		static from = [1039];
 	},
-	3716: class Item { //Enchantment: Magus		
+	3716: class Item extends _Item { //Enchantment: Magus
 		id = 3716;
 		static goldCost = 2250;
 		static from = [3715, 3108];
 	},
-	3717: class Item { //Enchantment: Juggernaut		
+	3717: class Item extends _Item { //Enchantment: Juggernaut
 		id = 3717;
 		static goldCost = 2250;
 		static from = [3715, 3067, 1028];
 	},
-	3718: class Item { //Enchantment: Devourer		
+	3718: class Item extends _Item { //Enchantment: Devourer
 		id = 3718;
 		static goldCost = 2250;
 		static from = [3715, 1042, 1042];
 	},
-	3719: class Item { //Enchantment: Warrior		
+	3719: class Item extends _Item { //Enchantment: Warrior
 		id = 3719;
 		static goldCost = 2250;
 		static from = [3711, 3134];
 	},
-	3720: class Item { //Enchantment: Magus		
+	3720: class Item extends _Item { //Enchantment: Magus
 		id = 3720;
 		static goldCost = 2250;
 		static from = [3711, 3108];
 	},
-	3721: class Item { //Enchantment: Juggernaut		
+	3721: class Item extends _Item { //Enchantment: Juggernaut
 		id = 3721;
 		static goldCost = 2250;
 		static from = [3711, 3067, 1028];
 	},
-	3722: class Item { //Enchantment: Devourer		
+	3722: class Item extends _Item { //Enchantment: Devourer
 		id = 3722;
 		static goldCost = 2250;
 		static from = [3711, 1042, 1042];
 	},
-	3723: class Item { //Enchantment: Warrior		
+	3723: class Item extends _Item { //Enchantment: Warrior
 		id = 3723;
 		static goldCost = 2250;
 		static from = [3713, 3134];
 	},
-	3724: class Item { //Enchantment: Magus		
+	3724: class Item extends _Item { //Enchantment: Magus
 		id = 3724;
 		static goldCost = 2250;
 		static from = [3713, 3108];
 	},
-	3725: class Item { //Enchantment: Juggernaut		
+	3725: class Item extends _Item { //Enchantment: Juggernaut
 		id = 3725;
 		static goldCost = 2250;
 		static from = [3713, 3067, 1028];
 	},
-	3726: class Item { //Enchantment: Devourer		
+	3726: class Item extends _Item { //Enchantment: Devourer
 		id = 3726;
 		static goldCost = 2250;
 		static from = [3713, 1042, 1042];
 	},
-	3800: class Item { //Righteous Glory		
+	3800: class Item extends _Item { //Righteous Glory
 		id = 3800;
 		static goldCost = 2500;
 		static from = [3010, 3801];
@@ -2796,7 +2797,7 @@ const ItemList = {
 			}
 		};
 	},
-	3801: class Item { //Crystalline Bracer		
+	3801: class Item extends _Item { //Crystalline Bracer
 		id = 3801;
 		static goldCost = 600;
 		static from = [1028, 1006];

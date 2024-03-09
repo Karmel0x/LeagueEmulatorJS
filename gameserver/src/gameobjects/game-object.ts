@@ -2,13 +2,15 @@
 import { EventEmitter } from 'node:events';
 import TypedEventEmitter from 'typed-emitter';
 import { Vector2 } from 'three';
-import UnitList from '../app/unit-list';
 import type { StatsGameObjectEvents, StatsGameObjectOptions } from './extensions/stats/game-object';
 import StatsGameObject from './extensions/stats/game-object';
+import GameObjectList from '../app/game-object-list';
 
 
 export type GameObjectEvents = StatsGameObjectEvents & {
 	'initialized': () => void;
+	'cancelOrder': () => void;
+	'destroy': () => void;
 }
 
 export type GameObjectOptions = {
@@ -25,10 +27,22 @@ export type GameObjectOptions = {
  * this class should contain only the most basic values
  */
 export default class GameObject {
+	static initialize(options: GameObjectOptions) {
+		const object = new this(options);
+		object.loader(options);
 
+		GameObjectList.add(object);
+		object.eventEmitter.on('destroy', () => {
+			GameObjectList.remove(object);
+			object.eventEmitter.removeAllListeners();
+		});
+
+		return object;
+	}
+
+	eventEmitter = new EventEmitter() as TypedEventEmitter<GameObjectEvents>;
 	netId = 0;
 	options;
-	eventEmitter = new EventEmitter() as TypedEventEmitter<GameObjectEvents>;
 
 	position = new Vector2(7000, 7000);
 	spawnPosition = new Vector2(7000, 7000);
@@ -49,8 +63,8 @@ export default class GameObject {
 	constructor(options: GameObjectOptions) {
 		this.options = options;
 
-		this.netId = options.netId || ++UnitList.lastNetId;
-		//console.log('new GameObject', this, this.netId, UnitList.lastNetId);
+		this.netId = options.netId || ++GameObjectList.lastNetId;
+		//console.log('new GameObject', this, this.netId, GameObjectList.lastNetId);
 
 		let spawnPosition = options.spawnPosition || options.position;
 		if (spawnPosition)

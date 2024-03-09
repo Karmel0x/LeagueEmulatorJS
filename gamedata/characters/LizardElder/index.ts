@@ -1,8 +1,9 @@
 
 import { SlotId } from '@workspace/gameserver/src/constants/slot-id';
-import _Monster from '@workspace/gameserver/src/game/datamethods/characters/_Monster';
+import _Monster from '@workspace/gameserver/src/game/basedata/characters/monster';
 import package1 from './package';
 import BasicAttack from './spells/BasicAttack';
+import type AttackableUnit from '@workspace/gameserver/src/gameobjects/units/attackable-unit';
 
 
 export default class LizardElder extends _Monster {
@@ -51,11 +52,15 @@ export default class LizardElder extends _Monster {
 		BasicAttack,
 	};
 
-	constructor(parent) {
-		super(parent);
+	get base() {
+		return this.constructor as typeof LizardElder;
+	}
+
+	constructor(owner: AttackableUnit) {
+		super(owner);
 
 		this.createOnSlots({
-			[SlotId.A]: this.constructor.spells.BasicAttack,
+			[SlotId.A]: this.base.spells.BasicAttack,
 		});
 	}
 }

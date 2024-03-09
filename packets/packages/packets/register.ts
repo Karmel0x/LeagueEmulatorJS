@@ -160,7 +160,7 @@ Registry.base.register(packets.World_SendGameNumber, packetIds.World_SendGameNum
 Registry.base.register(packets.World_SendGameNumberC2S, packetIds.World_SendGameNumber, channels.c2s);
 Registry.base.register(packets.SetPARState, packetIds.SetPARState, channels.s2c);
 Registry.base.register(packets.BuffRemoveGroup, packetIds.BuffRemoveGroup, channels.s2c);
-Registry.base.register(packets.Ping_Load_InfoS2CU, packetIds.Ping_Load_InfoS2C, channels.s2cUnreliable);
+Registry.base.register(packets.Ping_Load_InfoS2C, packetIds.Ping_Load_InfoS2C, channels.s2cUnreliable);
 Registry.base.register(packets.ChangeCharacterVoice, packetIds.ChangeCharacterVoice, channels.s2c);
 Registry.base.register(packets.ChangeCharacterData, packetIds.ChangeCharacterData, channels.s2c);
 Registry.base.register(packets.ExitS2C, packetIds.ExitS2C, channels.s2c);

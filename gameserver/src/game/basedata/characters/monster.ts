@@ -1,4 +1,4 @@
-import _Character from './_Character';
+import _Character from './character';
 
 
 export default class _Monster extends _Character {

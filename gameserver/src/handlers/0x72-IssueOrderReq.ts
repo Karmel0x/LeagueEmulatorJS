@@ -16,8 +16,7 @@ export default (player: Player, packet: packets.IssueOrderReqModel) => {
 	//console.log(packet);
 	//console.log('position', packet.position, 'waypoints', packet.movementData.waypoints);
 
-	player.combat.attackTarget = null;
-	player.combat.acquisitionManual = null;
+	player.eventEmitter.emit('cancelOrder');
 	player.combat.autoAttackSoftToggle = false;
 
 	if (packet.orderType == IssueOrderType.moveTo) {

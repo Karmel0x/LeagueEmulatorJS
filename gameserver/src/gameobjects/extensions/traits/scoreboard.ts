@@ -1,9 +1,9 @@
-import Player from '../../units/player';
+import Hero from '../../units/hero';
 
 export default class Scoreboard {
     owner;
 
-    constructor(owner: Player) {
+    constructor(owner: Hero) {
         this.owner = owner;
     }
 

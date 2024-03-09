@@ -5,7 +5,7 @@ import TypedEventEmitter from 'typed-emitter';
 
 export type TargetableEvents = GameObjectEvents & {
 
-}
+};
 
 export interface ITargetable extends GameObject {
     eventEmitter: TypedEventEmitter<TargetableEvents>;

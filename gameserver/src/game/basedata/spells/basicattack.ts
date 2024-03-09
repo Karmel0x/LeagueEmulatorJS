@@ -1,16 +1,16 @@
 
-import _Spell, { SpellOptions } from './_Spell';
+import _Spell, { SpellData, SpellOptions } from './spell';
 import Targetedshot, { TargetedshotOptions } from '../../../gameobjects/missiles/targetedshot';
 import * as packets from '@workspace/packets/packages/packets';
 import { SlotId } from '../../../constants/slot-id';
-import { IAttackable } from '../../../gameobjects/extensions/combat/attackable';
 import * as Measure from '../../../gameobjects/extensions/measure';
+import type GameObject from '../../../gameobjects/game-object';
 
 
 export type BasicAttackOptions = SpellOptions & {
-	owner: IAttackable;
-	windupPercent?: number;
-	attackSlot?: number;
+	//windupPercent?: number;
+	//attackSlot?: number;
+	//missile?: Targetedshot;
 };
 
 export default class _Basicattack extends _Spell {
@@ -31,35 +31,32 @@ export default class _Basicattack extends _Spell {
 	}
 
 	// attacking
-	attackProcess(target) {
+	attackProcess(target: GameObject) {
 		if (!this.owner.isAbleForAttacking())
 			return;
 
-		let basicattack = this.process({}, {
+		let basicattack = this.process({
 			stats: { speed: this.missileSpeed },
 			spawner: this.owner,
 			target,
 		});
 
-		if (this.owner.moving)
-			this.owner.moving.moveClear();
-
 		return basicattack;
 	}
 
-	beginAttackAns(options) {
+	beginAttackAns(missile: Targetedshot) {
 		let targetPosition = {
-			x: options.missile.target.position.x,
-			y: options.missile.target.position.y,
+			x: missile.target.position.x,
+			y: missile.target.position.y,
 			z: 10,
 		};
 
 		const packet1 = packets.Basic_Attack_Pos.create({
 			netId: this.owner.netId,
-			targetNetId: options.missile.target.netId,
+			targetNetId: missile.target.netId,
 			targetPosition: targetPosition,
-			attackSlot: options.attackSlot,
-			missileNextId: options.missile.netId,
+			attackSlot: this.spellSlot,
+			missileNextId: missile.netId,
 			extraTime: 127,
 			position: {
 				x: this.owner.position.x,
@@ -70,19 +67,19 @@ export default class _Basicattack extends _Spell {
 		this.owner.packets.toVision(packet1);
 	}
 
-	nextAttackAns(options) {
+	nextAttackAns(missile: Targetedshot) {
 		let targetPosition = {
-			x: options.missile.target.position.x,
-			y: options.missile.target.position.y,
+			x: missile.target.position.x,
+			y: missile.target.position.y,
 			z: 10,
 		};
 
 		const packet1 = packets.Basic_Attack.create({
 			netId: this.owner.netId,
-			targetNetId: options.missile.target.netId,
+			targetNetId: missile.target.netId,
 			targetPosition: targetPosition,
-			attackSlot: options.attackSlot,
-			missileNextId: options.missile.netId,
+			attackSlot: this.spellSlot,
+			missileNextId: missile.netId,
 			extraTime: 127,
 		});
 
@@ -91,35 +88,37 @@ export default class _Basicattack extends _Spell {
 
 	attackAnsCurrentUnit = 0;//@todo reset it on move?
 
-	attackAns(options) {
-		if (this.attackAnsCurrentUnit != options.missile.target.netId) {
-			this.attackAnsCurrentUnit = options.missile.target.netId;
-			this.beginAttackAns(options);
+	attackAns(missile: Targetedshot) {
+		if (this.attackAnsCurrentUnit != missile.target.netId) {
+			this.attackAnsCurrentUnit = missile.target.netId;
+			this.beginAttackAns(missile);
 		}
 		else
-			this.nextAttackAns(options);
+			this.nextAttackAns(missile);
 	}
 
-	process(options: Partial<BasicAttackOptions> = {}, targetedshotOptions: Partial<TargetedshotOptions> = {}) {
-		options.windupPercent = options.windupPercent || this.windupPercent;
-		let missile = new Targetedshot(targetedshotOptions);
-		missile.loader();
+	process(targetedshotOptions: TargetedshotOptions) {
+		let missile = Targetedshot.initialize(targetedshotOptions);
 
-		this.attackAns({
-			missile,
-			attackSlot: options.attackSlot ?? 64,
-		});
+		this.attackAns(missile);
 		missile.doFire();
+
 		return missile;
 	}
 
-	onCast(spellData) {
+	onCast(spellData: SpellData) {
+		if (!spellData.target)
+			return;
+
 		super.onCast(spellData);
 
-		spellData.missile = this.attackProcess(spellData.target);
+		spellData.spellChain.missile = this.attackProcess(spellData.target);
 	}
 
-	async afterCast(spellData) {
+	async afterCast(spellData: SpellData) {
+		if (!spellData.spellCast)
+			return;
+
 		this.owner.eventEmitter.emit('spellCastingEnd', spellData);
 
 		if (this.isProjectile)

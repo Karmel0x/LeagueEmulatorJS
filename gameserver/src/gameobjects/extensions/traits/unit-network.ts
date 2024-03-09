@@ -3,7 +3,7 @@ import { PacketMessage } from '@workspace/network/packages/packets/packet';
 import Server from '../../../app/server';
 import loadingStages from '../../../constants/loading-stages';
 import Unit from '../../units/unit';
-import PlayerList from '../../../app/player-list';
+import GameObjectList from '../../../app/game-object-list';
 
 
 export default class UnitNetwork {
@@ -31,7 +31,7 @@ export default class UnitNetwork {
 
 
 	sendReconnectPackets() {
-		PlayerList.list.forEach(player => {
+		GameObjectList.players.forEach(player => {
 			player.packets.CreateHero(this);
 			player.packets.AvatarInfo_Server(this);
 		});

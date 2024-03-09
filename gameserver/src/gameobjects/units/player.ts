@@ -1,7 +1,6 @@
 
 import Hero from './hero';
-export { HeroOptions as PlayerOptions } from './hero';
-
+import { HeroOptions } from './hero';
 
 export type SummonerConfig = {
 	id: number;
@@ -28,7 +27,13 @@ export type PlayerConfig = {
 	masteries: [];
 };
 
+export type PlayerOptions = HeroOptions;
 
 export default class Player extends Hero {
+	static initialize(options: PlayerOptions) {
+		return super.initialize(options) as Player;
+	}
+
+	lastChatCommand = '';
 
 }

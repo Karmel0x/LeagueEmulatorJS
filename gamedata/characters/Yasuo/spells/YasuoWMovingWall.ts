@@ -1,9 +1,9 @@
 
-import _Spell from '@workspace/gameserver/src/game/datamethods/spells/_Spell';
+import _Spell, { SpellData } from '@workspace/gameserver/src/game/basedata/spells/spell';
 
 
 export default class YasuoW extends _Spell {
-	onCast(spellData) {
+	onCast(spellData: SpellData) {
 
 	}
 }

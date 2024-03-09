@@ -1,14 +1,13 @@
+import GameObjectList from '../../app/game-object-list';
 import Server from '../../app/server';
-import UnitList from '../../app/unit-list';
-import Team, { TeamId } from '../../gameobjects/extensions/traits/team';
+
 
 async function spawnMinions(count: number) {
 	console.log('Minions spawn - wave', count);
 
-	for (let i = 0; i < 3; i++) {
-		UnitList.barracks[TeamId.order][i].spawnWave();
-		UnitList.barracks[TeamId.chaos][i].spawnWave();
-	}
+	GameObjectList.barracks.forEach(barrack => {
+		barrack.spawnWave();
+	});
 }
 
 async function wait_spawnMinions() {

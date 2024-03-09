@@ -9,7 +9,7 @@ import * as packets from '@workspace/packets/packages/packets';
 import handlers from './handlers';
 import Teams from './game/initializers/teams';
 import Game from './game/initializers/game';
-import PlayerList from './app/player-list';
+import GameObjectList from './app/game-object-list';
 
 function main() {
 	// if using websocket at first run `node tools/packet-inspector` and open your browser at `127.0.0.1`
@@ -52,7 +52,8 @@ function main() {
 			return;
 		}
 
-		let player = PlayerList.list[peerNum];
+		// @todo
+		let player = GameObjectList.playerByPeer[peerNum];
 		if (!player)
 			return;
 

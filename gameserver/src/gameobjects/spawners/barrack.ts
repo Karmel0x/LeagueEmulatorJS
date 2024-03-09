@@ -1,14 +1,12 @@
 
 import * as packets from '@workspace/packets/packages/packets';
-import Minion from '../units/minion';
+import Minion, { MinionOptions } from '../units/minion';
 
-import Team, { TeamId } from '../extensions/traits/team';
+import { TeamId } from '../extensions/traits/team';
 import Server from '../../app/server';
-import UnitList from '../../app/unit-list';
 import Spawner, { SpawnerOptions } from './spawner';
 import { barracks } from '../positions/index';
 import { NetId } from '@workspace/packets/packages/packets/types/player';
-import { Vector2Like } from '@workspace/packets/packages/packets/functions/translate-centered-coordinates';
 
 
 export type BarrackOptions = SpawnerOptions & {
@@ -19,6 +17,9 @@ export type BarrackOptions = SpawnerOptions & {
  * minion spawner
  */
 export default class Barrack extends Spawner {
+	static initialize(options: BarrackOptions) {
+		return super.initialize(options) as Barrack;
+	}
 
 	waveCount = 1;
 	damageBonus = 10;
@@ -29,7 +30,6 @@ export default class Barrack extends Spawner {
 	constructor(options: BarrackOptions) {
 		super(options);
 
-		UnitList.barracks[this.team.id][this.team.num] = this;
 		this.unitNamePrefix = (this.team.id == TeamId.order ? 'Blue' : 'Red') + '_Minion_';
 	}
 
@@ -56,9 +56,14 @@ export default class Barrack extends Spawner {
 	 * Spawn minion at position of this barrack
 	 * character (Basic/MechCannon/MechMelee/Wizard)
 	 */
-	spawnUnit(character: string, options = {}) {
+	spawnUnit(character: string, options: Partial<MinionOptions> & { unitNamePrefix?: string } = {}) {
 		character = (options.unitNamePrefix || this.unitNamePrefix) + character;
-		return Minion.initialize({ spawner: this, character, ...options });
+		return Minion.initialize({
+			spawner: this,
+			team: this.team.id,
+			character,
+			...options,
+		});
 	}
 
 	/**
@@ -94,15 +99,16 @@ export default class Barrack extends Spawner {
 		}
 	}
 
-	static spawnAll(spawnList: { [TEAM: number]: { netId: number, position: Vector2Like }[] } = barracks) {
+	static spawnAll(spawnList = barracks) {
 		for (let team in spawnList) {
 			let teamSpawnList = spawnList[team];
 
 			for (let num in teamSpawnList) {
 				let spawn = teamSpawnList[num];
 
-				new Barrack({
-					team, num,
+				Barrack.initialize({
+					team: Number(team),
+					num: Number(num),
 					netId: spawn.netId,
 					spawnPosition: spawn.position,
 					info: spawn.info,

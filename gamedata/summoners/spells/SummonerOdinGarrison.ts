@@ -1,4 +1,4 @@
-import _Spell from '@workspace/gameserver/src/game/datamethods/spells/_Spell';
+import _Spell, { SpellData } from '@workspace/gameserver/src/game/basedata/spells/spell';
 
 
 export default class SummonerOdinGarrison extends _Spell {
@@ -11,7 +11,7 @@ export default class SummonerOdinGarrison extends _Spell {
 	range = 1250;
 
 
-	onCast(spellData) {
+	onCast(spellData: SpellData) {
 		super.onCast(spellData);
 
 	}

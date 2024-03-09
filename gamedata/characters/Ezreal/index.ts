@@ -1,7 +1,8 @@
 
 import { SlotId } from '@workspace/gameserver/src/constants/slot-id';
-import _Champion from '@workspace/gameserver/src/game/datamethods/characters/_Champion';
+import _Hero from '@workspace/gameserver/src/game/basedata/characters/hero';
 import package1 from './package';
+import type AttackableUnit from '@workspace/gameserver/src/gameobjects/units/attackable-unit';
 
 import EzrealMysticShot from './spells/EzrealMysticShot';
 import EzrealEssenceFlux from './spells/EzrealEssenceFlux';
@@ -11,7 +12,7 @@ import EzrealTrueshotBarrage from './spells/EzrealTrueshotBarrage';
 import EzrealBasicAttack from './spells/EzrealBasicAttack';
 
 
-export default class Ezreal extends _Champion {
+export default class Ezreal extends _Hero {
 	static package = package1;
 
 	static stats = {
@@ -60,16 +61,20 @@ export default class Ezreal extends _Champion {
 		EzrealBasicAttack,
 	};
 
-	constructor(parent) {
-		super(parent);
+	get base() {
+		return this.constructor as typeof Ezreal;
+	}
+
+	constructor(owner: AttackableUnit) {
+		super(owner);
 
 		this.createOnSlots({
-			[SlotId.Q]: this.constructor.spells.EzrealMysticShot,
-			[SlotId.W]: this.constructor.spells.EzrealEssenceFlux,
-			[SlotId.E]: this.constructor.spells.EzrealArcaneShift,
-			[SlotId.R]: this.constructor.spells.EzrealTrueshotBarrage,
+			[SlotId.Q]: this.base.spells.EzrealMysticShot,
+			[SlotId.W]: this.base.spells.EzrealEssenceFlux,
+			[SlotId.E]: this.base.spells.EzrealArcaneShift,
+			[SlotId.R]: this.base.spells.EzrealTrueshotBarrage,
 
-			[SlotId.A]: this.constructor.spells.EzrealBasicAttack,
+			[SlotId.A]: this.base.spells.EzrealBasicAttack,
 		});
 	}
 }

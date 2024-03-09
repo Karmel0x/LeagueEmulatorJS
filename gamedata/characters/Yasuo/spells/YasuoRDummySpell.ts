@@ -1,15 +1,17 @@
 
-import _Spell from '@workspace/gameserver/src/game/datamethods/spells/_Spell';
+import _Spell, { SpellData } from '@workspace/gameserver/src/game/basedata/spells/spell';
 import TempYasuoRMissile from './TempYasuoRMissile';
 import Skillshot from '@workspace/gameserver/src/gameobjects/missiles/skillshot';
 import { SlotId } from '@workspace/gameserver/src/constants/slot-id';
+import { IDefendable } from '@workspace/gameserver/src/gameobjects/extensions/combat/defendable';
+import { SCastInfoModel } from '@workspace/packets/packages/packets/shared/SCastInfo';
 
 
 export default class YasuoRDummySpell extends _Spell {
 
 	spellSlot = SlotId.Qm;
 
-	castInfo = {
+	castInfo: Partial<SCastInfoModel> = {
 		designerCastTime: -1,
 		designerTotalTime: 0.7,
 	};
@@ -18,14 +20,18 @@ export default class YasuoRDummySpell extends _Spell {
 		TempYasuoRMissile,
 	];
 
-	onCast(spellData) {
+	onCast(spellData: SpellData) {
+		if (!spellData.spellCast)
+			return false;
+		if (!spellData.spellChain.anglePosition)
+			return false;
 
 		spellData.spellCast._CastInfo.targets = [{
 			unit: this.owner.netId,
 			hitResult: 1,
 		}];
 
-		let skillshotTargetPosition = spellData.anglePosition.add(this.owner.position);
+		let skillshotTargetPosition = spellData.spellChain.anglePosition.add(this.owner.position);
 
 		let skillshot = Skillshot.create({
 			spawner: this.owner,
@@ -39,27 +45,25 @@ export default class YasuoRDummySpell extends _Spell {
 
 
 		let collidedWith: number[] = [];
-		skillshot.callbacks.collision._ = {
-			options: {
-				range: 90,
-			},
-			function: (target) => {
-				if (skillshot.owner == target || collidedWith.includes(target))
-					return;
+		skillshot.eventEmitter.on('collision', (target) => {
+			if (this.owner == target || collidedWith.includes(target.netId))
+				return;
 
-				collidedWith.push(target);
+			collidedWith.push(target.netId);
 
-				skillshot.owner.combat.attack(target);
+			const defendableTarget = target as IDefendable;
+			if (defendableTarget.combat) {
+				this.owner.combat.attack(defendableTarget);
+
 				//if(target.moving.knockUp)
 				//	target.moving.knockUp({
 				//		duration: 0.75,
 				//		parabolicGravity: 16.5,
 				//		facing: 1,
 				//	});
-			},
-		};
-		this.collidedWith = collidedWith;
+			}
+		});
 
-		spellData.missile = skillshot;
+		spellData.spellChain.missile = skillshot;
 	}
 }

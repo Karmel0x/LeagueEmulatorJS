@@ -1,10 +1,10 @@
-import _Turret from '@workspace/gameserver/src/game/datamethods/characters/_Turret';
+import _Building from '@workspace/gameserver/src/game/basedata/characters/building';
 import package1 from './package';
 
 /**
  * @abstract
  */
-export default class _Turret_Outer extends _Turret {
+export default class _Turret_Outer extends _Building {
 	static package = package1;
 
 	static reward = {

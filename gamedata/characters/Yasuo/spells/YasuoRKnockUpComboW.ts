@@ -1,5 +1,5 @@
 
-import _Spell from '@workspace/gameserver/src/game/datamethods/spells/_Spell';
+import _Spell, { SpellData } from '@workspace/gameserver/src/game/basedata/spells/spell';
 import YasuoRDummySpell from './YasuoRDummySpell';
 import * as Measure from '@workspace/gameserver/src/gameobjects/extensions/measure';
 
@@ -12,9 +12,12 @@ export default class YasuoRKnockUpComboW extends _Spell {
 	];
 
 	collidedWith = [];
-	onCast(spellData) {
+	onCast(spellData: SpellData) {
+		if (!spellData.targetPosition)
+			return;
+
 		super.onCast(spellData);
 
-		spellData.anglePosition = Measure.general.anglePosition(spellData.packet, this.owner);
+		spellData.spellChain.anglePosition = Measure.general.anglePosition(spellData.targetPosition, this.owner);
 	}
 }

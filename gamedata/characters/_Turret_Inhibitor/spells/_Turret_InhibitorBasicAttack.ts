@@ -1,5 +1,5 @@
 
-import _Basicattack from '@workspace/gameserver/src/game/datamethods/spells/_Basicattack';
+import _Basicattack, { BasicAttackOptions } from '@workspace/gameserver/src/game/basedata/spells/basicattack';
 import { SCastInfoModel } from '@workspace/packets/packages/packets/shared/SCastInfo';
 
 
@@ -21,10 +21,11 @@ export default class _Turret_InhibitorBasicAttack extends _Basicattack {
 		designerCastTime: 0.06,
 		designerTotalTime: 0.06,
 	};
-	constructor(options) {
+
+	constructor(options: BasicAttackOptions) {
 		super(options);
 
-		this.castInfo._netId = this.owner.netId;
+		this.castInfo.casterNetId = this.owner.netId;
 	}
 
 }

@@ -3,47 +3,45 @@ import * as packets from '@workspace/packets/packages/packets';
 import { SlotId } from '../../constants/slot-id';
 import Summoners from '@workspace/gamedata/summoners/index';
 
-import Unit, { UnitEvents, UnitOptions } from './unit';
+import AttackableUnit, { AttackableUnitEvents, AttackableUnitOptions } from './attackable-unit';
 import PHero from '../extensions/packets/hero';
-import Spellable, { SpellableEvents } from '../extensions/combat/spellable';
-import Inventory from '../extensions/traits/inventory';
 import Network from '../extensions/traits/unit-network';
 import Scoreboard from '../extensions/traits/scoreboard';
-import MovingUnit, { IMovingUnit, MovingUnitEvents } from '../extensions/traits/moving-unit';
-import PlayerList from '../../app/player-list';
 import { SPlayerInfoModel } from '@workspace/packets/packages/packets/base/s2c/0x54-SynchVersion';
 import { OnEvent, OnEventArguments } from '@workspace/packets/packages/packets/types/on-event';
 import EventEmitter from 'node:events';
 import TypedEventEmitter from 'typed-emitter';
 import type Fountain from '../spawners/fountain';
 import type { SummonerConfig } from './player';
+import Progressable from '../extensions/progress/progressable';
+import _Hero from '../../game/basedata/characters/hero';
 
 
-export type HeroOptions = UnitOptions & {
+export type HeroOptions = AttackableUnitOptions & {
 	summoner: SummonerConfig;
 	spawner: Fountain;
 };
 
-export type HeroEvents = UnitEvents & SpellableEvents & MovingUnitEvents & {
-
+export type HeroEvents = AttackableUnitEvents & {
+	'respawn': () => void;
 }
 
-export default class Hero extends Unit implements IMovingUnit {
+export default class Hero extends AttackableUnit {
+	static clientIds = -1;
+
 	static initialize(options: HeroOptions) {
 		return super.initialize(options) as Hero;
 	}
 
-	static clientIds = -1;
-
 	eventEmitter = new EventEmitter() as TypedEventEmitter<HeroEvents>;
 
+	declare spawner: Fountain;
+	declare character: _Hero;
 	summoner!: SummonerConfig;
 	clientId = -1;
 
 	declare packets: PHero;
-	combat!: Spellable;
-	inventory!: Inventory;
-	moving!: MovingUnit;
+	declare progress: Progressable;
 	network!: Network;
 	scoreboard!: Scoreboard;
 
@@ -59,15 +57,12 @@ export default class Hero extends Unit implements IMovingUnit {
 
 		super.loader(options);
 
-		this.combat = new Spellable(this);
-		this.inventory = new Inventory(this);
-		this.moving = new MovingUnit(this);
+		this.progress = new Progressable(this);
 		this.network = new Network(this);
 		this.scoreboard = new Scoreboard(this);
 
 		this.summonerSpells = new Summoners(this, ['SummonerHeal', 'SummonerFlash']);
 
-		PlayerList.list.push(this);
 		this.initialized();
 	}
 
@@ -78,7 +73,7 @@ export default class Hero extends Unit implements IMovingUnit {
 	/**
 	 * It sends a packet to everyone in the game that the hero has died
 	 */
-	announceDie(source: Unit) {
+	announceDie(source: AttackableUnit) {
 		const packet1 = packets.OnEvent.create({
 			netId: this.netId,
 			eventData: {
@@ -92,10 +87,10 @@ export default class Hero extends Unit implements IMovingUnit {
 		this.packets.toEveryone(packet1);
 	}
 
-	async onDie(source: Unit) {
+	async onDie(source: AttackableUnit) {
 		this.announceDie(source);
 
-		if (!this.died)
+		if (!this.combat.died)
 			return console.log('[weird] died but not died?');
 
 		this.eventEmitter.emit('die', source);

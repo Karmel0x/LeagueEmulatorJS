@@ -3,9 +3,9 @@ import Player from '../gameobjects/units/player';
 import * as packets from '@workspace/packets/packages/packets';
 
 import { Vector2 } from 'three';
-import UnitList from '../app/unit-list';
-import Team, { TeamId } from '../gameobjects/extensions/traits/team';
+import { TeamId } from '../gameobjects/extensions/traits/team';
 import Minion from '../gameobjects/units/minion';
+import GameObjectList from '../app/game-object-list';
 
 
 export default (player: Player, packet: packets.MapPingModel) => {
@@ -18,10 +18,10 @@ export default (player: Player, packet: packets.MapPingModel) => {
 			position: packet.position,
 			targetNetId: packet.targetNetId,
 			sourceNetId: player.netId,
-			pingCategory: packet.pingCategory,
+			category: packet.category,
 			playAudio: true,
 			showChat: true,
-			pingThrottled: false,
+			throttled: false,
 			playVO: true,
 		});
 		player.packets.toTeam(packet1);
@@ -29,7 +29,7 @@ export default (player: Player, packet: packets.MapPingModel) => {
 
 	//test
 	let pos = new Vector2(packet.position.x, packet.position.y);
-	let redMinionUnits = UnitList.getUnitsF(TeamId.chaos, 'Minion') as Minion[];
-	redMinionUnits[0]?.moving.move1(pos);
+	let redMinion = GameObjectList.aliveUnits.find(unit => unit instanceof Minion && unit.team.id == TeamId.chaos) as Minion | undefined;
+	redMinion?.moving.move1(pos);
 
 };

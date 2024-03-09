@@ -33,7 +33,7 @@ export default class MeasureCenterToCenter {
 
 	static getNearest<T extends GameObject>(source: Vector2 | GameObject, targets: T[]) {
 		this.sortByDistance(source, targets);
-		return targets[0] || null;
+		return targets[0] || undefined;
 	}
 
 	static isInRangeFlat(source: Vector2 | GameObject, target: GameObject, range = 0) {
@@ -47,8 +47,7 @@ export default class MeasureCenterToCenter {
 	}
 
 	static filterByRange<T extends GameObject>(source: Vector2 | GameObject, targets: T[], range: number) {
-		let sourcePosition = (source as GameObject).position || source;
-		return targets.filter(target => this.isInRange(sourcePosition, target, range));
+		return targets.filter(target => this.isInRange(source, target, range));
 	}
 
 	static getPositionBetweenRange(source: Vector2 | GameObject, target: Vector2 | GameObject, range: number | { minimum: number; maximum: number; }) {

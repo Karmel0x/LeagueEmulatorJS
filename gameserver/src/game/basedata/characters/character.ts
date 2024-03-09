@@ -1,4 +1,4 @@
-import _Package from '../_Package';
+import _Package from '../package';
 
 
 /**

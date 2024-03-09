@@ -1,13 +1,12 @@
 
 import * as packets from '@workspace/packets/packages/packets';
 import loadingStages from '../../../constants/loading-stages';
-import TranslateCenteredCoordinates from '@workspace/packets/packages/packets/functions/translate-centered-coordinates';
-import UnitList from '../../../app/unit-list';
-import Team, { TeamId } from '../traits/team';
+import { TeamId } from '../traits/team';
 import PUnit from './unit';
 import Hero from '../../units/hero';
 import { DeathState } from '@workspace/packets/packages/packets/base/s2c/0x4C-CreateHero';
 import { sendUnitStats } from '../../../packet-helpers/OnReplication';
+import { PacketMessage } from '@workspace/network/packages/packets/packet';
 
 
 export default class PHero extends PUnit {
@@ -16,6 +15,10 @@ export default class PHero extends PUnit {
 
 	constructor(owner: Hero) {
 		super(owner);
+	}
+
+	toSelf(packet: PacketMessage | undefined, minStage = loadingStages.inGame) {
+		this.owner.network.sendPacket(packet, minStage);
 	}
 
 	OnEnterLocalVisibilityClient() {
@@ -80,6 +83,17 @@ export default class PHero extends PUnit {
 		console.debug(packet1);
 	}
 
+	skillUpgrade_send(slot: number) {
+		const packet1 = packets.UpgradeSpellAns.create({
+			netId: this.owner.netId,
+			slot: slot,
+			level: this.owner.progress.spellLevel[slot],
+			pointsLeft: this.owner.progress.skillPoints,
+		});
+		this.owner.packets.toSelf(packet1);
+		//console.debug(packet1);
+	}
+
 	SetCooldown(slot: number, cooldown = 0) {//return;
 		const packet1 = packets.SetCooldown.create({
 			netId: this.owner.netId,
@@ -93,44 +107,4 @@ export default class PHero extends PUnit {
 		//console.log(packet1);
 	}
 
-	// 497252 = root
-	AddParticleTarget(packageHash: number, effectNameHash: number, boneNameHash = 497252, target = undefined) {
-
-		let ownerPositionCC = TranslateCenteredCoordinates.to([this.owner.position])[0];
-		let targetPositionCC = target ? TranslateCenteredCoordinates.to([target.position])[0] : ownerPositionCC;
-		targetPositionCC.z = 0;// don't know if it's necessary to set z
-		ownerPositionCC.z = 50;
-
-		const packet1 = packets.FX_Create_Group.create({
-			netId: 0,//this.netId;
-			groupData: [{
-				packageHash: packageHash,
-				effectNameHash: effectNameHash,
-				flags: 32,
-				targetBoneNameHash: 0,
-				boneNameHash: boneNameHash,
-				createData: [{
-					targetNetId: target?.netId || 0,//this.netId,
-					netAssignedNetId: ++UnitList.lastNetId,//?
-					casterNetId: 0,//this.netId,
-					bindNetId: this.owner.netId,
-					keywordNetId: 0,//this.netId,
-					timeSpent: 0,
-					scriptScale: 1,
-					position: ownerPositionCC,
-					ownerPosition: ownerPositionCC,
-					targetPosition: targetPositionCC,
-					orientationVector: {
-						x: 0,
-						y: 0,
-						z: 0,
-					},
-				}],
-			}],
-		});
-
-		this.owner.packets.toVision(packet1);
-		//console.log(packet1);
-		//console.log(packet1.FXCreateGroupData[0].FXCreateData);
-	}
 }

@@ -1,9 +1,10 @@
-import _Spell from '@workspace/gameserver/src/game/datamethods/spells/_Spell';
+import _Spell, { SpellData } from '@workspace/gameserver/src/game/basedata/spells/spell';
+import _Buff from '@workspace/gameserver/src/game/basedata/spells/buff';
 import { sendUnitStats } from '@workspace/gameserver/src/packet-helpers/OnReplication';
 import { BuffType } from '@workspace/packets/packages/packets/base/s2c/0x68-BuffAddGroup';
 
 
-export default class SummonerHeal extends _Spell {
+export default class SummonerHeal extends _Buff {
 	summonerSpellKey = 7;
 	summonerSpellName = 'Heal';
 	spellHash = 56930076;
@@ -11,6 +12,7 @@ export default class SummonerHeal extends _Spell {
 	cooldown = 0;//300;
 	cost = 0;
 	range = 850;
+	canMoveWhenCast = true;
 
 	effect = {
 		heal: 75,
@@ -21,11 +23,16 @@ export default class SummonerHeal extends _Spell {
 		duration: 5,
 	};
 
-	onCast(spellData) {
+	onCast(spellData: SpellData) {
 		super.onCast(spellData);
 
 		const source = this.owner;
-		source.combat.heal((this.effect.heal + (source.progress.level * this.effect.healPerLevel)) / (1 + source.buffs.hasBuff(this)));
+
+		let healAmount = this.effect.heal + (source.progress.level * this.effect.healPerLevel);
+		if (source.buffs.hasBuff(this))
+			healAmount *= 0.5;
+
+		source.combat.heal(healAmount);
 		source.buffs.addBuffC(this);
 	}
 	buffActivate() {

@@ -1,19 +1,21 @@
 
 import * as packets from '@workspace/packets/packages/packets';
 import Server from '../../app/server';
-import UnitList from '../../app/unit-list';
 import loadingStages from '../../constants/loading-stages';
-import Team, { TeamId } from '../../gameobjects/extensions/traits/team';
+import { TeamId } from '../../gameobjects/extensions/traits/team';
 import Player from '../../gameobjects/units/player';
 import Unit from '../../gameobjects/units/unit';
 import { PacketMessage } from '@workspace/network/packages/packets/packet';
+import GameObjectList from '../../app/game-object-list';
+import AttackableUnit from '../../gameobjects/units/attackable-unit';
+import { MovementDataType } from '@workspace/packets/packages/packets/base/s2c/0xBA-OnEnterVisibilityClient';
 
 
 export default class Teams {
-	team;
+	id;
 
-	constructor(team: TeamId) {
-		this.team = team;
+	constructor(id: TeamId) {
+		this.id = id;
 	}
 
 	static createAll() {
@@ -47,9 +49,12 @@ export default class Teams {
 			return;
 
 		let players = [];
-		let teamPlayerUnits = UnitList.getUnitsF(this.team, 'Player') as Player[];
-		for (let i = 0, l = teamPlayerUnits.length; i < l; i++) {
-			let player = teamPlayerUnits[i];
+		let currentTeamPlayers = GameObjectList.players;
+		if (this.id !== TeamId.max)
+			currentTeamPlayers = currentTeamPlayers.filter(p => p.team.id == this.id);
+
+		for (let i = 0, l = currentTeamPlayers.length; i < l; i++) {
+			let player = currentTeamPlayers[i];
 
 			if (!player.network)
 				continue;
@@ -78,9 +83,9 @@ export default class Teams {
 			},
 			lookAtPosition: { x: 1, y: 0, z: 0 },
 			characterStackData: [{
-				skinName: unit.character.model,
+				skinName: unit.character?.model,
 			}],
-			movementData: unit.moving?.movementData,
+			movementData: (unit as AttackableUnit).moving?.movementData,
 		});
 		this.sendPacket(packet1);
 		//console.log(packet1);
@@ -99,10 +104,10 @@ export default class Teams {
 
 		//console.log('vision', target);
 		if (enters) {
-			console.debug('enters vision', this.team, target.constructor.name, target.netId);
+			console.debug('enters vision', this.id, target.constructor.name, target.netId);
 			this.showUnit(target);
 		} else {
-			console.debug('leaves vision', this.team, target.constructor.name, target.netId);
+			console.debug('leaves vision', this.id, target.constructor.name, target.netId);
 			this.hideUnit(target);
 		}
 

@@ -36,8 +36,8 @@ export default class TeamRosterUpdate extends PrimaryPacket {
 		dvr.writeUint32(payload.maxOrder);
 		dvr.writeUint32(payload.maxChaos);
 
-		dvr.writeArray(payload.teamOrderPlayerIds, v => dvr.writeInt64(v || -1), 24);
-		dvr.writeArray(payload.teamChaosPlayerIds, v => dvr.writeInt64(v || -1), 24);
+		dvr.writeArray(payload.teamOrderPlayerIds, v => dvr.writeInt64(v), 24);
+		dvr.writeArray(payload.teamChaosPlayerIds, v => dvr.writeInt64(v), 24);
 
 		dvr.writeUint32(payload.teamOrderPlayerIds.length);
 		dvr.writeUint32(payload.teamChaosPlayerIds.length);

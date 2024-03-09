@@ -1,7 +1,7 @@
 
 import * as packets from '@workspace/packets/packages/packets';
 import Server from '../../../app/server';
-import Team, { TeamId } from '../traits/team';
+import { TeamId } from '../traits/team';
 import { DamageResultType, DamageType } from '@workspace/packets/packages/packets/base/s2c/0x65-UnitApplyDamage';
 import Unit, { UnitEvents } from '../../units/unit';
 import TypedEventEmitter from 'typed-emitter';
@@ -10,12 +10,13 @@ import Targetable from './targetable';
 
 
 export type DefendableEvents = UnitEvents & {
-
-}
+	'die': (source: IAttackable) => void;
+};
 
 export interface IDefendable extends Unit {
 	eventEmitter: TypedEventEmitter<DefendableEvents>;
 	combat: Defendable;
+	onDie(source: IAttackable): void;
 }
 
 /**
@@ -23,10 +24,18 @@ export interface IDefendable extends Unit {
  */
 export default class Defendable extends Targetable {
 	declare owner: IDefendable;
+	respawnable = false;
 
-	constructor(owner: IDefendable) {
+	constructor(owner: IDefendable, respawnable = false) {
 		super(owner);
+		this.respawnable = respawnable;
 
+		this.owner.eventEmitter.on('die', (source) => {
+			this.owner.onDie(source);
+
+			if (!this.respawnable)
+				this.owner.eventEmitter.emit('destroy');
+		});
 	}
 
 	UnitApplyDamage(source: IAttackable, damage: { resultType?: number; type?: number; amount?: number; }) {
@@ -74,7 +83,6 @@ export default class Defendable extends Targetable {
 		this.died = Date.now() / 1000;
 		this.owner.onDie(source);
 		Server.teams[TeamId.max].vision(this.owner, false);
-		this.owner.destructor();
 	}
 
 	died = 0;

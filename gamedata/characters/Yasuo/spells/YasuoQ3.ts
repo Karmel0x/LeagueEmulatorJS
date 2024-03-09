@@ -1,41 +1,44 @@
 
 import { SlotId } from '@workspace/gameserver/src/constants/slot-id';
 import Skillshot from '@workspace/gameserver/src/gameobjects/missiles/skillshot';
-import _Spell from '@workspace/gameserver/src/game/datamethods/spells/_Spell';
+import _Spell, { SpellData } from '@workspace/gameserver/src/game/basedata/spells/spell';
 import package1 from '../package';
 import YasuoQ3Mis from './YasuoQ3Mis';
-import { IDefendable } from '@workspace/gameserver/src/gameobjects/extensions/combat/defendable';
-import { IMovingUnit } from '@workspace/gameserver/src/gameobjects/extensions/traits/moving-unit';
+import AttackableUnit from '@workspace/gameserver/src/gameobjects/units/attackable-unit';
+import Missile from '@workspace/gameserver/src/gameobjects/missiles/missile';
+import { SCastInfoModel } from '@workspace/packets/packages/packets/shared/SCastInfo';
 
 
 export default class YasuoQ3 extends _Spell {
-	packageHash = package1.packageHash;
-	spellSlot = SlotId.Qq;
-	windup = 0;
-
-	castInfo = {
-		designerCastTime: 0.35,
-		designerTotalTime: 0.5,
-		bitfield: {
-			isOverrideCastPosition: true,
-		},
-
-		// facing is not working without these two ??
-		spellSlot: 0,
-		target: [],
-		//spellSlot: 46,// <- original packet
-		//target: [{ unit: this.owner.netId, hitResult: 0 }],// <- original packet
-
-	};
 
 	static childSpellList = [
 		YasuoQ3Mis,
 	];
 
-	onCast(spellData) {
+	packageHash = package1.packageHash;
+	spellSlot = SlotId.Qq;
+	windup = 0;
+
+	castInfo: Partial<SCastInfoModel> = {
+		designerCastTime: 0.35,
+		designerTotalTime: 0.5,
+		isOverrideCastPosition: true,
+
+		// facing is not working without these two ??
+		spellSlot: 0,
+		targets: [],
+		//spellSlot: 46,// <- original packet
+		//targets: [{ unit: this.owner.netId, hitResult: 0 }],// <- original packet
+
+	};
+
+	onCast(spellData: SpellData) {
+		if (!spellData.spellChain.anglePosition)
+			return;
+
 		super.onCast(spellData);
 
-		let skillshotTargetPosition = spellData.anglePosition.add(this.owner.position);
+		let skillshotTargetPosition = spellData.spellChain.anglePosition.add(this.owner.position);
 
 		let skillshot = Skillshot.create({
 			spawner: this.owner,
@@ -48,26 +51,31 @@ export default class YasuoQ3 extends _Spell {
 		});
 
 		let collidedWith: number[] = [];
-		skillshot.callbacks.collision._ = {
-			options: {
-				range: 90,
-			},
-			function: (target: IDefendable) => {
-				if (skillshot.owner == target || collidedWith.includes(target.netId))
-					return;
+		skillshot.eventEmitter.on('collision', (target) => {
+			if (!(target instanceof AttackableUnit))
+				return;
 
-				collidedWith.push(target.netId);
+			if (!target.combat)
+				return;
 
-				skillshot.owner.combat.attack(target);
-				if ((target as unknown as IMovingUnit).moving)
-					(target as unknown as IMovingUnit).moving.knockUp({
+			if (this.owner == target || collidedWith.includes(target.netId))
+				return;
+
+			collidedWith.push(target.netId);
+
+			if (this.owner.combat) {
+				this.owner.combat.attack(target);
+
+				if (target.moving) {
+					target.moving.knockUp({
 						duration: 0.75,
 						parabolicGravity: 16.5,
-						facing: 1,
+						facing: true,
 					});
-			},
-		};
-		spellData.missile = skillshot;
+				}
+			}
+		});
 
+		spellData.spellChain.missile = skillshot;
 	}
 }

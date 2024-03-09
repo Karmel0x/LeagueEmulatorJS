@@ -1,22 +1,23 @@
 
 import * as packets from '@workspace/packets/packages/packets';
 import { SlotId } from '../../../constants/slot-id';
-import UnitList from '../../../app/unit-list';
-import Defendable, { DefendableEvents, IDefendable } from './defendable';
+import { IDefendable } from './defendable';
 import Filters from '../filters/index';
-
-import Unit, { UnitEvents } from '../../units/unit';
 import { NetId } from '@workspace/packets/packages/packets/types/player';
 import { LookAtType } from '@workspace/packets/packages/packets/base/s2c/0x010F-UnitSetLookAt';
 import TypedEventEmitter from 'typed-emitter';
 import * as Measure from '../measure';
+import { IMovingUnit } from '../moving/unit';
+import Spellable, { ISpellable, SpellableEvents } from './spellable';
+import GameObjectList from '../../../app/game-object-list';
+import AttackableUnit from '../../units/attackable-unit';
 
-export type AttackableEvents = DefendableEvents & {
+export type AttackableEvents = SpellableEvents & {
 	'noTargetsInRange': () => void;
 	'afterBasicAttack': () => void;
-}
+};
 
-export interface IAttackable extends IDefendable {
+export interface IAttackable extends ISpellable {
 	eventEmitter: TypedEventEmitter<AttackableEvents>;
 	combat: Attackable;
 }
@@ -25,20 +26,24 @@ export interface IAttackable extends IDefendable {
  * Trait for units that can attack
  * @depends IStatOwner, ISpellable
  */
-export default class Attackable extends Defendable {
+export default class Attackable extends Spellable {
 	declare owner: IAttackable;
 
-	constructor(owner: IAttackable) {
-		super(owner);
+	constructor(owner: IAttackable, respawnable = false) {
+		super(owner, respawnable);
 
-		this.owner.eventEmitter.on('respawn', () => {
+		this.owner.eventEmitter.on('spawn', () => {
 			this.autoAttackLoop();
+		});
+
+		this.owner.eventEmitter.on('cancelOrder', () => {
+			this.attackTarget = undefined;
+			this.acquisitionManual = undefined;
 		});
 	}
 
 	castAttack(packet: packets.IssueOrderReqModel) {
 		//let slot = packet.slot;
-		//
 		//if (slot < SlotId.A || slot > SlotId.A9)
 		//	return;
 
@@ -54,7 +59,7 @@ export default class Attackable extends Defendable {
 		if (!target.combat)
 			return console.log('unit cannot be damaged', target.netId, target.constructor.name);
 
-		//if(this.owner.team.id === target.team.team.id)
+		//if(this.owner.team.id == target.team.team.id)
 		//	return;
 
 		console.log('BattleUnit.attack', this.owner.netId, target.netId);
@@ -70,21 +75,28 @@ export default class Attackable extends Defendable {
 		if (!targetNetId)
 			return console.log('unit does not exist', targetNetId);
 
-		let target = UnitList.unitsNetId[targetNetId] as IDefendable;
+		let target = GameObjectList.objectByNetId[targetNetId];
+		if (!target)
+			return console.log('unit does not exist', targetNetId);
+
+		if (!(target instanceof AttackableUnit))
+			return console.log('unit cannot be damaged', target.netId, target.constructor.name);
+
 		return this.attack(target);
 	}
 
-	attackTarget: Unit | null = null;
+	attackTarget?: AttackableUnit = undefined;
 	autoAttackToggle = true;
 	autoAttackSoftToggle = true;
 
-	_acquisitionManual: Unit | null = null;
-	get acquisitionManual() {
+	_acquisitionManual?: AttackableUnit = undefined;
+	get acquisitionManual(): AttackableUnit | undefined {
 		return this._acquisitionManual;
 	}
-	set acquisitionManual(target) {
-		if (target && typeof target != 'object')
-			target = UnitList.getUnitByNetId(target);
+	set acquisitionManual(target: AttackableUnit | NetId | undefined) {
+		if (typeof target == 'number') {
+			target = GameObjectList.unitByNetId(target);
+		}
 
 		this._acquisitionManual = target;
 	}
@@ -93,11 +105,11 @@ export default class Attackable extends Defendable {
 	 * Get current target if in attackRange
 	 */
 	getCurrentAttackTargetIfInAcquisitionRange() {
-		if (!this.attackTarget || !this.attackTarget.canBeAttacked())
-			return null;
+		if (!this.attackTarget || !this.attackTarget.combat.canBeAttacked())
+			return undefined;
 
 		if (!Measure.edgeToEdge.isInRange(this.owner, this.attackTarget, this.owner.stats.attackRange.total || 400))
-			return null;
+			return undefined;
 
 		return this.attackTarget;
 	}
@@ -107,10 +119,12 @@ export default class Attackable extends Defendable {
 	/**
 	 * Find new target in range, sort by type and distance
 	 */
-	getNewAttackTarget(): Unit | null {
-		let unitsInRange = Measure.edgeToEdge.filterByRange(this.owner, this.owner.getEnemyUnits(), this.owner.stats.attackRange.total || 400);
+	getNewAttackTarget() {
+		const ownerTeamId = this.owner.team.id;
+		const enemyUnits = GameObjectList.aliveUnits.filter(unit => unit.team.id !== ownerTeamId);
+		let unitsInRange = Measure.edgeToEdge.filterByRange(this.owner, enemyUnits, this.owner.stats.attackRange.total || 400);
 		if (!unitsInRange.length)
-			return null;
+			return undefined;
 
 		Measure.centerToCenter.sortByDistance(this.owner, unitsInRange);
 		unitsInRange = Filters.filterByTypeName(unitsInRange, this.attackTargetUnitTypesOrder);
@@ -121,10 +135,16 @@ export default class Attackable extends Defendable {
 	shouldAutoAttackNow() {
 		if (!this.autoAttackToggle)
 			return false;
-		if (!this.autoAttackSoftToggle && this.owner.moving?.waypoints?.length)
-			return false;
-		if (this.owner.callbacks.move?.dash)//@todo
-			return false;
+
+		const movableOwner = this.owner as IAttackable & Partial<IMovingUnit>;
+		if (movableOwner.moving) {
+			if (!this.autoAttackSoftToggle && movableOwner.moving.waypoints?.length)
+				return false;
+
+			if (movableOwner.moving.waypointsForced?.length)//@todo
+				return false;
+		}
+
 		return true;
 	}
 
@@ -133,7 +153,7 @@ export default class Attackable extends Defendable {
 	 */
 	findTargetInAcquisitionRange() {
 		if (!this.shouldAutoAttackNow())
-			return null;
+			return undefined;
 
 		let target = this.getCurrentAttackTargetIfInAcquisitionRange();
 		if (target)
@@ -143,13 +163,13 @@ export default class Attackable extends Defendable {
 		if (target)
 			return target;
 
-		return null;
+		return undefined;
 	}
 
 	/**
 	 * Set attackTarget to attack
 	 */
-	setAttackTarget(target: Unit) {
+	setAttackTarget(target: AttackableUnit) {
 		if (this.attackTarget === target)
 			return;
 
@@ -172,13 +192,14 @@ export default class Attackable extends Defendable {
 	//	this.packets.toEveryone(packet1, loadingStages.notConnected);
 	//}
 
-	canFollowTarget(target) {
-		// todo: checks if target is visible, didn't died, ...
-		return true;
-	}
+	//canFollowTarget(target: Unit) {
+	//	// todo: checks if target is visible, didn't died, ...
+	//	return true;
+	//}
+
 	getTargetInAcquisitionManual() {
 		if (!this.acquisitionManual)
-			return null;
+			return undefined;
 
 		return this.acquisitionManual;
 	}
@@ -189,9 +210,9 @@ export default class Attackable extends Defendable {
 	 */
 	async attackInRange() {
 		let target = this.getTargetInAcquisitionManual();
-		if (!target) {
+		if (!target || target.combat.died) {
 			target = this.findTargetInAcquisitionRange();
-			if (!target) {
+			if (!target || target.combat.died) {
 				if (!this.emitted_noTargetsInRange) {
 					this.emitted_noTargetsInRange = true;
 					this.owner.eventEmitter.emit('noTargetsInRange');
@@ -200,6 +221,9 @@ export default class Attackable extends Defendable {
 			}
 		}
 		this.emitted_noTargetsInRange = false;
+
+		//if (this.attackTarget === target)
+		//	return;
 
 		this.setAttackTarget(target);
 		let casted = await this.owner.slots[SlotId.A].cast({ target });
@@ -233,7 +257,7 @@ export default class Attackable extends Defendable {
 
 	async autoAttackLoop() {
 		if (!this.owner.slots[SlotId.A])
-			return console.log('unit is Attackable but has no basic attacks', this.owner.name);
+			return;
 
 		while (!this.died) {
 			await this.attackInRange();

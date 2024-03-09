@@ -1,4 +1,4 @@
-import _Spell from '@workspace/gameserver/src/game/datamethods/spells/_Spell';
+import _Spell, { SpellData } from '@workspace/gameserver/src/game/basedata/spells/spell';
 
 
 export default class SummonerMana extends _Spell {
@@ -10,7 +10,7 @@ export default class SummonerMana extends _Spell {
 	cost = 0;
 
 
-	onCast(spellData) {
+	onCast(spellData: SpellData) {
 		super.onCast(spellData);
 
 	}

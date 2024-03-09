@@ -1,17 +1,18 @@
 
 import * as packets from '@workspace/packets/packages/packets';
 import { SlotId } from '../../../constants/slot-id';
-import Attackable, { AttackableEvents, IAttackable } from './attackable';
 import TypedEventEmitter from 'typed-emitter';
+import Defendable, { DefendableEvents, IDefendable } from './defendable';
+import { SpellData } from '../../../game/basedata/spells/spell';
 
 
-export type SpellableEvents = AttackableEvents & {
+export type SpellableEvents = DefendableEvents & {
 	'cancelSpell': () => void;
-	'spellCasting': (spellData: packets.CastSpellReqModel) => void;
-	'spellCastingEnd': (spellData: packets.CastSpellReqModel) => void;
-}
+	'spellCasting': (spellData: SpellData) => void;
+	'spellCastingEnd': (spellData: SpellData) => void;
+};
 
-export interface ISpellable extends IAttackable {
+export interface ISpellable extends IDefendable {
 	eventEmitter: TypedEventEmitter<SpellableEvents>;
 	combat: Spellable;
 }
@@ -19,30 +20,26 @@ export interface ISpellable extends IAttackable {
 /**
  * Trait for units that can use spells
  */
-export default class Spellable extends Attackable {
+export default class Spellable extends Defendable {
 	declare owner: ISpellable;
 
 	castingSpell = false;
 
-	constructor(owner: ISpellable) {
-		super(owner);
+	constructor(owner: ISpellable, respawnable = false) {
+		super(owner, respawnable);
 
-		this.owner.eventEmitter.on('setWaypoints', () => {
+		this.owner.eventEmitter.on('cancelOrder', () => {
 			this.owner.eventEmitter.emit('cancelSpell');
 		});
 
 		this.owner.eventEmitter.on('spellCasting', (spellData) => {
 			console.log('spellCasting');
 			this.castingSpell = true;
-			if (!spellData.movingSpell)
-				this.waypointsHalt = true;
 		});
 
 		this.owner.eventEmitter.on('spellCastingEnd', (spellData) => {
 			console.log('spellCastingEnd');
 			this.castingSpell = false;
-			if (!spellData.movingSpell)
-				this.waypointsHalt = false;
 		});
 	}
 

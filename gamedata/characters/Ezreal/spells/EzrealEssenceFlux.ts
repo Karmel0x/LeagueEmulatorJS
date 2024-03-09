@@ -2,10 +2,13 @@
 import { SlotId } from '@workspace/gameserver/src/constants/slot-id';
 import HashString from '@workspace/packets/packages/packets/functions/hash-string';
 import Skillshot from '@workspace/gameserver/src/gameobjects/missiles/skillshot';
-import _Spell from '@workspace/gameserver/src/game/datamethods/spells/_Spell';
+import _Spell, { SpellData } from '@workspace/gameserver/src/game/basedata/spells/spell';
 import * as Measure from '@workspace/gameserver/src/gameobjects/extensions/measure';
 import package1 from '../package';
 import EzrealEssenceFluxMissile from './EzrealEssenceFluxMissile';
+import { IDefendable } from '@workspace/gameserver/src/gameobjects/extensions/combat/defendable';
+import AttackableUnit from '@workspace/gameserver/src/gameobjects/units/attackable-unit';
+import { SCastInfoModel } from '@workspace/packets/packages/packets/shared/SCastInfo';
 
 
 class _Particle {
@@ -15,16 +18,17 @@ class _Particle {
 
 class ezreal_bow_yellow extends _Particle {
 	// todo
+	//owner: AttackableUnit;
+	//packageHash = package1.packageHash;
+	//particleHash = HashString.HashString(this.constructor.name + '.troy');
+	//boneHash = HashString.HashString('L_HAND');
+	//
+	//onCast(spellData: SpellData) {
+	//
+	//	this.owner.packets.AddParticleTarget(this.packageHash, this.particleHash, this.boneHash);
+	//}
 
-	packageHash = package1.packageHash;
-	particleHash = HashString.HashString(this.constructor.name + '.troy');
-	boneHash = HashString.HashString('L_HAND');
-
-	onCast(spellData) {
-
-		this.owner.packets.AddParticleTarget(this.packageHash, this.particleHash, this.boneHash);
-	}
-	static tempOnCast(spellData, owner) {
+	static tempOnCast(spellData: SpellData, owner: AttackableUnit) {
 		let particleHash = HashString.HashString(this.constructor.name + '.troy');
 		let boneHash = HashString.HashString('L_HAND');
 
@@ -36,8 +40,8 @@ export default class EzrealEssenceFlux extends _Spell {
 	packageHash = package1.packageHash;
 	spellSlot = SlotId.W;
 
-	castInfo = {
-		target: [],
+	castInfo: Partial<SCastInfoModel> = {
+		targets: [],
 		designerCastTime: 0.25,
 		designerTotalTime: 1,
 	};
@@ -46,12 +50,15 @@ export default class EzrealEssenceFlux extends _Spell {
 		EzrealEssenceFluxMissile,
 	];
 
-	preCast(spellData) {
-		spellData.maxRangePosition = Measure.centerToCenter.getPositionBetweenRange(this.owner, spellData.packet, this.castRange);
+	async preCast(spellData: SpellData) {
+		if (!spellData.targetPosition)
+			throw new Error('No target position');
+
+		const maxRangePosition = Measure.centerToCenter.getPositionBetweenRange(this.owner, spellData.targetPosition, this.castRange);
 
 		let skillshot = Skillshot.create({
 			spawner: this.owner,
-			targetPosition: spellData.maxRangePosition,
+			targetPosition: maxRangePosition,
 			stats: {
 				radius: 80,
 				range: 1000,
@@ -60,24 +67,22 @@ export default class EzrealEssenceFlux extends _Spell {
 		});
 
 		let collidedWith: number[] = [];
-		skillshot.callbacks.collision._ = {
-			options: {
-				range: 80,
-			},
-			function: (target) => {
-				if (skillshot.owner == target || collidedWith.includes(target.netId))
-					return;
+		skillshot.eventEmitter.on('collision', (target) => {
+			if (this.owner == target || collidedWith.includes(target.netId))
+				return;
 
-				collidedWith.push(target.netId);
+			collidedWith.push(target.netId);
 
-				skillshot.owner.combat.attack(target);
-			},
-		};
+			const defendableTarget = target as IDefendable;
+			if (defendableTarget.combat) {
+				this.owner.combat.attack(defendableTarget);
+			}
+		});
 
-		spellData.missile = skillshot;
-		return super.preCast(spellData);
+		spellData.spellChain.missile = skillshot;
+		return await super.preCast(spellData);
 	}
-	onCast(spellData) {
+	onCast(spellData: SpellData) {
 		super.onCast(spellData);
 		ezreal_bow_yellow.tempOnCast(spellData, this.owner);
 

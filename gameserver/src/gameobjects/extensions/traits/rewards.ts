@@ -11,7 +11,11 @@ export default class Rewards {
 		this.owner = owner;
 	}
 
-	get rewardExp() { }
-	get rewardGold() { }
+	get rewardExp() {
+		return 0;
+	}
+	get rewardGold() {
+		return 0;
+	}
 
 }

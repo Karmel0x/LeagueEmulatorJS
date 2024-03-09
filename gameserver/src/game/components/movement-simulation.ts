@@ -1,11 +1,8 @@
-import { Vector2 } from 'three';
-import UnitList from '../../app/unit-list';
 import Server from '../../app/server';
-import Unit from '../../gameobjects/units/unit';
-import { IMovingUnit, MovingUnitEvents } from '../../gameobjects/extensions/traits/moving-unit';
-import TypedEventEmitter from 'typed-emitter';
-import { IMovingObject } from '../../gameobjects/extensions/traits/moving-object';
+import { IMovingGameObject } from '../../gameobjects/extensions/moving/game-object';
 import { TeamId } from '../../gameobjects/extensions/traits/team';
+import GameObjectList from '../../app/game-object-list';
+import type AttackableUnit from '../../gameobjects/units/attackable-unit';
 
 // https://leagueoflegends.fandom.com/wiki/Sight#Sight_Ranges
 const defaultVisionRange = 1350;
@@ -17,21 +14,23 @@ const defaultVisionRange = 1350;
  */
 export default class MovementSimulation {
 
+	static moveInterval = 20;//lower this?
+
 	//Map = new Vector2(14000, 14000);
 
-	lastSeenUnitsByTeam: { [n: number]: Unit[]; } = {};
+	lastSeenUnitsByTeam: { [n: number]: AttackableUnit[]; } = {};
 
 	/**
 	 * Checks if unit is visible for enemy and broadcasting it
 	 * @todo only process units that moved ?
 	 */
 	visionProcess() {
-		let seenUnitsByTeam: { [n: number]: Unit[]; } = {};
-		UnitList.units.forEach(unit => {
+		let seenUnitsByTeam: { [n: number]: AttackableUnit[]; } = {};
+		GameObjectList.aliveUnits.forEach(unit => {
 			if (unit.team.id == TeamId.neutral)
 				return;
 
-			if (unit.died)
+			if (unit.combat.died)
 				return;
 
 			let unitTeamId = unit.team.id;
@@ -40,11 +39,11 @@ export default class MovementSimulation {
 
 			seenUnitsByTeam[unitTeamId] = seenUnitsByTeam[unitTeamId] || [];
 
-			UnitList.units.forEach(unit2 => {
+			GameObjectList.aliveUnits.forEach(unit2 => {
 				if (unitTeamId == unit2.team.id)
 					return;
 
-				if (unit2.died)
+				if (unit2.combat.died)
 					return;
 
 				if (unitPosition.distanceTo(unit2.position) > unitVisionRange)
@@ -98,32 +97,32 @@ export default class MovementSimulation {
 	 * Actually move unit  
 	 * returns {boolean} hasMoved
 	 */
-	move(unit: IMovingObject, diff: number) {
+	move(object: IMovingGameObject, diff: number) {
 		//if (unit.waypointsHalt)
 		//	return false;
 
 		//console.log('move', unit.netId, unitWaypoints[0]);
 
-		let unitWaypoints = unit.moving.waypoints;
+		let unitWaypoints = object.moving.waypoints;
 		if (!unitWaypoints)
 			return false;
 
-		unit.moving.sendWaypoints(unitWaypoints);
+		object.moving.sendWaypoints(unitWaypoints);
 
 		let nextWaypoint = unitWaypoints[0];
 		if (!nextWaypoint)
 			return false;
 
-		let unitPosition = unit.position;
+		let objectPosition = object.position;
 
-		let moveSpeed = (unit.moving.speedParams?.pathSpeedOverride || unit.stats.moveSpeed.total) / 1000;
+		let moveSpeed = (object.moving.speedParams?.pathSpeedOverride || object.stats.moveSpeed.total) / 1000;
 		let moveDistance = moveSpeed * diff;
 
 		let remainingDistance = moveDistance;
-		let nextWaypointDistance = unitPosition.distanceTo(nextWaypoint);
+		let nextWaypointDistance = objectPosition.distanceTo(nextWaypoint);
 
 		if (remainingDistance >= nextWaypointDistance) {
-			unitPosition.copy(nextWaypoint);
+			objectPosition.copy(nextWaypoint);
 			unitWaypoints.shift();
 			nextWaypoint = unitWaypoints[0];
 			remainingDistance -= nextWaypointDistance;
@@ -132,78 +131,58 @@ export default class MovementSimulation {
 		if (!nextWaypoint || remainingDistance <= 0)
 			return true;
 
-		let direction = nextWaypoint.clone().sub(unitPosition).normalize();
-		unitPosition.add(direction.multiplyScalar(remainingDistance));
+		let direction = nextWaypoint.clone().sub(objectPosition).normalize();
+		objectPosition.add(direction.multiplyScalar(remainingDistance));
 		return true;
 	}
 
 	/**
-	 * Called if unit has moved to call unit movement callbacks
+	 * @todo flags like self targetable, ally targetable, enemy targetable ?
+	 * @todo for better performance we could divide units array to territories
 	 */
-	callbacks(unit: IMovingObject, diff: number) {
+	emitEvents(object: IMovingGameObject, diff: number) {
 
-		let unitWaypoints = unit.moving.waypoints;
+		let unitWaypoints = object.moving.waypoints;
 		if (unitWaypoints.length < 1) {
-			unit.eventEmitter.emit('reachDestination');
+			object.eventEmitter.emit('reachDestination');
 		}
 
-		//@todo change callbacks to events
-		let unitCallbacks = unit.callbacks;
-		if (!unitCallbacks)
-			return false;
+		if (object.eventEmitter.listenerCount('collision') < 1)
+			return;
 
-		let unitPosition = unit.position;
+		let objectPosition = object.position;
+		let collisionRadius = object.collisionRadius;
 
-		for (let i in unitCallbacks.move) {
-			let callback = unitCallbacks.move[i];
-			if (unitWaypoints.length < 1 || unitPosition.distanceTo(unitWaypoints[0]) <= callback.options.range)
-				callback.function();
-		}
+		let objects = GameObjectList.objects;
+		for (let j = 0, l = objects.length; j < l; j++) {
+			let object2 = objects[j];
 
-		for (let i in unitCallbacks.collision) {
-			let callback = unitCallbacks.collision[i];
-			let collisionRadius = callback.options?.range || unit.collisionRadius;
-			//@todo flags like self targetable, ally targetable, enemy targetable
-			//callback.options.flags;
+			//@todo
+			if (!object2)
+				continue;
 
-			let units = UnitList.getUnits();
-			for (let j = 0, l = units.length; j < l; j++) {
-				let unit2 = units[j];
+			if (!object2.position)
+				continue;
 
-				//@todo
-				if (!unit2)
-					continue;
-
-				if (!unit2.position)
-					continue;
-
-				//@todo for better performance we could divide units array to territories
-				let dist2 = unitPosition.distanceTo(unit2.position);
-				if (dist2 <= (collisionRadius + unit2.collisionRadius)) {
-					callback.function(unit2);
-
-					// if callback has been removed
-					if (!unitCallbacks.collision[i])
-						break;
-				}
+			let dist2 = objectPosition.distanceTo(object2.position);
+			if (dist2 <= (collisionRadius + object2.collisionRadius)) {
+				object.eventEmitter.emit('collision', object2);
 			}
 		}
-
-		return true;
 	}
 
 	/**
 	 * Get unit elapsed time in ms since last movement update
 	 */
-	unitDiff(unit: IMovingObject) {
+	objectMoveDiff(object: IMovingGameObject) {
 		let now = performance.now();
-		if (!unit.moving.moveTime) {
-			unit.moving.moveTime = now;
+		if (!object.moving.moveTime) {
+			object.moving.moveTime = now;
 			return 0;
 		}
 
-		let diff = now - unit.moving.moveTime;
-		unit.moving.moveTime = now;
+		let diff = now - object.moving.moveTime;
+		object.moving.moveTime = now;
 		return diff;
 	}
 
@@ -214,32 +193,32 @@ export default class MovementSimulation {
 	 */
 	async update() {
 		for (; ;) {
-			await Promise.delay(20);//lower this?
+			await Promise.delay(MovementSimulation.moveInterval);
 			this.moved = {};
 
 			// @todo: get only movable units
-			let units = UnitList.getUnits() as IMovingUnit[];
+			let units = GameObjectList.aliveUnits;
 			units.forEach(unit => {
 				if (!unit.moving)
 					return;
 
-				let diff = this.unitDiff(unit);
+				let diff = this.objectMoveDiff(unit);
 				let moved = this.move(unit, diff);
 				if (moved)
-					this.callbacks(unit, diff);
+					this.emitEvents(unit, diff);
 				this.moved[unit.netId] = moved;
 			});
 
-			let missiles = UnitList.missiles;
+			let missiles = GameObjectList.missiles;
 			missiles.forEach(missile => {
 				//if (!missile.moving)
 				//	return;
 
-				let diff = this.unitDiff(missile);
+				let diff = this.objectMoveDiff(missile);
 				//todo: flags like collidable with terrain, with ally units, with enemy units
 				let moved = this.move(missile, diff);
 				if (moved)
-					this.callbacks(missile, diff);
+					this.emitEvents(missile, diff);
 				//this.moved[missile.netId] = moved;
 			});
 

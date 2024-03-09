@@ -1,5 +1,5 @@
 import type { PlayerConfig } from '../gameobjects/units/player';
-import Team, { TeamId } from '../gameobjects/extensions/traits/team';
+import { TeamId } from '../gameobjects/extensions/traits/team';
 
 export default [
 	{

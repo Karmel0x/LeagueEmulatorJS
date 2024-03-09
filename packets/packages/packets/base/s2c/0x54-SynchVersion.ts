@@ -30,7 +30,7 @@ export type SynchVersionModel = BasePacketModel & {
 	matchedGame: boolean,
 	dradisInit: boolean,
 	mapToLoad: number,
-	playerInfo: SPlayerInfoModel[],
+	playerInfo: Partial<SPlayerInfoModel>[],
 	versionString: string,
 	mapMode: string,
 	platformId: string,
@@ -196,13 +196,13 @@ export default class SynchVersion extends BasePacket {
 		payload.enabledDradisMessages = dvr.readArray(() => dvr.readBool(), 19);
 	}
 
-	static SPlayerInfo_writer(dvr: RelativeDataView, payload: SPlayerInfoModel) {
-		payload = payload || { playerId: -1 } as SPlayerInfoModel;
+	static SPlayerInfo_writer(dvr: RelativeDataView, payload: Partial<SPlayerInfoModel>) {
+		payload = payload || { playerId: -1 } as Partial<SPlayerInfoModel>;
 		dvr.writeInt64(payload.playerId);
 		dvr.writeUint16(payload.summonorLevel);
 		dvr.writeUint32(payload.summonorSpell1);
 		dvr.writeUint32(payload.summonorSpell2);
-		dvr.writeBitfield(this.SPlayerInfoBitfield1, payload.bitfield);
+		dvr.writeBitfield(this.SPlayerInfoBitfield1, payload.bitfield || {});
 		dvr.writeInt32(payload.team);
 		dvr.writeCharArray(payload.botName, 64);
 		dvr.writeCharArray(payload.botSkinName, 64);

@@ -35,8 +35,8 @@ export default function packetParser(packet1: ReplayRecord, i: number) {
 
 	let packetId = dvr.readUint8();
 
-	if (packetId == packets.Ping_Load_InfoS2CU.id)
-		return false;
+	//if (packetId == packets.Ping_Load_InfoS2C.id)
+	//	return false;
 	if (packetId == 0xFF)
 		return false;
 

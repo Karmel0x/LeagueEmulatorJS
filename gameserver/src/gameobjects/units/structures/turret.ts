@@ -1,36 +1,30 @@
 
 import * as packets from '@workspace/packets/packages/packets';
-import loadingStages from '../../constants/loading-stages';
-//import EVENT from '../../packets/EVENT';
-
-import Unit, { UnitEvents, UnitOptions } from './unit';
-import Attackable, { AttackableEvents, IAttackable } from '../extensions/combat/attackable';
+import loadingStages from '../../../constants/loading-stages';
+import Structure, { StructureEvents, StructureOptions } from './structure';
 import { OnEvent, OnEventArguments } from '@workspace/packets/packages/packets/types/on-event';
 import EventEmitter from 'node:events';
 import TypedEventEmitter from 'typed-emitter';
+import type AttackableUnit from '../attackable-unit';
 
 
-export type TurretOptions = UnitOptions & {
+export type TurretOptions = StructureOptions & {
 
 };
 
-export type TurretEvents = UnitEvents & AttackableEvents & {
+export type TurretEvents = StructureEvents & {
 
-}
+};
 
-export default class Turret extends Unit {
+export default class Turret extends Structure {
 	static initialize(options: TurretOptions) {
 		return super.initialize(options) as Turret;
 	}
 
 	eventEmitter = new EventEmitter() as TypedEventEmitter<TurretEvents>;
 
-	combat!: Attackable;
-
 	loader(options: TurretOptions) {
 		super.loader(options);
-
-		this.combat = new Attackable(this);
 
 		this.initialized();
 	}
@@ -42,7 +36,7 @@ export default class Turret extends Unit {
 	/**
 	 * It sends a packet to everyone that the turret has died
 	 */
-	announceDie(source: IAttackable) {
+	announceDie(source: AttackableUnit) {
 		const packet1 = packets.OnEvent.create({
 			netId: this.netId,
 			eventData: {
@@ -56,7 +50,7 @@ export default class Turret extends Unit {
 		this.packets.toEveryone(packet1);
 	}
 
-	async onDie(source: IAttackable) {
+	async onDie(source: AttackableUnit) {
 		this.announceDie(source);
 	}
 
@@ -65,7 +59,7 @@ export default class Turret extends Unit {
 			netId: this.netId,
 			objectNetId: this.netId,
 			netNodeId: 0x40,
-			name: this.info.name,
+			name: this.info?.name,
 			isTargetable: true,
 			unknown1: false,
 			unknown2: false,

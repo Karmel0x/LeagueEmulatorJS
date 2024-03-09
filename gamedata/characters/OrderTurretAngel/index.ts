@@ -2,6 +2,7 @@
 import { SlotId } from '@workspace/gameserver/src/constants/slot-id';
 import _Turret_Nexus from '../_Turret_Nexus/index';
 import OrderTurretAngelBasicAttack from './spells/OrderTurretAngelBasicAttack';
+import type AttackableUnit from '@workspace/gameserver/src/gameobjects/units/attackable-unit';
 
 
 export default class OrderTurretAngel extends _Turret_Nexus {
@@ -10,11 +11,15 @@ export default class OrderTurretAngel extends _Turret_Nexus {
 		OrderTurretAngelBasicAttack,
 	};
 
-	constructor(parent) {
-		super(parent);
+	get base() {
+		return this.constructor as typeof OrderTurretAngel;
+	}
+
+	constructor(owner: AttackableUnit) {
+		super(owner);
 
 		this.createOnSlots({
-			[SlotId.A]: this.constructor.spells.OrderTurretAngelBasicAttack,
+			[SlotId.A]: this.base.spells.OrderTurretAngelBasicAttack,
 		});
 	}
 }

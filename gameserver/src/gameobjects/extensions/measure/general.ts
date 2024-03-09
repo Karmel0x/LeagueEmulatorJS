@@ -2,6 +2,7 @@
 import { Vector2 } from 'three';
 
 import GameObject from '../../game-object';
+import Server from '../../../app/server';
 
 export default class MeasureGeneral {
 
@@ -46,7 +47,7 @@ export default class MeasureGeneral {
 				return dist;
 			}
 			return previousValue;
-		}, 25000);
+		}, Server.map.diagonal);
 		return arrayVector2.slice(nearest);
 	}
 

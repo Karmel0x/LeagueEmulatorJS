@@ -155,7 +155,7 @@ export { default as World_SendGameNumber, WorldSendGameNumberModel } from './bas
 export { default as World_SendGameNumberC2S, WorldSendGameNumberC2SModel } from './base/c2s/0x92-World_SendGameNumber';
 export { default as SetPARState, SetPARStateModel } from './base/s2c/0x93-SetPARState';
 export { default as BuffRemoveGroup, BuffRemoveGroupModel } from './base/s2c/0x94-BuffRemoveGroup';
-export { default as Ping_Load_InfoS2CU, Ping_Load_InfoS2CUModel } from './base/s2cUnreliable/0x95-Ping_Load_Info';
+export { default as Ping_Load_InfoS2C, Ping_Load_InfoS2CModel } from './base/s2cUnreliable/0x95-Ping_Load_Info';
 export { default as ChangeCharacterVoice, ChangeCharacterVoiceModel } from './base/s2c/0x96-ChangeCharacterVoice';
 export { default as ChangeCharacterData, ChangeCharacterDataModel } from './base/s2c/0x97-ChangeCharacterData';
 export { default as ExitS2C, ExitS2CModel } from './base/s2c/0x98-Exit';

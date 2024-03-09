@@ -1,70 +1,60 @@
 
-import { SlotId } from '../../constants/slot-id';
 import Server from '../../app/server';
-import UnitList from '../../app/unit-list';
-
 import GameObject, { GameObjectEvents, GameObjectOptions } from '../game-object';
 import PUnit from '../extensions/packets/unit';
 import Buffs from '../extensions/traits/buffs';
-import Progress from '../extensions/traits/progress';
+import Levelable from '../extensions/progress/levelable';
 import Rewards from '../extensions/traits/rewards';
 import StatsUnit, { StatsUnitOptions } from '../extensions/stats/unit';
-import Team, { LaneId, TeamId } from '../extensions/traits/team';
-import _Character from '../../game/datamethods/characters/_Character';
+import TeamArrangement, { LaneId, TeamId } from '../extensions/traits/team';
+import _Character from '../../game/basedata/characters/character';
 import * as Characters from '@workspace/gamedata/characters/index';
 import { EventEmitter } from 'node:events';
 import TypedEventEmitter from 'typed-emitter';
-import { UnitSpawner } from '../spawners/spawner';
-import * as Measure from '../extensions/measure';
+import Spawner from '../spawners/spawner';
+import _Spell from '../../game/basedata/spells/spell';
 
 
 export type UnitOptions = GameObjectOptions & {
-	spawner?: UnitSpawner;
+	spawner?: Spawner;
 	character: string;
 	team?: number;
 	num?: number;
-	info?: object;
+	info?: {
+		name: string;
+	};
 
 	stats?: StatsUnitOptions;
 };
 
 export type UnitEvents = GameObjectEvents & {
-	'die': (source: Unit) => void;
-	'respawn': () => void;
+	'spawn': () => void;
 }
 
 export default class Unit extends GameObject {
 	static initialize(options: UnitOptions) {
-		const unit = new this(options);
-		unit.loader(options);
-		return unit;
+		return super.initialize(options) as Unit;
 	}
-
-	static objects = [];
 
 	eventEmitter = new EventEmitter() as TypedEventEmitter<UnitEvents>;
 
+	info!: UnitOptions['info'];
 	declare stats: StatsUnit;
 	packets!: PUnit;
 	buffs!: Buffs;
-	progress!: Progress;
+	progress!: Levelable;
 	rewards!: Rewards;
-	team!: Team;
+	team!: TeamArrangement;
 
 	id = 0;
-	died = 0;
 
+	visionRange = 0;
 	visibleForEnemy = false;
 	visibleForEnemy2 = false;
 	visibleForTeam = false;
 	visibleForTeam2 = true;
 
-	callbacks = {
-		move: {},
-		collision: {},
-	};
-
-	slots: { [s: string]: any; } = {};
+	slots: { [s: string]: _Spell; } = {};
 
 	character?: _Character;
 
@@ -77,24 +67,20 @@ export default class Unit extends GameObject {
 		this.character = character;
 	}
 
-	spawner?: UnitSpawner;
+	spawner?: Spawner;
 
 	loader(options: UnitOptions) {
 		this.switchCharacter(options.character);
-		this.info = options.info || {};
+		this.info = options.info;
 
 		this.packets = this.packets || new PUnit(this);
 		this.buffs = new Buffs(this);
-		this.progress = new Progress(this);
+		this.progress = this.progress || new Levelable(this);
 		this.stats = this.stats || new StatsUnit(this, options.stats || this.character?.stats || {});
 		this.rewards = new Rewards(this);
-		this.team = new Team(this, options.team ?? TeamId.unknown, options.num || LaneId.unknown);
+		this.team = new TeamArrangement(this, options.team ?? TeamId.unknown, options.num || LaneId.unknown);
 
-		UnitList.append(this);
-		console.debug(Date.now(), 'Created Unit', this.constructor.name, this.netId);
-		console.log('UnitList.unitCount', UnitList.unitCount);
-		//console.log(UnitList.units);
-
+		super.loader(options);
 		this.update();
 	}
 
@@ -103,11 +89,6 @@ export default class Unit extends GameObject {
 		super(options);
 		this.options = options;
 		this.spawner = options.spawner;
-	}
-
-	destructor() {
-		// todo
-		//UnitList.remove(this);
 	}
 
 	initialized() {
@@ -119,50 +100,19 @@ export default class Unit extends GameObject {
 	}
 
 	spawn() {
-		this.respawn();
+		this.stats.health.current = this.stats.health.total;
+		this.stats.mana.current = this.stats.mana.total;
+
+		if (this.position)
+			this.position.copy(this.spawnPosition);
+
+		this.packets.OnEnterLocalVisibilityClient();
+		Server.teams[this.team.id]?.vision(this, true);
+		this.eventEmitter.emit('spawn');
 	}
 
 	async loop() {
 
-	}
-
-	ACTION = 0;
-
-	/**
-	 * Returns if unit is dead
-	 */
-	isDead() {
-		return this.died;
-	}
-
-	canBeAttacked() {
-		return false;
-	}
-
-	/**
-	 * Returns if unit is able to move
-	 */
-	isAbleForMoving() {
-		if (!this.moving)
-			return false;
-
-		if (this.isDead())
-			return false;
-
-		return true;
-	}
-
-	/**
-	 * Returns if unit is able to attack
-	 */
-	isAbleForAttacking() {
-		if (!this.slots[SlotId.A])
-			return false;
-
-		if (this.isDead())
-			return false;
-
-		return true;
 	}
 
 	async update() {
@@ -173,99 +123,6 @@ export default class Unit extends GameObject {
 				continue;
 
 		}
-	}
-
-	respawn() {
-		this.eventEmitter.emit('respawn');
-		this.died = 0;
-
-		this.stats.health.current = this.stats.health.total;
-		this.stats.mana.current = this.stats.mana.total;
-
-		if (this.position)
-			this.position.copy(this.spawnPosition);
-
-		this.packets.OnEnterLocalVisibilityClient();
-
-		Server.teams[this.team.id].vision(this, true);
-	}
-
-	// ==================================================
-
-	/**
-	 * Filter units by team
-	 */
-	static filterByTeam(targets: Unit[], team: number[] | number = TeamId.max) {
-		let teams = typeof team === 'number' ? [team] : team;
-
-		if (teams.includes(TeamId.max))
-			return targets;
-
-		return targets.filter(target => teams.includes(target.team.id));
-	}
-
-
-	/**
-	 * Remove this unit from array
-	 */
-	removeThisFromArray(array: Unit[]) {
-		let index = array.indexOf(this);
-		if (index === -1)
-			return;
-
-		array.splice(index, 1);
-	}
-
-	/**
-	 * Get all units
-	 */
-	getUnits(team = TeamId.max) {
-		return UnitList.getUnits(team);
-	}
-	/**
-	 * Get ally units to this unit
-	 */
-	getAllyUnits() {
-		let thisTeamId = this.team.id;
-		return UnitList.units.filter(unit => unit.team.id == thisTeamId);
-		//return this.getUnits(this.getAllyTeam());
-	}
-	/**
-	 * Get enemy units to this unit
-	 */
-	getEnemyUnits() {
-		let thisTeamId = this.team.id;
-		return UnitList.units.filter(unit => unit.team.id != thisTeamId);
-		//return this.getUnits(this.team.getEnemyTeam());
-	}
-
-	/**
-	 * Get all units except this
-	 */
-	getOtherUnits(team = TeamId.max) {
-		let units = this.getUnits(team);
-		this.removeThisFromArray(units);
-		return units;
-	}
-	/**
-	 * Get ally units except this
-	 */
-	getOtherAllyUnits() {
-		return this.getOtherUnits(this.team.getAllyTeam());
-	}
-
-	/**
-	 * Get ally units in range of this unit
-	 */
-	getAllyUnitsInRange(range: number, measure = Measure.centerToCenter) {
-		return measure.filterByRange(this, this.getAllyUnits(), range);
-	}
-
-	/**
-	 * Get enemy units in range of this unit
-	 */
-	getEnemyUnitsInRange(range: number, measure = Measure.centerToCenter) {
-		return measure.filterByRange(this, this.getEnemyUnits(), range);
 	}
 
 }

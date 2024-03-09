@@ -1,29 +1,29 @@
 
-import _Spell from '@workspace/gameserver/src/game/datamethods/spells/_Spell';
+import _Spell, { SpellData } from '@workspace/gameserver/src/game/basedata/spells/spell';
 import EzrealArcaneShiftMissile from './EzrealArcaneShiftMissile';
 
 import package1 from '../package';
 import { SlotId } from '@workspace/gameserver/src/constants/slot-id';
+import { Vector2 } from 'three';
 
 
 export default class EzrealArcaneShift extends _Spell {
+
 	packageHash = package1.packageHash;
 	spellSlot = SlotId.E;
-	movingSpell = true;
+	canMoveWhenCast = true;
 
 	static childSpellList = [
 		EzrealArcaneShiftMissile,
 	];
 
-	preCast(spellData) {
+	onCast(spellData: SpellData) {
+		if (!spellData.packet)
+			return;
 
-		spellData.position = spellData.packet.position;
-		return super.preCast(spellData);
-	}
-	onCast(spellData) {
 		super.onCast(spellData);
 
-		this.owner.moving.dashTo(spellData.packet.position, { speed: 1800, range: 400 });
-
+		const destPos = new Vector2(spellData.packet.position.x, spellData.packet.position.y);
+		this.owner.moving.dashTo(destPos, { speed: 1800, range: 400 });
 	}
 }

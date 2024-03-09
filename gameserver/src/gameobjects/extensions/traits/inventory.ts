@@ -2,8 +2,11 @@
 import * as packets from '@workspace/packets/packages/packets';
 import ItemList from '@workspace/gamedata/Items/ItemList';
 import ItemSpells from '@workspace/gamedata/Items/ItemSpells';
-import Player from '../../units/player';
 import { sendUnitStats } from '../../../packet-helpers/OnReplication';
+import type AttackableUnit from '../../units/attackable-unit';
+import _Item from '../../../game/basedata/item';
+import _Spell from '../../../game/basedata/spells/spell';
+import Hero from '../../units/hero';
 
 
 const ItemSlots = 6;// 0-5
@@ -20,13 +23,13 @@ export class UndoHistory {
 		BUILD_ITEM: 2,
 	};
 
-	parent: Inventory;
-	owner: Player;
-	history: { [s: string]: any; }[] = [];
+	parent;
+	owner;
+	history: { itemId: number, slot: number, action: number }[] = [];
 
 	constructor(parent: Inventory) {
 		this.parent = parent;
-		this.owner = parent.owner;
+		this.owner = parent.owner as Hero;
 
 	}
 
@@ -116,14 +119,14 @@ export default class Inventory {
 	owner;
 	undoHistory;
 
-	constructor(owner: Player) {
+	constructor(owner: AttackableUnit) {
 		this.owner = owner;
 
 		this.undoHistory = new UndoHistory(this);
 	}
 
-	items: { [n: number]: any; } = {};
-	itemsToRemove: any[][] = [];
+	items: { [n: number]: _Item; } = {};
+	itemsToRemove: [number, _Item][] = [];
 
 	/**
 	 * @todo
@@ -171,7 +174,7 @@ export default class Inventory {
 		if (!itemId)
 			return false;
 
-		const item = ItemList[itemId];
+		const item = ItemList[itemId as keyof typeof ItemList] as typeof _Item;
 		if (!item)
 			return false;
 
@@ -186,8 +189,11 @@ export default class Inventory {
 		if (item.from)
 			effectiveGoldCost = this.getEffectiveGoldCost(item);
 
-		if (this.owner.progress.gold < effectiveGoldCost)
-			return false;
+		const hero = this.owner as Hero;
+		if (hero.progress.gold !== undefined) {
+			if (hero.progress.gold < effectiveGoldCost)
+				return false;
+		}
 
 		if (!item.isTrinket)
 			slot = this.getReuseSlot(itemId);
@@ -200,8 +206,8 @@ export default class Inventory {
 		if (this.itemsToRemove.length)
 			this.removeBuildItems();
 
-		this.owner.progress.gold -= effectiveGoldCost;
-
+		if (hero.progress.gold !== undefined)
+			hero.progress.gold -= effectiveGoldCost;
 
 		let itemOnSlot = this.items[slot] = this.items[slot] || new item();
 		itemOnSlot.count = itemOnSlot.count || 0;
@@ -222,7 +228,7 @@ export default class Inventory {
 			this.undoHistory.addUndoHistory(itemId, slot, 1);
 	}
 
-	getEffectiveGoldCost(item: any) {
+	getEffectiveGoldCost(item: typeof _Item) {
 		let goldCost = item.goldCost;
 
 		item.from.forEach(childItemId => {
@@ -246,8 +252,8 @@ export default class Inventory {
 	swapItemsAns(slot1: number, slot2: number) {
 		const packet1 = packets.SwapItemAns.create({
 			netId: this.owner.netId,
-			sourceSlot: slot1,
-			destinationSlot: slot2,
+			source: slot1,
+			destination: slot2,
 		});
 		this.owner.packets.toVision(packet1);
 	}
@@ -280,7 +286,9 @@ export default class Inventory {
 		this.items[slot].count--;
 		this.removeItemAns(slot);
 		let itemOnSlot = this.items[slot];
-		const item = ItemList[itemOnSlot.id];
+		const item = ItemList[itemOnSlot.id as keyof typeof ItemList] as typeof _Item;
+		if (!item)
+			return;
 
 		if (item.stats)
 			this.owner.stats.increase(item.stats);
@@ -296,35 +304,47 @@ export default class Inventory {
 		if (!itemOnSlot)
 			return false;
 
-		const item = ItemList[itemOnSlot.id];
+		const item = ItemList[itemOnSlot.id as keyof typeof ItemList] as typeof _Item;
+		if (!item)
+			return;
+
 		let itemId = itemOnSlot.id;
-		this.owner.progress.gold += item.GoldSell ?? (item.goldCost * 0.7);
+
+		const hero = this.owner as Hero;
+		if (hero.progress.gold !== undefined)
+			hero.progress.gold += item.goldSell ?? (item.goldCost * 0.7);
 
 		this.removeItem(slot);
 
 		this.undoHistory.addUndoHistory(itemId, slot, 0);
 	}
 
-	useItem(slot, target = undefined) {
+	useItem(slot: number, target = undefined) {
 		let itemOnSlot = this.items[slot];
 		console.log('inventory.useItem', itemOnSlot);
-		let itemSpell = ItemSpells[itemOnSlot.id];
+		let itemSpell = ItemSpells[itemOnSlot.id as keyof typeof ItemSpells] as typeof _Spell;
 		if (!itemOnSlot || !itemSpell)
 			return false;
 
-		let itemSpellOnSlot = new itemSpell();
-		itemSpellOnSlot.onUse(target);
+		let itemSpellOnSlot = new itemSpell({
+			owner: this.owner,
+		});
+		itemSpellOnSlot.cast({
+			target,
+		});
 
 		if (itemOnSlot.isConsumable)
 			this.removeItem(slot);
 	}
 
-	castItem(packet) {
+	castItem(packet: packets.CastSpellReqModel) {
 		this.useItem(packet.slot - 6);
 	}
 
 	addItem(slot: number, itemId: number) {
-		const item = ItemList[itemId];
+		const item = ItemList[itemId as keyof typeof ItemList] as typeof _Item;
+		if (!item)
+			return;
 
 		let itemOnSlot = this.items[slot] = this.items[slot] || new item();
 		itemOnSlot.count = itemOnSlot.count || 0;

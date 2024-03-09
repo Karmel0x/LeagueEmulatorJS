@@ -3,40 +3,35 @@ import * as packets from '@workspace/packets/packages/packets';
 import loadingStages from '../../constants/loading-stages';
 import Server from '../../app/server';
 
-import Unit, { UnitEvents, UnitOptions } from './unit';
-import Spellable, { SpellableEvents } from '../extensions/combat/spellable';
-import Team, { TeamId } from '../extensions/traits/team';
-import MovingUnit, { IMovingUnit, MovingUnitEvents } from '../extensions/traits/moving-unit';
-import _Monster from '../../game/datamethods/characters/_Monster';
+import AttackableUnit, { AttackableUnitEvents, AttackableUnitOptions } from './attackable-unit';
+import { TeamId } from '../extensions/traits/team';
+import _Monster from '../../game/basedata/characters/monster';
 import EventEmitter from 'node:events';
 import TypedEventEmitter from 'typed-emitter';
 import type JungleCamp from '../spawners/jungle-camp';
-import { IAttackable } from '../extensions/combat/attackable';
+import Player from './player';
 
 
-export type MonsterOptions = UnitOptions & {
+export type MonsterOptions = AttackableUnitOptions & {
 	spawner: JungleCamp;
 };
 
-export type MonsterEvents = UnitEvents & SpellableEvents & MovingUnitEvents & {
+export type MonsterEvents = AttackableUnitEvents & {
 
 }
 
-export default class Monster extends Unit implements IMovingUnit {
+export default class Monster extends AttackableUnit {
 	static initialize(options: MonsterOptions) {
 		return super.initialize(options) as Monster;
 	}
 
 	eventEmitter = new EventEmitter() as TypedEventEmitter<MonsterEvents>;
 
-	combat!: Spellable;
-	moving!: MovingUnit;
+	declare spawner: JungleCamp;
+	declare character: _Monster;
 
 	loader(options: MonsterOptions) {
 		super.loader(options);
-
-		this.combat = new Spellable(this);
-		this.moving = new MovingUnit(this);
 
 		//console.log(this);
 		this.initialized();
@@ -83,11 +78,11 @@ export default class Monster extends Unit implements IMovingUnit {
 			position: this.position,
 			groupPosition: this.spawner?.position || this.position,
 			faceDirectionPosition: this.position,
-			name: this.info.name,
+			name: this.info?.name,
 			skinName: this.character.name,
-			uniqueName: this.info.name,
+			uniqueName: this.info?.name,
 			spawnAnimationName: '',
-			team: this.team,
+			team: this.team.id,
 			damageBonus: 0,
 			healthBonus: 0,
 			minionRoamState: 0,
@@ -113,19 +108,29 @@ export default class Monster extends Unit implements IMovingUnit {
 		return 1;
 	}
 
+	get characterBase() {
+		return this.character?.constructor as typeof _Monster | undefined;
+	}
+
 	get rewardExp() {
-		let character = this.character.constructor as _Monster;
+		let character = this.characterBase;
+		if (!character)
+			return 0;
+
 		return character.reward.exp;
 	}
 
 	get rewardGold() {
-		let character = this.character.constructor as _Monster;
+		let character = this.characterBase;
+		if (!character)
+			return 0;
+
 		return character.reward.gold + (character.rewardPerLevel.gold * this.level);
 	}
 
 	killRewarded = false;
 
-	onDieRewards(source: IAttackable) {
+	onDieRewards(source: AttackableUnit) {
 		console.log('onDieRewards', source.team.id, this.team.id, source.type);
 		// make sure once again if we should reward killer
 		if (source.team.id == this.team.id || this.killRewarded)
@@ -133,13 +138,13 @@ export default class Monster extends Unit implements IMovingUnit {
 
 		this.killRewarded = true;
 
-		if (source.type == 'Player') {
+		if (source instanceof Player) {
 			source.progress.expUp(this.rewardExp);
 			source.progress.goldUp(this.rewardGold, this);
 		}
 	}
 
-	onDie(source: IAttackable) {
+	onDie(source: AttackableUnit) {
 		this.onDieRewards(source);
 	}
 

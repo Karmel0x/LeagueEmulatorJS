@@ -1,6 +1,6 @@
 
 import { SlotId } from '@workspace/gameserver/src/constants/slot-id';
-import _Spell from '@workspace/gameserver/src/game/datamethods/spells/_Spell';
+import _Spell, { SpellData } from '@workspace/gameserver/src/game/basedata/spells/spell';
 
 import package1 from '../package';
 
@@ -11,9 +11,12 @@ export default class EzrealEssenceFluxMissile extends _Spell {
 
 	isProjectile = true;
 
-	onCast(spellData) {
-		//console.log(spellData.missile);
-		spellData.missile.fire(spellData.missile.target);
+	onCast(spellData: SpellData) {
+		const missile = spellData.spellChain.missile;
+		if (!missile) return;
+
+		//console.log(missile);
+		missile.fire(missile.target);
 	}
 
 }

@@ -37,12 +37,22 @@ export type BuffModel = {
 	count: number,
 };
 
-enum MovementDataType {
+export enum MovementDataType {
 	none = 0,
 	withSpeed = 1,
 	normal = 2,
 	stop = 3,
 };
+
+export type MovementData = {
+	type: MovementDataType,
+	syncId: number,
+} & (
+		{ type: MovementDataType.none } |
+		{ type: MovementDataType.withSpeed } & CMovementDataWithSpeedModel |
+		{ type: MovementDataType.normal } & CMovementDataNormalModel |
+		{ type: MovementDataType.stop, position: SVector2Model, forward: SVector2Model }
+	);
 
 export type OnEnterVisibilityClientModel = BasePacketModel & {
 	packets: PacketDataModel[],
@@ -52,21 +62,13 @@ export type OnEnterVisibilityClientModel = BasePacketModel & {
 } | {
 	isTurret: false,
 	shieldValues?: ShieldValuesModel,
-	characterStackData?: CharacterStackDataModel[],
+	characterStackData?: Partial<CharacterStackDataModel>[],
 	lookAtNetId: NetId,
 	lookAtType: number,
 	lookAtPosition: SVector3Model,
 	buff?: BuffModel[],
 	unknownIsHero: boolean,
-	movementData: {
-		type: MovementDataType,
-		syncId: number,
-	} & (
-		{ type: MovementDataType.none } |
-		{ type: MovementDataType.withSpeed } & CMovementDataWithSpeedModel |
-		{ type: MovementDataType.normal } & CMovementDataNormalModel |
-		{ type: MovementDataType.stop, position: SVector2Model, forward: SVector2Model }
-	),
+	movementData: MovementData,
 });
 
 export default class OnEnterVisibilityClient extends BasePacket {
@@ -136,10 +138,10 @@ export default class OnEnterVisibilityClient extends BasePacket {
 		payload.movementData.type = dvr.readUint8();
 		payload.movementData.syncId = dvr.readInt32();
 
-		if (payload.movementData.type == MovementDataType.normal) {
+		if (payload.movementData.type == MovementDataType.withSpeed) {
 			CMovementDataWithSpeed.reader(dvr, payload.movementData);
 		}
-		else if (payload.movementData.type == MovementDataType.withSpeed) {
+		else if (payload.movementData.type == MovementDataType.normal) {
 			CMovementDataNormal.reader(dvr, payload.movementData);
 		}
 		else if (payload.movementData.type == MovementDataType.stop) {
@@ -205,10 +207,10 @@ export default class OnEnterVisibilityClient extends BasePacket {
 		dvr.writeUint8(payload.movementData.type);
 		dvr.writeInt32(payload.movementData.syncId);
 
-		if (payload.movementData.type == MovementDataType.normal) {
+		if (payload.movementData.type == MovementDataType.withSpeed) {
 			CMovementDataWithSpeed.writer(dvr, payload.movementData);
 		}
-		else if (payload.movementData.type == MovementDataType.withSpeed) {
+		else if (payload.movementData.type == MovementDataType.normal) {
 			CMovementDataNormal.writer(dvr, payload.movementData);
 		}
 		else if (payload.movementData.type == MovementDataType.stop) {

@@ -4,7 +4,7 @@ import * as packets from '@workspace/packets/packages/packets';
 
 import Server from '../app/server';
 import loadingStages from '../constants/loading-stages';
-import PlayerList from '../app/player-list';
+import GameObjectList from '../app/game-object-list';
 
 const MapId = {
 	SummonersRift_Original: 1, // Summoner's Rift / Original Summer variant
@@ -36,7 +36,7 @@ export default (player: Player, packet: packets.SynchVersionC2SModel) => {
 
 	let playerInfo = [];
 	for (let i = 0; i < 12; i++) {
-		let player = PlayerList.list[i];
+		let player = GameObjectList.players[i];
 		if (!player)
 			continue;
 

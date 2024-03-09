@@ -1,6 +1,6 @@
 
 import { SlotId } from '@workspace/gameserver/src/constants/slot-id';
-import _Summoner from '@workspace/gameserver/src/game/datamethods/_Summoner';
+import _Summoner from '@workspace/gameserver/src/game/basedata/summoner';
 import package1 from './package';
 
 import SummonerBarrier from './spells/SummonerBarrier';
@@ -16,9 +16,10 @@ import SummonerOdinGarrison from './spells/SummonerOdinGarrison';
 import SummonerRevive from './spells/SummonerRevive';
 import SummonerSmite from './spells/SummonerSmite';
 import SummonerTeleport from './spells/SummonerTeleport';
+import type AttackableUnit from '@workspace/gameserver/src/gameobjects/units/attackable-unit';
 
 
-export default class Summoner extends _Summoner {
+export default class Summoners extends _Summoner {
     static package = package1;
 
     static spells = {
@@ -37,15 +38,19 @@ export default class Summoner extends _Summoner {
         SummonerTeleport,
     };
 
-    constructor(parent, spells) {
-        super(parent);
+    get base() {
+        return this.constructor as typeof Summoners
+    }
 
-        spells[SlotId.D] = spells[SlotId.D] || spells[0] || null;
-        spells[SlotId.F] = spells[SlotId.F] || spells[1] || null;
+    constructor(owner: AttackableUnit, spells: { [slot: number]: keyof typeof Summoners.spells }) {
+        super(owner);
+
+        let summonerSpellD = spells[SlotId.D] || spells[0];
+        let summonerSpellF = spells[SlotId.F] || spells[1];
 
         this.createOnSlots({
-            [SlotId.D]: this.constructor.spells[spells[SlotId.D]] || Object.values(this.constructor.spells)[0],
-            [SlotId.F]: this.constructor.spells[spells[SlotId.F]] || Object.values(this.constructor.spells)[1],
+            [SlotId.D]: this.base.spells[summonerSpellD] || Object.values(this.base.spells)[0],
+            [SlotId.F]: this.base.spells[summonerSpellF] || Object.values(this.base.spells)[1],
         });
     }
 }

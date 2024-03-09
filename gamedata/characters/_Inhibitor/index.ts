@@ -1,5 +1,6 @@
 
-import _Character from '@workspace/gameserver/src/game/datamethods/characters/_Character';
+import _Character from '@workspace/gameserver/src/game/basedata/characters/character';
+import type AttackableUnit from '@workspace/gameserver/src/gameobjects/units/attackable-unit';
 //import package1 from './package';
 
 
@@ -35,8 +36,12 @@ export default class _Inhibitor extends _Character {
 
 	};
 
-	constructor(parent) {
-		super(parent);
+	get base() {
+		return this.constructor as typeof _Inhibitor;
+	}
+
+	constructor(owner: AttackableUnit) {
+		super(owner);
 
 	}
 }

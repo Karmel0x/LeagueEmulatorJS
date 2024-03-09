@@ -2,7 +2,7 @@
 import * as packets from '@workspace/packets/packages/packets';
 import Server from '../app/server';
 import loadingStages from '../constants/loading-stages';
-import PlayerList from '../app/player-list';
+import GameObjectList from '../app/game-object-list';
 
 
 export default (peerNum: number, packet: packets.KeyCheckModel) => {
@@ -10,14 +10,14 @@ export default (peerNum: number, packet: packets.KeyCheckModel) => {
 	console.log(packet);
 
 	//@todo checks
-	let player = PlayerList.list.find(
+	let player = GameObjectList.players.find(
 		p => p.summoner.id == packet.playerId
 	);
 
 	if (!player)
 		return console.log('player not found');
 
-	PlayerList.peers[peerNum] = player.clientId;
+	GameObjectList.playerByPeer[peerNum] = player;
 	player.network.peerNum = peerNum;
 	Server.network.networkApi.setBlowfish(peerNum, '17BLOhi6KZsTtldTsizvHg==');
 

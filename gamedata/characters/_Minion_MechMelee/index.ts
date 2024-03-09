@@ -1,7 +1,9 @@
 
 import { SlotId } from '@workspace/gameserver/src/constants/slot-id';
-import _Minion from '@workspace/gameserver/src/game/datamethods/characters/_Minion';
+import _Minion, { MinionType } from '@workspace/gameserver/src/game/basedata/characters/minion';
 import package1 from './package';
+import type AttackableUnit from '@workspace/gameserver/src/gameobjects/units/attackable-unit';
+import _Basicattack from '@workspace/gameserver/src/game/basedata/spells/basicattack';
 //import BasicAttack from './spells/BasicAttack';
 
 
@@ -10,6 +12,8 @@ import package1 from './package';
  */
 export default class _Minion_MechMelee extends _Minion {
 	static package = package1;
+
+	id = MinionType.super;
 
 	static reward = {
 		gold: 40,
@@ -44,14 +48,18 @@ export default class _Minion_MechMelee extends _Minion {
 	};
 
 	static spells = {
-		//BasicAttack,
+		BasicAttack: _Basicattack,
 	};
 
-	constructor(parent) {
-		super(parent);
+	get base() {
+		return this.constructor as typeof _Minion_MechMelee;
+	}
+
+	constructor(owner: AttackableUnit) {
+		super(owner);
 
 		this.createOnSlots({
-			[SlotId.A]: this.constructor.spells.BasicAttack,
+			[SlotId.A]: this.base.spells.BasicAttack,
 		});
 	}
 }

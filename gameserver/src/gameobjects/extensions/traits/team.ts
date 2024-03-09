@@ -1,4 +1,6 @@
-import Unit from '../../units/unit';
+import Server from '../../../app/server';
+import type Teams from '../../../game/initializers/teams';
+import GameObject from '../../game-object';
 
 
 export enum TeamId {
@@ -21,14 +23,14 @@ export enum LaneId {
 /**
  * Trait for units which has team
  */
-export default class Team {
+export default class TeamArrangement {
 	owner;
 
-	constructor(owner: Unit, teamId: number, num: number) {
+	constructor(owner: GameObject, teamId: number, num: number) {
 		this.owner = owner;
 
-		this.id = teamId || owner.spawner?.team.id || TeamId.neutral;
-		this.num = num || 0;
+		this.id = teamId ?? TeamId.neutral;
+		this.num = num ?? 0;
 	}
 
 	id = TeamId.unknown;
@@ -44,29 +46,31 @@ export default class Team {
 		return teamsR[this.id as keyof typeof teamsR] || 'unknown';
 	}
 
-	getTeam() {
-		return TeamId.max;
-	}
-
-	/**
-	 * Get ally team to this unit  
-	 */
-	getAllyTeam(): number {
+	getTeamId(): number {
 		return this.id;
 	}
 
-	static getEnemyTeam(teamId: TeamId) {
+	getTeam(): Teams | undefined {
+		return Server.teams[this.id];
+	}
+
+	static getEnemyTeamId(teamId: TeamId) {
 		const oppositeTeam = {
 			[TeamId.order]: TeamId.chaos,
 			[TeamId.chaos]: TeamId.order,
 		};
-		return oppositeTeam[teamId as keyof typeof oppositeTeam] || TeamId.neutral;
+		return oppositeTeam[teamId as keyof typeof oppositeTeam] || TeamId.unknown;
 	}
 
 	/**
 	 * Get enemy team to this unit
 	 */
-	getEnemyTeam() {
-		return Team.getEnemyTeam(this.id);
+	getEnemyTeamId() {
+		return TeamArrangement.getEnemyTeamId(this.id);
 	}
+
+	getEnemyTeam(): Teams | undefined {
+		return Server.teams[TeamArrangement.getEnemyTeamId(this.id)];
+	}
+
 }

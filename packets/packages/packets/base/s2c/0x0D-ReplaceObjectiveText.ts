@@ -6,7 +6,7 @@ export type ReplaceObjectiveTextModel = BasePacketModel & {
 };
 
 export default class ReplaceObjectiveText extends BasePacket {
-	static create(payload: Partial<PacketModel>) {
+	static create(payload: Partial<ReplaceObjectiveTextModel>) {
 		return super.create(payload);
 	}
 

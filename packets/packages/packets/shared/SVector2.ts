@@ -17,6 +17,7 @@ export default class SVector2 extends PartialPacket {
 	}
 
 	static writer(dvr: RelativeDataView, payload: SVector2Model) {
+		payload = payload || {};
 		dvr.writeFloat(payload.x);
 		dvr.writeFloat(payload.y);
 	}

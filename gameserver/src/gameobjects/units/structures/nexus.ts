@@ -1,35 +1,30 @@
 
 import * as packets from '@workspace/packets/packages/packets';
-import loadingStages from '../../constants/loading-stages';
-
-import Unit, { UnitEvents, UnitOptions } from './unit';
-import Defendable, { DefendableEvents } from '../extensions/combat/defendable';
+import loadingStages from '../../../constants/loading-stages';
+import Structure, { StructureEvents, StructureOptions } from './structure';
 import EventEmitter from 'node:events';
 import TypedEventEmitter from 'typed-emitter';
-import { IAttackable } from '../extensions/combat/attackable';
+import type AttackableUnit from '../attackable-unit';
 
 
-export type NexusOptions = UnitOptions & {
+export type NexusOptions = StructureOptions & {
 	team: number;
 };
 
-export type NexusEvents = UnitEvents & DefendableEvents & {
+export type NexusEvents = StructureEvents & {
 
 }
 
-export default class Nexus extends Unit {
+export default class Nexus extends Structure {
 	static initialize(options: NexusOptions) {
 		return super.initialize(options) as Nexus;
 	}
 
 	eventEmitter = new EventEmitter() as TypedEventEmitter<NexusEvents>;
 
-	combat!: Defendable;
 
 	loader(options: NexusOptions) {
 		super.loader(options);
-
-		this.combat = new Defendable(this);
 
 		this.initialized();
 	}
@@ -41,10 +36,10 @@ export default class Nexus extends Unit {
 	/**
 	 * It sends a packet to everyone says that this building has died
 	 */
-	accounceDie(source: IAttackable) {
+	accounceDie(source: AttackableUnit) {
 		const packet1 = packets.Building_Die.create({
 			netId: this.netId,
-			attackerNetId: source.netId,
+			killerNetId: source.netId,
 		});
 		this.packets.toEveryone(packet1);
 	}
@@ -52,7 +47,7 @@ export default class Nexus extends Unit {
 	/**
 	 * source - The source of the damage.
 	 */
-	async onDie(source: IAttackable) {
+	async onDie(source: AttackableUnit) {
 		this.accounceDie(source);
 		//    //end game?
 	}

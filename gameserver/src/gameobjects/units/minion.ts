@@ -1,44 +1,36 @@
 
 import * as packets from '@workspace/packets/packages/packets';
-import UnitList from '../../app/unit-list';
-
-import Unit, { UnitEvents, UnitOptions } from './unit';
-import Attackable, { AttackableEvents, IAttackable } from '../extensions/combat/attackable';
-import { minionsLanePaths } from '../positions/index';
-import MovingUnit, { IMovingUnit, MovingUnitEvents } from '../extensions/traits/moving-unit';
+import AttackableUnit, { AttackableUnitEvents, AttackableUnitOptions } from './attackable-unit';
+import { minionLanePaths } from '../positions/index';
 import Player from './player';
-import _Minion from '../../game/datamethods/characters/_Minion';
+import _Minion from '../../game/basedata/characters/minion';
 import EventEmitter from 'node:events';
 import TypedEventEmitter from 'typed-emitter';
 import type Barrack from '../spawners/barrack';
 import { LaneId, TeamId } from '../extensions/traits/team';
 import * as Measure from '../extensions/measure';
+import GameObjectList from '../../app/game-object-list';
 
-export type MinionOptions = UnitOptions & {
+export type MinionOptions = AttackableUnitOptions & {
 	spawner: Barrack;
 };
 
-export type MinionEvents = UnitEvents & AttackableEvents & MovingUnitEvents & {
+export type MinionEvents = AttackableUnitEvents & {
 
 }
 
-export default class Minion extends Unit implements IMovingUnit {
+export default class Minion extends AttackableUnit {
 	static initialize(options: MinionOptions) {
 		return super.initialize(options) as Minion;
 	}
 
 	eventEmitter = new EventEmitter() as TypedEventEmitter<MinionEvents>;
 
-	combat!: Attackable;
-	moving!: MovingUnit;
-
-	//spawner;
+	declare spawner: Barrack;
+	declare character: _Minion;
 
 	loader(options: MinionOptions) {
 		super.loader(options);
-
-		this.combat = new Attackable(this);
-		this.moving = new MovingUnit(this);
 
 		//console.log(this);
 		this.initialized();
@@ -51,20 +43,15 @@ export default class Minion extends Unit implements IMovingUnit {
 
 			this.moveLane();
 		});
-
-		//this.eventEmitter.emit('noTargetsInRange');//todo
 	}
 
 	constructor(options: MinionOptions) {
 		super(options);
 	}
 
-	destructor() {
-		UnitList.remove(this);
-	}
-
 	spawn() {
-		this.spawner?.spawnUnitAns(this.netId, this.character.id);
+		if (this.spawner && this.character)
+			this.spawner.spawnUnitAns(this.netId, this.character.id);
 
 		super.spawn();
 	}
@@ -80,7 +67,7 @@ export default class Minion extends Unit implements IMovingUnit {
 		if (teamId == undefined || laneId == undefined)
 			return;
 
-		let minionLanePath = minionsLanePaths[teamId as keyof typeof minionsLanePaths]?.[laneId];
+		let minionLanePath = minionLanePaths[teamId as keyof typeof minionLanePaths]?.[laneId];
 		if (!minionLanePath)
 			return;
 
@@ -94,10 +81,6 @@ export default class Minion extends Unit implements IMovingUnit {
 		this.moving.setWaypoints(lanePath);
 	}
 
-
-
-	// on die / death functions ===========================================================
-
 	/**
 	 * @todo shall return spawner level
 	 */
@@ -105,19 +88,29 @@ export default class Minion extends Unit implements IMovingUnit {
 		return 1;
 	}
 
+	get characterBase() {
+		return this.character?.constructor as typeof _Minion | undefined;
+	}
+
 	get rewardExp() {
-		let character = this.character.constructor as typeof _Minion;
+		let character = this.characterBase;
+		if (!character)
+			return 0;
+
 		return character.reward.exp;
 	}
 
 	get rewardGold() {
-		let character = this.character.constructor as typeof _Minion;
+		let character = this.characterBase;
+		if (!character)
+			return 0;
+
 		return character.reward.gold + (character.rewardPerLevel.gold * this.level);
 	}
 
 	killRewarded = false;
 
-	onDieRewards(source: Unit) {
+	onDieRewards(source: AttackableUnit) {
 		console.log('onDieRewards', source.team.id, this.team.id, source.type);
 		// make sure once again if we should reward killer
 		if (source.team.id == this.team.id || this.killRewarded)
@@ -127,11 +120,12 @@ export default class Minion extends Unit implements IMovingUnit {
 
 		// Experience from minion deaths is split between all champions within 1400 range.
 		let range = 1400;
-		let enemyUnitsInRange = this.getEnemyUnitsInRange(range);
-		let enemyPlayersInRange = enemyUnitsInRange.filter(v => v instanceof Player && v != source);
+		let thisUnitTeamId = this.team.id;
+		let enemyUnitsInRange = GameObjectList.aliveUnits.filter(unit => unit.team.id !== thisUnitTeamId && unit.position.distanceTo(this.position) <= range);
+		let enemyPlayersInRange = enemyUnitsInRange.filter(v => v instanceof Player && v != source) as Player[];
 
 		let numberOfPlayersToSplitExp = enemyPlayersInRange.length;
-		if (source.type == 'Player')
+		if (source instanceof Player)
 			numberOfPlayersToSplitExp += 1;
 
 		let rewardExp = this.rewardExp;
@@ -143,7 +137,7 @@ export default class Minion extends Unit implements IMovingUnit {
 		rewardExp /= numberOfPlayersToSplitExp;
 
 		// give gold and exp to killer no matter if in range
-		if (source.type == 'Player') {
+		if (source instanceof Player) {
 			source.progress.expUp(rewardExp);
 			source.progress.goldUp(this.rewardGold, this);
 		}
@@ -154,9 +148,8 @@ export default class Minion extends Unit implements IMovingUnit {
 		});
 	}
 
-	onDie(source: IAttackable) {
+	onDie(source: AttackableUnit) {
 		this.onDieRewards(source);
 	}
 
-	// =================================================================================
 }

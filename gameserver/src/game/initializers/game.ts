@@ -5,9 +5,8 @@ import playersConfig from '../../constants/players-config';
 
 import Barrack from '../../gameobjects/spawners/barrack';
 import JungleCamp from '../../gameobjects/spawners/jungle-camp';
-import UnitList from '../../app/unit-list';
 import Server from '../../app/server';
-import Team, { TeamId } from '../../gameobjects/extensions/traits/team';
+import { TeamId } from '../../gameobjects/extensions/traits/team';
 import Fountain from '../../gameobjects/spawners/fountain';
 import Builder from '../../gameobjects/spawners/builder';
 
@@ -15,6 +14,7 @@ import Spawn from '../components/spawn';
 import MovementSimulation from '../components/movement-simulation';
 
 import Player from '../../gameobjects/units/player';
+import GameObjectList from '../../app/game-object-list';
 
 const GameComponents = {
 	Spawn,
@@ -30,7 +30,7 @@ export default class Game {
 	 * it's just answer to c2s.Ping_Load_Info
 	 */
 	static Ping_Load_Info(player: Player, packet: packets.Ping_Load_InfoModel) {
-		const packet1 = packets.Ping_Load_Info.create({
+		const packet1 = packets.Ping_Load_InfoS2C.create({
 			clientId: player.clientId,
 			playerId: player.summoner.id,
 			percentage: packet.percentage,
@@ -47,14 +47,14 @@ export default class Game {
 	 */
 	static TeamRosterUpdate(player: Player) {
 
-		let bluePlayersUnits = UnitList.getUnitsF(TeamId.order, 'Player') as Player[];
-		let redPlayersUnits = UnitList.getUnitsF(TeamId.chaos, 'Player') as Player[];
+		let bluePlayers = GameObjectList.players.filter(p => p.team.id == TeamId.order);
+		let redPlayers = GameObjectList.players.filter(p => p.team.id == TeamId.chaos);
 
 		const packet1 = packets.TeamRosterUpdate.create({
 			maxOrder: 6,
 			maxChaos: 6,
-			teamOrderPlayerIds: bluePlayersUnits.map(p => p.summoner.id),
-			teamChaosPlayerIds: redPlayersUnits.map(p => p.summoner.id),
+			teamOrderPlayerIds: bluePlayers.map(p => p.summoner.id),
+			teamChaosPlayerIds: redPlayers.map(p => p.summoner.id),
 		});
 
 		Server.teams[TeamId.max].sendPacket(packet1, loadingStages.notConnected);
@@ -188,10 +188,9 @@ export default class Game {
 		while (!Server.game.started) {
 			await Promise.delay(100);
 
-			let playerUnits = UnitList.getUnitsF(TeamId.max, 'Player');
-			if (!playerUnits || !playerUnits.length) {
-				console.log('[weird] players has been not initialized yet?');
-				//throw new Error('players has been not initialized yet?');
+			let players = GameObjectList.players;
+			if (!players || players.length < 1) {
+				console.error('players has been not initialized');
 				continue;
 			}
 
@@ -199,7 +198,6 @@ export default class Game {
 			//	start_game();// start game if 5 minutes passed
 			//else{
 			//	let playersLoaded = true;
-			//	let players = UnitList.getUnitsF(TeamId.max, 'Player');
 			//	for(let i = 0, l = players.length; i < l; i++){
 			//		if(players[i].network.loadingStage < loadingStages.loaded){
 			//			playersLoaded = false;
@@ -211,7 +209,7 @@ export default class Game {
 			//}
 
 			// atm we start game with '.start' chat command
-			if (Server.command_START_GAME)
+			if (Server.commandStartGame)
 				Game.started();
 		}
 
@@ -222,17 +220,18 @@ export default class Game {
 
 		Server.game = {
 			initialized: Date.now() / 1000,
-			loaded: false,
-			started: false,
+			loaded: 0,
+			started: 0,
 			paused: true,
 		};
-		Server.game.Timer = () => {
-			//todo: ticker function for setting variables dependent on game time
-			if (!Server.game.started)
-				return 0;
 
-			return Date.now() / 1000 - Server.game.started;
-		};
+		//Server.game.Timer = () => {
+		//	//todo: ticker function for setting variables dependent on game time
+		//	if (!Server.game.started)
+		//		return 0;
+		//
+		//	return Date.now() / 1000 - Server.game.started;
+		//};
 
 		Game.startWhenReady();
 

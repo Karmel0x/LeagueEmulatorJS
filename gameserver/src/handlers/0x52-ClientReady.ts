@@ -3,10 +3,10 @@ import Player from '../gameobjects/units/player';
 import * as packets from '@workspace/packets/packages/packets';
 
 import Server from '../app/server';
-import UnitList from '../app/unit-list';
 import loadingStages from '../constants/loading-stages';
 import Game from '../game/initializers/game';
-import Team, { TeamId } from '../gameobjects/extensions/traits/team';
+import { TeamId } from '../gameobjects/extensions/traits/team';
+import GameObjectList from '../app/game-object-list';
 
 
 export default (player: Player, packet: packets.ClientReadyModel) => {
@@ -17,11 +17,11 @@ export default (player: Player, packet: packets.ClientReadyModel) => {
 
 	Game.playerLoaded(player);
 
-	let blueUnits = UnitList.getUnitsF(TeamId.order);
+	let blueUnits = GameObjectList.aliveUnits.filter(unit => unit.team.id == TeamId.order);
 	for (let i = 0, l = blueUnits.length; i < l; i++)
 		Server.teams[TeamId.order].vision(blueUnits[i], true);// todo
 
-	let redUnits = UnitList.getUnitsF(TeamId.chaos);
+	let redUnits = GameObjectList.aliveUnits.filter(unit => unit.team.id == TeamId.chaos);
 	for (let i = 0, l = redUnits.length; i < l; i++)
 		Server.teams[TeamId.chaos].vision(redUnits[i], true);// todo
 

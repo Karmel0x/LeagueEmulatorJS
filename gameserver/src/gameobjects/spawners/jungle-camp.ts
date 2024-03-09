@@ -2,20 +2,31 @@
 import * as packets from '@workspace/packets/packages/packets';
 import Server from '../../app/server';
 import loadingStages from '../../constants/loading-stages';
-import Team, { TeamId } from '../extensions/traits/team';
+import { TeamId } from '../extensions/traits/team';
 import { jungleCamps } from '../positions/index';
 import Monster, { MonsterOptions } from '../units/monster';
 import Spawner, { SpawnerOptions } from './spawner';
 
 
+//enum CampLevel {
+//	none = 0x0,
+//	normal = 0x1,
+//	epic = 0x2,
+//	healthPack = 0x3,
+//	speedShrine = 0x4,
+//}
+
 export type JungleCampOptions = SpawnerOptions & {
-	monsters: MonsterOptions[];
+	monsters: Omit<MonsterOptions, 'spawner'>[];
 };
 
 /**
  * monster spawner
  */
 export default class JungleCamp extends Spawner {
+	static initialize(options: JungleCampOptions) {
+		return super.initialize(options) as JungleCamp;
+	}
 
 	constructor(options: JungleCampOptions) {
 		super(options);
@@ -61,17 +72,17 @@ export default class JungleCamp extends Spawner {
 		Server.teams[TeamId.max].sendPacket(packet1, loadingStages.loading);
 	}
 
-	static spawnAll(spawnList: object = jungleCamps) {
+	static spawnAll(spawnList = jungleCamps) {
 		for (let team in spawnList) {
-			let teamSpawnList = spawnList[team];
+			let teamSpawnList = spawnList[team as any as keyof typeof spawnList];
 
 			for (let num in teamSpawnList) {
-				let spawn = teamSpawnList[num];
+				let spawn = teamSpawnList[num as any as keyof typeof teamSpawnList];
 
-				new JungleCamp({
-					team, num,
+				JungleCamp.initialize({
+					team: Number(team),
+					num: Number(num),
 					netId: spawn.netId,
-					character: spawn.character,
 					spawnPosition: spawn.position || spawn.monsters[0].position,
 					monsters: spawn.monsters,
 				});

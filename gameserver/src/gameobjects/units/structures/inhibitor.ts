@@ -1,39 +1,32 @@
 
 import * as packets from '@workspace/packets/packages/packets';
-import loadingStages from '../../constants/loading-stages';
-//import EVENT from '../../packets/EVENT';
-
-import Unit, { UnitEvents, UnitOptions } from './unit';
-import Defendable, { DefendableEvents } from '../extensions/combat/defendable';
-
+import loadingStages from '../../../constants/loading-stages';
+import Structure, { StructureEvents, StructureOptions } from './structure';
 import { OnEvent, OnEventArguments } from '@workspace/packets/packages/packets/types/on-event';
 import EventEmitter from 'node:events';
 import TypedEventEmitter from 'typed-emitter';
-import { IAttackable } from '../extensions/combat/attackable';
+import type AttackableUnit from '../attackable-unit';
 
 
-export type InhibitorOptions = UnitOptions & {
+export type InhibitorOptions = StructureOptions & {
 	team: number;
 	num: number;
 };
 
-export type InhibitorEvents = UnitEvents & DefendableEvents & {
+export type InhibitorEvents = StructureEvents & {
 
-}
+};
 
-export default class Inhibitor extends Unit {
+export default class Inhibitor extends Structure {
 	static initialize(options: InhibitorOptions) {
 		return super.initialize(options) as Inhibitor;
 	}
 
 	eventEmitter = new EventEmitter() as TypedEventEmitter<InhibitorEvents>;
 
-	combat!: Defendable;
 
 	loader(options: InhibitorOptions) {
 		super.loader(options);
-
-		this.combat = new Defendable(this);
 
 		this.initialized();
 	}
@@ -42,7 +35,7 @@ export default class Inhibitor extends Unit {
 		super(options);
 	}
 
-	announceDie(source: IAttackable) {
+	announceDie(source: AttackableUnit) {
 		const packet1 = packets.OnEvent.create({
 			netId: this.netId,
 			eventData: {
@@ -62,7 +55,7 @@ export default class Inhibitor extends Unit {
 		this.packets.toEveryone(packet2);
 	}
 
-	async onDie(source: IAttackable) {
+	async onDie(source: AttackableUnit) {
 		this.announceDie(source);
 	}
 

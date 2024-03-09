@@ -3,7 +3,7 @@ import type RelativeDataView from '@workspace/network/packages/relative-data-vie
 
 export type SVector3Model = {
 	x: number,
-	z: number,
+	z?: number,
 	y: number,
 };
 

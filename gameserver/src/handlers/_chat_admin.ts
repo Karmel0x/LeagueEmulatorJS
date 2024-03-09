@@ -2,13 +2,14 @@
 import * as packets from '@workspace/packets/packages/packets';
 import * as packetHelpers from '../../src/packet-helpers';
 import { Vector2 } from 'three';
-import UnitList from '../app/unit-list';
 import Server from '../app/server';
-import Team, { TeamId } from '../gameobjects/extensions/traits/team';
+import { TeamId } from '../gameobjects/extensions/traits/team';
 
 import Player from '../gameobjects/units/player';
 import Minion from '../gameobjects/units/minion';
-import Logging from '../core/logging';
+import Logging, { LoggingOutput, LoggingType } from '../core/logging';
+import GameObjectList from '../app/game-object-list';
+import { IStat } from '../gameobjects/extensions/stats/istat';
 
 
 export type Command = {
@@ -70,8 +71,8 @@ const commandList: { [s: string]: Command; } = {
 		arguments: ['minionsAmount'],
 		handler: function (player, args) {
 			for (let i = parseInt(args[1] || '1'); i > 0; i--) {
-				UnitList.barracks[TeamId.order][0].spawnUnit('Basic');
-				UnitList.barracks[TeamId.chaos][0].spawnUnit('Basic');
+				GameObjectList.barracks.find(barrack => barrack.team.id == TeamId.order)?.spawnUnit('Basic');
+				GameObjectList.barracks.find(barrack => barrack.team.id == TeamId.chaos)?.spawnUnit('Basic');
 				//await Promise.delay(2);
 			}
 		},
@@ -80,9 +81,9 @@ const commandList: { [s: string]: Command; } = {
 		description: '',
 		arguments: ['team'],
 		handler: function (player, args) {
-			let team = (args[1] || player.team.getEnemyTeam());
+			let team = (args[1] || player.team.getEnemyTeamId());
 			player.packets.chatBoxMessage('spawnMinion', team);
-			UnitList.barracks[team][0].spawnUnit('Basic', { spawnPosition: player.position });
+			GameObjectList.barracks.find(barrack => barrack.team.id == team)?.spawnUnit('Basic', { spawnPosition: player.position });
 		},
 	},
 	'qq': {
@@ -90,7 +91,8 @@ const commandList: { [s: string]: Command; } = {
 		arguments: ['minionsAmount'],
 		handler: function (player, args) {
 			for (let i = parseInt(args[1] || '1'); i > 0; i--) {
-				UnitList.barracks[TeamId.chaos][0].spawnUnit('Basic').moving.teleport(new Vector2(1000 + (i * 150), 600));
+				const barrack = GameObjectList.barracks.find(barrack => barrack.team.id == TeamId.chaos);
+				barrack?.spawnUnit('Basic').moving.teleport(new Vector2(1000 + (i * 150), 600));
 			}
 		},
 	},
@@ -103,7 +105,8 @@ const commandList: { [s: string]: Command; } = {
 			];
 			let j = parseInt(args[2] || '0');
 			for (let i = parseInt(args[1] || '1'); i > 0; i--) {
-				UnitList.barracks[TeamId.chaos][0].spawnUnit(characters[j]).moving.teleport(new Vector2(1000 + (i * 150), 600));
+				const barrack = GameObjectList.barracks.find(barrack => barrack.team.id == TeamId.chaos);
+				barrack?.spawnUnit(characters[j]).moving.teleport(new Vector2(1000 + (i * 150), 600));
 			}
 		},
 	},
@@ -111,7 +114,7 @@ const commandList: { [s: string]: Command; } = {
 		description: 'start game (start spawning minions)',
 		arguments: [],
 		handler: function (player, args) {
-			Server.command_START_GAME = true;
+			Server.commandStartGame = true;
 			player.packets.chatBoxMessage('starting game');
 		},
 	},
@@ -120,19 +123,11 @@ const commandList: { [s: string]: Command; } = {
 		arguments: [],
 		handler: function (player, args) {
 			let pos = new Vector2(10200, 13200);
-			let redMinionUnits = UnitList.getUnitsF(TeamId.chaos, 'Minion') as Minion[];
-			for (let i = 0, l = redMinionUnits.length; i < l; i++)
-				redMinionUnits[i].moving.move1(pos.clone());
+			let redMinions = GameObjectList.aliveUnits.filter(unit => unit instanceof Minion && unit.team.id == TeamId.chaos) as Minion[];
+			for (let i = 0, l = redMinions.length; i < l; i++)
+				redMinions[i].moving.move1(pos.clone());
 		},
 	},
-	//'ee': {
-	//	description: '',
-	//	arguments: [],
-	//	handler: function (player, args) {
-	//		player.attack(UnitList.units[1]);
-	//		UnitList.units[1].attack(player);
-	//	},
-	//},
 	'e': {
 		description: 'resend player stats to client',
 		arguments: [],
@@ -182,9 +177,9 @@ const commandList: { [s: string]: Command; } = {
 		arguments: ['websocket/console/none'],
 		handler: function (player, args) {
 			Logging.changeOptions({
-				packet: Logging.output[args[1]] || Logging.output.websocket,
+				packet: Logging.output[args[1] as keyof typeof Logging.output] || Logging.output.websocket,
 			});
-			player.packets.chatBoxMessage(`packet logging: ${Logging.options.packet.name}`);
+			player.packets.chatBoxMessage(`packet logging: ${(Logging.options as { [key in LoggingType]?: LoggingOutput }).packet?.name}`);
 		},
 	},
 	'levelup': {
@@ -221,11 +216,9 @@ const commandList: { [s: string]: Command; } = {
 		arguments: [],
 		handler: function (player, args) {
 			for (let i = 22; i > 0; i--) {
-				let unit = UnitList.barracks[TeamId.chaos][0].spawnUnit('Basic');
-				//unit.moveLane = () => {};
-				//unit.eventEmitter.once('initialized', () => {
-				unit.moving.teleport(new Vector2(1000 + (i * 150), 600));
-				//});
+				const barrack = GameObjectList.barracks.find(barrack => barrack.team.id == TeamId.chaos);
+				const unit = barrack?.spawnUnit('Basic');
+				unit?.moving.teleport(new Vector2(1000 + (i * 150), 600));
 			}
 
 			for (let i = 5; i > 0; i--)
@@ -257,7 +250,7 @@ const commandList: { [s: string]: Command; } = {
 			else if (args[1] == 'stats') {
 				let message = '';
 				for (let i in player.stats.base) {
-					let playerStat = player.stats[i];
+					let playerStat = player.stats[i as keyof typeof player.stats] as IStat;
 					if (playerStat)
 						message += ` | ${i}: ${playerStat.total}`;
 				}
@@ -272,10 +265,11 @@ const commandList: { [s: string]: Command; } = {
 		handler: function (player, args) {
 			// teleport to unit by netId
 			let netId = parseInt(args[1] || '0');
-			let unit = UnitList.getUnitByNetId(netId);
-			if (unit) {
-				player.moving.teleport(unit.position);
-			}
+			let unit = GameObjectList.unitByNetId(netId);
+			if (!unit)
+				return;
+
+			player.moving.teleport(unit.position);
 			player.packets.chatBoxMessage('teleporting player to ', unit.constructor.name, netId, '-', unit.position.x, unit.position.y);
 		},
 	},
@@ -303,7 +297,7 @@ const commandList: { [s: string]: Command; } = {
 		description: '',
 		arguments: ['characterName'],
 		handler: function (player, args) {
-			player.character = args[1] || 'Ezreal';
+			player.switchCharacter(args[1] || 'Ezreal');
 		},
 	},
 	'SystemMessage': {
@@ -347,10 +341,18 @@ const commandList: { [s: string]: Command; } = {
 	},
 	'wave': {
 		description: '',
-		arguments: [],
+		arguments: ['team'],
 		handler: function (player, args) {
-			UnitList.barracks[TeamId.order][1]?.spawnWave();
-			UnitList.barracks[TeamId.chaos][1]?.spawnWave();
+			if (!args[1])
+				args[1] = 'order,chaos';
+
+			if (args[1].includes('order')) {
+				GameObjectList.barracks.find(barrack => barrack.team.id == TeamId.order)?.spawnWave();
+			}
+
+			if (args[1].includes('chaos')) {
+				GameObjectList.barracks.find(barrack => barrack.team.id == TeamId.chaos)?.spawnWave();
+			}
 		}
 	},
 
@@ -362,8 +364,8 @@ export default (player: Player, packet: packets.ChatModel) => {
 		return;
 
 	let command = packet.message.slice(1);
-	command = command || player.lastAdminCommand;
-	player.lastAdminCommand = command;
+	command = command || player.lastChatCommand;
+	player.lastChatCommand = command;
 
 	if (!command)
 		return;
