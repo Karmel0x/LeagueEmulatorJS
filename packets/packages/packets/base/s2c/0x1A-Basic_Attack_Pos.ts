@@ -2,9 +2,11 @@ import BasePacket, { BasePacketModel } from '@workspace/network/packages/packets
 import type RelativeDataView from '@workspace/network/packages/relative-data-view';
 import SBasicAttackData, { SBasicAttackDataModel } from '../../shared/SBasicAttackData';
 import SVector2, { SVector2Model } from '../../shared/SVector2';
+import SVector3, { SVector3Model } from '../../shared/SVector3';
 
 export type Basic_Attack_PosModel = BasePacketModel & SBasicAttackDataModel & {
-	position: SVector2Model,
+	//position: SVector2Model,
+	position: SVector3Model,
 };
 
 export default class Basic_Attack_Pos extends BasePacket {
@@ -16,13 +18,15 @@ export default class Basic_Attack_Pos extends BasePacket {
 		super.reader(dvr, payload);
 
 		SBasicAttackData.reader(dvr, payload);
-		payload.position = SVector2.read(dvr);
+		//payload.position = SVector2.read(dvr);
+		payload.position = SVector3.read(dvr);
 	}
 
 	static writer(dvr: RelativeDataView, payload: Basic_Attack_PosModel) {
 		super.writer(dvr, payload);
 
 		SBasicAttackData.writer(dvr, payload);
-		SVector2.writer(dvr, payload.position);
+		//SVector2.writer(dvr, payload.position);
+		SVector3.writer(dvr, payload.position);
 	}
 }

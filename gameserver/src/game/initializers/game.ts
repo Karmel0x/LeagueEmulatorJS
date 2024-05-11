@@ -38,6 +38,7 @@ export default class Game {
 			count: packet.count,
 			ping: packet.ping,
 			ready: packet.ready,
+			state: packet.state,
 		});
 		Server.teams[TeamId.max].sendPacket(packet1, loadingStages.notConnected);
 	}

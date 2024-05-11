@@ -199,7 +199,7 @@ export default class SynchVersion extends BasePacket {
 	}
 
 	static SPlayerInfo_writer(dvr: RelativeDataView, payload: Partial<SPlayerInfoModel>) {
-		payload = payload || { playerId: -1 } as Partial<SPlayerInfoModel>;
+		payload = payload || { /*playerId: -1*/ } as Partial<SPlayerInfoModel>;
 		dvr.writeInt64(payload.playerId);
 		dvr.writeUint16(payload.summonorLevel);
 		dvr.writeUint32(payload.summonorSpell1);
@@ -227,6 +227,7 @@ export default class SynchVersion extends BasePacket {
 			matchedGame: payload.matchedGame,
 			dradisInit: payload.dradisInit,
 		});
+
 		dvr.writeInt32(payload.mapToLoad);
 		dvr.writeArray(payload.playerInfo, v => this.SPlayerInfo_writer(dvr, v), 12);
 		dvr.writeCharArray(payload.versionString, 256);

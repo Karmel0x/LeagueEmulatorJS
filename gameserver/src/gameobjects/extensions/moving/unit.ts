@@ -48,14 +48,20 @@ export default class MovingUnit extends MovingGameObject {
 	moveAns(teleport = false) {
 		// this should be in Movement_Simulation so we can resend if destination will change (following moveable unit)
 		// or following should be made with dash.speedParams.followNetId ?
-		const packet1 = packets.WaypointGroup.create({
+		//const packet1 = packets.WaypointGroup.create({
+		//	syncId: performance.now(),
+		//	netId: 0,
+		//	movementData: [{
+		//		teleportNetId: this.owner.netId,
+		//		teleportId: teleport ? this.getNextTeleportId() : 0,
+		//		waypoints: this.waypointsHalt ? [this.owner.position] : [this.owner.position, ...this._waypoints.slice(0, 2)],
+		//	}],
+		//});
+		const packet1 = packets.WaypointList.create({
+			netId: this.owner.netId,
 			syncId: performance.now(),
-			netId: 0,
-			movementData: [{
-				teleportNetId: this.owner.netId,
-				teleportId: teleport ? this.getNextTeleportId() : 0,
-				waypoints: this.waypointsHalt ? [this.owner.position] : [this.owner.position, ...this._waypoints.slice(0, 2)],
-			}],
+			waypoints: this.waypointsHalt ? [this.owner.position] : [this.owner.position, ...this._waypoints.slice(0, 2)],
+
 		});
 		this.owner.packets.toVision(packet1);
 		//console.log('WaypointGroup', packet1);

@@ -10,6 +10,7 @@ export type SConnectionInfoModel = {
 	count: number,
 	ping: number,
 	ready: boolean,
+	state: string,
 };
 
 export default class SConnectionInfo extends PartialPacket {
@@ -35,6 +36,8 @@ export default class SConnectionInfo extends PartialPacket {
 		// v >= 4.18
 		let bitfield1 = dvr.readBitfield(this.bitfield1);
 		payload.ready = bitfield1.ready;
+
+		payload.state = dvr.readStringNullTerminated(64);
 	}
 
 	static writer(dvr: RelativeDataView, payload: SConnectionInfoModel) {
@@ -48,5 +51,7 @@ export default class SConnectionInfo extends PartialPacket {
 		dvr.writeBitfield(this.bitfield1, {
 			ready: payload.ready,
 		});
+
+		dvr.writeStringNullTerminated(payload.state, 64);
 	}
 }

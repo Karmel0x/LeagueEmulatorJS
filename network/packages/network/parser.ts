@@ -21,7 +21,7 @@ export default class Parser {
 
 		try {
 			const packetId = dvr.readUint8();
-			console.log('packetId', packetId);
+			console.log('packetId', packetId, 'channel', packet.channel);
 			dvr.offset = 0;
 			return this.read(packet.channel, packetId, dvr);
 		}

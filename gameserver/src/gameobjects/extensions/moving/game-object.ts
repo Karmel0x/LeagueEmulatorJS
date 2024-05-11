@@ -147,24 +147,25 @@ export default class MovingGameObject {
 
 	move0(packet: packets.IssueOrderReqModel) {
 
-		let movementData = packet.movementData;
-		if (!movementData)
-			return;
-
-		this.sendDebugData('move0', movementData);
-
-		let newWaipoints = movementData.waypoints;
-		if (!newWaipoints || !newWaipoints.length)
-			return;
-
-		//if (!Server.doNotUsePathfinding) {
-		//	// idk if it's even necessary here but MoveData.waypoints are wrong when character is dashing
-		//	newWaipoints = Pathfinding.getPath(this.owner.position, packet.position);
-		//	//console.log({waypoints: movementData.waypoints, newWaipoints});
-		//}
-
-		// first waypoint is current position
-		newWaipoints.shift();
+		//let movementData = packet.movementData;
+		//if (!movementData)
+		//	return;
+		//
+		//this.sendDebugData('move0', movementData);
+		//
+		//let newWaipoints = movementData.waypoints;
+		//if (!newWaipoints || !newWaipoints.length)
+		//	return;
+		//
+		////if (!Server.doNotUsePathfinding) {
+		////	// idk if it's even necessary here but MoveData.waypoints are wrong when character is dashing
+		////	newWaipoints = Pathfinding.getPath(this.owner.position, packet.position);
+		////	//console.log({waypoints: movementData.waypoints, newWaipoints});
+		////}
+		//
+		//// first waypoint is current position
+		//newWaipoints.shift();
+		let newWaipoints = [new Vector2(packet.position.x, packet.position.y)];
 
 		if (newWaipoints && newWaipoints.length) {
 			this.setWaypoints(newWaipoints);

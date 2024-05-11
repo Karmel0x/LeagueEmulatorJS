@@ -65,7 +65,7 @@ export default class Turret extends Structure {
 			unknown2: false,
 			isTargetableToTeam: 0x01800000,
 		});
-		this.packets.toEveryone(packet1, loadingStages.notConnected);
+		//this.packets.toEveryone(packet1, loadingStages.notConnected);
 
 		super.spawn();
 	}

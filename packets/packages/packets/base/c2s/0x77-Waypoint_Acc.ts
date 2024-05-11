@@ -9,7 +9,7 @@ export type TeleportDataModel = {
 
 export type Waypoint_AccModel = BasePacketModel & {
 	syncId: number,
-	teleports: TeleportDataModel[],
+	//teleports: TeleportDataModel[],
 };
 
 export default class Waypoint_Acc extends BasePacket {
@@ -22,25 +22,25 @@ export default class Waypoint_Acc extends BasePacket {
 
 		payload.syncId = dvr.readInt32();
 
-		const count = dvr.readUint8();
-		payload.teleports = dvr.readArray(() => ({
-			netId: dvr.readUint32(),
-			teleportId: dvr.readUint8(),
-		}), count);
+		//const count = dvr.readUint8();
+		//payload.teleports = dvr.readArray(() => ({
+		//	netId: dvr.readUint32(),
+		//	teleportId: dvr.readUint8(),
+		//}), count);
 	}
 
 	static writer(dvr: RelativeDataView, payload: Waypoint_AccModel) {
-		if (!payload.teleports || payload.teleports.length < 1)
-			return;
+		//if (!payload.teleports || payload.teleports.length < 1)
+		//	return;
 
 		super.writer(dvr, payload);
 
 		dvr.writeInt32(payload.syncId);
 
-		dvr.writeUint8(payload.teleports.length);
-		payload.teleports.forEach(teleport => {
-			dvr.writeUint32(teleport.netId);
-			dvr.writeUint8(teleport.teleportId);
-		});
+		//dvr.writeUint8(payload.teleports.length);
+		//payload.teleports.forEach(teleport => {
+		//	dvr.writeUint32(teleport.netId);
+		//	dvr.writeUint8(teleport.teleportId);
+		//});
 	}
 }

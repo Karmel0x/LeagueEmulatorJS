@@ -18,7 +18,8 @@ export default class SBasicAttackData extends PartialPacket {
 
 	static reader(dvr: RelativeDataView, payload: SBasicAttackDataModel) {
 		payload.targetNetId = dvr.readUint32();
-		payload.extraTime = dvr.readInt8();//(dvr.readUint8() - 128) / 100.0f
+		//payload.extraTime = dvr.readInt8();//(dvr.readUint8() - 128) / 100.0f
+		payload.extraTime = dvr.readFloat();
 		payload.missileNextId = dvr.readUint32();
 		payload.attackSlot = dvr.readUint8();
 
@@ -27,7 +28,8 @@ export default class SBasicAttackData extends PartialPacket {
 
 	static writer(dvr: RelativeDataView, payload: SBasicAttackDataModel) {
 		dvr.writeUint32(payload.targetNetId);
-		dvr.writeInt8(payload.extraTime);
+		//dvr.writeInt8(payload.extraTime);
+		dvr.writeFloat(payload.extraTime);
 		dvr.writeUint32(payload.missileNextId);
 		dvr.writeUint8(payload.attackSlot);
 

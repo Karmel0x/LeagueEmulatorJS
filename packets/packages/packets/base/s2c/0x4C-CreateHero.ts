@@ -15,8 +15,8 @@ export type CreateHeroModel = BasePacketModel & {
 	skillLevel: number,
 	teamIsOrder: boolean,
 	isBot: boolean,
-	botRank: number,
-	spawnPosIndex: number,
+	//botRank: number,
+	//spawnPosIndex: number,
 	skinId: number,
 	name: string,
 	skinName: string,
@@ -56,8 +56,8 @@ export default class CreateHero extends BasePacket {
 		payload.teamIsOrder = dvr.readBool();
 		payload.isBot = dvr.readBool();
 
-		payload.botRank = dvr.readUint8();
-		payload.spawnPosIndex = dvr.readUint8();
+		//payload.botRank = dvr.readUint8();
+		//payload.spawnPosIndex = dvr.readUint8();
 		payload.skinId = dvr.readInt32();
 		payload.name = dvr.readCharArray(40);
 		payload.skinName = dvr.readCharArray(40);
@@ -85,8 +85,8 @@ export default class CreateHero extends BasePacket {
 		dvr.writeBool(payload.teamIsOrder);
 		dvr.writeBool(payload.isBot);
 
-		dvr.writeUint8(payload.botRank);
-		dvr.writeUint8(payload.spawnPosIndex);
+		//dvr.writeUint8(payload.botRank);
+		//dvr.writeUint8(payload.spawnPosIndex);
 		dvr.writeInt32(payload.skinId);
 		dvr.writeCharArray(payload.name, 40);
 		dvr.writeCharArray(payload.skinName, 40);

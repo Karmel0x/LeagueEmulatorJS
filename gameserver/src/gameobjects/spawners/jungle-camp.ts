@@ -52,7 +52,7 @@ export default class JungleCamp extends Spawner {
 			campIndex: this.team.num,
 		});
 
-		Server.teams[TeamId.max].sendPacket(packet1, loadingStages.loading);
+		//Server.teams[TeamId.max].sendPacket(packet1, loadingStages.loading);
 	}
 
 	notifyActivate() {
@@ -61,7 +61,7 @@ export default class JungleCamp extends Spawner {
 			campIndex: this.team.num,
 		});
 
-		Server.teams[TeamId.max].sendPacket(packet1, loadingStages.loading);
+		//Server.teams[TeamId.max].sendPacket(packet1, loadingStages.loading);
 	}
 
 	notifyDeactivate() {
@@ -69,7 +69,7 @@ export default class JungleCamp extends Spawner {
 			campIndex: this.team.num,
 		});
 
-		Server.teams[TeamId.max].sendPacket(packet1, loadingStages.loading);
+		//Server.teams[TeamId.max].sendPacket(packet1, loadingStages.loading);
 	}
 
 	static spawnAll(spawnList = jungleCamps) {

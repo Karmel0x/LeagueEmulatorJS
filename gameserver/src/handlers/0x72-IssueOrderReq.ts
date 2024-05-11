@@ -12,7 +12,7 @@ import { IssueOrderType } from '@workspace/packets/packages/packets/base/c2s/0x7
 let waypointsDrawer: any = undefined;
 
 export default (player: Player, packet: packets.IssueOrderReqModel) => {
-	//console.log('handle: c2s.IssueOrderReq');
+	console.log('handle: c2s.IssueOrderReq');
 	//console.log(packet);
 	//console.log('position', packet.position, 'waypoints', packet.movementData.waypoints);
 

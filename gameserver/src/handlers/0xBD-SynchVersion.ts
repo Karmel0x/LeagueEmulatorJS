@@ -24,7 +24,7 @@ const MapId = {
 	//NexusBlitz: 21, // Nexus Blitz / Nexus Blitz map
 };
 
-const VersionString = 'Version 1.0.0.126 [PUBLIC]';
+//const VersionString = 'Version 1.0.0.126 [PUBLIC]';
 
 
 export default (player: Player, packet: packets.SynchVersionC2SModel) => {
@@ -46,7 +46,7 @@ export default (player: Player, packet: packets.SynchVersionC2SModel) => {
 	const packet1 = packets.SynchVersion.create({
 		versionMatches: true,
 		mapToLoad: MapId.SummonersRift_Original,
-		versionString: VersionString,
+		versionString: packet.version,
 		playerInfo,
 		mapMode: 'CLASSIC',
 		platformId: 'NA1',
