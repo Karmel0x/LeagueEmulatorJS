@@ -1,5 +1,6 @@
 
 export { default as AncientGolem } from './AncientGolem/index';
+export { default as Annie } from './Annie/index';
 export { default as Blue_Minion_Basic } from './Blue_Minion_Basic/index';
 export { default as Blue_Minion_MechCannon } from './Blue_Minion_MechCannon/index';
 export { default as Blue_Minion_MechMelee } from './Blue_Minion_MechMelee/index';

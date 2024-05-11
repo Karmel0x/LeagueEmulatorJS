@@ -99,11 +99,11 @@ export const jungleCamps: SpawnConfig<JungleCampOptions> = {
             //type: 'LesserCamp',
             info: { name: 'blue_golem', },
             monsters: [
-                {
-                    position: { x: 7916.8423, y: 2533.9634 },
-                    info: { name: 'SmallGolem5.1.1' },
-                    character: 'SmallGolem',
-                },
+                //{
+                //    position: { x: 7916.8423, y: 2533.9634 },
+                //    info: { name: 'SmallGolem5.1.1' },
+                //    character: 'SmallGolem',
+                //},
                 {
                     position: { x: 8216.842, y: 2533.9634 },
                     info: { name: 'Golem5.1.2' },
@@ -217,11 +217,11 @@ export const jungleCamps: SpawnConfig<JungleCampOptions> = {
             //type: 'LesserCamp',
             info: { name: 'red_golem', },
             monsters: [
-                {
-                    position: { x: 5810.464, y: 11925.474 },
-                    info: { name: 'SmallGolem11.1.1' },
-                    character: 'SmallGolem',
-                },
+                //{
+                //    position: { x: 5810.464, y: 11925.474 },
+                //    info: { name: 'SmallGolem11.1.1' },
+                //    character: 'SmallGolem',
+                //},
                 {
                     position: { x: 6140.464, y: 11935.474 },
                     info: { name: 'Golem11.1.2' },
@@ -242,27 +242,27 @@ export const jungleCamps: SpawnConfig<JungleCampOptions> = {
             ],
         },
 
-        13: {
-            //type: 'LesserCamp',
-            info: { name: 'blue_greatWraith', },
-            monsters: [
-                {
-                    position: { x: 1684, y: 8207 },
-                    info: { name: 'GreatWraith14.1.1' },
-                    character: 'GreatWraith',
-                },
-            ],
-        },
-        14: {
-            //type: 'LesserCamp',
-            info: { name: 'red_greatWraith', },
-            monsters: [
-                {
-                    position: { x: 12337, y: 6263 },
-                    info: { name: 'GreatWraith14.1.1' },
-                    character: 'GreatWraith',
-                },
-            ],
-        },
+        //13: {
+        //    //type: 'LesserCamp',
+        //    info: { name: 'blue_greatWraith', },
+        //    monsters: [
+        //        {
+        //            position: { x: 1684, y: 8207 },
+        //            info: { name: 'GreatWraith14.1.1' },
+        //            character: 'GreatWraith',
+        //        },
+        //    ],
+        //},
+        //14: {
+        //    //type: 'LesserCamp',
+        //    info: { name: 'red_greatWraith', },
+        //    monsters: [
+        //        {
+        //            position: { x: 12337, y: 6263 },
+        //            info: { name: 'GreatWraith14.1.1' },
+        //            character: 'GreatWraith',
+        //        },
+        //    ],
+        //},
     }
 };

@@ -17,7 +17,7 @@ export default [
 		},
 		match: {
 			team: TeamId.order,
-			champion: 'Ezreal',
+			champion: 'Annie',
 			skin: 0,
 		},
 		runes: [],
@@ -38,7 +38,7 @@ export default [
 		},
 		match: {
 			team: TeamId.chaos,
-			champion: 'Ezreal',
+			champion: 'Annie',
 			skin: 0,
 		},
 		runes: [],
