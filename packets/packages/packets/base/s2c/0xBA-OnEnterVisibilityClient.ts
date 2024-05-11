@@ -85,10 +85,10 @@ export default class OnEnterVisibilityClient extends BasePacket {
 	static reader(dvr: RelativeDataView, payload: OnEnterVisibilityClientModel) {
 		super.reader(dvr, payload);
 
-		let packetSize = dvr.readUint16();
-		payload.packets = dvr.readArray(() => ({
-			data: dvr.readArray(() => dvr.readUint8(), packetSize),
-		}), packetSize);
+		//let packetSize = dvr.readUint16();
+		//payload.packets = dvr.readArray(() => ({
+		//	data: dvr.readArray(() => dvr.readUint8(), packetSize),
+		//}), packetSize);
 
 		let itemDataSize = dvr.readUint8();
 		payload.itemData = dvr.readArray(() => ({
@@ -102,34 +102,34 @@ export default class OnEnterVisibilityClient extends BasePacket {
 		if (payload.isTurret)
 			return;
 
-		let hasShieldValues = dvr.readBool();
-		if (hasShieldValues) {
-			payload.shieldValues = {
-				magical: dvr.readFloat(),
-				physical: dvr.readFloat(),
-				magicalAndPhysical: dvr.readFloat(),
-			};
-		}
+		//let hasShieldValues = dvr.readBool();
+		//if (hasShieldValues) {
+		//	payload.shieldValues = {
+		//		magical: dvr.readFloat(),
+		//		physical: dvr.readFloat(),
+		//		magicalAndPhysical: dvr.readFloat(),
+		//	};
+		//}
+		//
+		//let characterStackDataSize = dvr.readInt32();
+		//payload.characterStackData = dvr.readArray(() => ({
+		//	skinName: dvr.readString(),
+		//	skinId: dvr.readUint32(),
+		//	...dvr.readBitfield(this.characterStackDataBitfield1),
+		//	id: dvr.readUint32(),
+		//}), characterStackDataSize);
 
-		let characterStackDataSize = dvr.readInt32();
-		payload.characterStackData = dvr.readArray(() => ({
-			skinName: dvr.readString(),
-			skinId: dvr.readUint32(),
-			...dvr.readBitfield(this.characterStackDataBitfield1),
-			id: dvr.readUint32(),
-		}), characterStackDataSize);
-
-		payload.lookAtNetId = dvr.readUint32();
+		//payload.lookAtNetId = dvr.readUint32();
 		payload.lookAtType = dvr.readUint8();
 		payload.lookAtPosition = SVector3.read(dvr);
 
-		let buffSize = dvr.readInt32();
-		payload.buff = dvr.readArray(() => ({
-			slot: dvr.readUint8(),
-			count: dvr.readInt32(),
-		}), buffSize);
-
-		payload.unknownIsHero = dvr.readBool();
+		//let buffSize = dvr.readInt32();
+		//payload.buff = dvr.readArray(() => ({
+		//	slot: dvr.readUint8(),
+		//	count: dvr.readInt32(),
+		//}), buffSize);
+		//
+		//payload.unknownIsHero = dvr.readBool();
 
 		if (dvr.bytesLeft < 5)
 			return;
@@ -153,11 +153,11 @@ export default class OnEnterVisibilityClient extends BasePacket {
 	static writer(dvr: RelativeDataView, payload: OnEnterVisibilityClientModel) {
 		super.writer(dvr, payload);
 
-		let packets = payload.packets || [];
-		dvr.writeUint16(packets.length);
-		packets.forEach(packet => {
-			dvr.writeArray(packet.data, dvr.writeUint8);
-		});
+		//let packets = payload.packets || [];
+		//dvr.writeUint16(packets.length);
+		//packets.forEach(packet => {
+		//	dvr.writeArray(packet.data, dvr.writeUint8);
+		//});
 
 		let itemData = payload.itemData || [];
 		dvr.writeUint8(itemData.length);
@@ -171,35 +171,35 @@ export default class OnEnterVisibilityClient extends BasePacket {
 		if (payload.isTurret)
 			return;
 
-		let hasShieldValues = !!payload.shieldValues;
-		dvr.writeBool(hasShieldValues);
-		if (hasShieldValues) {
-			dvr.writeFloat(payload.shieldValues!.magical);
-			dvr.writeFloat(payload.shieldValues!.physical);
-			dvr.writeFloat(payload.shieldValues!.magicalAndPhysical);
-		}
+		//let hasShieldValues = !!payload.shieldValues;
+		//dvr.writeBool(hasShieldValues);
+		//if (hasShieldValues) {
+		//	dvr.writeFloat(payload.shieldValues!.magical);
+		//	dvr.writeFloat(payload.shieldValues!.physical);
+		//	dvr.writeFloat(payload.shieldValues!.magicalAndPhysical);
+		//}
+		//
+		//let characterStackData = payload.characterStackData || [];
+		//dvr.writeInt32(characterStackData.length);
+		//characterStackData.forEach(character => {
+		//	dvr.writeString(character.skinName);
+		//	dvr.writeUint32(character.skinId);
+		//	dvr.writeBitfield(this.characterStackDataBitfield1, character);
+		//	dvr.writeUint32(character.id);
+		//});
 
-		let characterStackData = payload.characterStackData || [];
-		dvr.writeInt32(characterStackData.length);
-		characterStackData.forEach(character => {
-			dvr.writeString(character.skinName);
-			dvr.writeUint32(character.skinId);
-			dvr.writeBitfield(this.characterStackDataBitfield1, character);
-			dvr.writeUint32(character.id);
-		});
-
-		dvr.writeUint32(payload.lookAtNetId);
+		//dvr.writeUint32(payload.lookAtNetId);
 		dvr.writeUint8(payload.lookAtType);
 		SVector3.writer(dvr, payload.lookAtPosition);
 
-		let buff = payload.buff || [];
-		dvr.writeInt32(buff.length);
-		buff.forEach(buff => {
-			dvr.writeUint8(buff.slot);
-			dvr.writeInt32(buff.count);
-		});
-
-		dvr.writeBool(payload.unknownIsHero);
+		//let buff = payload.buff || [];
+		//dvr.writeInt32(buff.length);
+		//buff.forEach(buff => {
+		//	dvr.writeUint8(buff.slot);
+		//	dvr.writeInt32(buff.count);
+		//});
+		//
+		//dvr.writeBool(payload.unknownIsHero);
 
 		if (!payload.movementData)
 			return;

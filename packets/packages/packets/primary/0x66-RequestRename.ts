@@ -16,6 +16,7 @@ export default class RequestRename extends PrimaryPacket {
 	static reader(dvr: RelativeDataView, payload: RequestRenameModel) {
 		super.reader(dvr, payload);
 
+		dvr.readCharArray(7);
 		payload.playerId = dvr.readInt64();
 		payload.skinId = dvr.readInt32();
 		payload.playerName = dvr.readString();
@@ -27,6 +28,7 @@ export default class RequestRename extends PrimaryPacket {
 
 		super.writer(dvr, payload);
 
+		dvr.writeCharArray('', 7);
 		dvr.writeInt64(payload.playerId);
 		dvr.writeInt32(payload.skinId);
 

@@ -16,6 +16,7 @@ export default class RequestJoinTeam extends PrimaryPacket {
 	static reader(dvr: RelativeDataView, payload: RequestJoinTeamModel) {
 		super.reader(dvr, payload);
 
+		dvr.readCharArray(3);
 		payload.clientId = dvr.readUint32();
 		payload.team = dvr.readUint32();
 	}
@@ -23,6 +24,7 @@ export default class RequestJoinTeam extends PrimaryPacket {
 	static writer(dvr: RelativeDataView, payload: RequestJoinTeamModel) {
 		super.writer(dvr, payload);
 
+		dvr.writeCharArray('', 3);
 		dvr.writeUint32(payload.clientId);
 		dvr.writeUint32(payload.team);
 	}

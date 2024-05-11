@@ -18,9 +18,11 @@ export default class CMovementDataNormal extends PartialPacket {
 	}
 
 	static reader(dvr: RelativeDataView, payload: CMovementDataNormalModel) {
-		let bitfield = dvr.readUint8();
-		let waypointsSize = bitfield >> 1;
+		let bitfield = dvr.readUint16();
 		let hasTeleportId = (bitfield & 1) != 0;
+
+		let bitfield2 = dvr.readUint16();
+		let waypointsSize = bitfield2 & 0x7F;
 
 		if (waypointsSize) {
 			payload.teleportNetId = dvr.readUint32();
@@ -39,11 +41,13 @@ export default class CMovementDataNormal extends PartialPacket {
 		let compressedWaypointsLength = payload.compressedWaypoints?.length || 0;
 
 		let bitfield = 0;
-		bitfield |= compressedWaypointsLength << 1;
+		//bitfield |= compressedWaypointsLength << 1;
 		if (payload.teleportId)
 			bitfield |= 1;
 
-		dvr.writeUint8(bitfield);
+		dvr.writeUint16(bitfield);
+		let bitfield2 = compressedWaypointsLength & 0x7F;
+		dvr.writeUint16(bitfield2);
 		if (compressedWaypointsLength) {
 			dvr.writeUint32(payload.teleportNetId || 0);
 			if (payload.teleportId)

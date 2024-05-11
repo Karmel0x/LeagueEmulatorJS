@@ -16,16 +16,16 @@ export default class ClientReady extends BasePacket {
 	static reader(dvr: RelativeDataView, payload: ClientReadyModel) {
 		super.reader(dvr, payload);
 
-		payload.dummy1 = dvr.readCharArray(4);
-		payload.tipConfig = STipConfig.read(dvr);
-		payload.dummy2 = dvr.readStringNullTerminated(8);
+		//payload.dummy1 = dvr.readCharArray(4);
+		//payload.tipConfig = STipConfig.read(dvr);
+		//payload.dummy2 = dvr.readStringNullTerminated(8);
 	}
 
 	static writer(dvr: RelativeDataView, payload: ClientReadyModel) {
 		super.writer(dvr, payload);
 
-		dvr.writeCharArray(payload.dummy1, 4);
-		STipConfig.writer(dvr, payload.tipConfig);
-		dvr.writeStringNullTerminated(payload.dummy2, 8);
+		//dvr.writeCharArray(payload.dummy1, 4);
+		//STipConfig.writer(dvr, payload.tipConfig);
+		//dvr.writeStringNullTerminated(payload.dummy2, 8);
 	}
 }

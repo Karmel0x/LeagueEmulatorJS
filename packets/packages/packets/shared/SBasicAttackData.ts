@@ -22,7 +22,7 @@ export default class SBasicAttackData extends PartialPacket {
 		payload.missileNextId = dvr.readUint32();
 		payload.attackSlot = dvr.readUint8();
 
-		payload.targetPosition = SVector3.read(dvr);
+		//payload.targetPosition = SVector3.read(dvr);
 	}
 
 	static writer(dvr: RelativeDataView, payload: SBasicAttackDataModel) {
@@ -31,6 +31,6 @@ export default class SBasicAttackData extends PartialPacket {
 		dvr.writeUint32(payload.missileNextId);
 		dvr.writeUint8(payload.attackSlot);
 
-		SVector3.writer(dvr, payload.targetPosition);
+		//SVector3.writer(dvr, payload.targetPosition);
 	}
 }

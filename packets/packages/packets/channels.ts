@@ -7,15 +7,16 @@ export enum channels {
     s2c = 3,
     s2cUnreliable = 4,
     chat = 5,
-    quickChat = 6,
-    loading = 7,
+    //quickChat = 6,
+    //loading = 7,
+    loading = 6,
 }
 
 Registry.getPacketRegistry = function getPacketRegistry(channel: number, packetId: number) {
     if (channel === 0x00 && packetId === 0x00)
         return Registry.primary;
 
-    if (channel === channels.loading || channel === channels.chat || channel === channels.quickChat)
+    if (channel === channels.loading || channel === channels.chat)// || channel === channels.quickChat)
         return Registry.primary;
 
     return Registry.base;

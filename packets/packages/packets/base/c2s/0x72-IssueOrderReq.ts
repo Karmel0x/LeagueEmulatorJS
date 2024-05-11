@@ -1,6 +1,6 @@
 import BasePacket, { BasePacketModel } from '@workspace/network/packages/packets/base-packet';
 import type RelativeDataView from '@workspace/network/packages/relative-data-view';
-import SVector2, { SVector2Model } from '../../shared/SVector2';
+import SVector3, { SVector3Model } from '../../shared/SVector3';
 import CMovementDataNormal, { CMovementDataNormalModel } from '../../shared/CMovementDataNormal';
 import type { NetId } from '../../types/player';
 
@@ -25,7 +25,7 @@ export enum IssueOrderType {
 
 export type IssueOrderReqModel = BasePacketModel & {
 	orderType: IssueOrderType,
-	position: SVector2Model,
+	position: SVector3Model,
 	targetNetId: NetId,
 	movementData?: CMovementDataNormalModel,
 };
@@ -50,7 +50,7 @@ export default class IssueOrderReq extends BasePacket {
 		super.reader(dvr, payload);
 
 		payload.orderType = dvr.readUint8();
-		payload.position = SVector2.read(dvr);
+		payload.position = SVector3.read(dvr);
 		payload.targetNetId = dvr.readUint32();
 
 		if (dvr.bytesLeft <= 4)
@@ -63,7 +63,7 @@ export default class IssueOrderReq extends BasePacket {
 		super.writer(dvr, payload);
 
 		dvr.writeUint8(payload.orderType);
-		SVector2.writer(dvr, payload.position);
+		SVector3.writer(dvr, payload.position);
 		dvr.writeUint32(payload.targetNetId);
 
 		if (!payload.movementData)

@@ -10,15 +10,23 @@ At the moment, it ~~does not support multiplayer~~ and there is no game flow yet
 ```
 # download and install git (optional) - https://git-scm.com/download
 # download and install nodejs - https://nodejs.org/en/download/
+
 git clone https://github.com/Karmel0x/LeagueEmulatorJS
 cd LeagueEmulatorJS
+
 git clone https://github.com/Karmel0x/enetcppjs
+
+cd enetcppjs
+git checkout enet-1.2.5
+cd ..
+
 git clone https://github.com/Karmel0x/navmeshcppjs
+
 npm install
 npm run dev
 ```
 ```
-# download game client (4.20) here - https://github.com/LeagueSandbox/GameServer#manual-setup-windowsmac
+# download game client
 # copy runLol.bat to client directory and run
 # say `.help` ingame to get list of available commands
 ```

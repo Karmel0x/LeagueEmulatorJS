@@ -22,9 +22,14 @@ export default class Registry<Type extends typeof Packet> {
 
     lastPacketId: number = -1;
 
+    newPacketId() {
+        while (this.packets[++this.lastPacketId]);
+        return this.lastPacketId;
+    }
+
     register(packetClass: Type, packetId: number | undefined, channelId: number | undefined) {
 
-        packetClass.id = packetId ?? ++this.lastPacketId;
+        packetClass.id = packetId ?? this.newPacketId();
         packetClass.channel = channelId ?? 0;
 
         this.packets[packetClass.id] = packetClass;

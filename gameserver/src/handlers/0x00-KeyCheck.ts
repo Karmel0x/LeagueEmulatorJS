@@ -19,7 +19,7 @@ export default (peerNum: number, packet: packets.KeyCheckModel) => {
 
 	GameObjectList.playerByPeer[peerNum] = player;
 	player.network.peerNum = peerNum;
-	Server.network.networkApi.setBlowfish(peerNum, '17BLOhi6KZsTtldTsizvHg==');
+	Server.network.networkApi.setBlowfish(peerNum, 'GLzvuWtyCfHyGhF2');
 
 	{
 		const packet1 = packets.KeyCheck.create({

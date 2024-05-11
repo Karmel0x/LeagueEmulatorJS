@@ -17,7 +17,7 @@ export default [
 		},
 		match: {
 			team: TeamId.order,
-			champion: 'Yasuo',
+			champion: 'Ezreal',
 			skin: 0,
 		},
 		runes: [],

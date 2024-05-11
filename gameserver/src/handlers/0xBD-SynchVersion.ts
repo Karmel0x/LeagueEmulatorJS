@@ -24,7 +24,7 @@ const MapId = {
 	//NexusBlitz: 21, // Nexus Blitz / Nexus Blitz map
 };
 
-const VersionString = 'Version 4.20.0.315 [PUBLIC]';
+const VersionString = 'Version 1.0.0.126 [PUBLIC]';
 
 
 export default (player: Player, packet: packets.SynchVersionC2SModel) => {

@@ -95,6 +95,6 @@ export function sendUnitStats(units: Unit | Unit[]) {
     if (!Array.isArray(units))
         units = [units];
 
-    const packet1 = create(units);
-    Server.teams[TeamId.max].sendPacket(packet1, loadingStages.inGame);
+    //const packet1 = create(units);
+    //Server.teams[TeamId.max].sendPacket(packet1, loadingStages.inGame);
 }

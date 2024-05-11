@@ -144,14 +144,16 @@ export default class SynchVersion extends BasePacket {
 		payload.summonorSpell2 = dvr.readUint32();
 		payload.bitfield = dvr.readBitfield(this.SPlayerInfoBitfield1);
 		payload.team = dvr.readInt32();
-		payload.botName = dvr.readCharArray(64);
-		payload.botSkinName = dvr.readCharArray(64);
-		payload.eloRanking = dvr.readCharArray(16);
-		payload.botSkinId = dvr.readInt32();
+		//payload.botName = dvr.readCharArray(64);
+		//payload.botSkinName = dvr.readCharArray(64);
+		//payload.eloRanking = dvr.readCharArray(16);
+		//payload.botSkinId = dvr.readInt32();
+		dvr.readCharArray(28);
+		dvr.readCharArray(28);
 		payload.botDifficulty = dvr.readInt32();
 		payload.profileIconId = dvr.readInt32();
-		payload.allyBadgeId = dvr.readUint8();
-		payload.enemyBadgeId = dvr.readUint8();
+		//payload.allyBadgeId = dvr.readUint8();
+		//payload.enemyBadgeId = dvr.readUint8();
 	}
 
 	static reader(dvr: RelativeDataView, payload: SynchVersionModel) {
@@ -171,29 +173,29 @@ export default class SynchVersion extends BasePacket {
 		}, 12);
 		payload.versionString = dvr.readCharArray(256);
 		payload.mapMode = dvr.readCharArray(128);
-		payload.platformId = dvr.readCharArray(32);
-		payload.mutators = dvr.readArray(() => dvr.readCharArray(64), 8);
-		payload.mutatorsNum = dvr.readUint8();
-		payload.orderRankedTeamName = dvr.readCharArray(97);
-		payload.orderRankedTeamTag = dvr.readCharArray(25);
-		payload.chaosRankedTeamName = dvr.readCharArray(97);
-		payload.chaosRankedTeamTag = dvr.readCharArray(25);
-		payload.metricsServerWebAddress = dvr.readCharArray(256);
-		payload.metricsServerWebPath = dvr.readCharArray(256);
-		payload.metricsServerPort = dvr.readUint16();
-		payload.dradisProdAddress = dvr.readCharArray(256);
-		payload.dradisProdResource = dvr.readCharArray(256);
-		payload.dradisProdPort = dvr.readUint16();
-		payload.dradisTestAddress = dvr.readCharArray(256);
-		payload.dradisTestResource = dvr.readCharArray(256);
-		payload.dradisTestPort = dvr.readUint16();
-		payload.tipConfig = STipConfig.read(dvr);
-
-		let gameFeaturesBitfield = dvr.readBitfield64(this.gameFeaturesBitfield);
-		payload.gameFeatures = gameFeaturesBitfield;
-
-		payload.disabledItems = dvr.readArray(() => dvr.readUint32(), 64);
-		payload.enabledDradisMessages = dvr.readArray(() => dvr.readBool(), 19);
+		//payload.platformId = dvr.readCharArray(32);
+		//payload.mutators = dvr.readArray(() => dvr.readCharArray(64), 8);
+		//payload.mutatorsNum = dvr.readUint8();
+		//payload.orderRankedTeamName = dvr.readCharArray(97);
+		//payload.orderRankedTeamTag = dvr.readCharArray(25);
+		//payload.chaosRankedTeamName = dvr.readCharArray(97);
+		//payload.chaosRankedTeamTag = dvr.readCharArray(25);
+		//payload.metricsServerWebAddress = dvr.readCharArray(256);
+		//payload.metricsServerWebPath = dvr.readCharArray(256);
+		//payload.metricsServerPort = dvr.readUint16();
+		//payload.dradisProdAddress = dvr.readCharArray(256);
+		//payload.dradisProdResource = dvr.readCharArray(256);
+		//payload.dradisProdPort = dvr.readUint16();
+		//payload.dradisTestAddress = dvr.readCharArray(256);
+		//payload.dradisTestResource = dvr.readCharArray(256);
+		//payload.dradisTestPort = dvr.readUint16();
+		//payload.tipConfig = STipConfig.read(dvr);
+		//
+		//let gameFeaturesBitfield = dvr.readBitfield64(this.gameFeaturesBitfield);
+		//payload.gameFeatures = gameFeaturesBitfield;
+		//
+		//payload.disabledItems = dvr.readArray(() => dvr.readUint32(), 64);
+		//payload.enabledDradisMessages = dvr.readArray(() => dvr.readBool(), 19);
 	}
 
 	static SPlayerInfo_writer(dvr: RelativeDataView, payload: Partial<SPlayerInfoModel>) {
@@ -204,14 +206,16 @@ export default class SynchVersion extends BasePacket {
 		dvr.writeUint32(payload.summonorSpell2);
 		dvr.writeBitfield(this.SPlayerInfoBitfield1, payload.bitfield || {});
 		dvr.writeInt32(payload.team);
-		dvr.writeCharArray(payload.botName, 64);
-		dvr.writeCharArray(payload.botSkinName, 64);
-		dvr.writeCharArray(payload.eloRanking, 16);
-		dvr.writeInt32(payload.botSkinId);
+		//dvr.writeCharArray(payload.botName, 64);
+		//dvr.writeCharArray(payload.botSkinName, 64);
+		//dvr.writeCharArray(payload.eloRanking, 16);
+		//dvr.writeInt32(payload.botSkinId);
+		dvr.writeCharArray('', 28);
+		dvr.writeCharArray('', 28);
 		dvr.writeInt32(payload.botDifficulty);
 		dvr.writeInt32(payload.profileIconId);
-		dvr.writeUint8(payload.allyBadgeId);
-		dvr.writeUint8(payload.enemyBadgeId);
+		//dvr.writeUint8(payload.allyBadgeId);
+		//dvr.writeUint8(payload.enemyBadgeId);
 	}
 
 	static writer(dvr: RelativeDataView, payload: SynchVersionModel) {
@@ -227,28 +231,28 @@ export default class SynchVersion extends BasePacket {
 		dvr.writeArray(payload.playerInfo, v => this.SPlayerInfo_writer(dvr, v), 12);
 		dvr.writeCharArray(payload.versionString, 256);
 		dvr.writeCharArray(payload.mapMode, 128);
-		dvr.writeCharArray(payload.platformId, 32);
-
-		dvr.writeArray(payload.mutators, v => dvr.writeCharArray(v, 64), 8);
-		dvr.writeUint8(payload.mutatorsNum);
-		dvr.writeCharArray(payload.orderRankedTeamName, 97);
-		dvr.writeCharArray(payload.orderRankedTeamTag, 25);
-		dvr.writeCharArray(payload.chaosRankedTeamName, 97);
-		dvr.writeCharArray(payload.chaosRankedTeamTag, 25);
-		dvr.writeCharArray(payload.metricsServerWebAddress, 256);
-		dvr.writeCharArray(payload.metricsServerWebPath, 256);
-		dvr.writeUint16(payload.metricsServerPort);
-		dvr.writeCharArray(payload.dradisProdAddress, 256);
-		dvr.writeCharArray(payload.dradisProdResource, 256);
-		dvr.writeUint16(payload.dradisProdPort);
-		dvr.writeCharArray(payload.dradisTestAddress, 256);
-		dvr.writeCharArray(payload.dradisTestResource, 256);
-		dvr.writeUint16(payload.dradisTestPort);
-		STipConfig.writer(dvr, payload.tipConfig);
-
-		dvr.writeBitfield64(this.gameFeaturesBitfield, payload.gameFeatures);
-
-		dvr.writeArray(payload.disabledItems, v => dvr.writeUint32(v), 64);
-		dvr.writeArray(payload.enabledDradisMessages, v => dvr.writeBool(v), 19);
+		//dvr.writeCharArray(payload.platformId, 32);
+		//
+		//dvr.writeArray(payload.mutators, v => dvr.writeCharArray(v, 64), 8);
+		//dvr.writeUint8(payload.mutatorsNum);
+		//dvr.writeCharArray(payload.orderRankedTeamName, 97);
+		//dvr.writeCharArray(payload.orderRankedTeamTag, 25);
+		//dvr.writeCharArray(payload.chaosRankedTeamName, 97);
+		//dvr.writeCharArray(payload.chaosRankedTeamTag, 25);
+		//dvr.writeCharArray(payload.metricsServerWebAddress, 256);
+		//dvr.writeCharArray(payload.metricsServerWebPath, 256);
+		//dvr.writeUint16(payload.metricsServerPort);
+		//dvr.writeCharArray(payload.dradisProdAddress, 256);
+		//dvr.writeCharArray(payload.dradisProdResource, 256);
+		//dvr.writeUint16(payload.dradisProdPort);
+		//dvr.writeCharArray(payload.dradisTestAddress, 256);
+		//dvr.writeCharArray(payload.dradisTestResource, 256);
+		//dvr.writeUint16(payload.dradisTestPort);
+		//STipConfig.writer(dvr, payload.tipConfig);
+		//
+		//dvr.writeBitfield64(this.gameFeaturesBitfield, payload.gameFeatures);
+		//
+		//dvr.writeArray(payload.disabledItems, v => dvr.writeUint32(v), 64);
+		//dvr.writeArray(payload.enabledDradisMessages, v => dvr.writeBool(v), 19);
 	}
 }

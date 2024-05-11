@@ -15,6 +15,7 @@ export default class SynchVersionC2S extends BasePacket {
 	static reader(dvr: RelativeDataView, payload: SynchVersionC2SModel) {
 		super.reader(dvr, payload);
 
+		dvr.readFloat();
 		payload.clientId = dvr.readUint32();
 		payload.version = dvr.readStringNullTerminated(256);
 	}
@@ -22,6 +23,7 @@ export default class SynchVersionC2S extends BasePacket {
 	static writer(dvr: RelativeDataView, payload: SynchVersionC2SModel) {
 		super.writer(dvr, payload);
 
+		dvr.writeFloat(0);
 		dvr.writeUint32(payload.clientId);
 		dvr.writeStringNullTerminated(payload.version, 256);
 	}

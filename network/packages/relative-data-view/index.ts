@@ -1,4 +1,13 @@
 
+export function ctrz(integer: number) {
+    integer >>>= 0;
+    if (integer === 0) {
+        return 32;
+    }
+    integer &= -integer;
+    return 31 - Math.clz32(integer);
+}
+
 export default class RelativeDataView {
 
     static from(buffer: ArrayBufferLike | Buffer) {
@@ -160,8 +169,23 @@ export default class RelativeDataView {
         return str;
     }
 
-    readBitfield<T extends { [name: string]: number }>(fields: T) {
+    unpackIntegerBitfield<T extends { [name: string]: number }>(fields: T, bitfield: number) {
+        let result = {} as { [K in keyof T]: number };
+
+        for (let i in fields) {
+            let trailingZeros = ctrz(fields[i]);
+            result[i] = (bitfield >>> trailingZeros) & (fields[i] >>> trailingZeros);
+        }
+
+        return result;
+    }
+
+    readIntegerBitfield<T extends { [name: string]: number }>(fields: T) {
         let bitfield = this.readUint8();
+        return this.unpackIntegerBitfield(fields, bitfield);
+    }
+
+    unpackBooleanBitfield<T extends { [name: string]: number }>(fields: T, bitfield: number) {
         let result = {} as { [K in keyof T]: boolean };
 
         for (let i in fields)
@@ -170,14 +194,14 @@ export default class RelativeDataView {
         return result;
     }
 
+    readBitfield<T extends { [name: string]: number }>(fields: T) {
+        let bitfield = this.readUint8();
+        return this.unpackBooleanBitfield(fields, bitfield);
+    }
+
     readBitfield64<T extends { [name: string]: number }>(fields: T) {
         let bitfield = this.readUint64();
-        let result = {} as { [K in keyof T]: boolean };
-
-        for (let i in fields)
-            result[i] = (bitfield & fields[i]) != 0;
-
-        return result;
+        return this.unpackBooleanBitfield(fields, Number(bitfield));
     }
 
     readArray<T extends (...args: any[]) => any>(reader: T, length: number | undefined = undefined) {
@@ -303,21 +327,41 @@ export default class RelativeDataView {
         }
     }
 
-    writeBitfield<T extends { [name: string]: number }>(fields: T, values: { [K in keyof Partial<T>]: boolean }) {
+    packIntegerBitfield<T extends { [name: string]: number }>(fields: T, values: { [K in keyof Partial<T>]: number }) {
         let bitfield = 0;
-        for (let i in values)
-            if (values[i])
-                bitfield |= fields[i];
+        for (let i in values) {
+            if (values[i]) {
+                if (values[i] > fields[i])
+                    throw new Error(`value of ${i} (${values[i]}) is greater than the field (${fields[i]})`);
 
+                bitfield |= values[i] << ctrz(fields[i]);
+            }
+        }
+        return bitfield;
+    }
+
+    writeIntegerBitfield<T extends { [name: string]: number }>(fields: T, values: { [K in keyof Partial<T>]: number }) {
+        let bitfield = this.packIntegerBitfield(fields, values);
+        this.writeUint8(bitfield);
+    }
+
+    packBooleanBitfield<T extends { [name: string]: number }>(fields: T, values: { [K in keyof Partial<T>]: boolean }) {
+        let bitfield = 0;
+        for (let i in values) {
+            if (values[i]) {
+                bitfield |= fields[i];
+            }
+        }
+        return bitfield;
+    }
+
+    writeBitfield<T extends { [name: string]: number }>(fields: T, values: { [K in keyof Partial<T>]: boolean }) {
+        let bitfield = this.packBooleanBitfield(fields, values);
         this.writeUint8(bitfield);
     }
 
     writeBitfield64<T extends { [name: string]: number }>(fields: T, values: { [K in keyof Partial<T>]: boolean }) {
-        let bitfield = 0;
-        for (let i in values)
-            if (values[i])
-                bitfield |= fields[i];
-
+        let bitfield = this.packBooleanBitfield(fields, values);
         this.writeUint64(bitfield);
     }
 

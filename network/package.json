@@ -1,6 +1,6 @@
 {
   "name": "network",
   "devDependencies": {
-    "@types/node": "^20.11.19"
+    "@types/node": "^20.12.8"
   }
 }

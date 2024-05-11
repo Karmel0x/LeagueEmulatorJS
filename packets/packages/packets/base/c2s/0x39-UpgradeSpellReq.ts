@@ -19,16 +19,16 @@ export default class UpgradeSpellReq extends BasePacket {
 		super.reader(dvr, payload);
 
 		payload.slot = dvr.readUint8();
-		let bitfield1 = dvr.readBitfield(this.bitfield1);
-		payload.isEvolve = bitfield1.isEvolve;
+		//let bitfield1 = dvr.readBitfield(this.bitfield1);
+		//payload.isEvolve = bitfield1.isEvolve;
 	}
 
 	static writer(dvr: RelativeDataView, payload: UpgradeSpellReqModel) {
 		super.writer(dvr, payload);
 
 		dvr.writeUint8(payload.slot);
-		dvr.writeBitfield(this.bitfield1, {
-			isEvolve: payload.isEvolve,
-		});
+		//dvr.writeBitfield(this.bitfield1, {
+		//	isEvolve: payload.isEvolve,
+		//});
 	}
 }

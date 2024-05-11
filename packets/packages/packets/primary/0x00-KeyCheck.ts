@@ -21,9 +21,10 @@ export default class KeyCheck extends PrimaryPacket {
 		payload.partialKey = dvr.readByteArray(3);
 		payload.clientId = dvr.readUint32();
 		payload.playerId = dvr.readUint64();
-		payload.versionNumber = dvr.readUint32();
-		payload.checksum = dvr.readBigUint64();
-		payload.dummy1 = dvr.readUint32();
+		//payload.versionNumber = dvr.readUint32();
+		//payload.checksum = dvr.readBigUint64();
+		//payload.dummy1 = dvr.readUint32();
+		dvr.readBigUint64();
 	}
 
 	static writer(dvr: RelativeDataView, payload: KeyCheckModel) {
@@ -32,8 +33,9 @@ export default class KeyCheck extends PrimaryPacket {
 		dvr.writeByteArray(payload.partialKey, 3);
 		dvr.writeUint32(payload.clientId);
 		dvr.writeUint64(payload.playerId);
-		dvr.writeUint32(payload.versionNumber);
-		dvr.writeBigUint64(payload.checksum);
-		dvr.writeUint32(payload.dummy1);
+		//dvr.writeUint32(payload.versionNumber);
+		//dvr.writeBigUint64(payload.checksum);
+		//dvr.writeUint32(payload.dummy1);
+		dvr.writeBigUint64(0n);
 	}
 }

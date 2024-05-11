@@ -157,11 +157,11 @@ export default class MovingGameObject {
 		if (!newWaipoints || !newWaipoints.length)
 			return;
 
-		if (!Server.doNotUsePathfinding) {
-			// idk if it's even necessary here but MoveData.waypoints are wrong when character is dashing
-			newWaipoints = Pathfinding.getPath(this.owner.position, packet.position);
-			//console.log({waypoints: movementData.waypoints, newWaipoints});
-		}
+		//if (!Server.doNotUsePathfinding) {
+		//	// idk if it's even necessary here but MoveData.waypoints are wrong when character is dashing
+		//	newWaipoints = Pathfinding.getPath(this.owner.position, packet.position);
+		//	//console.log({waypoints: movementData.waypoints, newWaipoints});
+		//}
 
 		// first waypoint is current position
 		newWaipoints.shift();

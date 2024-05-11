@@ -69,7 +69,7 @@ export default class PHero extends PUnit {
 			wardSkin: 0,
 		});
 
-		dest.sendPacket(packet1, loadingStages.notConnected);
+		//dest.sendPacket(packet1, loadingStages.notConnected);
 	}
 
 	chatBoxMessage(...args: any[]) {

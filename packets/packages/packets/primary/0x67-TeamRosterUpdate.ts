@@ -17,8 +17,10 @@ export default class TeamRosterUpdate extends PrimaryPacket {
 	static reader(dvr: RelativeDataView, payload: TeamRosterUpdateModel) {
 		super.reader(dvr, payload);
 
+		dvr.readCharArray(3);
 		payload.maxOrder = dvr.readUint32();
 		payload.maxChaos = dvr.readUint32();
+		dvr.readCharArray(4);
 
 		let playerIds1 = dvr.readArray(() => dvr.readInt64(), 24);
 		let playerIds2 = dvr.readArray(() => dvr.readInt64(), 24);
@@ -33,8 +35,10 @@ export default class TeamRosterUpdate extends PrimaryPacket {
 	static writer(dvr: RelativeDataView, payload: TeamRosterUpdateModel) {
 		super.writer(dvr, payload);
 
+		dvr.writeCharArray('', 3);
 		dvr.writeUint32(payload.maxOrder);
 		dvr.writeUint32(payload.maxChaos);
+		dvr.writeCharArray('', 4);
 
 		dvr.writeArray(payload.teamOrderPlayerIds, v => dvr.writeInt64(v), 24);
 		dvr.writeArray(payload.teamChaosPlayerIds, v => dvr.writeInt64(v), 24);
