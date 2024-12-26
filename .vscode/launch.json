@@ -8,7 +8,7 @@
 			"name": "Launch via NPM",
 			"request": "launch",
 			"runtimeArgs": [
-				"run-script",
+				"run",
 				"dev"
 			],
 			"runtimeExecutable": "npm",
@@ -16,7 +16,7 @@
 				"<node_internals>/**"
 			],
 			"type": "node",
-			"cwd": "${workspaceFolder}/gameserver"
+			"cwd": "${workspaceFolder}/apps/gameserver"
 		},
 		{
 			"name": "Launch via BAT",
@@ -30,14 +30,14 @@
 				"<node_internals>/**"
 			],
 			"type": "node",
-			"cwd": "${workspaceFolder}/gameserver"
+			"cwd": "${workspaceFolder}/apps"
 		},
 		{
 			"command": "npm run dev",
 			"name": "npm run dev",
 			"request": "launch",
 			"type": "node-terminal",
-			"cwd": "${workspaceFolder}/gameserver"
+			"cwd": "${workspaceFolder}/apps/gameserver"
 		},
 		{
 			"type": "node",
@@ -49,12 +49,12 @@
 			"runtimeArgs": [
 				"--enable-source-maps"
 			],
-			"program": "${workspaceFolder}/src/main.ts",
+			"program": "${workspaceFolder}/apps/gameserver/src/main.ts",
 			"sourceMaps": true,
 			"outFiles": [
-				"${workspaceFolder}/dist/**/*.js"
+				"${workspaceFolder}/apps/gameserver/dist/**/*.js"
 			],
-			"cwd": "${workspaceFolder}/gameserver"
+			"cwd": "${workspaceFolder}/apps/gameserver"
 		}
 	]
 }

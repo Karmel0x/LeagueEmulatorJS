@@ -1,0 +1,11 @@
+{
+  "name": "@repo/packets",
+  "private": true,
+  "dependencies": {
+    "@repo/network": "*",
+    "@repo/geometry": "*"
+  },
+  "exports": {
+    "./*": "./src/*.ts"
+  }
+}

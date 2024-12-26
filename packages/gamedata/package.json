@@ -1,0 +1,7 @@
+{
+  "name": "@repo/gamedata",
+  "private": true,
+  "exports": {
+    "./*": "./src/*.ts"
+  }
+}

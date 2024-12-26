@@ -1,7 +1,8 @@
 {
     "editor.formatOnSave": true,
-    "files.associations": {
-        "xutility": "cpp",
-        "string": "cpp"
-    }
+    "typescript.preferences.preferTypeOnlyAutoImports": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": "explicit"
+    },
+    "debug.onTaskErrors": "debugAnyway"
 }

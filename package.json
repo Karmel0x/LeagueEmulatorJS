@@ -1,15 +1,16 @@
 {
-    "dependencies": {
-        "@workspace/enetcppjs": "./enetcppjs",
-        "@workspace/network": "./network",
-        "@workspace/packets": "./packets",
-        "@workspace/navmeshcppjs": "./navmeshcppjs",
-        "@workspace/gamedata": "./gamedata",
-        "@workspace/gameserver": "./gameserver",
-        "@workspace/tools": "./tools"
+    "name": "leagueemulatorjs",
+    "private": true,
+    "workspaces": [
+        "apps/*",
+        "packages/*"
+    ],
+    "devDependencies": {
+        "@types/node": "^22.10.2"
     },
     "scripts": {
-        "dev": "cd gameserver && ts-node -T src/main",
-        "pi": "cd tools && ts-node -T packet-inspector"
+        "dev": "cd apps && cd gameserver && ts-node -T src/main",
+        "pi": "cd apps && cd tools && ts-node -T packet-inspector",
+        "check-types": "cd apps && cd gameserver && tsc --noEmit"
     }
 }

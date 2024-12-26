@@ -1,0 +1,8 @@
+{
+  "name": "@repo/network",
+  "private": true,
+  "exports": {
+    "./relative-data-view": "./src/relative-data-view/index.ts",
+    "./*": "./src/*.ts"
+  }
+}

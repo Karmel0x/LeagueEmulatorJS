@@ -1,0 +1,8 @@
+{
+  "name": "@repo/geometry",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
+  }
+}

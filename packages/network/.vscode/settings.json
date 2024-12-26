@@ -1,0 +1,7 @@
+{
+    "editor.formatOnSave": true,
+    "typescript.preferences.preferTypeOnlyAutoImports": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": "explicit"
+    }
+}

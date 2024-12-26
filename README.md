@@ -12,8 +12,10 @@ At the moment, it ~~does not support multiplayer~~ and there is no game flow yet
 # download and install nodejs - https://nodejs.org/en/download/
 git clone https://github.com/Karmel0x/LeagueEmulatorJS
 cd LeagueEmulatorJS
+cd packages
 git clone https://github.com/Karmel0x/enetcppjs
 git clone https://github.com/Karmel0x/navmeshcppjs
+cd ..
 npm install
 npm run dev
 ```
