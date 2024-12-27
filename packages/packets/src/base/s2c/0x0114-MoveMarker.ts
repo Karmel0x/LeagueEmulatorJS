@@ -1,5 +1,5 @@
-import type RelativeDataView from '@repo/network/relative-data-view';
 import ExtendedPacket, { ExtendedPacketModel } from '@repo/network/packets/extended-packet';
+import type RelativeDataView from '@repo/network/relative-data-view';
 import SVector2, { SVector2Model } from '../../shared/SVector2';
 
 export type MoveMarkerModel = ExtendedPacketModel & {

@@ -47,8 +47,8 @@ export default class CCompressedWaypoint extends PartialPacket {
 		if (waypoints.length > 1) {
 			for (let i = 1; i < waypoints.length; i++) {
 				let relativeWaypoint = {
-					x: waypoints[i].x - waypoints[i - 1].x,
-					y: waypoints[i].y - waypoints[i - 1].y,
+					x: waypoints[i]!.x - waypoints[i - 1]!.x,
+					y: waypoints[i]!.y - waypoints[i - 1]!.y,
 				};
 				relativeWaypoints.push(relativeWaypoint);
 
@@ -61,23 +61,23 @@ export default class CCompressedWaypoint extends PartialPacket {
 			dvr.writeByteArray(flagsBuffer.slice(0, flagsCount));
 		}
 
-		dvr.writeInt16(waypoints[0].x);
-		dvr.writeInt16(waypoints[0].y);
+		dvr.writeInt16(waypoints[0]!.x);
+		dvr.writeInt16(waypoints[0]!.y);
 
 		for (let i = 0; i < relativeWaypoints.length; i++) {
-			let relativeWaypoint = relativeWaypoints[i];
+			let relativeWaypoint = relativeWaypoints[i]!;
 
 			if (relativeWaypoint.x >= -128 && relativeWaypoint.x <= 127) {
 				dvr.writeInt8(relativeWaypoint.x);
 			} else {
-				let waypoint = waypoints[i + 1];
+				let waypoint = waypoints[i + 1]!;
 				dvr.writeInt16(waypoint.x);
 			}
 
 			if (relativeWaypoint.y >= -128 && relativeWaypoint.y <= 127) {
 				dvr.writeInt8(relativeWaypoint.y);
 			} else {
-				let waypoint = waypoints[i + 1];
+				let waypoint = waypoints[i + 1]!;
 				dvr.writeInt16(waypoint.y);
 			}
 		}

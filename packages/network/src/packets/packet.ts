@@ -10,7 +10,7 @@ export class PacketDebugger {
 
 	static offsets: { [property: string]: string } = {};
 	static readATM: any = {};
-	static lastOffset = 0;
+	//static lastOffset = 0;
 
 	static trimDot(str: string) {
 		return str.replace(/^\./, '');
@@ -19,7 +19,7 @@ export class PacketDebugger {
 	static getProxy(dvr: RelativeDataView, payload: PacketModel, reset = true) {
 		if (reset) {
 			this.offsets = {};
-			this.lastOffset = 1;
+			//this.lastOffset = 1;
 		}
 
 		const proxyHandler: (parent: string) => ProxyHandler<any> = (parent) => {
@@ -29,7 +29,7 @@ export class PacketDebugger {
 						if (Array.isArray(value)) {
 							value = value.map((item, index) => {
 								if (typeof item === 'object') {
-									return new Proxy(item, proxyHandler(`${parent}.${property as string}[${index}]`));
+									return new Proxy(item, proxyHandler(`${parent}.${property as string}.${index}`));
 								}
 								return item;
 							});
@@ -55,8 +55,9 @@ export class PacketDebugger {
 
 					}
 
-					this.offsets[this.trimDot(`${parent}.${property as string}`)] = `${this.lastOffset}-${dvr.offset}`;
-					this.lastOffset = dvr.offset;
+					if (!Array.isArray(value) || value.length > 0)
+						this.offsets[this.trimDot(`${parent}.${property as string}`)] = `${dvr.offset - dvr.lastFieldSize}-${dvr.offset}`;
+					//this.lastOffset = dvr.offset;
 
 					target[property as string] = value;
 					return true;
@@ -74,6 +75,7 @@ export class PacketDebugger {
 export type PacketMessage = {
 	data: ArrayBuffer;
 	channel: number;
+	flags?: number;
 };
 
 export default class Packet {
@@ -81,8 +83,8 @@ export default class Packet {
 	static baseSize = 10240;
 	static debug = true;
 
-	static channel = 0;
-	static id = 0;
+	static channel = -1;
+	static id = -1;
 
 	static from(content: PacketModel | RelativeDataView | ArrayBuffer) {
 		if (content instanceof RelativeDataView || content instanceof ArrayBuffer)
@@ -117,15 +119,25 @@ export default class Packet {
 
 	static create(payload: Partial<PacketModel>) {
 		try {
+			const data = this.write(payload);
+			if (data.byteLength <= 0)
+				throw new Error('empty packet');
+
 			return {
-				data: this.write(payload),
+				payload,// for debug
+				data,
 				//id: this.id,
 				channel: this.channel,
+				//flags: this.channel === /*channels.s2cUnreliable*/4 ? packetFlag.unsequenced : undefined,
 			} as PacketMessage;
 		}
 		catch (e) {
-			console.error(e);
-			return undefined;
+			if (e instanceof Error) {
+				if (e.message.includes('no replication units changed'))
+					return;
+
+				console.error(e);
+			}
 		}
 	}
 

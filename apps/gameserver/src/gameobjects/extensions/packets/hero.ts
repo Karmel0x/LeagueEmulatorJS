@@ -1,28 +1,29 @@
 
 import * as packets from '@repo/packets/list';
-import loadingStages from '../../../constants/loading-stages';
+import { DamageSource, DamageType } from '@repo/packets/shared/SDeathData';
+import loadingStages from '../../../constants/game-state';
+import { humanizeMS } from '../../../core/utils';
+import { sendUnitStats } from '../../../packet-helpers/on-replication';
+import Fountain from '../../spawners/fountain';
+import type Hero from '../../unit-ai/hero';
+import type AttackableUnit from '../../units/attackable-unit';
 import { TeamId } from '../traits/team';
-import PUnit from './unit';
-import Hero from '../../units/hero';
-import { DeathState } from '@repo/packets/base/s2c/0x4C-CreateHero';
-import { sendUnitStats } from '../../../packet-helpers/OnReplication';
-import { PacketMessage } from '@repo/network/packets/packet';
 
 
-export default class PHero extends PUnit {
+export default class PHero {
 
-	declare owner: Hero;
+	declare readonly owner: Hero;
 
 	constructor(owner: Hero) {
-		super(owner);
+		this.owner = owner;
 	}
 
-	toSelf(packet: PacketMessage | undefined, minStage = loadingStages.inGame) {
-		this.owner.network.sendPacket(packet, minStage);
-	}
+	//toSelf(packet: PacketMessage | undefined, minStage = loadingStages.inGame) {
+	//	this.owner.network.sendPacket(packet, minStage);
+	//}
 
 	OnEnterLocalVisibilityClient() {
-		sendUnitStats(this.owner);
+		sendUnitStats(this.owner.owner);
 	}
 
 	CreateHero(dest: { sendPacket: Function }) {
@@ -30,22 +31,22 @@ export default class PHero extends PUnit {
 
 		const packet1 = packets.CreateHero.create({
 			//netId : this.netId,
-			objectNetId: this.owner.netId,
+			objectNetId: this.owner.owner.netId,
 			clientId: this.owner.clientId,
-			netNodeId: 0,//0x40;
+			netNodeId: 0x40,
 			skillLevel: 0,
-			teamIsOrder: this.owner.team.id == TeamId.order,
+			teamIsOrder: this.owner.owner.team.id === TeamId.order,
 			isBot: false,
 			botRank: 0,
-			spawnPosIndex: this.owner.team.num,//2;
+			spawnPosIndex: this.owner.num,
 			skinId: 0,
-			name: 'Test',
-			skinName: this.owner.character.model,
-			deathDurationRemaining: 0,
-			timeSinceDeath: 0,
-			createHeroDeath: DeathState.alive,
-			unknown1: false,
-			unknown2: false,
+			name: this.owner.summoner?.name,
+			skinName: this.owner.owner.skin,
+			//deathDurationRemaining: 0,
+			//timeSinceDeath: 0,
+			//createHeroDeath: DeathState.alive,
+			//unknown1: false,
+			//unknown2: false,
 		});
 
 		dest.sendPacket(packet1, loadingStages.notConnected);
@@ -54,57 +55,77 @@ export default class PHero extends PUnit {
 	AvatarInfo_Server(dest: { sendPacket: Function }) {
 		//todo
 		const packet1 = packets.AvatarInfo_Server.create({
-			netId: this.owner.netId,
-			itemIds: [
-				0,
-				0x147d, 0x147d, 0x147d, 0x147d, 0x147d, 0x147d, 0x147d, 0x147d, 0x147d,
-				0x14c5, 0x14c5, 0x14c5, 0x14c5, 0x14c5, 0x14c5, 0x14c5, 0x14c5, 0x14c5,
-				0x14a9, 0x14a9, 0x14a9, 0x14a9, 0x14a9, 0x14a9, 0x14a9, 0x14a9, 0x14a9,
-				0x14d7, 0x14d7
+			netId: this.owner.owner.netId,
+			itemIds: [],
+			summonerIds: [
+				this.owner.summonerSpells[0]!.spellHash,
+				this.owner.summonerSpells[1]!.spellHash,
 			],
-			summonerIds: [0x0364af1c, 0x06496ea8],
-			summonerIds2: [0x0364af1c, 0x06496ea8],
 			talents: [],
 			level: 1,
-			wardSkin: 0,
 		});
 
 		dest.sendPacket(packet1, loadingStages.notConnected);
 	}
 
-	chatBoxMessage(...args: any[]) {
-		let message = args.join(' ');
-
+	chatBoxMessage(message: string) {
 		const packet1 = packets.Chat.create({
-			netId: this.owner.netId,
+			//netId: this.owner.netId,
+			clientId: this.owner.clientId,
 			message,
 		});
-		this.owner.packets.toSelf(packet1);
-		console.debug(packet1);
+		this.owner.owner.packets.toSelf(packet1);
+	}
+
+	chatBoxDebugMessage(...args: any[]) {
+		const argsStr = args.map((a) => typeof a === 'string' ? a : JSON.stringify(a));
+
+		let message = argsStr.join(' ');
+		message = `[${humanizeMS(performance.now())}] ` + message;
+
+		this.chatBoxMessage(message);
 	}
 
 	skillUpgrade_send(slot: number) {
 		const packet1 = packets.UpgradeSpellAns.create({
-			netId: this.owner.netId,
+			netId: this.owner.owner.netId,
 			slot: slot,
-			level: this.owner.progress.spellLevel[slot],
-			pointsLeft: this.owner.progress.skillPoints,
+			level: this.owner.owner.progress.spellLevel[slot],
+			pointsLeft: this.owner.owner.progress.skillPoints,
 		});
-		this.owner.packets.toSelf(packet1);
+		this.owner.owner.packets.toSelf(packet1);
 		//console.debug(packet1);
 	}
 
-	SetCooldown(slot: number, cooldown = 0) {//return;
+	setCooldown(slot: number, cooldown = 0) {//return;
 		const packet1 = packets.SetCooldown.create({
-			netId: this.owner.netId,
-			slot: slot,
-			playVOWhenCooldownReady: false,
+			netId: this.owner.owner.netId,
+			slot,
+			//playVOWhenCooldownReady: false,
 			isSummonerSpell: false,
-			cooldown: cooldown,
-			maxCooldownForDisplay: cooldown,
+			cooldown,
+			//maxCooldownForDisplay: cooldown,
 		});
-		this.owner.packets.toSelf(packet1);
+		this.owner.owner.packets.toSelf(packet1);
 		//console.log(packet1);
+	}
+
+	Die(source: AttackableUnit) {
+		const unit = this.owner.owner;
+		const spawner = unit.spawner as Fountain;
+		if (!spawner) return;
+
+		const deathDuration = spawner.getDeathDuration(unit);
+
+		const packet1 = packets.Hero_Die.create({
+			netId: unit.netId,
+			killerNetId: source.netId,
+			damageType: DamageType.physical,
+			damageSource: DamageSource.attack,
+			deathDuration,
+			becomeZombie: false,
+		});
+		this.owner.owner.packets.toEveryone(packet1);
 	}
 
 }

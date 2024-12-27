@@ -1,19 +1,13 @@
 
-import { Vector2 } from 'three';
+import { Vector2 } from '@repo/geometry';
 import * as packets from '@repo/packets/list';
-import MovingGameObject, { MovingEvents } from './game-object';
-import TypedEventEmitter from 'typed-emitter';
-import Unit, { UnitEvents } from '../../units/unit';
-import * as Measure from '../measure';
 import { SSpeedParamsModel } from '@repo/packets/shared/SSpeedParams';
+import type { Player } from '../../unit-ai';
+import type AttackableUnit from '../../units/attackable-unit';
+import * as Measure from '../measure';
+import MovingGameObject, { MovingEvents, SpeedParams } from './game-object';
 
-export type MovingUnitEvents = MovingEvents & UnitEvents & {
-	'dashed': () => void;
-};
-
-export interface IMovingUnit extends Unit {
-	eventEmitter: TypedEventEmitter<MovingUnitEvents>;
-	moving: MovingUnit;
+export type MovingUnitEvents = MovingEvents & {
 };
 
 /**
@@ -21,82 +15,129 @@ export interface IMovingUnit extends Unit {
  */
 export default class MovingUnit extends MovingGameObject {
 
-	declare owner: IMovingUnit;
+	declare readonly owner: AttackableUnit;
+	forceSendWaypoints = false;
 
-	sendWaypoints(waypoints: Vector2[]) {
+	constructor(owner: AttackableUnit) {
+		super(owner);
+
+		//owner.eventEmitter.on('launchAttack', (attackTarget) => {
+		//	this.forceSendWaypoints = true;
+		//});
+		//
+		//owner.eventEmitter.on('spellCast', (castData) => {
+		//	this.forceSendWaypoints = true;
+		//});
+	}
+
+	sendWaypoints(waypoints: Vector2[] | undefined = undefined) {
 		waypoints = waypoints || this.waypoints;
 
-		let waypointsType = this.waypointsForced.length ? 1 : 0;
-		let nextWaypoint = waypoints[0] || this.owner.position;
+		const forcedMovement = this.waypointsForced.length > 0;
+		const waypointsType = forcedMovement ? 1 : 0;
+
+		if (!forcedMovement) {
+			if (this.waypointsHalt) {
+				waypoints = [];
+			}
+			else {
+				waypoints = waypoints.slice(0, 2);
+			}
+		}
+
+		const nextWaypoint = waypoints[0] || this.owner.position;
 
 		let shouldSend = false;
-		shouldSend = shouldSend || this.sentWaypointsType != waypointsType;
-		shouldSend = shouldSend || this.sentWaypoint.distanceTo(nextWaypoint) > 1;
+		if (!shouldSend)
+			shouldSend = this.forceSendWaypoints;
+		if (!shouldSend)
+			shouldSend = this.sentWaypointsType !== waypointsType;
+		if (!shouldSend)
+			shouldSend = this.sentWaypoint.distanceTo(nextWaypoint) > 1;
 
 		if (shouldSend) {
+			this.forceSendWaypoints = false;
 			this.sentWaypointsType = waypointsType;
 			this.sentWaypoint = nextWaypoint.clone();
 
-			if (waypointsType)
-				this.dashAns();
-			else
-				this.moveAns();
+			if (waypointsType) {
+				// TODO
+				waypoints = this.waypointsForced;
+			}
+
+			this.moveAns(waypoints);
 		}
 
 	}
 
-	moveAns(teleport = false) {
+	moveAns(waypoints: Vector2[], teleport = false) {
 		// this should be in Movement_Simulation so we can resend if destination will change (following moveable unit)
 		// or following should be made with dash.speedParams.followNetId ?
-		const packet1 = packets.WaypointGroup.create({
-			syncId: performance.now(),
-			netId: 0,
-			movementData: [{
-				teleportNetId: this.owner.netId,
-				teleportId: teleport ? this.getNextTeleportId() : 0,
-				waypoints: this.waypointsHalt ? [this.owner.position] : [this.owner.position, ...this._waypoints.slice(0, 2)],
-			}],
-		});
-		this.owner.packets.toVision(packet1);
+
+		waypoints = [this.owner.position, ...waypoints];
+		(this.owner.ai as Player)?.packets?.chatBoxDebugMessage('moveAns:', waypoints.map(p => ({
+			x: p.x.toFixed(4),
+			y: p.y.toFixed(4),
+		})));
+
+		if (teleport) {
+			if (this.speedParams && this.speedParams.pathSpeedOverride) {
+				// not needed here, rather should be used for batch
+				const packet1 = packets.WaypointGroupWithSpeed.create({
+					syncId: performance.now(),
+					netId: 0,
+					movementData: [{
+						teleportNetId: this.owner.netId,
+						teleportId: teleport ? this.getNextTeleportId() : 0,
+						waypoints,
+						speedParams: this.speedParams,
+					}],
+				});
+				this.owner.packets.toVision(packet1);
+			} else {
+				const packet1 = packets.WaypointGroup.create({
+					syncId: performance.now(),
+					netId: 0,
+					movementData: [{
+						teleportNetId: this.owner.netId,
+						teleportId: teleport ? this.getNextTeleportId() : 0,
+						waypoints,
+					}],
+				});
+				this.owner.packets.toVision(packet1);
+			}
+		} else {
+			if (this.speedParams && this.speedParams.pathSpeedOverride) {
+				const packet1 = packets.WaypointListHeroWithSpeed.create({
+					syncId: performance.now(),
+					netId: this.owner.netId,
+					waypoints,
+					speedParams: this.speedParams,
+				});
+				this.owner.packets.toVision(packet1);
+			} else {
+				const packet1 = packets.WaypointList.create({
+					syncId: performance.now(),
+					netId: this.owner.netId,
+					waypoints,
+				});
+				this.owner.packets.toVision(packet1);
+			}
+		}
+
 		//console.log('WaypointGroup', packet1);
 		//console.log('WaypointGroup.waypoints', packet1.waypoints);
 		//console.trace();
-	}
-
-	dashAns() {
-		const packet1 = packets.WaypointGroupWithSpeed.create({
-			syncId: performance.now(),
-
-			netId: 0,
-			movementData: [{
-				teleportNetId: this.owner.netId,
-				waypoints: [this.owner.position, ...this.waypointsForced.slice(0, 2)],
-				speedParams: this.speedParams,
-			}],
-		});
-
-		this.owner.packets.toVision(packet1);
-		//console.log(packet1);
 	}
 
 	/**
 	 * dash to position, but you should use dashTo probably
 	 */
 	dash(position: Vector2, speedParams: Partial<SSpeedParamsModel>) {
-		this.speedParams = {
-			pathSpeedOverride: speedParams.pathSpeedOverride || 1000,
-			parabolicGravity: speedParams.parabolicGravity || 0,
-			parabolicStartPoint: speedParams.parabolicStartPoint || { x: 0, y: 0 },
-			facing: speedParams.facing || false,
-			followNetId: speedParams.followNetId || 0,
-			followDistance: speedParams.followDistance || 0,
-			followBackDistance: speedParams.followBackDistance || 0,
-			followTravelTime: speedParams.followTravelTime || 0,
-		};
+		this.speedParams = new SpeedParams(speedParams);
 
 		this.waypointsForced = [position];
 
-		//@todo
 		this.owner.eventEmitter.once('reachDestination', () => {
 			//this.waypointsForced = [];
 			this.speedParams = undefined;
@@ -107,9 +148,9 @@ export default class MovingUnit extends MovingGameObject {
 	/**
 	 * dash unit to position
 	 */
-	dashTo(position: Vector2, options: { speed: number, range: number, minRange?: number }) {
-		let pos = Measure.centerToCenter.getPositionBetweenRange(this.owner, position, { maximum: options.range, minimum: options.minRange || options.range });
-		this.dash(pos, { pathSpeedOverride: options.speed });
+	dashTo(position: Vector2, options: { speed: number, range: number, minRange?: number }, speedParams: Partial<SSpeedParamsModel> | undefined = undefined) {
+		const pos = Measure.centerToCenter.getPositionBetweenRange(this.owner, position, { maximum: options.range, minimum: options.minRange || options.range });
+		this.dash(pos, { pathSpeedOverride: options.speed, ...speedParams });
 	}
 
 	/**
@@ -122,7 +163,7 @@ export default class MovingUnit extends MovingGameObject {
 		options.parabolicGravity = options.parabolicGravity || 0;
 		options.facing = options.facing ?? true;
 
-		let pos = Measure.centerToCenter.getPositionBetweenRange(this.owner, position, { maximum: distance, minimum: minDistance });
+		const pos = Measure.centerToCenter.getPositionBetweenRange(this.owner, position, { maximum: distance, minimum: minDistance });
 		this.dash(pos, options);
 	}
 
@@ -142,7 +183,7 @@ export default class MovingUnit extends MovingGameObject {
 		options.parabolicGravity = options.parabolicGravity || 16.5;
 		options.facing = options.facing ?? true;
 
-		let position = Measure.general.getRandomPositionClamped(this.owner, 10);
+		const position = Measure.general.getRandomPositionClamped(this.owner, 10);
 		this.dash(position, options);
 	}
 

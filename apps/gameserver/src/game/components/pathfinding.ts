@@ -1,11 +1,10 @@
 
-import { Vector2 } from 'three';
-import Server from '../../app/server';
+import { Vector2, Vector2Like } from '@repo/geometry';
 import Navmeshcppjs from '../../../../../packages/navmeshcppjs/index2';
+import Server from '../../app/server';
 import Pathfinding_ScalarAIMesh from './pathfinding_scalar-ai-mesh';
 // @ts-ignore
 import Pathfinding_TerrainEscape from './pathfinding_terrain-escape.json' assert { type: "json" };
-import { Vector2Like } from '@repo/packets/functions/translate-centered-coordinates';
 
 Navmeshcppjs.initialize();
 
@@ -24,11 +23,11 @@ export default class Pathfinding extends Navmeshcppjs {
 			return position;
 
 		let pos = Pathfinding_ScalarAIMesh.toAIMesh(position);
-		let posEscaped = Pathfinding_TerrainEscape[pos.x][pos.y] as number[];
+		let posEscaped = Pathfinding_TerrainEscape[pos.x]![pos.y] as number[];
 		if (!posEscaped)
 			return position;
 
-		return Pathfinding_ScalarAIMesh.toCoordinates({ x: posEscaped[0], y: posEscaped[1] });
+		return Pathfinding_ScalarAIMesh.toCoordinates({ x: posEscaped[0]!, y: posEscaped[1]! });
 	}
 
 	/**

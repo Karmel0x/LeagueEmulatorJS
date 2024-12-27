@@ -18,52 +18,52 @@
 	</style>
 </head>
 
-<body style="display: flex;">
-	<div>
-		<button onclick="newShape()">new_shape</button>
-		<button onclick="finishEditing()">finish</button>
-		<span id="coords"></span>
-		<br>
-
-		<button onclick="div_optionShow()">options</button>
-		<button onclick="div_infoShow()">info</button>
-
-		<div id="div_options" style="display: none;">
-			<label><input type="checkbox" onclick="xyAsInt(this.checked);" checked>round xy</label>
+<body>
+	<div style="display: flex;">
+		<div>
+			<button onclick="newShape()">new_shape</button>
+			<button onclick="finishEditing()">finish</button>
+			<span id="coords"></span>
 			<br>
-			<button onclick="zoom_in()">zoom_in</button>
-			<button onclick="zoom_out()">zoom_out</button>
+
+			<button onclick="div_optionShow()">options</button>
+			<button onclick="div_infoShow()">info</button>
+
+			<div id="div_options" style="display: none;">
+				<label><input type="checkbox" onclick="xyAsInt(this.checked);" checked>round xy</label>
+				<br>
+				<button onclick="zoom_in()">zoom_in</button>
+				<button onclick="zoom_out()">zoom_out</button>
+			</div>
+
+			<div id="div_info" style="display: none;">
+				right click to remove point<br>
+				doubleclick on shape to edit<br>
+				cpp navmesh does not support concaves<br>
+			</div>
+
+			<div id="div_warningimage">
+				image may load a while..<br>
+			</div>
+			<br><br>
+
+			<div id="shapeList" style="max-height: 400px;overflow: auto;"></div>
+			<br>
+
+			<textarea id="shapeListJson" cols="30" rows="10" autocomplete="off"></textarea>
+			<br>
+
+			<button onclick="readShapeListJson()" id="read_shape_json_list_button">read_shape_json_list</button>
+
 		</div>
 
-		<div id="div_info" style="display: none;">
-			right click to remove point<br>
-			doubleclick on shape to edit<br>
-			cpp navmesh does not support concaves<br>
+		<div oncontextmenu="return false;">
+			<div style="max-width: 1400px;max-height: 900px;overflow: auto;position: relative;">
+				<img id="image" src="./aimesh.png" style="position: absolute;opacity: 0.6;z-index: -1;">
+				<canvas class="canvas-wrap" id="canvas" width="6000" height="6000" style="opacity: 0.6;"></canvas>
+			</div>
+
 		</div>
-
-		<div id="div_warningimage">
-			image may load a while..<br>
-		</div>
-		<br><br>
-
-		<div id="shapeList" style="max-height: 400px;overflow: auto;"></div>
-		<br>
-
-		<textarea id="shapeListJson" cols="30" rows="10" autocomplete="off"></textarea>
-		<br>
-
-		<button onclick="readShapeListJson()" id="read_shape_json_list_button">read_shape_json_list</button>
-
-	</div>
-
-	<div oncontextmenu="return false;">
-		<div style="max-width: 1400px;max-height: 900px;overflow: auto;position: relative;">
-			<img id="image"
-				src="https://cdn.discordapp.com/attachments/827653944120442901/976904004388945960/aimesh.png"
-				style="position: absolute;opacity: 0.6;z-index: -1;">
-			<canvas class="canvas-wrap" id="canvas" width="6000" height="6000" style="opacity: 0.6;"></canvas>
-		</div>
-
 	</div>
 
 	<script src="./FreeDraw.js"></script>
@@ -76,7 +76,7 @@
 			eventsReceive: ['doubleclick'],
 			eventsCallBack: (event, key, eventType) => {
 				//console.log(event, key, eventType);
-				if (!freeDraw.editingId && eventType == 'doubleclick') {
+				if (!freeDraw.editingId && eventType === 'doubleclick') {
 					editShape(key);
 				}
 			}

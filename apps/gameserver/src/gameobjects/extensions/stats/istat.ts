@@ -1,18 +1,31 @@
-import Unit from '../../units/unit';
+import type AttackableUnit from '../../units/attackable-unit';
 
 export class IStat {
 	baseValue = 0;
 	flatBonus = 0;
-	flatBonus2 = 0;
+	flatPermanent = 0;
 	percentBonus = 0;
-	percentBonus2 = 0;
+	percentPermanent = 0;
+
+	get baseTotalValue() {
+		return this.baseValue;
+	}
+
+	get flatBonusValue() {
+		return this.flatBonus + this.flatPermanent;
+	}
+
+	get percentBonusValue() {
+		return this.percentBonus + this.percentPermanent;
+	}
 
 	get total(): number {
-		return this.baseValue + (this.flatBonus + this.flatBonus2) + (this.baseValue * (this.percentBonus + this.percentBonus2) / 100);
+		const baseTotalValue = this.baseTotalValue;
+		return baseTotalValue + this.flatBonusValue + (baseTotalValue * this.percentBonusValue / 100);
 	}
 
 	constructor(baseValue: number | object = 0) {
-		if (typeof baseValue == 'object') {
+		if (typeof baseValue === 'object') {
 			Object.assign(this, baseValue);
 		} else {
 			this.baseValue = baseValue;
@@ -24,17 +37,16 @@ export class IStatLevelable extends IStat {
 	perLevel = 0;
 
 	get levelValue() {
-		return this.perLevel * (this.owner.progress.level - 1);
+		return this.perLevel * this.owner.progress.level;//(this.owner.progress.level - 1);
 	}
 
-	get total(): number {
-		let baseValueWithLevel = this.baseValue + this.levelValue;
-		return baseValueWithLevel + (this.flatBonus + this.flatBonus2) + (baseValueWithLevel * (this.percentBonus + this.percentBonus2) / 100);
+	get baseTotalValue() {
+		return this.baseValue + this.levelValue;
 	}
 
-	owner;
+	readonly owner;
 
-	constructor(owner: Unit, baseValue: number = 0, perLevel: number = 0) {
+	constructor(owner: AttackableUnit, baseValue: number = 0, perLevel: number = 0) {
 		super(baseValue);
 		this.perLevel = perLevel;
 		this.owner = owner;

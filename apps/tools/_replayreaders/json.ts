@@ -4,8 +4,8 @@ import type { ReplayFileReader } from './replay-reader';
 
 
 const reader_json: ReplayFileReader = function (filePath) {
-    let data = fs.readFileSync(filePath, 'utf8');
-    let replay: ReturnType<ReplayFileReader> = JSON.parse(data);
+    const data = fs.readFileSync(filePath, 'utf8');
+    const replay: ReturnType<ReplayFileReader> = JSON.parse(data);
 
     /** @deprecated */
     replay.forEach(record => {

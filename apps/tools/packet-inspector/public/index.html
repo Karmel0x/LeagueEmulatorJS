@@ -17,12 +17,18 @@
 	<link href="./style.css" rel="stylesheet">
 	<script src="./index.js"></script>
 
+	<style>
+		:root {
+			color-scheme: dark;
+		}
+	</style>
 </head>
 
 <body class="container-fluid text-white bg-dark">
 	<div id="top-header" class="fixed-top bg-dark border-bottom d-flex gap-1 p-1">
 
 		<select class="form-select form-select-sm w-auto" id="loadreplaylist"></select>
+		<button class="btn btn-sm btn-secondary" onclick="Controls.loadreplayinfo()">i</button>
 		<input class="form-control form-control-sm" style="width: 100px" type="number" name="loadreplay_offset"
 			id="loadreplay_offset" placeholder="offset">
 		<input class="form-control form-control-sm" style="width: 100px" type="number" name="loadreplay_limit"
@@ -32,6 +38,9 @@
 		<button class="btn btn-sm btn-secondary" onclick="Controls.loadreplayfile()">loadreplayfile</button>
 		<button class="btn btn-sm btn-secondary" onclick="am_popup.show('popupAddpacket')">addpacket</button>
 		<button class="btn btn-sm btn-secondary" onclick="Controls.clear()">clear</button>
+		<button class="btn btn-sm btn-secondary"
+			onclick="console.log(HashString(prompt('hash string')))">hash_string</button>
+
 		<div class="spinner-border text-primary d-none align-middle mx-2" role="status" id="loadingspinner">
 			<span class="visually-hidden">Loading...</span>
 		</div>
@@ -73,6 +82,7 @@
 				</div>
 				<div class="mb-3">
 					<button class="btn btn-primary" onclick="Controls.addpacket()">addpacket</button>
+					<button class="btn btn-primary" onclick="Controls.sendpacket()">sendpacket</button>
 				</div>
 			</form>
 

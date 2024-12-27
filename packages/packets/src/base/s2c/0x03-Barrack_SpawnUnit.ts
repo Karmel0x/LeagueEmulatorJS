@@ -2,6 +2,13 @@ import BasePacket, { BasePacketModel } from '@repo/network/packets/base-packet';
 import type RelativeDataView from '@repo/network/relative-data-view';
 import type { NetId } from '../../types/player';
 
+export enum MinionType {
+	melee = 0,
+	caster = 1,
+	cannon = 2,
+	super = 3,
+};
+
 export type Barrack_SpawnUnitModel = BasePacketModel & {
 	objectId: NetId,
 	objectNodeId: number,

@@ -11,7 +11,7 @@
 //};
 //
 //Server.game = {
-//	initialized: Date.now() / 1000,
+//	initialized: performance.now(),
 //	loaded: true,
 //	started: false,
 //	paused: false,
@@ -21,7 +21,7 @@
 //	if (!Server.game.started)
 //		return 0;
 //
-//	return Date.now() / 1000 - Server.game.started;
+//	return performance.now() - Server.game.started;
 //};
 //
 //class TestsTeams {
@@ -48,9 +48,9 @@
 //		});
 //		//console.trace();
 //
-//		if (unit.tests['visibleFor' + this.team] == visibleFor) {
+//		if (unit.tests['visibleFor' + this.team] === visibleFor) {
 //			console.error(`test failed :: passed same visibleFor argument two times`);
-//			console.error(`unit.tests['visibleFor' + this.team] == visibleFor ::`, unit.tests['visibleFor' + this.team], '==', visibleFor);
+//			console.error(`unit.tests['visibleFor' + this.team] === visibleFor ::`, unit.tests['visibleFor' + this.team], '==', visibleFor);
 //			process.exit();
 //		}
 //		unit.tests['visibleFor' + this.team] = visibleFor;

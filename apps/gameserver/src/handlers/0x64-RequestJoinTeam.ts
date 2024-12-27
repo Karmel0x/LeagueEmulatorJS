@@ -1,6 +1,6 @@
 
-import Player from '../gameobjects/units/player';
 import * as packets from '@repo/packets/list';
+import Player from '../gameobjects/unit-ai/player';
 
 import Game from '../game/initializers/game';
 

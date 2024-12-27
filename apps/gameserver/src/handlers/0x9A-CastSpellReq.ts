@@ -1,6 +1,6 @@
 
-import Player from '../gameobjects/units/player';
 import * as packets from '@repo/packets/list';
+import Player from '../gameobjects/unit-ai/player';
 
 import { SlotId } from '../constants/slot-id';
 
@@ -9,11 +9,14 @@ export default (player: Player, packet: packets.CastSpellReqModel) => {
 	console.log('handle: c2s.CastSpellReq');
 	//console.log(packet);
 
-	if (packet.slot >= SlotId.Q && packet.slot <= SlotId.F)
-		player.combat.castSpell(packet);
-	//else if (packet.slot >= SlotId.A && packet.slot <= SlotId.A9)
-	//	player.combat.castAttack(packet);
-	else if (packet.slot >= SlotId.I && packet.slot <= SlotId.I7)
-		player.inventory.castItem(packet);
+	const slot = packet.slot;
+
+	const owner = player.owner;
+	if (slot >= SlotId.q && slot <= SlotId.f)
+		owner.combat.castSpell(packet);
+	//else if (slot >= SlotId.a && slot <= SlotId.a9)
+	//	owner.combat.startAttack(packet);
+	else if (slot >= SlotId.i && slot <= SlotId.i7)
+		owner.inventory.castItem(packet);
 
 };

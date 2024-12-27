@@ -1,20 +1,37 @@
 
-/**
- * @abstract
- */
-export default class _Item {
-    id = 0;
-    static goldCost = 0;
-    static goldSell = 0;
-    static stats = {};
+import { getItem } from "@repo/gamedata/data/items/ItemList";
+import { EventEmitter2 } from "../../core/event-emitter2";
+import type AttackableUnit from "../../gameobjects/units/attackable-unit";
 
-    static from: number[] = [];
-    isConsumable = false;
-    static isStackable = false;
-    stacks = 0;
-    active = false;
-    static isTrinket = false;
+export type ItemEvents = {
+    'acquire': (owner: AttackableUnit) => void;
+    'throw': (owner: AttackableUnit) => void;
+    'use': (owner: AttackableUnit, target: AttackableUnit | undefined) => void;
+    'buffAdd': (owner: AttackableUnit, attacker: AttackableUnit, buffVars?: any) => void;
+    'buffRemove': (target: AttackableUnit) => void;
+};
 
-    count = 0;
-    itemsRemoved: [number, _Item][] = [];
+export default class Item {
+
+    readonly eventEmitter = new EventEmitter2<ItemEvents>();
+
+    name: string = '';
+    itemId = 0;
+
+    maxStack = 1;
+    price = 0;
+    canBeSold = true;
+    sellMultiplier = 0.7;
+    consumable = false;
+    isTrinket = false;
+
+    from: number[] | undefined = undefined;
+
+    get recipeItems() {
+        if (!this.from)
+            return;
+
+        return this.from.map(itemId => getItem(itemId)!);
+    }
+
 }

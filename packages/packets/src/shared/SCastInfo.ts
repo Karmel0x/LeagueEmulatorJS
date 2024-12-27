@@ -1,7 +1,7 @@
 import PartialPacket from '@repo/network/packets/partial-packet';
 import type RelativeDataView from '@repo/network/relative-data-view';
-import SVector3, { SVector3Model } from './SVector3';
 import type { NetId } from '../types/player';
+import SVector3, { SVector3Model } from './SVector3';
 
 export enum HitResult {
 	normal = 0,
@@ -9,6 +9,11 @@ export enum HitResult {
 	dodge = 2,
 	miss = 3,
 }
+
+export type TargetModel = {
+	unitNetId: NetId,
+	hitResult: HitResult,
+};
 
 export type SCastInfoModel = {
 	spellHash: number,
@@ -21,11 +26,7 @@ export type SCastInfoModel = {
 	missileNetId: NetId,
 	targetPosition: SVector3Model,
 	targetPositionEnd: SVector3Model,
-	targetCount: number,
-	targets: {
-		unit: number,
-		hitResult: HitResult,
-	}[],
+	targets: TargetModel[],
 	designerCastTime: number,
 	extraCastTime: number,
 	designerTotalTime: number,
@@ -72,7 +73,7 @@ export default class SCastInfo extends PartialPacket {
 
 		let targetCount = dvr.readUint8();
 		payload.targets = dvr.readArray(() => ({
-			unit: dvr.readUint32(),
+			unitNetId: dvr.readUint32(),
 			hitResult: dvr.readUint8(),
 		}), targetCount);
 
@@ -113,7 +114,7 @@ export default class SCastInfo extends PartialPacket {
 
 		dvr.writeUint8(payload.targets.length);
 		payload.targets.forEach(target => {
-			dvr.writeUint32(target.unit);
+			dvr.writeUint32(target.unitNetId);
 			dvr.writeUint8(target.hitResult);
 		});
 

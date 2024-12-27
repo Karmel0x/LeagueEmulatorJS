@@ -1,22 +1,23 @@
 
-import { EventEmitter } from 'node:events';
-import TypedEventEmitter from 'typed-emitter';
-import { Vector2 } from 'three';
+import { Vector2, type Vector2Like } from '@repo/geometry';
+import GameObjectList from '../app/game-object-list';
+import { EventEmitter2 } from '../core/event-emitter2';
 import type { StatsGameObjectEvents, StatsGameObjectOptions } from './extensions/stats/game-object';
 import StatsGameObject from './extensions/stats/game-object';
-import GameObjectList from '../app/game-object-list';
 
 
 export type GameObjectEvents = StatsGameObjectEvents & {
-	'initialized': () => void;
-	'cancelOrder': () => void;
+	'spawn': () => void;
 	'destroy': () => void;
+	'changeOrder': () => void;
 }
 
 export type GameObjectOptions = {
 	netId?: number;
-	spawnPosition?: Vector2 | { x: number, y: number };
-	position?: Vector2 | { x: number, y: number };
+	spawnPosition?: Vector2Like;
+	position?: Vector2Like;
+	facePosition?: Vector2Like;
+	height?: number;
 
 	stats?: StatsGameObjectOptions;
 };
@@ -31,8 +32,11 @@ export default class GameObject {
 		const object = new this(options);
 		object.loader(options);
 
-		GameObjectList.add(object);
-		object.eventEmitter.on('destroy', () => {
+		object.eventEmitter.once('spawn', () => {
+			GameObjectList.add(object);
+		});
+
+		object.eventEmitter.once('destroy', () => {
 			GameObjectList.remove(object);
 			object.eventEmitter.removeAllListeners();
 		});
@@ -40,13 +44,31 @@ export default class GameObject {
 		return object;
 	}
 
-	eventEmitter = new EventEmitter() as TypedEventEmitter<GameObjectEvents>;
+	readonly eventEmitter = new EventEmitter2<GameObjectEvents>();
 	netId = 0;
 	options;
 
-	position = new Vector2(7000, 7000);
-	spawnPosition = new Vector2(7000, 7000);
+	readonly spawnPosition = new Vector2(7000, 7000);
+	readonly position = new Vector2(7000, 7000);
+	height = 0;
+	/**
+	 * @todo set direction on attack and spell cast
+	 */
+	readonly direction = new Vector2(1, 0);
+
 	stats!: StatsGameObject;
+	ignoreCollision = false;
+	spawned = false;
+
+	get facePosition() {
+		return this.position.clone().add(this.direction);
+	}
+
+	set facePosition(v: Vector2Like) {
+		const facing = new Vector2(v.x, v.y);
+		facing.sub(this.position).normalize();
+		this.direction.copy(facing);
+	}
 
 	get type() {
 		return this.constructor.name;
@@ -54,6 +76,10 @@ export default class GameObject {
 
 	get collisionRadius() {
 		return this.stats.collisionRadius.total || 1;
+	}
+
+	get pathfindingRadius() {
+		return this.stats.pathfindingRadius.total || 1;
 	}
 
 	loader(options: GameObjectOptions = {}) {
@@ -66,14 +92,19 @@ export default class GameObject {
 		this.netId = options.netId || ++GameObjectList.lastNetId;
 		//console.log('new GameObject', this, this.netId, GameObjectList.lastNetId);
 
-		let spawnPosition = options.spawnPosition || options.position;
+		const spawnPosition = options.spawnPosition || options.position;
 		if (spawnPosition)
 			this.spawnPosition = new Vector2(spawnPosition.x, spawnPosition.y);
 
-		let position = options.position || options.spawnPosition;
+		const position = options.position || options.spawnPosition;
 		if (position)
 			this.position = new Vector2(position.x, position.y);
 
+		const facePosition = options.facePosition;
+		if (facePosition)
+			this.facePosition = new Vector2(facePosition.x, facePosition.y);
+
+		this.height = options.height || 0;
 	}
 
 	/**
@@ -81,6 +112,23 @@ export default class GameObject {
 	 */
 	distanceTo(target: GameObject | Vector2) {
 		return this.position.distanceTo((target as GameObject).position || target);
+	}
+
+	spawn() {
+		if (this.spawned)
+			return;
+
+		this.spawned = true;
+		this.eventEmitter.emit('spawn');
+	}
+
+	waitForSpawn() {
+		return new Promise<void>(resolve => {
+			if (this.spawned)
+				resolve();
+			else
+				this.eventEmitter.once('spawn', () => resolve());
+		});
 	}
 
 }

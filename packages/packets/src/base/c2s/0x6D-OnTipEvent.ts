@@ -14,7 +14,7 @@ export default class OnTipEvent extends BasePacket {
 	static reader(dvr: RelativeDataView, payload: OnTipEventModel) {
 		super.reader(dvr, payload);
 
-		payload.command = dvr.readUint8();
+		payload.command = dvr.readUint8();// event
 		payload.id = dvr.readUint32();
 	}
 

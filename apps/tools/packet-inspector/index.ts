@@ -1,29 +1,41 @@
 
-let replayDir = '../temp/replays/';
-
+import registerPackets from '@repo/packets/register';
 import fs from 'fs';
-import { server, wss } from './init_client-server';
-import packetParser from './packet-parser';
 import _replayreaders from '../_replayreaders/index';
 import { ReplayRecord } from '../_replayreaders/replay-reader';
+import { WebSocket } from './extended-web-socket';
+import { wss } from './init_client-server';
+import packetParser from './packet-parser';
 
+const replayDir = '../../temp/replays/';
 
 let replayUnpacked: ReplayRecord[];
 let pId = 0;
+let gs: WebSocket | undefined = undefined;
+
+function sendToGs(data: any) {
+	if (gs)
+		gs.sendJson(data);
+}
+
+registerPackets();
 
 wss.onMessage = (ws, data) => {
 
-	let res = JSON.parse(data);
+	let res = JSON.parse(data as unknown as string);
 	console.log(res);
 
-	if (res.cmd == 'loadpackets') {
+	if (res.cmd === 'gs') {
+		gs = ws;
+	}
+	else if (res.cmd === 'loadpackets') {
 
 		let offset = res.offset || 0;
-		let limit = (res.limit || 2000) + offset;
+		let limit = (res.limit || 2000);
 		let packetsearch: string[] = res.packetsearch || [];
 
 		for (let i = offset, l = replayUnpacked.length, ll = 0; i < l && ll < limit; i++) {
-			let packetDetails = packetParser(replayUnpacked[i], i + 1);
+			let packetDetails = packetParser(replayUnpacked[i]!, i + 1);
 
 			if (!packetDetails)
 				continue;
@@ -49,23 +61,64 @@ wss.onMessage = (ws, data) => {
 			cmd: 'endloading',
 		});
 	}
-	//else if(res.cmd == 'initialize_client'){
+	else if (res.cmd === 'loadpackets2') {
+
+		let start = res.start || 0;
+		let end = (res.end || 2000);
+		let packetsearch: string[] = res.packetsearch || [];
+
+		for (let i = start, l = replayUnpacked.length, ll = 0; i < l && ll < end; i++) {
+			ll++;
+			let packetDetails = packetParser(replayUnpacked[i]!, i + 1);
+
+			if (!packetDetails)
+				continue;
+
+			if (packetsearch && packetsearch.length) {
+
+				packetsearch = packetsearch.map(v => v.toLowerCase());
+				let values = Object.values(packetDetails).map(v => `${v}`.toLowerCase());
+
+				let found = values.some(v => packetsearch.some(v2 => v.includes(v2)));
+				if (!found)
+					continue;
+			}
+
+			ws.sendJson({
+				cmd: 'newpacket',
+				packet: packetDetails,
+			});
+		}
+
+		ws.sendJson({
+			cmd: 'endloading',
+		});
+	}
+	//else if(res.cmd === 'initialize_client'){
 	//	require('./init_client-network')();
 	//}
-	//else if(res.cmd == 'sendpacket'){
+	//else if(res.cmd === 'sendpacket'){
 	//	let i = res.Id;
 	//	let buffer = replayUnpacked[i].Bytes ? Buffer.from(replayUnpacked[i].Bytes, 'base64') : Buffer.from(replayUnpacked[i].BytesHex.split(' ').join(''), 'hex');
 	//	
 	//    enet.sendPacket(0, buffer, replayUnpacked[i].Channel);
 	//}
-	//else if(res.cmd == 'sendpacket_type'){
+	//else if(res.cmd === 'sendpacket_type'){
 	//	const packet11 = createPacket(res.name, res.channel);
 	//	packet11.partialKey = [ 0x2A, 0x00, 0xFF ];
 	//	packet11.clientId = 0;
 	//	packet11.playerId = 1;
 	//	sendPacket(0, packet11);
 	//}
-	else if (res.cmd == 'loadreplaylist') {
+	else if (res.cmd === 'sendpacket') {
+		sendToGs({
+			cmd: 'sendpacket',
+			peerNums: res.peerNums,
+			data: res.data,
+			channel: res.channel,
+		});
+	}
+	else if (res.cmd === 'loadreplaylist') {
 		if (fs.existsSync(replayDir)) {
 			let replayList = fs.readdirSync(replayDir).filter((value) => {
 				return value.endsWith('.json') || value.endsWith('.lrpkt');
@@ -76,10 +129,10 @@ wss.onMessage = (ws, data) => {
 			});
 		}
 	}
-	else if (res.cmd == 'loadreplayfile') {
+	else if (res.cmd === 'loadreplayfile') {
 		replayUnpacked = _replayreaders(replayDir + res.name);
 	}
-	else if (res.cmd == 'addpacket' || res.cmd == 'addpacketforall') {
+	else if (res.cmd === 'addpacket' || res.cmd === 'addpacketforall') {
 		let packets = res.data;
 		if (!Array.isArray(packets))
 			packets = [packets];
@@ -110,7 +163,7 @@ wss.onMessage = (ws, data) => {
 			if (!packetDetails2)
 				continue;
 
-			if (res.cmd == 'addpacketforall')
+			if (res.cmd === 'addpacketforall')
 				wss.sendJsonToAll({
 					cmd: 'newpacket',
 					packet: packetDetails2,

@@ -1,0 +1,53 @@
+{
+	"$schema": "./game.config.schema.json",
+	"server": {
+		"port": 5119,
+		"host": "127.0.0.1"
+	},
+	"version": 4.20,
+	"map": 1,
+	"players": [
+		{
+			"summoner": {
+				"id": 1,
+				"name": "Player1",
+				"level": 30,
+				"iconId": 666,
+				"rankId": 0,
+				"ribbonId": 0,
+				"spells": {
+					"d": "SummonerHeal",
+					"f": "SummonerFlash"
+				}
+			},
+			"match": {
+				"team": 100,
+				"champion": "Ezreal",
+				"skin": 0
+			},
+			"runes": [],
+			"masteries": []
+		},
+		{
+			"summoner": {
+				"id": 2,
+				"name": "Player2",
+				"level": 30,
+				"iconId": 666,
+				"rankId": 0,
+				"ribbonId": 0,
+				"spells": {
+					"d": "SummonerSmite",
+					"f": "SummonerBoost"
+				}
+			},
+			"match": {
+				"team": 200,
+				"champion": "Ezreal",
+				"skin": 0
+			},
+			"runes": [],
+			"masteries": []
+		}
+	]
+}

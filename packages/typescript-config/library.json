@@ -21,9 +21,5 @@
     "checkJs": true,
     "noEmit": true,
     "allowJs": true
-  },
-  "exclude": [
-    "packages/gamedatabb/data",
-    "packages/gamedatabb/maps"
-  ]
+  }
 }

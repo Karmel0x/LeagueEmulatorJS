@@ -1,0 +1,83 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "properties": {
+        "map": {
+            "type": "number"
+        },
+        "players": {
+            "items": {
+                "properties": {
+                    "masteries": {
+                        "maxItems": 0,
+                        "minItems": 0,
+                        "type": "array"
+                    },
+                    "match": {
+                        "properties": {
+                            "champion": {
+                                "type": "string"
+                            },
+                            "num": {
+                                "type": "number"
+                            },
+                            "skin": {
+                                "type": "number"
+                            },
+                            "team": {
+                                "type": "number"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "runes": {
+                        "maxItems": 0,
+                        "minItems": 0,
+                        "type": "array"
+                    },
+                    "summoner": {
+                        "properties": {
+                            "iconId": {
+                                "type": "number"
+                            },
+                            "id": {
+                                "type": "number"
+                            },
+                            "level": {
+                                "type": "number"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "rankId": {
+                                "type": "number"
+                            },
+                            "ribbonId": {
+                                "type": "number"
+                            },
+                            "spells": {
+                                "properties": {
+                                    "d": {
+                                        "type": "string"
+                                    },
+                                    "f": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "type": "array"
+        },
+        "server": {},
+        "version": {
+            "type": "number"
+        }
+    },
+    "type": "object"
+}
+

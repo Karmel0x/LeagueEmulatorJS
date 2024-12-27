@@ -1,44 +1,42 @@
 
-import GameObject, { GameObjectEvents, GameObjectOptions } from '../game-object';
-import MovingGameObject, { MovingEvents } from '../extensions/moving/game-object';
+import type { Vector2, Vector2Like } from '@repo/geometry';
+import * as packets from '@repo/packets/list';
+import Server from '../../app/server';
+import { EventEmitter2 } from '../../core/event-emitter2';
+import * as Measure from '../extensions/measure';
 import StatsMissile, { StatsMissileOptions } from '../extensions/stats/missile';
+import { TeamId } from '../extensions/traits/team';
+import MovableGameObject, { MovableGameObjectEvents, MovableGameObjectOptions } from '../movable-game-object';
+import AttackableUnit from '../units/attackable-unit';
 
-import EventEmitter from 'events';
-import TypedEventEmitter from 'typed-emitter';
-import { IAttackable } from '../extensions/combat/attackable';
-import { IDefendable } from '../extensions/combat/defendable';
-import Dummytarget from './dummytarget';
-import GameObjectList from '../../app/game-object-list';
 
-export type GameTarget = IDefendable | Dummytarget;
-
-export type MissileEvents = GameObjectEvents & MovingEvents & {
-	'reachedDest': (target: GameTarget) => void;
+export type MissileEvents = MovableGameObjectEvents & {
 }
 
-export type MissileOptions = GameObjectOptions & {
+export type MissileOptions = MovableGameObjectOptions & {
 	stats: StatsMissileOptions;
-	spawner: IAttackable;
-	target: GameTarget;
-	windupPercent?: number;
+	spawner: AttackableUnit;
+	target?: AttackableUnit;
 };
 
-/**
- * @abstract
- */
-export default class Missile extends GameObject {
+export default class Missile extends MovableGameObject {
 	static initialize(options: MissileOptions) {
 		return super.initialize(options) as Missile;
 	}
 
-	eventEmitter = new EventEmitter() as TypedEventEmitter<MissileEvents>;
+	static makePositionForSkillshot({ startPosition, endPosition, range, radius }: { startPosition: Vector2Like, endPosition: Vector2Like, range: number, radius: number }) {
+		const finalRange = range - (radius / 2);// idk if it is correct here, corners on max range will not hit
+		const position = Measure.centerToCenter.getPositionBetweenRange(startPosition, endPosition, finalRange);
+		return position;
+	}
+
+	readonly eventEmitter = new EventEmitter2<MissileEvents>();
 
 	declare options: MissileOptions;
 	spawner;
 
 	declare stats: StatsMissile;
-	moving!: MovingGameObject;
-	target!: GameTarget;
+	target;
 
 	get owner() {
 		return this.spawner;
@@ -50,6 +48,7 @@ export default class Missile extends GameObject {
 		super(options);
 		this.options = options || {};
 		this.spawner = options.spawner;
+		this.target = options.target;
 	}
 
 	loader(options: MissileOptions) {
@@ -59,76 +58,30 @@ export default class Missile extends GameObject {
 
 		this.stats = new StatsMissile(this, options.stats || {});
 
-		this.moving = new MovingGameObject(this);
-
-		this.target = options.target;
-
-		this.eventEmitter.on('reachedDest', () => {
-			this.eventEmitter.emit('destroy');
+		this.eventEmitter.on('reachDestination', () => {
+			this.owner.eventEmitter.emit('missileEnd', this);
+			setTimeout(() => {
+				this.eventEmitter.emit('destroy');
+			}, 0);
 		});
 
 		super.loader(options);
 	}
 
-	/**
-	 * @todo move windup somewhere else?
-	 */
-	async fire(target: GameTarget | number | undefined, windupPercent = 0) {
-		if (typeof target === 'number')
-			target = GameObjectList.unitByNetId(target);
-		if (!target)
-			return console.log('Missile.fire:target is not a unit', target);
-
-		//console.debug('Missile.fire', {
-		//	owner: {
-		//		netId: this.owner.netId,
-		//		position: this.owner.position,
-		//	},
-		//	this: {
-		//		netId: this.owner.netId,
-		//		position: this.position,
-		//	},
-		//	target: {
-		//		netId: target.netId,
-		//		position: target.position,
-		//	},
-		//});
-
-		if (windupPercent) {
-			// https://leagueoflegends.fandom.com/wiki/Basic_attack#Windup
-			let windupP = windupPercent / 100;
-			let windupModifier = 1;//?
-
-			let bWindupTime = 1 / this.owner.stats.attackSpeed.baseValue;
-			let cAttackTime = 1 / this.owner.stats.attackSpeed.total;
-			let windup = bWindupTime + ((cAttackTime * windupP) - bWindupTime) * windupModifier;
-
-			//console.debug('Missile.fire:windupCalc', {
-			//	windup,
-			//	attackSpeed: this.owner.attackSpeed.total,
-			//});
-			await Promise.delay(windup * 1000);
+	fire(destination: Vector2) {
+		if (!this.spawned) {
+			this.spawn();
+			this.owner.eventEmitter.emit('launchMissile', this, destination);
 		}
-		this.fly(target);
+
+		this.moving.setWaypoints([destination]);
 	}
 
-	/**
-	 * Called when the missile reaches its destination (hit the target)
-	 * @abstract
-	 */
-	reachedDest(target: GameTarget) {
-		console.log('Missile.reachedDest');
-		this.eventEmitter.emit('reachedDest', target);
+	destroy() {
+		// TODO
+		const packet1 = packets.DestroyClientMissile.create({
+			netId: this.netId,
+		});
+		Server.teams[TeamId.max]!.sendPacket_withVision(packet1);
 	}
-
-	fulfillRange = 1;
-
-	fly(target: GameTarget) {
-
-		if (!this.moving.inRangeOrFollow(this.fulfillRange, target, () => this.reachedDest(target)))
-			return false;
-
-		this.reachedDest(target);
-	}
-
 }

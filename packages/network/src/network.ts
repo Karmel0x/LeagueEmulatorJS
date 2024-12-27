@@ -1,11 +1,16 @@
 
-import Parser from './parser';
-import { PacketMessage } from './packets/packet';
-import { NetworkApi } from './network-api/network-api';
-import NetworkApiEnet from './network-api/enet';
 import EventEmitter from 'events';
+import NetworkApiEnet from './network-api/enet';
+import { NetworkApi } from './network-api/network-api';
+import { PacketMessage } from './packets/packet';
 import { PrimaryPacketModel } from './packets/primary-packet';
+import Parser from './parser';
 
+
+export type NetworkConfig = {
+	port?: number;
+	host?: string;
+};
 
 export interface NetworkApiEvents {
 	'parse-received': (peerNum: number, channel: number, packet: PrimaryPacketModel) => void;
@@ -15,7 +20,7 @@ export default class Network {
 
 	static instance: Network;
 
-	static start(config: { port?: number; host?: string; } = {}) {
+	static start(config: NetworkConfig = {}) {
 		this.instance = new Network(config);
 		return this.instance;
 	}
@@ -29,9 +34,9 @@ export default class Network {
 	}
 
 	networkApi: NetworkApi;
-	eventEmitter: EventEmitter;
+	readonly eventEmitter = new EventEmitter();
 
-	constructor(config: { port?: number; host?: string; } = {}) {
+	constructor(config: NetworkConfig = {}) {
 		config.port = config.port || 5119;
 		config.host = config.host || '127.0.0.1';
 
@@ -39,12 +44,10 @@ export default class Network {
 		this.networkApi.bind(config.port, config.host);
 		console.log('network started on', config.host + ':' + config.port);
 
-		this.eventEmitter = new EventEmitter();
-
 		this.networkApi.on('receive', (peerNum: number, data: ArrayBuffer, channel: number) => {
 			Network.logPacketReceive(peerNum, data, channel);
 
-			let packet = Parser.parse({ data, channel });
+			const packet = Parser.parse({ data, channel });
 			if (!packet)
 				return;
 
@@ -72,7 +75,7 @@ export default class Network {
 		return this;
 	}
 
-	sendData(peerNums: number[], data: ArrayBuffer, channel: number) {
+	sendData(peerNums: number[], data: ArrayBuffer, channel: number, flags?: number) {
 		Network.logPacketSend(peerNums, data, channel);
 		peerNums.forEach((peerNum) => {
 			if (peerNum < 0) {
@@ -81,12 +84,18 @@ export default class Network {
 				return;
 			}
 
-			this.networkApi.send(peerNum, data, channel);
+			//console.log('sending packet of size', data.byteLength, 'to', peerNum, 'on channel', channel, 'cmd:', new Uint8Array(data)[0]);
+
+			// @todo make this copy in cpp or handle encryption other way
+			const dest = new ArrayBuffer(data.byteLength);
+			new Uint8Array(dest).set(new Uint8Array(data));
+
+			this.networkApi.send(peerNum, dest, channel, flags);
 		});
 	}
 
 	sendPacket(peerNums: number[], packet: PacketMessage) {
-		this.sendData(peerNums, packet.data, packet.channel);
+		this.sendData(peerNums, packet.data, packet.channel, packet.flags);
 	}
 
 }

@@ -1,4 +1,4 @@
-import { Vector2Like } from '@repo/packets/functions/translate-centered-coordinates';
+import { Vector2Like } from '@repo/geometry';
 
 export default class Pathfinding_ScalarAIMesh {
 

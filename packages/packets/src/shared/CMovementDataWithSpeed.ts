@@ -1,17 +1,17 @@
+import { type Vector2Like } from '@repo/geometry';
 import PartialPacket from '@repo/network/packets/partial-packet';
 import type RelativeDataView from '@repo/network/relative-data-view';
-import CCompressedWaypoint, { CCompressedWaypointModel } from './CCompressedWaypoint';
 import TranslateCenteredCoordinates from '../functions/translate-centered-coordinates';
-import SSpeedParams, { SSpeedParamsModel } from './SSpeedParams';
 import type { NetId } from '../types/player';
-import { Vector2 } from 'three';
+import CCompressedWaypoint, { CCompressedWaypointModel } from './CCompressedWaypoint';
+import SSpeedParams, { SSpeedParamsModel } from './SSpeedParams';
 
 export type CMovementDataWithSpeedModel = {
 	teleportNetId?: NetId,
 	teleportId?: number,
 	speedParams?: SSpeedParamsModel,
 	compressedWaypoints?: CCompressedWaypointModel,
-	waypoints?: Vector2[],
+	waypoints?: Vector2Like[],
 };
 
 export default class CMovementDataWithSpeed extends PartialPacket {
@@ -22,7 +22,7 @@ export default class CMovementDataWithSpeed extends PartialPacket {
 	static reader(dvr: RelativeDataView, payload: CMovementDataWithSpeedModel) {
 		let bitfield = dvr.readUint8();
 		let waypointsSize = bitfield >> 1;
-		let hasTeleportId = (bitfield & 1) != 0;
+		let hasTeleportId = (bitfield & 1) !== 0;
 
 		if (waypointsSize) {
 			payload.teleportNetId = dvr.readUint32();

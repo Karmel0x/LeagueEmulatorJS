@@ -1,15 +1,15 @@
 import { TeamId } from '../extensions/traits/team';
-import { nexuses, inhibitors, turrets, SpawnConfigByTeam } from '../positions/index';
-import Inhibitor, { InhibitorOptions } from '../units/structures/inhibitor';
-import Nexus, { NexusOptions } from '../units/structures/nexus';
-import Turret, { TurretOptions } from '../units/structures/turret';
+import { inhibitors, nexuses, turrets, type SpawnConfig } from '../positions/index';
+import Inhibitor, { type InhibitorOptions } from '../unit-ai/structures/inhibitor';
+import Nexus, { type NexusOptions } from '../unit-ai/structures/nexus';
+import Turret, { type TurretOptions } from '../unit-ai/structures/turret';
 import Spawner, { SpawnerOptions } from './spawner';
 
 
 export type BuilderOptions = SpawnerOptions & {
-    nexuses: SpawnConfigByTeam<NexusOptions>;
-    inhibitors: SpawnConfigByTeam<InhibitorOptions>;
-    turrets: SpawnConfigByTeam<TurretOptions>;
+    nexuses: SpawnConfig<NexusOptions>[];
+    inhibitors: SpawnConfig<InhibitorOptions>[];
+    turrets: SpawnConfig<TurretOptions>[];
 };
 
 /**
@@ -21,81 +21,78 @@ export default class Builder extends Spawner {
     }
 
     static spawnAll() {
-        Builder.initialize({
+        const builder1 = Builder.initialize({
             team: TeamId.order,
-            num: 0,
-            spawnPosition: { x: 7000, y: 7000 },
-            nexuses: nexuses[TeamId.order],
-            inhibitors: inhibitors[TeamId.order],
-            turrets: turrets[TeamId.order],
+            position: { x: 6500, y: 6500 },
+            nexuses: nexuses.filter(nexus => nexus.team === TeamId.order),
+            inhibitors: inhibitors.filter(inhibitor => inhibitor.team === TeamId.order),
+            turrets: turrets.filter(turret => turret.team === TeamId.order),
         });
+        builder1.spawn();
 
-        Builder.initialize({
+        const builder2 = Builder.initialize({
             team: TeamId.chaos,
-            num: 0,
-            spawnPosition: { x: 7000, y: 7000 },
-            nexuses: nexuses[TeamId.chaos],
-            inhibitors: inhibitors[TeamId.chaos],
-            turrets: turrets[TeamId.chaos],
+            position: { x: 7500, y: 7500 },
+            nexuses: nexuses.filter(nexus => nexus.team === TeamId.chaos),
+            inhibitors: inhibitors.filter(inhibitor => inhibitor.team === TeamId.chaos),
+            turrets: turrets.filter(turret => turret.team === TeamId.chaos),
         });
+        builder2.spawn();
     }
 
     constructor(options: BuilderOptions) {
         super(options);
 
-        this.spawnNexuses(options.nexuses);
-        this.spawnInhibitors(options.inhibitors);
-        this.spawnTurrets(options.turrets);
+        this.eventEmitter.once('spawn', () => {
+            this.spawnNexuses(options.nexuses);
+            this.spawnInhibitors(options.inhibitors);
+            this.spawnTurrets(options.turrets);
+        });
     }
 
-    spawnNexuses(spawnList: SpawnConfigByTeam<NexusOptions>) {
+    spawnNexuses(spawnList: SpawnConfig<NexusOptions>[]) {
 
-        for (let num in spawnList) {
-            let spawn = spawnList[num];
+        for (let i = 0; i < spawnList.length; i++) {
+            const spawn = spawnList[i]!;
 
-            Nexus.initialize({
+            const unit = Nexus.initializeUnit({
+                ...spawn,
                 team: this.team.id,
-                num: Number(num),
-                netId: spawn.netId,
-                character: spawn.character,
-                spawnPosition: spawn.position,
-                info: spawn.info,
                 spawner: this,
-            });
+            }, spawn.aiOptions);
+
+            unit.spawn();
         }
     }
 
-    spawnInhibitors(spawnList: SpawnConfigByTeam<InhibitorOptions>) {
+    spawnInhibitors(spawnList: SpawnConfig<TurretOptions>[]) {
 
-        for (let num in spawnList) {
-            let spawn = spawnList[num];
+        for (let i = 0; i < spawnList.length; i++) {
+            const spawn = spawnList[i]!;
 
-            Inhibitor.initialize({
+            const unit = Inhibitor.initializeUnit({
+                ...spawn,
                 team: this.team.id,
-                num: Number(num),
-                netId: spawn.netId,
-                character: spawn.character,
-                spawnPosition: spawn.position,
-                info: spawn.info,
                 spawner: this,
-            });
+            }, spawn.aiOptions);
+
+            unit.spawn();
         }
 
     }
 
-    spawnTurrets(spawnList: SpawnConfigByTeam<TurretOptions>) {
+    spawnTurrets(spawnList: SpawnConfig<TurretOptions>[]) {
 
-        for (let num in spawnList) {
-            let spawn = spawnList[num];
+        for (let i = 0; i < spawnList.length; i++) {
+            const spawn = spawnList[i]!;
 
-            Turret.initialize({
+            const unit = Turret.initializeUnit({
+                ...spawn,
                 team: this.team.id,
-                num: Number(num),
-                character: spawn.character,
-                spawnPosition: spawn.position,
-                info: spawn.info,
                 spawner: this,
-            });
+            }, spawn.aiOptions);
+
+            unit.spawn();
         }
     }
 

@@ -1,14 +1,13 @@
 
+import { PacketMessage } from '@repo/network/packets/packet';
 import * as packets from '@repo/packets/list';
 import Server from '../../app/server';
-import loadingStages from '../../constants/loading-stages';
+import loadingStages from '../../constants/game-state';
 import { TeamId } from '../../gameobjects/extensions/traits/team';
-import Player from '../../gameobjects/units/player';
-import Unit from '../../gameobjects/units/unit';
-import { PacketMessage } from '@repo/network/packets/packet';
-import GameObjectList from '../../app/game-object-list';
+import { AiType } from '../../gameobjects/unit-ai/base-ai';
+import Player from '../../gameobjects/unit-ai/player';
 import AttackableUnit from '../../gameobjects/units/attackable-unit';
-import { MovementDataType } from '@repo/packets/base/s2c/0xBA-OnEnterVisibilityClient';
+import Unit from '../../gameobjects/units/unit';
 
 
 export default class Teams {
@@ -44,21 +43,27 @@ export default class Teams {
 		Server.network.sendPacket(peers, packet);
 	}
 
-	sendPacket(packet: PacketMessage | undefined, minStage = loadingStages.inGame) {
+	sendPacket(packet: PacketMessage | undefined, minStage = loadingStages.inGame, maxStage = loadingStages.inGame) {
 		if (!packet)
 			return;
 
-		let players = [];
-		let currentTeamPlayers = GameObjectList.players;
+		const players = Server.players.map(player => player.ai as Player);
+		let currentTeamPlayers = players;
 		if (this.id !== TeamId.max)
-			currentTeamPlayers = currentTeamPlayers.filter(p => p.team.id == this.id);
+			currentTeamPlayers = currentTeamPlayers.filter(p => p.owner.team.id === this.id);
+
+		const playersToSend: Player[] = [];
 
 		for (let i = 0, l = currentTeamPlayers.length; i < l; i++) {
-			let player = currentTeamPlayers[i];
+			const player = currentTeamPlayers[i];
+			if (!player)
+				continue;
 
 			if (!player.network)
 				continue;
 			if (player.network.loadingStage < minStage)
+				continue;
+			if (player.network.loadingStage > maxStage)
 				continue;
 
 			//if(typeof player.network.peerNum === 'undefined'){
@@ -67,13 +72,14 @@ export default class Teams {
 			//	continue;
 			//}
 
-			players.push(player);
+			playersToSend.push(player);
 		}
 
-		this.sendPacketTo(players, packet);
+		this.sendPacketTo(playersToSend, packet);
 	}
 
 	showUnit(unit: Unit) {
+		// @todo buffs
 		const packet1 = packets.OnEnterVisibilityClient.create({
 			netId: unit.netId,
 			shieldValues: {
@@ -83,7 +89,7 @@ export default class Teams {
 			},
 			lookAtPosition: { x: 1, y: 0, z: 0 },
 			characterStackData: [{
-				skinName: unit.character?.model,
+				skinName: unit.skin,
 			}],
 			movementData: (unit as AttackableUnit).moving?.movementData,
 		});
@@ -96,18 +102,27 @@ export default class Teams {
 			netId: unit.netId,
 		});
 		this.sendPacket(packet1);
+
+		// @todo fade when hiding in grass, disable auto fading
+		//const packet1 = packets.SetFadeOut_Push.create({
+		//	netId: unit.netId,
+		//	fadeId: 0,
+		//	fadeTime: 0.1,
+		//	fadeTargetValue: 0.5,
+		//});
+		//this.sendPacket(packet1);
 	}
 
-	vision(target: Unit, enters = true) {
-		if (target.type == 'Nexus' || target.type == 'Inhibitor' || target.type == 'Turret')
+	vision(target: AttackableUnit, enters = true) {
+		if (target.ai?.type === AiType.Building)
 			return;
 
 		//console.log('vision', target);
 		if (enters) {
-			console.debug('enters vision', this.id, target.constructor.name, target.netId);
+			//console.debug('enters vision', this.id, target.ai?.constructor.name, target.netId);
 			this.showUnit(target);
 		} else {
-			console.debug('leaves vision', this.id, target.constructor.name, target.netId);
+			//console.debug('leaves vision', this.id, target.ai?.constructor.name, target.netId);
 			this.hideUnit(target);
 		}
 

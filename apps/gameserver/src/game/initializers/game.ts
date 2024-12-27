@@ -1,28 +1,34 @@
 
 import * as packets from '@repo/packets/list';
-import loadingStages from '../../constants/loading-stages';
-import playersConfig from '../../constants/players-config';
-
-import Barrack from '../../gameobjects/spawners/barrack';
-import JungleCamp from '../../gameobjects/spawners/jungle-camp';
 import Server from '../../app/server';
+import loadingStages from '../../constants/game-state';
+import { EventEmitter2 } from '../../core/event-emitter2';
+import Timer from '../../core/timer';
+import { delay } from '../../core/utils';
 import { TeamId } from '../../gameobjects/extensions/traits/team';
-import Fountain from '../../gameobjects/spawners/fountain';
+import Barrack from '../../gameobjects/spawners/barrack';
 import Builder from '../../gameobjects/spawners/builder';
-
-import Spawn from '../components/spawn';
+import Fountain, { type PlayerList } from '../../gameobjects/spawners/fountain';
+import JungleCamp from '../../gameobjects/spawners/jungle-camp';
+import type Player from '../../gameobjects/unit-ai/player';
+import AmbientGain from '../components/ambient-gain';
 import MovementSimulation from '../components/movement-simulation';
-
-import Player from '../../gameobjects/units/player';
-import GameObjectList from '../../app/game-object-list';
+import config from '../game.config.json';
+import '../game.config.schema.json';
 
 const GameComponents = {
-	Spawn,
 	MovementSimulation,
+	AmbientGain,
 };
 
+export type GameEvents = {
+	//'playerStartSpawn': (player: Player) => void;
+};
 
 export default class Game {
+
+	static readonly eventEmitter = new EventEmitter2<GameEvents>();
+
 	// STAGE client opened ==========================================================
 
 	/**
@@ -39,7 +45,7 @@ export default class Game {
 			ping: packet.ping,
 			ready: packet.ready,
 		});
-		Server.teams[TeamId.max].sendPacket(packet1, loadingStages.notConnected);
+		Server.teams[TeamId.max]?.sendPacket(packet1, loadingStages.notConnected, loadingStages.loaded);
 	}
 
 	/**
@@ -47,8 +53,10 @@ export default class Game {
 	 */
 	static TeamRosterUpdate(player: Player) {
 
-		let bluePlayers = GameObjectList.players.filter(p => p.team.id == TeamId.order);
-		let redPlayers = GameObjectList.players.filter(p => p.team.id == TeamId.chaos);
+		const players = Server.players.map(player => player.ai as Player);
+
+		const bluePlayers = players.filter(p => p.owner.team.id === TeamId.order);
+		const redPlayers = players.filter(p => p.owner.team.id === TeamId.chaos);
 
 		const packet1 = packets.TeamRosterUpdate.create({
 			maxOrder: 6,
@@ -57,7 +65,7 @@ export default class Game {
 			teamChaosPlayerIds: redPlayers.map(p => p.summoner.id),
 		});
 
-		Server.teams[TeamId.max].sendPacket(packet1, loadingStages.notConnected);
+		Server.teams[TeamId.max]?.sendPacket(packet1, loadingStages.notConnected);
 	}
 
 	/**
@@ -67,10 +75,10 @@ export default class Game {
 		const packet1 = packets.RequestRename.create({
 			playerId: player.summoner.id,
 			skinId: 0,
-			playerName: 'Test',
+			playerName: player.summoner.name,
 		});
 
-		Server.teams[TeamId.max].sendPacket(packet1, loadingStages.notConnected);
+		Server.teams[TeamId.max]?.sendPacket(packet1, loadingStages.notConnected);
 	}
 
 	/**
@@ -80,10 +88,10 @@ export default class Game {
 		const packet1 = packets.RequestReskin.create({
 			playerId: player.summoner.id,
 			skinId: 0,
-			skinName: player.character?.model,
+			skinName: player.owner.skin,
 		});
 
-		Server.teams[TeamId.max].sendPacket(packet1, loadingStages.notConnected);
+		Server.teams[TeamId.max]?.sendPacket(packet1, loadingStages.notConnected);
 	}
 
 	static connected(player: Player) {
@@ -97,143 +105,192 @@ export default class Game {
 	/**
 	 * Send packet to client to start game (switch from loading screen to game)
 	 */
-	static StartGame() {
+	static StartGame(player: Player) {
 		const packet1 = packets.StartGame.create({
 			enablePause: true,
 		});
 
-		Server.teams[TeamId.max].sendPacket(packet1, loadingStages.notConnected);
+		//Server.teams[TeamId.max]?.sendPacket(packet1, loadingStages.notConnected);
+		player.network.sendPacket(packet1, loadingStages.notConnected);
 	}
 
 	/**
 	 * Send packet to client to synchronize game time
 	 */
-	static SynchSimTime(time = 0) {
+	static SynchSimTime(player: Player, ms = 0) {
 		const packet1 = packets.SynchSimTimeS2C.create({
-			time,
+			time: Math.round(ms / 1000),
 		});
 
-		Server.teams[TeamId.max].sendPacket(packet1, loadingStages.notConnected);
+		player.network.sendPacket(packet1, loadingStages.notConnected);
 	}
-	static SyncMissionStartTime(time = 0) {
+
+	static SyncMissionStartTime(player: Player, ms = 0) {
 		const packet1 = packets.SyncMissionStartTime.create({
-			time,
+			time: Math.round(ms / 1000),
 		});
 
-		Server.teams[TeamId.max].sendPacket(packet1, loadingStages.notConnected);
+		player.network.sendPacket(packet1, loadingStages.notConnected);
 	}
 
 	/**
-	 * 
-	 * @todo
+	 * @todo check when and how many times this should be sent
 	 */
-	static async GameTimeHeartBeat() {
+	static async GameTimeHeartBeat(player: Player) {
+		for (let i = 0; i < 3; i++) {
+			let time = Server.game.timer.now();
 
-		let time = 0;
-		for (let i = 0; i < 3; i++) {//for(;;){
-			Game.SynchSimTime(time);
+			// @todo remove this
+			if (!time)
+				time = Timer.app.now();
 
-			await Promise.delay(10 * 1000);
-			time += 10;
+			Game.SynchSimTime(player, time);
+			await delay(10 * 1000);
 		}
 	}
 
-	/**
-	 * 
-	 * @todo should be in Game.run
-	 */
+	static async resolveOnGameLoaded() {
+		for (; ;) {
+			if (Server.game.loaded)
+				return;
+
+			await delay(100);
+		}
+	}
+
+	static async resolveOnGameStarted() {
+		for (; ;) {
+			if (Server.game.started)
+				return;
+
+			await delay(100);
+		}
+	}
+
 	static async playerLoaded(player: Player) {
-		Server.game.loaded = Date.now() / 1000;// this shouldn't be here
-		Game.StartGame();
-		Game.GameTimeHeartBeat();
-		Game.SyncMissionStartTime();
+		// @todo also wait for game start?
+		await this.resolveOnGameLoaded();
+		Game.StartGame(player);
+		Game.GameTimeHeartBeat(player);
+		Game.SyncMissionStartTime(player);
 	}
 
 	// STAGE start game flow ==========================================================
 
 	static initialize() {
-		Game.initGame();
-		Fountain.spawnAll(playersConfig);
+		Server.game = new Game();
+		Server.game.initialize();
+		Fountain.spawnAll(config.players as PlayerList);
 	}
 
-	static async run() {
-		const packet1 = packets.SwitchNexusesToOnIdleParticles.create({});
-		Server.teams[TeamId.max].sendPacket(packet1);
 
-		GameComponents.Spawn();
+	static async run() {
+
 		//GameComponents.Fountain();//instead of component, create perma buff for fountain turret
+
+		const ambientGain = new GameComponents.AmbientGain();
+		ambientGain.start();
 
 	}
 
 	static loaded() {
-		Server.game.loaded = Date.now() / 1000;
+		if (Server.game.loaded)
+			return;
+
+		Server.game.loaded = Timer.app.now();
 
 		Builder.spawnAll();
 		Barrack.spawnAll();
 		JungleCamp.spawnAll();
 
 	}
-	static started() {
-		Server.game.started = Date.now() / 1000;
-		Server.game.paused = false;
 
-		Game.run();
+	static started() {
+		if (Server.game.started)
+			return;
+
+		Server.game.start();
+
+		this.run();
+	}
+
+	static checkPlayersLoaded() {
+		if (Server.game.loaded)
+			return true;
+
+		// start game if 5 minutes passed
+		const passed = Timer.app.now() - Server.game.initialized;
+		if (passed > 300 * 1000)
+			return true;
+
+		// or all players which connected has loaded
+		let players = Server.players.map(player => player.ai as Player);
+
+		// @todo wait for players which didn't connected too
+		players = players.filter(player => player.network.loadingStage >= loadingStages.loading);
+		if (players.length < 1)
+			return false;
+
+		for (let i = 0, l = players.length; i < l; i++) {
+			const player = players[i]!;
+
+			if (player.network.loadingStage < loadingStages.loaded)
+				return false;
+		}
+
+		return true;
 	}
 
 	static async startWhenReady() {
-		//Game.loaded();
+		// @todo this should be after game loaded
 		Server.movement = new GameComponents.MovementSimulation();
 		Server.movement.start();
 
-		while (!Server.game.started) {
-			await Promise.delay(100);
+		while (!Server.game.loaded) {
+			await delay(100);
 
-			let players = GameObjectList.players;
+			const players = Server.players;
 			if (!players || players.length < 1) {
 				console.error('players has been not initialized');
 				continue;
 			}
 
-			//if(Server.game.initialized + 300 < Date.now() / 1000)
-			//	start_game();// start game if 5 minutes passed
-			//else{
-			//	let playersLoaded = true;
-			//	for(let i = 0, l = players.length; i < l; i++){
-			//		if(players[i].network.loadingStage < loadingStages.loaded){
-			//			playersLoaded = false;
-			//			break;
-			//		}
-			//	}
-			//	if(playersLoaded)
-			//		start_game();// or all players has loaded
+			//if (this.checkPlayersLoaded()) {
+			this.loaded();
+			break;
 			//}
+		}
+
+		while (!Server.game.started) {
+			await delay(100);
 
 			// atm we start game with '.start' chat command
-			if (Server.commandStartGame)
+			if (Server.commandStartGame) {
 				Game.started();
+				break;
+			}
 		}
 
 	}
 
-	static async initGame() {
+	initialized = 0;
+	loaded = 0;
+	started = 0;
+	timer = new Timer().notYet();
 
-
-		Server.game = {
-			initialized: Date.now() / 1000,
-			loaded: 0,
-			started: 0,
-			paused: true,
-		};
-
-		//Server.game.Timer = () => {
-		//	//todo: ticker function for setting variables dependent on game time
-		//	if (!Server.game.started)
-		//		return 0;
-		//
-		//	return Date.now() / 1000 - Server.game.started;
-		//};
-
+	initialize() {
+		this.initialized = Timer.app.now();
 		Game.startWhenReady();
+	}
 
+	start() {
+		this.started = Timer.app.now();
+		this.timer.start();
+
+		// @todo remove this
+		Server.players.forEach(unit => {
+			Game.GameTimeHeartBeat(unit.ai as Player);
+			Game.SyncMissionStartTime(unit.ai as Player);
+		});
 	}
 }

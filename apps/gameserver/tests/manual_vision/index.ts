@@ -1,5 +1,5 @@
 //
-//import { Vector2 } from 'three';
+//import { Vector2 } from '@repo/geometry';
 //
 //import Server from './_env';
 //import MovementSimulation from '../../game/components/movement-simulation';

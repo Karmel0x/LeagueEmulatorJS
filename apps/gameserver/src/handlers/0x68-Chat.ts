@@ -1,6 +1,6 @@
 
-import Player from '../gameobjects/units/player';
 import * as packets from '@repo/packets/list';
+import Player from '../gameobjects/unit-ai/player';
 
 import _chat_admin from './_chat_admin';
 
@@ -9,9 +9,9 @@ export default (player: Player, packet: packets.ChatModel) => {
 	console.log('handle: chat.Chat');
 	//console.log(packet);
 
-
+	const owner = player.owner;
 	const packet1 = packets.Chat.create({
-		netId: player.netId,
+		netId: owner.netId,
 		message: packet.message,
 	});
 	player.network.sendPacket(packet1);

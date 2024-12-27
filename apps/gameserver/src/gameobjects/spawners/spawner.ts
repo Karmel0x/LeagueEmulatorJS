@@ -1,14 +1,15 @@
-import GameObject, { GameObjectOptions } from '../game-object';
+import { EventEmitter2 } from '../../core/event-emitter2';
 import Team from '../extensions/traits/team';
+import GameObject, { GameObjectOptions, type GameObjectEvents } from '../game-object';
 
 
 export type SpawnerOptions = GameObjectOptions & {
+    name?: string;
     team: number;
-    num?: number;
+};
 
-    info?: {
-        name: string;
-    };
+export type SpawnerEvents = GameObjectEvents & {
+
 };
 
 export default class Spawner extends GameObject {
@@ -16,12 +17,16 @@ export default class Spawner extends GameObject {
         return super.initialize(options) as Spawner;
     }
 
+    readonly eventEmitter = new EventEmitter2<SpawnerEvents>();
+
+    name;
     team;
 
     constructor(options: SpawnerOptions) {
         super(options);
 
-        this.team = new Team(this, options.team, options.num ?? 0);
+        this.name = options.name || '';
+        this.team = new Team(this, options.team);
     }
 
 }

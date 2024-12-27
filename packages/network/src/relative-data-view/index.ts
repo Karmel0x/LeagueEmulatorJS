@@ -1,4 +1,13 @@
 
+export function ctrz(integer: number) {
+    integer >>>= 0;
+    if (integer === 0) {
+        return 32;
+    }
+    integer &= -integer;
+    return 31 - Math.clz32(integer);
+}
+
 export default class RelativeDataView {
 
     static from(buffer: ArrayBufferLike | Buffer) {
@@ -10,13 +19,14 @@ export default class RelativeDataView {
     }
 
     static alloc(length: number) {
-        let buffer = new ArrayBuffer(length);
+        const buffer = new ArrayBuffer(length);
         return this.from(buffer);
     }
 
     dv: DataView;
     littleEndian = true;
     offset = 0;
+    lastFieldSize = 0;
 
     /** buffer byte length */
     get length() {
@@ -41,19 +51,27 @@ export default class RelativeDataView {
     }
 
     readUint8() {
-        return this.dv.getUint8(this.offset++);
+        const fieldSize = 1;
+        this.lastFieldSize = fieldSize;
+        return this.dv.getUint8((this.offset += fieldSize) - fieldSize);
     }
 
     readUint16() {
-        return this.dv.getUint16((this.offset += 2) - 2, this.littleEndian);
+        const fieldSize = 2;
+        this.lastFieldSize = fieldSize;
+        return this.dv.getUint16((this.offset += fieldSize) - fieldSize, this.littleEndian);
     }
 
     readUint32() {
-        return this.dv.getUint32((this.offset += 4) - 4, this.littleEndian);
+        const fieldSize = 4;
+        this.lastFieldSize = fieldSize;
+        return this.dv.getUint32((this.offset += fieldSize) - fieldSize, this.littleEndian);
     }
 
     readBigUint64() {
-        return this.dv.getBigUint64((this.offset += 8) - 8, this.littleEndian);
+        const fieldSize = 8;
+        this.lastFieldSize = fieldSize;
+        return this.dv.getBigUint64((this.offset += fieldSize) - fieldSize, this.littleEndian);
     }
 
     readUint64() {
@@ -61,19 +79,27 @@ export default class RelativeDataView {
     }
 
     readInt8() {
-        return this.dv.getInt8(this.offset++);
+        const fieldSize = 1;
+        this.lastFieldSize = fieldSize;
+        return this.dv.getInt8((this.offset += fieldSize) - fieldSize);
     }
 
     readInt16() {
-        return this.dv.getInt16((this.offset += 2) - 2, this.littleEndian);
+        const fieldSize = 2;
+        this.lastFieldSize = fieldSize;
+        return this.dv.getInt16((this.offset += fieldSize) - fieldSize, this.littleEndian);
     }
 
     readInt32() {
-        return this.dv.getInt32((this.offset += 4) - 4, this.littleEndian);
+        const fieldSize = 4;
+        this.lastFieldSize = fieldSize;
+        return this.dv.getInt32((this.offset += fieldSize) - fieldSize, this.littleEndian);
     }
 
     readBigInt64() {
-        return this.dv.getBigInt64((this.offset += 8) - 8, this.littleEndian);
+        const fieldSize = 8;
+        this.lastFieldSize = fieldSize;
+        return this.dv.getBigInt64((this.offset += fieldSize) - fieldSize, this.littleEndian);
     }
 
     readInt64() {
@@ -81,7 +107,9 @@ export default class RelativeDataView {
     }
 
     readFloat32() {
-        return this.dv.getFloat32((this.offset += 4) - 4, this.littleEndian);
+        const fieldSize = 4;
+        this.lastFieldSize = fieldSize;
+        return this.dv.getFloat32((this.offset += fieldSize) - fieldSize, this.littleEndian);
     }
 
     readFloat() {
@@ -89,7 +117,9 @@ export default class RelativeDataView {
     }
 
     readFloat64() {
-        return this.dv.getFloat64((this.offset += 8) - 8, this.littleEndian);
+        const fieldSize = 8;
+        this.lastFieldSize = fieldSize;
+        return this.dv.getFloat64((this.offset += fieldSize) - fieldSize, this.littleEndian);
     }
 
     readDouble() {
@@ -101,10 +131,11 @@ export default class RelativeDataView {
     }
 
     readUint8Array(length: number) {
-        let result = new Uint8Array(length);
+        const result = new Uint8Array(length);
         for (let i = 0; i < length; i++)
             result[i] = this.readUint8();
 
+        this.lastFieldSize = length;
         return result;
     }
 
@@ -118,6 +149,7 @@ export default class RelativeDataView {
 
     readString() {
         let str = '';
+        const off = this.offset;
         let length = this.readUint32();
 
         for (let i = 0; i < length; i++) {
@@ -125,31 +157,35 @@ export default class RelativeDataView {
             str += String.fromCharCode(s);
         }
 
+        this.lastFieldSize = this.offset - off;
         return str;
     }
 
     readCharArray(length: number | undefined = undefined) {
         let str = '';
+        const off = this.offset;
         length = length ?? this.readUint32();
 
         for (let i = 0; i < length; i++) {
             let s = this.readUint8();
-            if (s == 0x00)
+            if (s === 0x00)
                 break;
 
             str += String.fromCharCode(s);
         }
 
         this.offset += Math.max(0, length - (str.length + 1));
+        this.lastFieldSize = this.offset - off;
         return str;
     }
 
     readStringNullTerminated(maxLength = 0) {
         let str = '';
+        const off = this.offset;
 
         while (this.offset < this.dv.byteLength) {
             let s = this.readUint8();
-            if (s == 0x00)
+            if (s === 0x00)
                 break;
 
             str += String.fromCharCode(s);
@@ -157,36 +193,58 @@ export default class RelativeDataView {
                 break;
         }
 
+        this.lastFieldSize = this.offset - off;
         return str;
     }
 
-    readBitfield<T extends { [name: string]: number }>(fields: T) {
-        let bitfield = this.readUint8();
-        let result = {} as { [K in keyof T]: boolean };
+    unpackIntegerBitfield<T extends { [name: string]: number }>(fields: T, bitfield: number) {
+        const result = {} as { [K in keyof T]: number };
 
-        for (let i in fields)
-            result[i] = (bitfield & fields[i]) != 0;
+        for (const i in fields) {
+            const field = fields[i]!;
+            const trailingZeros = ctrz(field);
+            result[i] = (bitfield >>> trailingZeros) & (field >>> trailingZeros);
+            bitfield >>= field;
+        }
 
         return result;
+    }
+
+    readIntegerBitfield<T extends { [name: string]: number }>(fields: T) {
+        const bitfield = this.readUint8();
+        return this.unpackIntegerBitfield(fields, bitfield);
+    }
+
+    unpackBooleanBitfield<T extends { [name: string]: number }>(fields: T, bitfield: number) {
+        const result = {} as { [K in keyof T]: boolean };
+
+        for (const i in fields) {
+            const field = fields[i]!;
+            result[i] = (bitfield & field) !== 0;
+        }
+
+        return result;
+    }
+
+    readBitfield<T extends { [name: string]: number }>(fields: T) {
+        const bitfield = this.readUint8();
+        return this.unpackBooleanBitfield(fields, bitfield);
     }
 
     readBitfield64<T extends { [name: string]: number }>(fields: T) {
-        let bitfield = this.readUint64();
-        let result = {} as { [K in keyof T]: boolean };
-
-        for (let i in fields)
-            result[i] = (bitfield & fields[i]) != 0;
-
-        return result;
+        const bitfield = this.readUint64();
+        return this.unpackBooleanBitfield(fields, Number(bitfield));
     }
 
     readArray<T extends (...args: any[]) => any>(reader: T, length: number | undefined = undefined) {
-        let result = [] as ReturnType<T>[];
+        const result = [] as ReturnType<T>[];
+        const off = this.offset;
         length = length ?? this.readUint8();
 
         for (let i = 0; i < length; i++)
             result.push(reader());
 
+        this.lastFieldSize = this.offset - off;
         return result;
     }
 
@@ -303,21 +361,43 @@ export default class RelativeDataView {
         }
     }
 
-    writeBitfield<T extends { [name: string]: number }>(fields: T, values: { [K in keyof Partial<T>]: boolean }) {
+    packIntegerBitfield<T extends { [name: string]: number }>(fields: T, values: { [K in keyof Partial<T>]: number }) {
         let bitfield = 0;
-        for (let i in values)
-            if (values[i])
-                bitfield |= fields[i];
+        for (const i in values) {
+            if (values[i]) {
+                const value = values[i];
+                const field = fields[i]!;
+                if (value > field)
+                    throw new Error(`value of ${i} (${value}) is greater than the field (${field})`);
 
+                bitfield |= value << ctrz(field);
+            }
+        }
+        return bitfield;
+    }
+
+    writeIntegerBitfield<T extends { [name: string]: number }>(fields: T, values: { [K in keyof Partial<T>]: number }) {
+        const bitfield = this.packIntegerBitfield(fields, values);
+        this.writeUint8(bitfield);
+    }
+
+    packBooleanBitfield<T extends { [name: string]: number }>(fields: T, values: { [K in keyof Partial<T>]: boolean }) {
+        let bitfield = 0;
+        for (const i in values) {
+            if (values[i]) {
+                bitfield |= fields[i]!;
+            }
+        }
+        return bitfield;
+    }
+
+    writeBitfield<T extends { [name: string]: number }>(fields: T, values: { [K in keyof Partial<T>]: boolean }) {
+        const bitfield = this.packBooleanBitfield(fields, values);
         this.writeUint8(bitfield);
     }
 
     writeBitfield64<T extends { [name: string]: number }>(fields: T, values: { [K in keyof Partial<T>]: boolean }) {
-        let bitfield = 0;
-        for (let i in values)
-            if (values[i])
-                bitfield |= fields[i];
-
+        const bitfield = this.packBooleanBitfield(fields, values);
         this.writeUint64(bitfield);
     }
 
@@ -330,7 +410,7 @@ export default class RelativeDataView {
         }
 
         for (let i = 0; i < length; i++)
-            writer(value[i]);
+            writer(value[i]!);
     }
 
 }

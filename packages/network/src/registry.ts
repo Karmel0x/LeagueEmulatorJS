@@ -1,7 +1,7 @@
 
+import BasePacket from './packets/base-packet';
 import Packet from './packets/packet';
 import PrimaryPacket from './packets/primary-packet';
-import BasePacket from './packets/base-packet';
 
 
 export default class Registry<Type extends typeof Packet> {
@@ -17,16 +17,14 @@ export default class Registry<Type extends typeof Packet> {
     }
 
     packets: {
-        [packetId: number]: Type
+        [packetId: string]: Type
     } = {};
-
-    lastPacketId: number = -1;
 
     register(packetClass: Type, packetId: number | undefined, channelId: number | undefined) {
 
-        packetClass.id = packetId ?? ++this.lastPacketId;
-        packetClass.channel = channelId ?? 0;
+        packetClass.id = packetId ?? -1;
+        packetClass.channel = channelId ?? -1;
 
-        this.packets[packetClass.id] = packetClass;
+        this.packets[`${packetClass.channel}-${packetClass.id}`] = packetClass;
     }
 }

@@ -28,7 +28,7 @@ HashString.HashStringObject(spellHash);
 console.log(spellHash);
 
 
-const packageHash = {};
+const packageHash: Record<string, number> = {};
 
 const championList = [
 	'Aatrox',

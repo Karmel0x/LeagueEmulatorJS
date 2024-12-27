@@ -1,8 +1,8 @@
 
-import Player from '../gameobjects/units/player';
 import * as packets from '@repo/packets/list';
+import Player from '../gameobjects/unit-ai/player';
 
-import loadingStages from '../constants/loading-stages';
+import loadingStages from '../constants/game-state';
 
 
 export default (player: Player, packet: packets.QueryStatusReqModel) => {
@@ -14,6 +14,6 @@ export default (player: Player, packet: packets.QueryStatusReqModel) => {
 			response: true,
 		});
 
-		player.packets.toSelf(packet1, loadingStages.notConnected);
+		player.owner.packets.toSelf(packet1, loadingStages.notConnected);
 	}
 };

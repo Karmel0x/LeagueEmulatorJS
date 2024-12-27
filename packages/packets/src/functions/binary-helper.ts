@@ -9,7 +9,7 @@ export default class BinaryHelper {
 	 * 4 = 32-bit, 8 = 64-bit
 	 */
 	static getBytes(num: number, len = 4) {
-		let bytes = new Uint8Array(len);
+		const bytes = new Uint8Array(len);
 		for (let i = 0; i < len; i++) {
 			bytes[i] = num & 0xFF; // get the least significant byte of num
 			num = num >> 8; // shift num right by 8 bits
@@ -35,7 +35,7 @@ export default class BinaryHelper {
 	 * Convert an array of numbers to an array of booleans representing binary values
 	 */
 	static byteArrayToBinary(array: Uint8Array | number[]) {
-		let binaryArray: boolean[] = [];
+		const binaryArray: boolean[] = [];
 
 		array.forEach(number => {
 			for (let i = 0; i < 8; i++) {

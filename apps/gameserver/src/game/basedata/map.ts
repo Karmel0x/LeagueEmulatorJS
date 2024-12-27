@@ -1,11 +1,7 @@
 
-/**
- * @abstract
- */
-export default class _Map {
+export default class Map {
 
-    static id = 0;
-
-    static diagonal = 0;
+    id = 0;
+    diagonal = 0;
 
 }

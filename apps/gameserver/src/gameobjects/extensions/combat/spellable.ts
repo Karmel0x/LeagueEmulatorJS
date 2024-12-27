@@ -1,55 +1,75 @@
 
 import * as packets from '@repo/packets/list';
 import { SlotId } from '../../../constants/slot-id';
-import TypedEventEmitter from 'typed-emitter';
-import Defendable, { DefendableEvents, IDefendable } from './defendable';
-import { SpellData } from '../../../game/basedata/spells/spell';
+import type { CastData } from '../../../game/basedata/spell';
+import type Hero from '../../unit-ai/hero';
+import type AttackableUnit from '../../units/attackable-unit';
+import Defendable, { DefendableEvents } from './defendable';
 
 
 export type SpellableEvents = DefendableEvents & {
-	'cancelSpell': () => void;
-	'spellCasting': (spellData: SpellData) => void;
-	'spellCastingEnd': (spellData: SpellData) => void;
+	'spellCast': (castData: CastData) => void;
+	//'spellCastingEnd': (spellData: any) => void;
 };
-
-export interface ISpellable extends IDefendable {
-	eventEmitter: TypedEventEmitter<SpellableEvents>;
-	combat: Spellable;
-}
 
 /**
  * Trait for units that can use spells
  */
 export default class Spellable extends Defendable {
-	declare owner: ISpellable;
+	declare readonly owner: AttackableUnit;
 
-	castingSpell = false;
+	//castingSpell = false;
 
-	constructor(owner: ISpellable, respawnable = false) {
+	constructor(owner: AttackableUnit, respawnable = false) {
 		super(owner, respawnable);
 
-		this.owner.eventEmitter.on('cancelOrder', () => {
-			this.owner.eventEmitter.emit('cancelSpell');
-		});
-
-		this.owner.eventEmitter.on('spellCasting', (spellData) => {
-			console.log('spellCasting');
-			this.castingSpell = true;
-		});
-
-		this.owner.eventEmitter.on('spellCastingEnd', (spellData) => {
-			console.log('spellCastingEnd');
-			this.castingSpell = false;
-		});
+		//this.owner.eventEmitter.on('spellCast', (spellData) => {
+		//	//console.log('spellCast');
+		//	this.castingSpell = true;
+		//});
+		//
+		//this.owner.eventEmitter.on('spellCastingEnd', (spellData) => {
+		//	console.log('spellCastingEnd');
+		//	this.castingSpell = false;
+		//});
 	}
 
 	castSpell(packet: packets.CastSpellReqModel) {
-		let slot = packet.slot;
+		const slot = packet.slot;
 
-		if (slot < SlotId.Q || slot > SlotId.F)
-			return;
+		if (slot >= SlotId.q && slot <= SlotId.r) {
+			const character = this.owner.character;
+			if (!character)
+				return;
 
-		this.owner.slots[slot]?.cast({ packet });
+			const spells = character.spells;
+			if (!spells)
+				return;
+
+			const spell = spells[slot];
+			if (!spell)
+				return;
+
+			spell.eventEmitter.emit('cast', this.owner, {
+				packet,
+				spell,
+			});
+		}
+		else if (slot >= SlotId.d && slot <= SlotId.f) {
+			const spells = (this.owner.ai as Hero).summonerSpells;
+			if (!spells)
+				return;
+
+			const spell = spells[slot - SlotId.d];
+			if (!spell)
+				return;
+
+			spell.eventEmitter.emit('cast', this.owner, {
+				packet,
+				spell,
+			});
+		}
+
 	}
 
 }

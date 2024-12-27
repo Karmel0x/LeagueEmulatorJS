@@ -1,24 +1,18 @@
 
-import GameObject, { GameObjectEvents } from '../../game-object';
-import TypedEventEmitter from 'typed-emitter';
+import GameObject from '../../game-object';
 
 
-export type TargetableEvents = GameObjectEvents & {
+export type TargetableEvents = {
 
 };
-
-export interface ITargetable extends GameObject {
-    eventEmitter: TypedEventEmitter<TargetableEvents>;
-    combat: Targetable;
-}
 
 /**
  * Trait for units that can be attacked
  */
 export default class Targetable {
-    owner;
+    readonly owner;
 
-    constructor(owner: ITargetable) {
+    constructor(owner: GameObject) {
         this.owner = owner;
     }
 

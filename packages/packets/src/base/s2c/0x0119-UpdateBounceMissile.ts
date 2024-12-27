@@ -1,5 +1,5 @@
-import type RelativeDataView from '@repo/network/relative-data-view';
 import ExtendedPacket, { ExtendedPacketModel } from '@repo/network/packets/extended-packet';
+import type RelativeDataView from '@repo/network/relative-data-view';
 import SVector3, { SVector3Model } from '../../shared/SVector3';
 import type { NetId } from '../../types/player';
 

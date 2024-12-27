@@ -1,100 +1,114 @@
 
-import * as packets from '@repo/packets/list';
-import { SlotId } from '../../../constants/slot-id';
-import { IDefendable } from './defendable';
-import Filters from '../filters/index';
+import type { Vector2Like } from '@repo/geometry';
+import { IssueOrderType } from '@repo/packets/base/c2s/0x72-IssueOrderReq';
 import { NetId } from '@repo/packets/types/player';
-import { LookAtType } from '@repo/packets/base/s2c/0x010F-UnitSetLookAt';
-import TypedEventEmitter from 'typed-emitter';
-import * as Measure from '../measure';
-import { IMovingUnit } from '../moving/unit';
-import Spellable, { ISpellable, SpellableEvents } from './spellable';
 import GameObjectList from '../../../app/game-object-list';
-import AttackableUnit from '../../units/attackable-unit';
+import Server from '../../../app/server';
+import { SlotId } from '../../../constants/slot-id';
+import Timer from '../../../core/timer';
+import { delay } from '../../../core/utils';
+import type { Player } from '../../unit-ai';
+import { AiType } from '../../unit-ai/base-ai';
+import type AttackableUnit from '../../units/attackable-unit';
+import Filters from '../filters/index';
+import * as Measure from '../measure';
+import BasicAttacks from './basic-attacks';
+import Spellable, { SpellableEvents } from './spellable';
 
 export type AttackableEvents = SpellableEvents & {
 	'noTargetsInRange': () => void;
 	'afterBasicAttack': () => void;
 };
 
-export interface IAttackable extends ISpellable {
-	eventEmitter: TypedEventEmitter<AttackableEvents>;
-	combat: Attackable;
-}
+type AttackOrder = {
+	position?: Vector2Like;
+	//endPosition?: Vector2Like;
+	targetNetId: NetId;
+};
 
 /**
  * Trait for units that can attack
- * @depends IStatOwner, ISpellable
  */
 export default class Attackable extends Spellable {
-	declare owner: IAttackable;
+	declare readonly owner: AttackableUnit;
+	basicAttacks;
+	order: AttackOrder | undefined;
+	lastAttackTime = 0;
 
-	constructor(owner: IAttackable, respawnable = false) {
+	constructor(owner: AttackableUnit, respawnable = false) {
 		super(owner, respawnable);
 
 		this.owner.eventEmitter.on('spawn', () => {
 			this.autoAttackLoop();
 		});
 
-		this.owner.eventEmitter.on('cancelOrder', () => {
+		this.owner.eventEmitter.on('resurrect', () => {
+			this.autoAttackLoop();
+		});
+
+		this.owner.eventEmitter.on('changeOrder', () => {
 			this.attackTarget = undefined;
+			this.order = undefined;
 			this.acquisitionManual = undefined;
 		});
+
+		this.basicAttacks = new BasicAttacks(this.owner);
 	}
 
-	castAttack(packet: packets.IssueOrderReqModel) {
-		//let slot = packet.slot;
-		//if (slot < SlotId.A || slot > SlotId.A9)
-		//	return;
+	startAttack(order: AttackOrder) {
+		this.order = order;
+		this.acquisitionManual = order.targetNetId;
 
-		this.acquisitionManual = packet.targetNetId;
-		this.autoAttackSoftToggle = true;
+		if (this.acquisitionManual) {
+			const attackRange = this.owner.stats.attackRange.total || 400;
+			this.owner.moving.follow(this.acquisitionManual, attackRange);
+		}
 	}
 
-	attack(target: IDefendable) {
+	getAttackSpell() {
+		const character = this.owner.character;
+		if (!character)
+			return;
 
-		if (!target)
-			return console.log('unit does not exist', target);
+		const spells = character.spells;
+		if (!spells)
+			return;
 
-		if (!target.combat)
-			return console.log('unit cannot be damaged', target.netId, target.constructor.name);
+		const slot = SlotId.a;
+		const spell = spells[slot];
+		if (!spell)
+			return;
 
-		//if(this.owner.team.id == target.team.team.id)
-		//	return;
-
-		console.log('BattleUnit.attack', this.owner.netId, target.netId);
-		let dmg = {
-			ad: 0,
-			ap: 0,
-		};
-		dmg.ad += this.owner.stats.attackDamage.total;
-		target.combat.damage(this.owner, dmg);
+		return spell;
 	}
 
-	attackByNetId(targetNetId: NetId) {
-		if (!targetNetId)
-			return console.log('unit does not exist', targetNetId);
+	castAttack() {
+		if (!this.attackTarget)
+			return;
 
-		let target = GameObjectList.objectByNetId[targetNetId];
-		if (!target)
-			return console.log('unit does not exist', targetNetId);
+		this.owner.eventEmitter.emit('preAttack', this.attackTarget);
+		const spell = this.getAttackSpell();
+		if (!spell)
+			return;
 
-		if (!(target instanceof AttackableUnit))
-			return console.log('unit cannot be damaged', target.netId, target.constructor.name);
-
-		return this.attack(target);
+		this.owner.eventEmitter.emit('launchAttack', this.attackTarget);
+		spell.eventEmitter.emit('cast', this.owner, {
+			packet: this.order || {
+				targetNetId: this.attackTarget.netId,
+			},
+			spell,
+		});
 	}
 
 	attackTarget?: AttackableUnit = undefined;
 	autoAttackToggle = true;
-	autoAttackSoftToggle = true;
 
 	_acquisitionManual?: AttackableUnit = undefined;
 	get acquisitionManual(): AttackableUnit | undefined {
 		return this._acquisitionManual;
 	}
 	set acquisitionManual(target: AttackableUnit | NetId | undefined) {
-		if (typeof target == 'number') {
+		if (typeof target === 'number') {
 			target = GameObjectList.unitByNetId(target);
 		}
 
@@ -106,15 +120,16 @@ export default class Attackable extends Spellable {
 	 */
 	getCurrentAttackTargetIfInAcquisitionRange() {
 		if (!this.attackTarget || !this.attackTarget.combat.canBeAttacked())
-			return undefined;
+			return;
 
-		if (!Measure.edgeToEdge.isInRange(this.owner, this.attackTarget, this.owner.stats.attackRange.total || 400))
-			return undefined;
+		const acquisitionRange = this.owner.stats.acquisitionRange.total || 750;
+		if (!Measure.edgeToEdge.isInRange(this.owner, this.attackTarget, acquisitionRange))
+			return;
 
 		return this.attackTarget;
 	}
 
-	attackTargetUnitTypesOrder = ['Minion', 'Player', 'Turret', 'Inhibitor', 'Nexus'];
+	attackTargetUnitTypesOrder = [AiType.Minion, AiType.Hero, AiType.Building];
 
 	/**
 	 * Find new target in range, sort by type and distance
@@ -122,28 +137,34 @@ export default class Attackable extends Spellable {
 	getNewAttackTarget() {
 		const ownerTeamId = this.owner.team.id;
 		const enemyUnits = GameObjectList.aliveUnits.filter(unit => unit.team.id !== ownerTeamId);
-		let unitsInRange = Measure.edgeToEdge.filterByRange(this.owner, enemyUnits, this.owner.stats.attackRange.total || 400);
+
+		const attackRange = this.owner.stats.attackRange.total || 400;
+		let unitsInRange = Measure.edgeToEdge.filterByRange(this.owner, enemyUnits, attackRange);
 		if (!unitsInRange.length)
-			return undefined;
+			return;
 
 		Measure.centerToCenter.sortByDistance(this.owner, unitsInRange);
-		unitsInRange = Filters.filterByTypeName(unitsInRange, this.attackTargetUnitTypesOrder);
-		Filters.sortByType(unitsInRange, this.attackTargetUnitTypesOrder);
+		//unitsInRange = Filters.filterByTypeName(unitsInRange, this.attackTargetUnitTypesOrder);
+		const types = this.attackTargetUnitTypesOrder;
+		unitsInRange = unitsInRange.filter(target => target.ai && types.includes(target.ai.type));
+		Filters.sortByAiType(unitsInRange, this.attackTargetUnitTypesOrder);
 		return unitsInRange[0];
 	}
 
-	shouldAutoAttackNow() {
+	shouldAcquisiteTarget() {
 		if (!this.autoAttackToggle)
 			return false;
 
-		const movableOwner = this.owner as IAttackable & Partial<IMovingUnit>;
-		if (movableOwner.moving) {
-			if (!this.autoAttackSoftToggle && movableOwner.moving.waypoints?.length)
-				return false;
+		if (this.owner.moving.waypointsForced.length)//@todo
+			return false;
 
-			if (movableOwner.moving.waypointsForced?.length)//@todo
+		const issuedOrder = this.owner.issuedOrder;
+		if (issuedOrder === IssueOrderType.moveTo) {
+			if (this.owner.moving.waypoints.length)
 				return false;
 		}
+		else if (issuedOrder !== IssueOrderType.orderNone && issuedOrder !== IssueOrderType.attackTo && issuedOrder !== IssueOrderType.attackMove)
+			return false;
 
 		return true;
 	}
@@ -152,18 +173,16 @@ export default class Attackable extends Spellable {
 	 * Find target to attack or get previous target if still in range
 	 */
 	findTargetInAcquisitionRange() {
-		if (!this.shouldAutoAttackNow())
-			return undefined;
+		if (!this.shouldAcquisiteTarget())
+			return;
 
 		let target = this.getCurrentAttackTargetIfInAcquisitionRange();
-		if (target)
+		if (target && !target.combat.died)
 			return target;
 
 		target = this.getNewAttackTarget();
-		if (target)
+		if (target && !target.combat.died)
 			return target;
-
-		return undefined;
 	}
 
 	/**
@@ -182,86 +201,109 @@ export default class Attackable extends Spellable {
 		//this.packets.toEveryone(packet1);
 	}
 
-	//FaceDirection() {
-	//	const packet1 = packets.FaceDirection.create({
-	//		netId: this.netId,
-	//		flags: { doLerpTime: true },
-	//		direction: new Vector3(-0.93, 0, -0.35),
-	//		lerpTime: 0.08,
-	//	});
-	//	this.packets.toEveryone(packet1, loadingStages.notConnected);
-	//}
-
 	//canFollowTarget(target: Unit) {
 	//	// todo: checks if target is visible, didn't died, ...
 	//	return true;
 	//}
 
 	getTargetInAcquisitionManual() {
-		if (!this.acquisitionManual)
-			return undefined;
+		const issuedOrder = this.owner.issuedOrder;
+		if (issuedOrder !== IssueOrderType.attackTo && issuedOrder !== IssueOrderType.attackMove)
+			return;
 
-		return this.acquisitionManual;
+		const target = this.acquisitionManual;
+		if (!target)
+			return;
+
+		if (target.combat.died)
+			return;
+
+		//const acquisitionRange = this.owner.stats.acquisitionRange.total || 750;
+		//if (this.owner.position.distanceTo(target.position) > acquisitionRange)
+		//	return;
+
+		return target;
 	}
 
 	emitted_noTargetsInRange = false;
+	haltedMovement: boolean[] = [];
+
 	/**
 	 * Scan for enemy units in range and attack nearest one
 	 */
 	async attackInRange() {
 		let target = this.getTargetInAcquisitionManual();
-		if (!target || target.combat.died) {
+		if (!target) {
 			target = this.findTargetInAcquisitionRange();
-			if (!target || target.combat.died) {
+			if (!target) {
 				if (!this.emitted_noTargetsInRange) {
 					this.emitted_noTargetsInRange = true;
+
+					//if (this.owner.issuedOrder === IssueOrderType.attackMove) {
+					//	this.owner.moving.unhaltMovement(this.haltedMovement);
+					//}
+
 					this.owner.eventEmitter.emit('noTargetsInRange');
+					(this.owner.ai as Player)?.packets?.chatBoxDebugMessage('noTargetsInRange');
 				}
 				return;
 			}
 		}
 		this.emitted_noTargetsInRange = false;
 
+		//if (this.owner.issuedOrder === IssueOrderType.attackMove && this.haltedMovement.length < 1) {
+		//	this.haltedMovement = this.owner.moving.haltMovement();
+		//}
+
 		//if (this.attackTarget === target)
 		//	return;
 
+		const attackRange = this.owner.stats.attackRange.total || 400;
+		this.owner.moving.follow(target, attackRange - 1);
+
+		const distanceToTarget = this.owner.distanceTo(target);
+		if (distanceToTarget > attackRange)
+			return;
+
 		this.setAttackTarget(target);
-		let casted = await this.owner.slots[SlotId.A].cast({ target });
-		if (casted) {
-			//const packet1 = packets.InstantStop_Attack.create({
-			//	netId: this.netId,
-			//	flags: {
-			//		keepAnimating: true,
-			//	},
-			//});
-			//this.owner.packets.toEveryone(packet1);
+		this.lastAttackTime = Timer.app.now();
 
-			const packet1 = packets.UnitSetLookAt.create({
-				netId: this.owner.netId,
-				type: LookAtType.unit,
-				targetPosition: {
-					x: target.position.x,
-					y: target.position.y,
-					z: 10,
-				},
-				targetNetId: target.netId,
-			});
-			this.owner.packets.toEveryone(packet1);
+		this.castAttack();
+		this.owner.eventEmitter.emit('afterBasicAttack');
+	}
 
-			this.owner.eventEmitter.emit('afterBasicAttack');
-		}
-
-		//this.FaceDirection();
-		//attackSlot.turretAttackProjectile(basicattack);
+	getAttackCooldown() {
+		const attackSpeed = this.owner.stats.attackSpeed.total || 0.625;
+		const cooldown = 1 / Math.min(attackSpeed, 2.55);
+		return cooldown;
 	}
 
 	async autoAttackLoop() {
-		if (!this.owner.slots[SlotId.A])
+		if (!this.getAttackSpell())
 			return;
+
+		if (!Server.game.loaded) {
+			while (!Server.game.loaded)
+				await delay(100);
+
+			await delay(1000 * 5);
+		}
+
+		// @todo remove this delay but minions does not go lane atm
+		await delay(33);// ~30hz
 
 		while (!this.died) {
 			await this.attackInRange();
-			await Promise.delay(100);
+
+			let currentDelay: number;
+			let cooldown: number;
+
+			do {
+				await delay(33);// ~30hz
+				currentDelay = Timer.app.now() - this.lastAttackTime;
+				cooldown = this.getAttackCooldown() * 1000;
+			}
+			while (currentDelay < cooldown);
 		}
 	}
 

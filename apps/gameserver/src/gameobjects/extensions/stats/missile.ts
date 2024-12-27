@@ -14,7 +14,7 @@ export type StatsMissileOptions = StatsGameObjectOptions & {
 
 export default class StatsMissile extends StatsGameObject {
 
-	declare owner: Missile;
+	declare readonly owner: Missile;
 	declare base: StatsMissileOptions;
 
 	attackRange: IStat;
@@ -23,8 +23,8 @@ export default class StatsMissile extends StatsGameObject {
 	constructor(owner: Missile, stats: StatsMissileOptions = {}) {
 		super(owner, stats);
 
-		this.attackRange = new IStat(stats.attackRange || stats.range || 175);
-		this.moveSpeed = new IStat(stats.moveSpeed || stats.speed || 325);
+		this.attackRange = new IStat(stats.attackRange ?? stats.range ?? 175);
+		this.moveSpeed = new IStat(stats.moveSpeed ?? stats.speed ?? 325);
 	}
 
 }

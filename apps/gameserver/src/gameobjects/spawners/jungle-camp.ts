@@ -1,12 +1,14 @@
 
 import * as packets from '@repo/packets/list';
 import Server from '../../app/server';
-import loadingStages from '../../constants/loading-stages';
+import loadingStages from '../../constants/game-state';
+import { EventEmitter2 } from '../../core/event-emitter2';
+import { accurateDelay } from '../../core/timer';
 import { TeamId } from '../extensions/traits/team';
-import { jungleCamps } from '../positions/index';
-import Monster, { MonsterOptions } from '../units/monster';
-import Spawner, { SpawnerOptions } from './spawner';
-
+import { jungleCamps } from '../positions';
+import Monster from '../unit-ai/monster';
+import { AttackableUnitOptions } from '../units/attackable-unit';
+import Spawner, { SpawnerOptions, type SpawnerEvents } from './spawner';
 
 //enum CampLevel {
 //	none = 0x0,
@@ -17,7 +19,15 @@ import Spawner, { SpawnerOptions } from './spawner';
 //}
 
 export type JungleCampOptions = SpawnerOptions & {
-	monsters: Omit<MonsterOptions, 'spawner'>[];
+	num: number;
+	side: TeamId;
+	monsters: Omit<AttackableUnitOptions, 'spawner'>[];
+	respawnTime: number;
+	delaySpawnTime: number;
+};
+
+export type JungleCampEvents = SpawnerEvents & {
+	'clearCamp': () => void;
 };
 
 /**
@@ -28,65 +38,141 @@ export default class JungleCamp extends Spawner {
 		return super.initialize(options) as JungleCamp;
 	}
 
+	readonly eventEmitter = new EventEmitter2<JungleCampEvents>();
+	declare options: JungleCampOptions;
+	num: number;
+	side: number;
+
 	constructor(options: JungleCampOptions) {
 		super(options);
 
+		this.num = options.num;
+		this.side = options.side;
+	}
+
+	spawnMonsters() {
+		const options = this.options;
+		let killedMonstersCount = 0;
+
 		options.monsters.forEach((v, i) => {
-			Monster.initialize({
+			const unit = Monster.initializeUnit({
 				team: options.team,
-				num: i,
-				spawnPosition: v.position,
-				info: v.info,
+				position: v.position,
+				facePosition: v.facePosition,
+				height: v.height,
+				name: v.name,
 				character: v.character,
 				spawner: this,
 			});
+
+			unit.spawn();
+
+			unit.eventEmitter.once('death', () => {
+				killedMonstersCount++;
+				if (killedMonstersCount === options.monsters.length) {
+					killedMonstersCount = 0;
+					this.eventEmitter.emit('clearCamp');
+				}
+			});
 		});
 
-		this.notifyCreate();
 		this.notifyActivate();
 	}
 
 	notifyCreate() {
 		const packet1 = packets.CreateMinionCamp.create({
-			position: this.position,
-			campIndex: this.team.num,
+			position: {
+				x: this.position.x,
+				y: this.position.y,
+				z: this.height,
+			},
+			campIndex: this.num,
 		});
 
-		Server.teams[TeamId.max].sendPacket(packet1, loadingStages.loading);
+		Server.teams[TeamId.max]?.sendPacket(packet1, loadingStages.loading);
 	}
 
 	notifyActivate() {
 		const packet1 = packets.ActivateMinionCamp.create({
-			position: this.position,
-			campIndex: this.team.num,
+			position: {
+				x: this.position.x,
+				y: this.position.y,
+				z: this.height,
+			},
+			campIndex: this.num,
 		});
 
-		Server.teams[TeamId.max].sendPacket(packet1, loadingStages.loading);
+		Server.teams[TeamId.max]?.sendPacket(packet1, loadingStages.loading);
 	}
 
 	notifyDeactivate() {
 		const packet1 = packets.Neutral_Camp_Empty.create({
-			campIndex: this.team.num,
+			campIndex: this.num,
 		});
 
-		Server.teams[TeamId.max].sendPacket(packet1, loadingStages.loading);
+		Server.teams[TeamId.max]?.sendPacket(packet1, loadingStages.loading);
 	}
 
-	static spawnAll(spawnList = jungleCamps) {
-		for (let team in spawnList) {
-			let teamSpawnList = spawnList[team as any as keyof typeof spawnList];
+	//static spawnAll(spawnList = jungleCamps) {
+	//	for (let i = 0; i < spawnList.length; i++) {
+	//		let spawn = spawnList[i]!;
+	//
+	//		JungleCamp.initialize({
+	//			team: TeamId.neutral,
+	//			side: spawn.team,
+	//			num: spawn.num,
+	//			netId: spawn.netId,
+	//			spawnPosition: spawn.position || spawn.monsters[0]?.position,
+	//			monsters: spawn.monsters,
+	//		});
+	//	}
+	//}
 
-			for (let num in teamSpawnList) {
-				let spawn = teamSpawnList[num as any as keyof typeof teamSpawnList];
+	static async runSpawners(list: JungleCamp[]) {
+		list.forEach(async (spawner) => {
+			// @todo uncomment this
+			//const startAt = spawner.options.delaySpawnTime * 1000;
+			//while (startAt > Server.game.timer.now())
+			//	await delay(100);
 
-				JungleCamp.initialize({
-					team: Number(team),
-					num: Number(num),
-					netId: spawn.netId,
-					spawnPosition: spawn.position || spawn.monsters[0].position,
-					monsters: spawn.monsters,
-				});
-			}
+			spawner.notifyCreate();
+			spawner.spawnMonsters();
+
+			spawner.eventEmitter.on('clearCamp', async () => {
+				spawner.notifyDeactivate();
+
+				await accurateDelay(spawner.options.respawnTime * 1000);
+				spawner.spawnMonsters();
+			});
+		});
+	}
+
+	static spawnAll() {
+		const list: JungleCamp[] = [];
+
+		for (let i = 0; i < jungleCamps.length; i++) {
+			const spawn = jungleCamps[i]!;
+
+			const side = spawn.side;
+			const num = Number(i);
+
+			const monsters = spawn.monsters;
+			const spawnPosition = monsters[0]!.position!;
+
+			const jungleCamp = JungleCamp.initialize({
+				team: TeamId.neutral,
+				side,
+				num,
+				spawnPosition: { x: spawnPosition.x, y: spawnPosition.y },
+				height: 50,
+				monsters,
+				respawnTime: spawn.respawnTime,
+				delaySpawnTime: spawn.delaySpawnTime,
+			});
+			jungleCamp.spawn();
+			list.push(jungleCamp);
 		}
+
+		this.runSpawners(list);
 	}
 }

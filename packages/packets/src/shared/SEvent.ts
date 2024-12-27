@@ -1,10 +1,10 @@
 import PartialPacket from '@repo/network/packets/partial-packet';
 import type RelativeDataView from '@repo/network/relative-data-view';
+import { OnEvent, OnEventArguments, OnEventParam } from '../types/on-event';
 import type { NetId } from '../types/player';
-import { OnEvent, OnEventParam, OnEventArguments } from '../types/on-event';
 
 export type SEventModelBase = {
-	event: OnEvent,
+	eventId: OnEvent,
 	onEventParam: OnEventParam,
 	otherNetId: NetId,
 };
@@ -178,10 +178,10 @@ export default class SEvent extends PartialPacket {
 	};
 
 	static reader(dvr: RelativeDataView, payload: SEventModel) {
-		payload.event = dvr.readUint8();
+		payload.eventId = dvr.readUint8();
 		payload.otherNetId = dvr.readUint32();
 
-		let payloadEvent = payload.event;
+		let payloadEvent = payload.eventId;
 		payload.onEventParam = payload.onEventParam ?? OnEventArguments[payloadEvent];
 
 		if (payload.onEventParam) {
@@ -300,7 +300,7 @@ export default class SEvent extends PartialPacket {
 	}
 
 	static writer(dvr: RelativeDataView, payload: SEventModel) {
-		dvr.writeUint8(payload.event);
+		dvr.writeUint8(payload.eventId);
 		dvr.writeUint32(payload.otherNetId);
 
 		if (payload.onEventParam) {

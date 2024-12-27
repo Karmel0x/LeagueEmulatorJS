@@ -1,5 +1,5 @@
 
-import { Vector2 } from 'three';
+import { Vector2, type Vector2Like } from '@repo/geometry';
 import type GameObject from '../../game-object';
 
 export default class MeasureCenterToCenter {
@@ -16,15 +16,15 @@ export default class MeasureCenterToCenter {
 	 * use distanceTo on Vector2 if possible
 	*/
 	static distanceBetween(source: Vector2 | GameObject, target: Vector2 | GameObject) {
-		let sourcePosition = (source as GameObject).position || source;
-		let targetPosition = (target as GameObject).position || target;
+		const sourcePosition = (source as GameObject).position || source;
+		const targetPosition = (target as GameObject).position || target;
 		//sourcePosition = new Vector2(sourcePosition.x, sourcePosition.y);
 		//targetPosition = new Vector2(targetPosition.x, targetPosition.y);
 		return sourcePosition.distanceTo(targetPosition);
 	}
 
 	static sortByDistance(source: Vector2 | GameObject, targets: GameObject[]) {
-		let sourcePosition = (source as GameObject).position || source;
+		const sourcePosition = (source as GameObject).position || source;
 		targets.sort((a, b) => {
 			return (sourcePosition.distanceTo(a.position) - this.getRangeSum(source as GameObject, a))
 				- (sourcePosition.distanceTo(b.position) - this.getRangeSum(source as GameObject, b));
@@ -36,34 +36,39 @@ export default class MeasureCenterToCenter {
 		return targets[0] || undefined;
 	}
 
-	static isInRangeFlat(source: Vector2 | GameObject, target: GameObject, range = 0) {
-		let sourcePosition = (source as GameObject).position || source;
-		let targetPosition = (target as GameObject).position || target;
-		return sourcePosition.distanceTo(targetPosition) <= range;
+	static isInRangeFlat(source: Vector2 | GameObject, target: Vector2 | GameObject, range = 0) {
+		const sourcePosition = (source as GameObject).position || source;
+		const targetPosition = (target as GameObject).position || target;
+
+		const distance = sourcePosition.distanceTo(targetPosition);
+		return distance <= range;
 	}
 
-	static isInRange(source: Vector2 | GameObject, target: GameObject, range = 0) {
-		return this.isInRangeFlat(source, target, this.getRangeSum((source as GameObject), target, range));
+	static isInRange(source: Vector2 | GameObject, target: Vector2 | GameObject, range = 0) {
+		const rangeSum = this.getRangeSum((source as GameObject), (target as GameObject), range);
+		const result = this.isInRangeFlat(source, target, rangeSum);
+		return result;
 	}
 
 	static filterByRange<T extends GameObject>(source: Vector2 | GameObject, targets: T[], range: number) {
 		return targets.filter(target => this.isInRange(source, target, range));
 	}
 
-	static getPositionBetweenRange(source: Vector2 | GameObject, target: Vector2 | GameObject, range: number | { minimum: number; maximum: number; }) {
+	static getPositionBetweenRange(source: Vector2Like | GameObject, target: Vector2Like | GameObject, range: number | { minimum: number; maximum: number; }) {
 
-		let sourcePosition = (source as GameObject).position || source;
-		let targetPosition = (target as GameObject).position || target;
-		let positionBetweenRange = new Vector2(targetPosition.x, targetPosition.y);
+		const sourcePosition = (source as GameObject).position || source;
+		const targetPosition = (target as GameObject).position || target;
+
+		const positionBetweenRange = new Vector2(targetPosition.x, targetPosition.y);
 		positionBetweenRange.sub(sourcePosition);
-		if (positionBetweenRange.length() == 0)
+		if (positionBetweenRange.length() === 0)
 			positionBetweenRange.x = 0.001;
 
 		if (typeof range === 'number')
 			range = { minimum: range, maximum: range };
 
-		let rangeMinimum = this.getRangeSum((source as GameObject), target as GameObject, range.minimum);
-		let rangeMaximum = range.minimum == range.maximum ? rangeMinimum : this.getRangeSum((source as GameObject), target as GameObject, range.maximum);
+		const rangeMinimum = this.getRangeSum((source as GameObject), target as GameObject, range.minimum);
+		const rangeMaximum = range.minimum === range.maximum ? rangeMinimum : this.getRangeSum((source as GameObject), target as GameObject, range.maximum);
 		positionBetweenRange.clampLength(rangeMinimum, rangeMaximum);
 		positionBetweenRange.add(sourcePosition);
 
@@ -73,10 +78,10 @@ export default class MeasureCenterToCenter {
 	/**
 	 * may be used, for example, to move a unit to distance where it can attack a target
 	 */
-	static getPositionToTargetMinusRange(source: Vector2 | GameObject, target: Vector2 | GameObject, range = 0) {
-		let sourcePosition = (source as GameObject).position || source;
-		let targetPosition = (target as GameObject).position || target;
-		let positionToTargetMinusRange = new Vector2(sourcePosition.x, sourcePosition.y);
+	static getPositionToTargetMinusRange(source: Vector2Like | GameObject, target: Vector2Like | GameObject, range = 0) {
+		const sourcePosition = (source as GameObject).position || source;
+		const targetPosition = (target as GameObject).position || target;
+		const positionToTargetMinusRange = new Vector2(sourcePosition.x, sourcePosition.y);
 		positionToTargetMinusRange.sub(targetPosition);
 		positionToTargetMinusRange.clampLength(0, range);
 		positionToTargetMinusRange.add(targetPosition);

@@ -4,18 +4,24 @@ import SVector2, { SVector2Model } from '../../shared/SVector2';
 import CMovementDataNormal, { CMovementDataNormalModel } from '../../shared/CMovementDataNormal';
 import type { NetId } from '../../types/player';
 
+/** orders_e */
 export enum IssueOrderType {
 	orderNone = 0,
+	/** Player Hold Position (h keyup) */
 	hold = 1,
-	moveTo = 2, // right click move
-	attackTo = 3, // right click attack
+	/** Player Move Click (Right Click) */
+	moveTo = 2,
+	/** Player Move Click (Right Click On Target) */
+	attackTo = 3,
 	tempCastSpell = 4,
 	petHardAttack = 5,
 	petHardMove = 6,
+	/** Player Attack Move (a) / Player Attack Move Click (Shift + Right Click) */
 	attackMove = 7,
 	taunt = 8,
 	petHardReturn = 9,
-	stop = 10, // s key stop
+	/** Player Stop Position (s) / Player Hold Position (h keydown) */
+	stop = 10,
 	petHardStop = 11,
 	use = 12,
 	attackTerrainSustained = 13,

@@ -1,15 +1,19 @@
+import type Unit from "../../units/unit";
 
-import Unit from '../../units/unit';
 
+export type LevelableEvents = {
+
+};
 
 /**
  * Trait for units that can be leveled up
  */
 export default class Levelable {
-    owner;
+    readonly owner;
 
     constructor(owner: Unit) {
         this.owner = owner;
+
     }
 
     level = 1;

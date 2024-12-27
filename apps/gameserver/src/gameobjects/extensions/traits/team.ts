@@ -13,9 +13,11 @@ export enum TeamId {
 };
 
 export enum LaneId {
-	// may be inversely
+	/** right */
 	top = 0,
+	/** center */
 	mid = 1,
+	/** left */
 	bot = 2,
 	unknown = 11,
 };
@@ -24,17 +26,15 @@ export enum LaneId {
  * Trait for units which has team
  */
 export default class TeamArrangement {
-	owner;
+	readonly owner;
 
-	constructor(owner: GameObject, teamId: number, num: number) {
+	constructor(owner: GameObject, teamId: number) {
 		this.owner = owner;
 
 		this.id = teamId ?? TeamId.neutral;
-		this.num = num ?? 0;
 	}
 
 	id = TeamId.unknown;
-	num = 0;
 
 	get teamName() {
 		const teamsR = {
@@ -70,7 +70,7 @@ export default class TeamArrangement {
 	}
 
 	getEnemyTeam(): Teams | undefined {
-		return Server.teams[TeamArrangement.getEnemyTeamId(this.id)];
+		return Server.teams[this.getEnemyTeamId()];
 	}
 
 }

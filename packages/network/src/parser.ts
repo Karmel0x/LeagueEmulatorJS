@@ -1,26 +1,35 @@
 
-import RelativeDataView from './relative-data-view';
 import Packet, { PacketDebugger, PacketMessage } from './packets/packet';
 import Registry from './registry';
+import RelativeDataView from './relative-data-view';
 
 
 export default class Parser {
 
-	static read(channel: number, cmd: number, dvr: RelativeDataView) {
-		let packetRegistry = Registry.getPacketRegistry(channel, cmd);
-		let packetClass = packetRegistry.packets[cmd] as typeof Packet;
+	static getPacketClass(channel: number, cmd: number) {
+		const packetRegistry = Registry.getPacketRegistry(channel, cmd);
+		const packetClass = packetRegistry.packets[`${channel}-${cmd}`] as typeof Packet;
 
 		if (!packetClass)
-			throw new Error(`packet not defined ${channel} ${cmd} (${channel.toString(16)} ${cmd.toString(16)})`);
+			throw new Error(`packet not defined ${channel} ${cmd} (0x${channel.toString(16)} 0x${cmd.toString(16)})`);
 
+		return packetClass;
+	}
+
+	static read(channel: number, cmd: number, dvr: RelativeDataView) {
+		const packetClass = this.getPacketClass(channel, cmd);
 		return packetClass.read(dvr);
 	}
 
 	static parse(packet: PacketMessage) {
 		const dvr = RelativeDataView.from(packet.data);
+		PacketDebugger.offsets = {};
+		PacketDebugger.readATM = {};
 
 		try {
 			const packetId = dvr.readUint8();
+
+			console.log('packetId', packetId, 'channel', packet.channel);
 			dvr.offset = 0;
 			return this.read(packet.channel, packetId, dvr);
 		}
@@ -33,6 +42,12 @@ export default class Parser {
 			);
 			console.log('packet', packet);
 		}
+		//finally {
+		//	console.log(
+		//		'offsets', PacketDebugger.offsets,
+		//		'readATM', PacketDebugger.readATM,
+		//	);
+		//}
 	}
 
 }

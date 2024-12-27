@@ -1,6 +1,6 @@
 
-import Player from '../gameobjects/units/player';
 import * as packets from '@repo/packets/list';
+import Player from '../gameobjects/unit-ai/player';
 
 
 export default (player: Player, packet: packets.PlayEmoteModel) => {
@@ -8,11 +8,12 @@ export default (player: Player, packet: packets.PlayEmoteModel) => {
 	//console.log(packet);
 
 	{
+		const owner = player.owner;
 		const packet1 = packets.PlayEmote.create({
-			netId: player.netId,
+			netId: owner.netId,
 			emoteId: packet.emoteId,
 		});
-		player.packets.toVision(packet1);
+		player.owner.packets.toVision(packet1);
 	}
 
 };

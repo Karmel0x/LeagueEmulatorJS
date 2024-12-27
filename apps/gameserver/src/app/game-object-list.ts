@@ -3,18 +3,16 @@ import type GameObject from "../gameobjects/game-object";
 import type Missile from "../gameobjects/missiles/missile";
 import type Barrack from "../gameobjects/spawners/barrack";
 import type AttackableUnit from "../gameobjects/units/attackable-unit";
-import type Player from "../gameobjects/units/player";
-import type Structure from "../gameobjects/units/structures/structure";
 
 
-function arrayRemove<T>(arr: T[], value: T) {
+export function arrayRemove<T>(arr: T[], value: T) {
     const index = arr.indexOf(value);
     if (index !== -1) {
         arr.splice(index, 1);
     }
 }
 
-function getPrototypeChainNames(obj: object) {
+export function getPrototypeChainNames(obj: object) {
     const names = [];
 
     let proto = obj.constructor;
@@ -32,13 +30,10 @@ export default class GameObjectList {
 
     static objects: GameObject[] = [];
     static attackableUnits: AttackableUnit[] = [];
-    static players: Player[] = [];
-    static structures: Structure[] = [];
     static missiles: Missile[] = [];
     static barracks: Barrack[] = [];
 
     static objectByNetId: { [netId: NetId]: GameObject } = {};
-    static playerByPeer: { [peerNum: number]: Player } = {};
 
     static add(object: GameObject) {
         this.objects.push(object);
@@ -48,16 +43,6 @@ export default class GameObjectList {
         if (protos.includes('AttackableUnit')) {
             const o = object as AttackableUnit;
             this.attackableUnits.push(o);
-        }
-
-        if (protos.includes('Player')) {
-            const o = object as Player;
-            this.players.push(o);
-        }
-
-        if (protos.includes('Structure')) {
-            const o = object as Structure;
-            this.structures.push(o);
         }
 
         if (protos.includes('Missile')) {
@@ -81,16 +66,6 @@ export default class GameObjectList {
             arrayRemove(this.attackableUnits, o);
         }
 
-        if (protos.includes('Player')) {
-            const o = object as Player;
-            arrayRemove(this.players, o);
-        }
-
-        if (protos.includes('Structure')) {
-            const o = object as Structure;
-            arrayRemove(this.structures, o);
-        }
-
         if (protos.includes('Missile')) {
             const o = object as Missile;
             arrayRemove(this.missiles, o);
@@ -110,11 +85,11 @@ export default class GameObjectList {
         const object = this.objectByNetId[netId];
 
         if (!object)
-            return undefined;
+            return;
 
         const protos = getPrototypeChainNames(object);
         if (!protos.includes('AttackableUnit'))
-            return undefined;
+            return;
 
         const o = object as AttackableUnit;
         return o;

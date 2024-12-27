@@ -1,5 +1,6 @@
 /**
  * JSONViewer - by Roman Makudera 2016 (c) MIT licence.
+ * custom
  */
 let JSONViewer = (function (document) {
 	let Object_prototype_toString = ({}).toString;
@@ -96,6 +97,10 @@ let JSONViewer = (function (document) {
 				items.forEach(function (key, ind) {
 					let item = isArray ? key : value[key];
 					let li = document.createElement("li");
+
+					let parentParsedKey = (/** @type {HTMLElement} */(outputParent)).dataset.parsedKey;
+					let curKey = typeof key === "string" || typeof key === "number" ? key : ind;
+					li.dataset.parsedKey = parentParsedKey ? `${parentParsedKey}.${curKey}` : curKey;
 
 					if (typeof item === "object") {
 						// null && date

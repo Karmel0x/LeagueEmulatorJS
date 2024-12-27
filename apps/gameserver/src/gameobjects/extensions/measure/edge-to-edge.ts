@@ -1,7 +1,6 @@
 
-import MeasureCenterToCenter from './center-to-center';
-
 import type GameObject from '../../game-object';
+import MeasureCenterToCenter from './center-to-center';
 
 export default class MeasureEdgeToEdge extends MeasureCenterToCenter {
 

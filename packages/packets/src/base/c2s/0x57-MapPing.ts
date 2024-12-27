@@ -7,7 +7,7 @@ import { PingCategory } from '../s2c/0x40-MapPing';
 export type MapPingC2SModel = BasePacketModel & {
 	position: SVector2Model,
 	targetNetId: NetId,
-	pingCategory: PingCategory,
+	category: PingCategory,
 };
 
 export default class MapPingC2S extends BasePacket {
@@ -21,7 +21,7 @@ export default class MapPingC2S extends BasePacket {
 		payload.position = SVector2.read(dvr);
 		payload.targetNetId = dvr.readUint32();
 
-		payload.pingCategory = dvr.readUint8();//(bitfield & 0x0F) ?
+		payload.category = dvr.readUint8();//(bitfield & 0x0F) ?
 	}
 
 	static writer(dvr: RelativeDataView, payload: MapPingC2SModel) {
@@ -30,6 +30,6 @@ export default class MapPingC2S extends BasePacket {
 		SVector2.writer(dvr, payload.position);
 		dvr.writeUint32(payload.targetNetId);
 
-		dvr.writeUint8(payload.pingCategory);
+		dvr.writeUint8(payload.category);
 	}
 }

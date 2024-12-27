@@ -9,7 +9,7 @@ interface NetworkApiEvents {
 export interface NetworkApi {
     bind(port: number, host: string): void;
     disconnect(peerNum: number): void;
-    send(peerNum: number, data: ArrayBuffer, channel: number): void;
+    send(peerNum: number, data: ArrayBuffer, channel: number, flags?: number): void;
     setBlowfish(peerNum: number, base64Key: string): void;
     on<T extends keyof NetworkApiEvents>(event: T, listener: NetworkApiEvents[T]): void;
     once<T extends keyof NetworkApiEvents>(event: T, listener: NetworkApiEvents[T]): void;

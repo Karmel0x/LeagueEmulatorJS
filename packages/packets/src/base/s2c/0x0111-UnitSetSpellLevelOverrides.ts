@@ -1,5 +1,5 @@
-import type RelativeDataView from '@repo/network/relative-data-view';
 import ExtendedPacket, { ExtendedPacketModel } from '@repo/network/packets/extended-packet';
+import type RelativeDataView from '@repo/network/relative-data-view';
 
 export type UnitSetSpellLevelOverridesModel = ExtendedPacketModel & {
 	spellMaxLevels: number[],

@@ -4,7 +4,7 @@ import type { RespawnPointEvent } from '../s2c/0xD5-HandleRespawnPointUpdate';
 
 export type OnRespawnPointEventModel = BasePacketModel & {
 	respawnPointEvent: RespawnPointEvent,
-	respawnPointUiId: number,
+	respawnPointUiElementId: number,
 };
 
 export default class OnRespawnPointEvent extends BasePacket {
@@ -16,13 +16,13 @@ export default class OnRespawnPointEvent extends BasePacket {
 		super.reader(dvr, payload);
 
 		payload.respawnPointEvent = dvr.readUint8();
-		payload.respawnPointUiId = dvr.readUint8();
+		payload.respawnPointUiElementId = dvr.readUint8();
 	}
 
 	static writer(dvr: RelativeDataView, payload: OnRespawnPointEventModel) {
 		super.writer(dvr, payload);
 
 		dvr.writeUint8(payload.respawnPointEvent);
-		dvr.writeUint8(payload.respawnPointUiId);
+		dvr.writeUint8(payload.respawnPointUiElementId);
 	}
 }

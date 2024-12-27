@@ -44,13 +44,13 @@
 //			let packetSize = (bitfield >> 2);
 //
 //			packet = {
-//				cmd: ((bitfield & 1) == 0) ? buffer.read('uint8') : packet.cmd,
-//				netId: ((bitfield & 2) == 0) ? buffer.read('uint32') : (packet.netId + buffer.read('int8')),
-//				packetSize: (packetSize == 63) ? buffer.read('uint8') : packetSize,
+//				cmd: ((bitfield & 1) === 0) ? buffer.read('uint8') : packet.cmd,
+//				netId: ((bitfield & 2) === 0) ? buffer.read('uint32') : (packet.netId + buffer.read('int8')),
+//				packetSize: (packetSize === 63) ? buffer.read('uint8') : packetSize,
 //			};
 //
 //			let packetData = buffer.read(['uint8', packet.packetSize]);
-//			//console.log({bitfield, packet, c: packet.cmd.toString(16), b: [(packetSize == 63), ((bitfield & 1) == 0), ((bitfield & 2) != 0)], data: Buffer.from(packetData)});
+//			//console.log({bitfield, packet, c: packet.cmd.toString(16), b: [(packetSize === 63), ((bitfield & 1) === 0), ((bitfield & 2) !== 0)], data: Buffer.from(packetData)});
 //			let buffer2 = Buffer.from([].concat(packet.cmd, BinaryHelper.getBytes(packet.netId), packetData));
 //			packets.push(buffer2);
 //		}
@@ -58,7 +58,7 @@
 //		for (let i in packets) {
 //			//// some batched packets are different?
 //			//let cmd = packets[i].readUInt8(0);
-//			//if(cmd == 0x72) // IssueOrderReq
+//			//if(cmd === 0x72) // IssueOrderReq
 //			//	continue;
 //
 //			let parsed = parsePacket({ channel: this.constructor.channel, buffer: packets[i] });
@@ -109,7 +109,7 @@
 //			let bitfield = 0;
 //
 //			// if cmd has changed
-//			if (packet2.cmd != packet.cmd)
+//			if (packet2.cmd !== packet.cmd)
 //				bitfield |= 1;
 //
 //			// if difference between netId is more than byte
@@ -124,15 +124,15 @@
 //
 //			buffer.write('uint8', bitfield);
 //
-//			if ((bitfield & 1) == 0)
+//			if ((bitfield & 1) === 0)
 //				buffer.write('uint8', packet2.cmd);
 //
-//			if ((bitfield & 2) == 0)
+//			if ((bitfield & 2) === 0)
 //				buffer.write('uint32', packet2.netId);
 //			else
 //				buffer.write('int8', (packet.netId - packet2.netId));
 //
-//			if ((bitfield >> 2) == 63)
+//			if ((bitfield >> 2) === 63)
 //				buffer.write('uint8', packet2.packetSize);
 //
 //			buffer = Buffer.concat([buffer, this.packets[i].buffer.slice(5)]);

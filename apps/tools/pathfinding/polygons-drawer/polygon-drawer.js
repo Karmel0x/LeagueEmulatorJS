@@ -14,10 +14,10 @@ function resetScale() {
 }
 
 function div_optionShow() {
-	document.getElementById('div_options').style.display = document.getElementById('div_options').style.display == 'block' ? 'none' : 'block';
+	document.getElementById('div_options').style.display = document.getElementById('div_options').style.display === 'block' ? 'none' : 'block';
 }
 function div_infoShow() {
-	document.getElementById('div_info').style.display = document.getElementById('div_info').style.display == 'block' ? 'none' : 'block';
+	document.getElementById('div_info').style.display = document.getElementById('div_info').style.display === 'block' ? 'none' : 'block';
 }
 
 function zoom_in() {
@@ -87,29 +87,7 @@ function refreshShapeList() {
 	document.getElementById('shapeListJson').value = shapesToJson();
 }
 
-function readShapeListJson() {
-	let json = JSON.parse(document.getElementById('shapeListJson').value);
-	json = json.filter(points => points.length > 0);
-	//json.sort((a, b) => a[0][1] - b[0][1]);
-
-	let shapes = json.map((points) => {
-		freeDraw.shapeCounter = ++freeDraw.shapeCounter || 0;
-		return {
-			id: 'polygon-' + freeDraw.shapeCounter,
-			type: 'polygon',
-			points: points
-		};
-	});
-	shapes.forEach(shape => freeDraw.addShape(shape).finish());
-	refreshShapeList();
-	document.getElementById('read_shape_json_list_button').style.display = 'none';
-}
-
-function newShape() {
-	finishEditing();
-	freeDraw.shapeCounter = ++freeDraw.shapeCounter || 0;
-	let shape = freeDraw.addShape({ id: 'polygon-' + freeDraw.shapeCounter, type: 'polygon' });
-
+function patchShapeMouseDown(shape) {
 	// add deleting point method on right mouse click
 	if (!shape.__proto__.__polygonMouseDown) {
 		shape.__proto__.__polygonMouseDown = shape.__proto__._polygonMouseDown;
@@ -129,6 +107,37 @@ function newShape() {
 			this.__polygonMouseDown(event);
 		};
 	}
+}
+
+function readShapeListJson() {
+	let json = JSON.parse(document.getElementById('shapeListJson').value);
+	json = json.filter(points => points.length > 0);
+	//json.sort((a, b) => a[0][1] - b[0][1]);
+
+	let shapes = json.map((points) => {
+		freeDraw.shapeCounter = ++freeDraw.shapeCounter || 0;
+		return {
+			id: 'polygon-' + freeDraw.shapeCounter,
+			type: 'polygon',
+			points: points
+		};
+	});
+
+	shapes.forEach(shape => {
+		let fdShape = freeDraw.addShape(shape);
+		fdShape.finish();
+		patchShapeMouseDown(fdShape);
+	});
+
+	refreshShapeList();
+	document.getElementById('read_shape_json_list_button').style.display = 'none';
+}
+
+function newShape() {
+	finishEditing();
+	freeDraw.shapeCounter = ++freeDraw.shapeCounter || 0;
+	let fdShape = freeDraw.addShape({ id: 'polygon-' + freeDraw.shapeCounter, type: 'polygon' });
+	patchShapeMouseDown(fdShape);
 
 	refreshShapeList();
 	document.getElementById('read_shape_json_list_button').style.display = 'none';
@@ -136,7 +145,7 @@ function newShape() {
 
 function repToCp(scaling = 1) {
 	let q = document.getElementById('shapeListJson').value;
-	if (scaling != 1) {
+	if (scaling !== 1) {
 		q = q.replace(/\d+/g, (match) => {
 			return Math.round(parseInt(match) * scaling);
 		});

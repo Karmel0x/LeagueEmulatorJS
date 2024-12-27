@@ -1,8 +1,9 @@
 
 import * as packets from '@repo/packets/list';
 import Server from '../app/server';
-import loadingStages from '../constants/loading-stages';
-import GameObjectList from '../app/game-object-list';
+import UnitAiList from '../app/unit-ai-list';
+import loadingStages from '../constants/game-state';
+import type { Player } from '../gameobjects/unit-ai';
 
 
 export default (peerNum: number, packet: packets.KeyCheckModel) => {
@@ -10,14 +11,15 @@ export default (peerNum: number, packet: packets.KeyCheckModel) => {
 	console.log(packet);
 
 	//@todo checks
-	let player = GameObjectList.players.find(
-		p => p.summoner.id == packet.playerId
+	const players = Server.players.map(player => player.ai as Player);
+	const player = players.find(
+		p => p.summoner.id === packet.playerId
 	);
 
 	if (!player)
-		return console.log('player not found');
+		return console.warn('player not found');
 
-	GameObjectList.playerByPeer[peerNum] = player;
+	UnitAiList.playerByPeer[peerNum] = player;
 	player.network.peerNum = peerNum;
 	Server.network.networkApi.setBlowfish(peerNum, '17BLOhi6KZsTtldTsizvHg==');
 

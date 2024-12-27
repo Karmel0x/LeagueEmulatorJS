@@ -2,6 +2,25 @@ import BasePacket, { BasePacketModel } from '@repo/network/packets/base-packet';
 import type RelativeDataView from '@repo/network/relative-data-view';
 import type { NetId } from '../../types/player';
 
+export enum ttype_e {
+	//invalid = 0xFFFFFFFF,
+	self = 0x0,
+	target = 0x1,
+	area = 0x2,
+	cone = 0x3,
+	selfAOE = 0x4,
+	targetOrLocation = 0x5,
+	location = 0x6,
+	direction = 0x7,
+	/** rumble r */
+	dragDirection = 0x8,
+	//lineTargetToCaster = 0x9,
+	/** orianna w,r */
+	offsetAOE = 0x9,
+	/** ? */
+	offsetLocation = 0xA,
+};
+
 export enum ChangeSlotSpellDataType {
 	// -1 ?
 	targetingType = 1,

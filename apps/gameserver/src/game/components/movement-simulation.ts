@@ -1,7 +1,9 @@
-import Server from '../../app/server';
-import { IMovingGameObject } from '../../gameobjects/extensions/moving/game-object';
-import { TeamId } from '../../gameobjects/extensions/traits/team';
+import { IssueOrderType } from '@repo/packets/base/c2s/0x72-IssueOrderReq';
 import GameObjectList from '../../app/game-object-list';
+import Server from '../../app/server';
+import { runAccurateInterval } from '../../core/timer';
+import { TeamId } from '../../gameobjects/extensions/traits/team';
+import type MovableGameObject from '../../gameobjects/movable-game-object';
 import type AttackableUnit from '../../gameobjects/units/attackable-unit';
 
 // https://leagueoflegends.fandom.com/wiki/Sight#Sight_Ranges
@@ -14,7 +16,7 @@ const defaultVisionRange = 1350;
  */
 export default class MovementSimulation {
 
-	static moveInterval = 20;//lower this?
+	static moveInterval = 33;// ~30hz
 
 	//Map = new Vector2(14000, 14000);
 
@@ -23,24 +25,26 @@ export default class MovementSimulation {
 	/**
 	 * Checks if unit is visible for enemy and broadcasting it
 	 * @todo only process units that moved ?
+	 * @todo improve loop to not repeat same unit pairs
 	 */
 	visionProcess() {
-		let seenUnitsByTeam: { [n: number]: AttackableUnit[]; } = {};
+		const seenUnitsByTeam: { [n: number]: AttackableUnit[]; } = {};
 		GameObjectList.aliveUnits.forEach(unit => {
-			if (unit.team.id == TeamId.neutral)
+			if (unit.team.id === TeamId.neutral)
 				return;
 
 			if (unit.combat.died)
 				return;
 
-			let unitTeamId = unit.team.id;
-			let unitPosition = unit.position;
-			let unitVisionRange = unit.visionRange || defaultVisionRange;
+			const unitTeamId = unit.team.id;
+			const unitPosition = unit.position;
+			const unitVisionRange = unit.visionRange || defaultVisionRange;
 
-			seenUnitsByTeam[unitTeamId] = seenUnitsByTeam[unitTeamId] || [];
+			const seenUnits = seenUnitsByTeam[unitTeamId] || [];
+			seenUnitsByTeam[unitTeamId] = seenUnits;
 
 			GameObjectList.aliveUnits.forEach(unit2 => {
-				if (unitTeamId == unit2.team.id)
+				if (unitTeamId === unit2.team.id)
 					return;
 
 				if (unit2.combat.died)
@@ -49,44 +53,51 @@ export default class MovementSimulation {
 				if (unitPosition.distanceTo(unit2.position) > unitVisionRange)
 					return;
 
-				if (seenUnitsByTeam[unitTeamId].includes(unit2))
+				if (seenUnits.includes(unit2))
 					return;
 
-				seenUnitsByTeam[unitTeamId].push(unit2);
+				seenUnits.push(unit2);
 			});
 		});
 
 		// leaves the vision
-		for (let teamId in this.lastSeenUnitsByTeam) {
-			let teamUnits = this.lastSeenUnitsByTeam[teamId];
+		for (const teamId in this.lastSeenUnitsByTeam) {
+			const teamUnits = this.lastSeenUnitsByTeam[teamId]!;
 
-			if (!Server.teams[teamId])
+			const team = Server.teams[teamId];
+			if (!team)
 				continue;
 
-			seenUnitsByTeam[teamId] = seenUnitsByTeam[teamId] || [];
+			const seenUnits = seenUnitsByTeam[teamId] || [];
+			seenUnitsByTeam[teamId] = seenUnits;
 
 			teamUnits.forEach(unit => {
-				if (seenUnitsByTeam[teamId].includes(unit))
+				if (seenUnits.includes(unit))
 					return;
 
-				Server.teams[teamId].vision(unit, false);
+				if (unit.combat.died)
+					return;
+
+				team.vision(unit, false);
 			});
 		}
 
 		// enters the vision
-		for (let teamId in seenUnitsByTeam) {
-			let teamUnits = seenUnitsByTeam[teamId];
+		for (const teamId in seenUnitsByTeam) {
+			const teamUnits = seenUnitsByTeam[teamId]!;
 
-			if (!Server.teams[teamId])
+			const team = Server.teams[teamId];
+			if (!team)
 				continue;
 
-			this.lastSeenUnitsByTeam[teamId] = this.lastSeenUnitsByTeam[teamId] || [];
+			const lastSeenUnits = this.lastSeenUnitsByTeam[teamId] || [];
+			this.lastSeenUnitsByTeam[teamId] = lastSeenUnits;
 
 			teamUnits.forEach(unit => {
-				if (this.lastSeenUnitsByTeam[teamId].includes(unit))
+				if (lastSeenUnits.includes(unit))
 					return;
 
-				Server.teams[teamId].vision(unit, true);
+				team.vision(unit, true);
 			});
 		}
 
@@ -97,7 +108,7 @@ export default class MovementSimulation {
 	 * Actually move unit  
 	 * returns {boolean} hasMoved
 	 */
-	move(object: IMovingGameObject, diff: number) {
+	move(object: MovableGameObject, diff: number) {
 		//if (unit.waypointsHalt)
 		//	return false;
 
@@ -140,50 +151,48 @@ export default class MovementSimulation {
 	 * @todo flags like self targetable, ally targetable, enemy targetable ?
 	 * @todo for better performance we could divide units array to territories
 	 */
-	emitEvents(object: IMovingGameObject, diff: number) {
+	emitEvents(object: MovableGameObject, diff: number) {
 
-		let unitWaypoints = object.moving.waypoints;
-		if (unitWaypoints.length < 1) {
-			object.eventEmitter.emit('reachDestination');
-		}
+		// @todo missiles only
+		if (object.eventEmitter.listenerCount('collision') > 0) {
+			const objectPosition = object.position;
+			const collisionRadius = object.collisionRadius;
 
-		if (object.eventEmitter.listenerCount('collision') < 1)
-			return;
+			const objects = GameObjectList.objects;
+			for (let j = 0, l = objects.length; j < l; j++) {
+				const object2 = objects[j];
 
-		let objectPosition = object.position;
-		let collisionRadius = object.collisionRadius;
+				//TODO
+				if (!object2)
+					continue;
 
-		let objects = GameObjectList.objects;
-		for (let j = 0, l = objects.length; j < l; j++) {
-			let object2 = objects[j];
+				if (object === object2)
+					continue;
 
-			//@todo
-			if (!object2)
-				continue;
+				if (!object2.position)
+					continue;
 
-			if (!object2.position)
-				continue;
+				if (object2.ignoreCollision)
+					continue;
 
-			let dist2 = objectPosition.distanceTo(object2.position);
-			if (dist2 <= (collisionRadius + object2.collisionRadius)) {
-				object.eventEmitter.emit('collision', object2);
+				const dist2 = objectPosition.distanceTo(object2.position);
+				if (dist2 <= (collisionRadius + object2.collisionRadius)) {
+					object.eventEmitter.emit('collision', object2);
+				}
 			}
 		}
-	}
 
-	/**
-	 * Get unit elapsed time in ms since last movement update
-	 */
-	objectMoveDiff(object: IMovingGameObject) {
-		let now = performance.now();
-		if (!object.moving.moveTime) {
-			object.moving.moveTime = now;
-			return 0;
+		const unitWaypoints = object.moving.waypoints;
+		if (unitWaypoints.length < 1) {
+			object.eventEmitter.emit('reachDestination');
+
+			const attackableUnit = object as AttackableUnit;
+			if (attackableUnit.ai) {
+				if (attackableUnit.issuedOrder === IssueOrderType.moveTo)
+					attackableUnit.issuedOrder = IssueOrderType.orderNone;
+
+			}
 		}
-
-		let diff = now - object.moving.moveTime;
-		object.moving.moveTime = now;
-		return diff;
 	}
 
 	moved: { [n: number]: boolean; } = {};
@@ -191,43 +200,30 @@ export default class MovementSimulation {
 	/**
 	 * Movement main loop for units to make them move on server side
 	 */
-	async update() {
-		for (; ;) {
-			await Promise.delay(MovementSimulation.moveInterval);
-			this.moved = {};
+	async update(diff: number) {
+		this.moved = {};
 
-			// @todo: get only movable units
-			let units = GameObjectList.aliveUnits;
-			units.forEach(unit => {
-				if (!unit.moving)
-					return;
+		const units = GameObjectList.aliveUnits;
+		units.forEach(unit => {
+			const moved = this.move(unit, diff);
+			if (moved)
+				this.emitEvents(unit, diff);
+			this.moved[unit.netId] = moved;
+		});
 
-				let diff = this.objectMoveDiff(unit);
-				let moved = this.move(unit, diff);
-				if (moved)
-					this.emitEvents(unit, diff);
-				this.moved[unit.netId] = moved;
-			});
+		const missiles = GameObjectList.missiles;
+		missiles.forEach(missile => {
+			//todo: flags like collidable with terrain, with ally units, with enemy units
+			const moved = this.move(missile, diff);
+			if (moved)
+				this.emitEvents(missile, diff);
+			//this.moved[missile.netId] = moved;
+		});
 
-			let missiles = GameObjectList.missiles;
-			missiles.forEach(missile => {
-				//if (!missile.moving)
-				//	return;
-
-				let diff = this.objectMoveDiff(missile);
-				//todo: flags like collidable with terrain, with ally units, with enemy units
-				let moved = this.move(missile, diff);
-				if (moved)
-					this.emitEvents(missile, diff);
-				//this.moved[missile.netId] = moved;
-			});
-
-			this.visionProcess();
-
-		}
+		this.visionProcess();
 	}
-	async start() {
 
-		this.update();
+	async start() {
+		runAccurateInterval((diff) => this.update(diff), MovementSimulation.moveInterval);
 	}
 }

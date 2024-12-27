@@ -5,7 +5,7 @@
     "dev": "ts-node -T src/main",
     "watch": "node .esbuild.cjs --watch",
     "build": "node .esbuild.cjs",
-    "dev2": "node .esbuild.cjs && node --enable-source-maps dist/main"
+    "dev2": "node .esbuild.cjs && node --enable-source-maps --trace-warnings dist/main"
   },
   "dependencies": {
     "@repo/gamedata": "*",

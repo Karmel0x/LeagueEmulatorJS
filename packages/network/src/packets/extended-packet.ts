@@ -1,6 +1,6 @@
 
-import RelativeDataView from '../relative-data-view';
 import Registry from '../registry';
+import RelativeDataView from '../relative-data-view';
 import BasePacket, { BasePacketModel } from './base-packet';
 
 
@@ -17,7 +17,7 @@ export default class ExtendedPacket extends BasePacket {
 		super.reader(dvr, payload);
 		payload.cmd2 = dvr.readUint16();
 
-		let Packet = Registry.base.packets[payload.cmd2];
+		const Packet = Registry.base.packets[payload.cmd2];
 		if (!Packet)
 			return;
 

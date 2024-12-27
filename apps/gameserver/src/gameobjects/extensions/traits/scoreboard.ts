@@ -1,7 +1,7 @@
-import Hero from '../../units/hero';
+import Hero from '../../unit-ai/hero';
 
 export default class Scoreboard {
-    owner;
+    readonly owner;
 
     constructor(owner: Hero) {
         this.owner = owner;

@@ -1,5 +1,5 @@
 
-import type Unit from '../../units/unit';
+import type AttackableUnit from '../../units/attackable-unit';
 import StatsGameObject, { StatsGameObjectOptions } from './game-object';
 import { IStat, IStatLevelable, IStatStateable } from './istat';
 
@@ -30,66 +30,79 @@ export type StatsUnitOptions = StatsGameObjectOptions & {
 
 export default class StatsUnit extends StatsGameObject {
 
-	declare owner: Unit;
+	declare readonly owner: AttackableUnit;
 	declare base: StatsUnitOptions;
 
-	health: IStatStateable;
-	mana: IStatStateable;
+	health!: IStatStateable;
+	healthRegen!: IStatLevelable;
+	mana!: IStatStateable;
+	manaRegen!: IStatLevelable;
+	attackDamage!: IStatLevelable;
+	abilityPower!: IStatLevelable;
+	armor!: IStatLevelable;
+	magicResist!: IStatLevelable;
+	attackSpeed!: IStatLevelable;
+	critChance!: IStatLevelable;
+	dodge!: IStatLevelable;
+	moveSpeed!: IStat;
+	acquisitionRange!: IStat;
+	attackRange!: IStat;
+	//collisionRadius!: IStat;
+	//pathfindingRadius!: IStat;
+	physicalShield;
+	magicShield;
+	armorPenetration;
+	magicPenetration;
+	bubbleRadius;
+	critDamage;
+	goldPer10Mod;
+	magicReduction;
+	missChance;
+	physicalReduction;
+	cooldownMod;
+	expBonus;
+	lifeSteal;
+	multiplicativeAttackSpeedMod;
+	multiplicativeMovementSpeedMod;
+	respawnTimeMod;
+	spellVamp;
 
-	healthRegen: IStatLevelable;
-	manaRegen: IStatLevelable;
-	attackDamage: IStatLevelable;
-	abilityPower: IStatLevelable;
-	armor: IStatLevelable;
-	resist: IStatLevelable;
-
-	attackSpeed: IStat;
-	crit: IStat;
-	attackRange: IStat;
-	moveSpeed: IStat;
-
-	attackSpeedMultiplier: IStat;
-	cooldownReduction: IStat;
-	lifeSteal: IStat;
-	spellVamp: IStat;
-	tenacity: IStat;
-
-	perceptionRange: IStat;
-	size: IStat;
-	sightRange: IStat;
-
-	critDamage: IStat;
-
-	constructor(owner: Unit, stats: StatsUnitOptions = {}) {
+	constructor(owner: AttackableUnit, stats: StatsUnitOptions = {}) {
 		super(owner, stats);
 
 		this.health = new IStatStateable(owner, stats.health || 100);
-		this.mana = new IStatStateable(owner, stats.mana || 100);
-
 		this.healthRegen = new IStatLevelable(owner, stats.healthRegen || 0);
+		this.mana = new IStatStateable(owner, stats.mana || 100);
 		this.manaRegen = new IStatLevelable(owner, stats.manaRegen || 0);
 		this.attackDamage = new IStatLevelable(owner, stats.attackDamage || 0);
 		this.abilityPower = new IStatLevelable(owner, stats.abilityPower || 0);
 		this.armor = new IStatLevelable(owner, stats.armor || 0);
-		this.resist = new IStatLevelable(owner, stats.resist || 0);
-
-		this.attackSpeed = new IStat(stats.attackSpeed || 1);
-		this.crit = new IStat(stats.crit || 0);
-		this.attackRange = new IStat(stats.attackRange || 175);
+		this.magicResist = new IStatLevelable(owner, 0);
+		this.attackSpeed = new IStatLevelable(owner, stats.attackSpeed || 1);
+		this.critChance = new IStatLevelable(owner, 0);
+		this.dodge = new IStatLevelable(owner, 0);
 		this.moveSpeed = new IStat(stats.moveSpeed || 325);
+		this.acquisitionRange = new IStat(175);
+		this.attackRange = new IStat(stats.attackRange || 175);
 
-		this.attackSpeedMultiplier = new IStat(stats.attackSpeedMultiplier || 1);// ? (+ 1)
-		this.cooldownReduction = new IStat(stats.cooldownReduction || 0);
-		this.lifeSteal = new IStat(stats.lifeSteal || 0);
-		this.spellVamp = new IStat(stats.spellVamp || 0);
-		this.tenacity = new IStat(stats.tenacity || 0);
+		this.physicalShield = new IStatStateable(owner, 0, 0);
+		this.magicShield = new IStatStateable(owner, 0, 0);
+		this.armorPenetration = new IStatLevelable(owner, 0, 0);
+		this.magicPenetration = new IStatLevelable(owner, 0, 0);
 
-		this.perceptionRange = new IStat(stats.perceptionRange || 1);
-		this.size = new IStat(stats.size || 1);
-		this.sightRange = new IStat(stats.sightRange || 1350);
-
-		this.critDamage = new IStat(stats.critDamage || 2);
-		this.collisionRadius = new IStat(stats.collisionRadius || 48);
+		this.bubbleRadius = new IStat(owner);
+		this.critDamage = new IStat(owner);
+		this.goldPer10Mod = new IStat(owner);
+		this.magicReduction = new IStat(owner);
+		this.missChance = new IStat(owner);
+		this.physicalReduction = new IStat(owner);
+		this.cooldownMod = new IStat(owner);
+		this.expBonus = new IStat(owner);
+		this.lifeSteal = new IStat(owner);
+		this.multiplicativeAttackSpeedMod = new IStat(owner);
+		this.multiplicativeMovementSpeedMod = new IStat(owner);
+		this.respawnTimeMod = new IStat(owner);
+		this.spellVamp = new IStat(owner);
 	}
 
 }

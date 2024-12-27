@@ -1,6 +1,6 @@
 
-import http from 'http';
 import fs from 'fs';
+import http from 'http';
 import * as exws from './extended-web-socket';
 
 export const server = http.createServer((req, res) => {
@@ -12,12 +12,12 @@ export const server = http.createServer((req, res) => {
 	}
 
 	console.log(url);
-	if (url == '/')
+	if (url === '/')
 		url = '/index.html';
 
 	// do not allow access to files outside of the public directory
 	// allow only alphanumeric, dots, slashes, underscores, dashes
-	if (url.indexOf('..') != -1 || !url.match(/^\/[a-zA-Z0-9\.\/_-]+$/)) {
+	if (url.indexOf('..') !== -1 || !url.match(/^\/[a-zA-Z0-9\.\/_-]+$/)) {
 		res.writeHead(403);
 		res.end('403 Forbidden');
 		return;

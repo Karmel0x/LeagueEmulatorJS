@@ -1,59 +1,74 @@
 
-import '@repo/packets/register';
-import * as handlers from './handlers';
+import Packet, { PacketModel } from '@repo/network/packets/packet';
 import * as packets from '@repo/packets/list';
-import Player from '../gameobjects/units/player';
-import { PacketModel } from '@repo/network/packets/packet';
+import '@repo/packets/register';
+import type Player from '../gameobjects/unit-ai/player';
+import * as handlers from './handlers';
 
-export default {
-	[packets.KeyCheck.id]: handlers.KeyCheck,
-	[packets.TutorialAudioEventFinished.id]: handlers.TutorialAudioEventFinished,
-	[packets.SynchSimTime.id]: handlers.SynchSimTime,
-	[packets.RemoveItemReq.id]: handlers.RemoveItemReq,
-	[packets.ResumePacket.id]: handlers.ResumePacket,
-	[packets.QueryStatusReq.id]: handlers.QueryStatusReq,
-	[packets.Ping_Load_Info.id]: handlers.Ping_Load_Info,
-	[packets.WriteNavFlags_Acc.id]: handlers.WriteNavFlags_Acc,
-	[packets.SwapItemReq.id]: handlers.SwapItemReq,
-	[packets.World_SendCamera_Server.id]: handlers.World_SendCamera_Server,
-	[packets.UpgradeSpellReq.id]: handlers.UpgradeSpellReq,
-	[packets.UseObject.id]: handlers.UseObject,
-	[packets.UpdateGameOptions.id]: handlers.UpdateGameOptions,
-	[packets.PlayEmote.id]: handlers.PlayEmote,
-	[packets.PlayVOCommand.id]: handlers.PlayVOCommand,
-	[packets.OnScoreBoardOpened.id]: handlers.OnScoreBoardOpened,
-	[packets.ClientReady.id]: handlers.ClientReady,
-	[packets.StatsUpdateReq.id]: handlers.StatsUpdateReq,
-	[packets.MapPing.id]: handlers.MapPing,
-	[packets.OnShopOpened.id]: handlers.OnShopOpened,
-	[packets.RequestJoinTeam.id]: handlers.RequestJoinTeam,
-	[packets.Chat.id]: handlers.Chat,
-	[packets.OnTipEvent.id]: handlers.OnTipEvent,
-	[packets.IssueOrderReq.id]: handlers.IssueOrderReq,
-	[packets.Waypoint_Acc.id]: handlers.Waypoint_Acc,
-	[packets.World_LockCamera_Server.id]: handlers.World_LockCamera_Server,
-	[packets.BuyItemReq.id]: handlers.BuyItemReq,
-	[packets.ClientFinished.id]: handlers.ClientFinished,
-	[packets.Exit.id]: handlers.Exit,
-	[packets.World_SendGameNumber.id]: handlers.World_SendGameNumber,
-	[packets.CastSpellReq.id]: handlers.CastSpellReq,
-	[packets.SoftReconnect.id]: handlers.SoftReconnect,
-	[packets.PausePacket.id]: handlers.PausePacket,
-	[packets.TeamSurrenderVote.id]: handlers.TeamSurrenderVote,
-	[packets.OnReplication_Acc.id]: handlers.OnReplication_Acc,
-	[packets.SendSelectedObjId.id]: handlers.SendSelectedObjId,
-	[packets.SynchVersionC2S.id]: handlers.SynchVersion,
-	[packets.CharSelected.id]: handlers.CharSelected,
-	[packets.OnTutorialPopupClosed.id]: handlers.OnTutorialPopupClosed,
-	[packets.OnQuestEvent.id]: handlers.OnQuestEvent,
-	[packets.OnRespawnPointEvent.id]: handlers.OnRespawnPointEvent,
-	[packets.SpellChargeUpdateReq.id]: handlers.SpellChargeUpdateReq,
-	[packets.SpectatorDataReq.id]: handlers.SpectatorDataReq,
-	[packets.PlayContextualEmote.id]: handlers.PlayContextualEmote,
-	[packets.TeamBalanceVote.id]: handlers.TeamBalanceVote,
-	[packets.UnitSendDrawPath.id]: handlers.UnitSendDrawPath,
-	[packets.UndoItemReq.id]: handlers.UndoItemReq,
-	[packets.CheatLogGoldSources.id]: handlers.CheatLogGoldSources,
-} as {
-	[packetId: number]: (player: Player | number, packet: PacketModel) => void
-};
+export function packetIdent(packet: typeof Packet) {
+	return `${packet.channel}-${packet.id}`;
+}
+
+const list: {
+	[packetId: string]: (player: Player | number, packet: PacketModel) => void
+} = {};
+
+export function registerHandlers() {
+	const list2 = {
+		[packetIdent(packets.KeyCheck)]: handlers.KeyCheck,
+		[packetIdent(packets.TutorialAudioEventFinished)]: handlers.TutorialAudioEventFinished,
+		[packetIdent(packets.SynchSimTime)]: handlers.SynchSimTime,
+		[packetIdent(packets.RemoveItemReq)]: handlers.RemoveItemReq,
+		[packetIdent(packets.ResumePacket)]: handlers.ResumePacket,
+		[packetIdent(packets.QueryStatusReq)]: handlers.QueryStatusReq,
+		[packetIdent(packets.Ping_Load_Info)]: handlers.Ping_Load_Info,
+		[packetIdent(packets.WriteNavFlags_Acc)]: handlers.WriteNavFlags_Acc,
+		[packetIdent(packets.SwapItemReq)]: handlers.SwapItemReq,
+		[packetIdent(packets.World_SendCamera_Server)]: handlers.World_SendCamera_Server,
+		[packetIdent(packets.UpgradeSpellReq)]: handlers.UpgradeSpellReq,
+		[packetIdent(packets.UseObject)]: handlers.UseObject,
+		[packetIdent(packets.UpdateGameOptions)]: handlers.UpdateGameOptions,
+		[packetIdent(packets.PlayEmote)]: handlers.PlayEmote,
+		[packetIdent(packets.PlayVOCommand)]: handlers.PlayVOCommand,
+		[packetIdent(packets.OnScoreBoardOpened)]: handlers.OnScoreBoardOpened,
+		[packetIdent(packets.ClientReady)]: handlers.ClientReady,
+		[packetIdent(packets.StatsUpdateReq)]: handlers.StatsUpdateReq,
+		[packetIdent(packets.MapPing)]: handlers.MapPing,
+		[packetIdent(packets.OnShopOpened)]: handlers.OnShopOpened,
+		[packetIdent(packets.RequestJoinTeam)]: handlers.RequestJoinTeam,
+		[packetIdent(packets.Chat)]: handlers.Chat,
+		[packetIdent(packets.OnTipEvent)]: handlers.OnTipEvent,
+		[packetIdent(packets.IssueOrderReq)]: handlers.IssueOrderReq,
+		[packetIdent(packets.Waypoint_Acc)]: handlers.Waypoint_Acc,
+		[packetIdent(packets.World_LockCamera_Server)]: handlers.World_LockCamera_Server,
+		[packetIdent(packets.BuyItemReq)]: handlers.BuyItemReq,
+		[packetIdent(packets.ClientFinished)]: handlers.ClientFinished,
+		[packetIdent(packets.Exit)]: handlers.Exit,
+		[packetIdent(packets.World_SendGameNumber)]: handlers.World_SendGameNumber,
+		[packetIdent(packets.CastSpellReq)]: handlers.CastSpellReq,
+		[packetIdent(packets.SoftReconnect)]: handlers.SoftReconnect,
+		[packetIdent(packets.PausePacket)]: handlers.PausePacket,
+		[packetIdent(packets.TeamSurrenderVote)]: handlers.TeamSurrenderVote,
+		[packetIdent(packets.OnReplication_Acc)]: handlers.OnReplication_Acc,
+		[packetIdent(packets.SendSelectedObjId)]: handlers.SendSelectedObjId,
+		[packetIdent(packets.SynchVersionC2S)]: handlers.SynchVersion,
+		[packetIdent(packets.CharSelected)]: handlers.CharSelected,
+		[packetIdent(packets.OnTutorialPopupClosed)]: handlers.OnTutorialPopupClosed,
+		[packetIdent(packets.OnQuestEvent)]: handlers.OnQuestEvent,
+		[packetIdent(packets.OnRespawnPointEvent)]: handlers.OnRespawnPointEvent,
+		[packetIdent(packets.SpellChargeUpdateReq)]: handlers.SpellChargeUpdateReq,
+		[packetIdent(packets.SpectatorDataReq)]: handlers.SpectatorDataReq,
+		[packetIdent(packets.PlayContextualEmote)]: handlers.PlayContextualEmote,
+		[packetIdent(packets.TeamBalanceVote)]: handlers.TeamBalanceVote,
+		[packetIdent(packets.UnitSendDrawPath)]: handlers.UnitSendDrawPath,
+		[packetIdent(packets.UndoItemReq)]: handlers.UndoItemReq,
+		[packetIdent(packets.CheatLogGoldSources)]: handlers.CheatLogGoldSources,
+	};
+
+	for (const key in list2) {
+		//@ts-ignore
+		list[key] = list2[key];
+	}
+}
+
+export default list;

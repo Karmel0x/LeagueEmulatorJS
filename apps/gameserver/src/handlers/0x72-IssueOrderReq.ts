@@ -1,42 +1,44 @@
 
-import Player from '../gameobjects/units/player';
-import * as packets from '@repo/packets/list';
-
-import { Vector2 } from 'three';
-//import IssueOrderReq from '../packets/c2s/0x72-IssueOrderReq';
-import Server from '../app/server';
+import { Vector2 } from '@repo/geometry';
 import { IssueOrderType } from '@repo/packets/base/c2s/0x72-IssueOrderReq';
+import * as packets from '@repo/packets/list';
+import Player from '../gameobjects/unit-ai/player';
 
 //import WaypointsDrawer from '@repo/tools/pathfinding/waypoints-drawer.js';
 //let waypointsDrawer = new WaypointsDrawer();
-let waypointsDrawer: any = undefined;
+//let waypointsDrawer: any = undefined;
 
 export default (player: Player, packet: packets.IssueOrderReqModel) => {
 	//console.log('handle: c2s.IssueOrderReq');
 	//console.log(packet);
 	//console.log('position', packet.position, 'waypoints', packet.movementData.waypoints);
 
-	player.eventEmitter.emit('cancelOrder');
-	player.combat.autoAttackSoftToggle = false;
+	const orderType = packet.orderType;
 
-	if (packet.orderType == IssueOrderType.moveTo) {
+	const owner = player.owner;
+	owner.lastOrderId++;
+	owner.issuedOrder = orderType;
+	owner.eventEmitter.emit('changeOrder');
+	player.packets.chatBoxDebugMessage('c2s.IssueOrderReq', orderType);
 
-		if (Server.doNotUsePathfinding)
-			waypointsDrawer?.drawWaypoints(packet.movementData?.waypoints);
+	if (orderType === IssueOrderType.moveTo || orderType === IssueOrderType.attackMove) {
 
-		player.moving.move0(packet);
-		//player.eventEmitter.once('reachDestination', () => {
-		//	player.autoAttackSoftToggle = true;
-		//});
+		//if (!Server.usePathFinding)
+		//	waypointsDrawer?.drawWaypoints(packet.movementData?.waypoints);
+
+		owner.moving.moveTo(packet);
 	}
-	else if (packet.orderType == IssueOrderType.attackTo) {
-		player.combat.castAttack(packet);
+	else if (orderType === IssueOrderType.attackTo) {
+		owner.combat.startAttack({
+			targetNetId: packet.targetNetId,
+			position: packet.position,
+		});
 	}
-	else if (packet.orderType == IssueOrderType.stop) {
+	else if (orderType === IssueOrderType.stop || orderType === IssueOrderType.hold) {
 		//@todo move to client position ?
 		let clientPosition = new Vector2(packet.position.x, packet.position.y);
-		console.log('IssueOrderReq STOP client->server distanceTo:', clientPosition.distanceTo(player.position));
+		console.log('IssueOrderReq STOP client->server distanceTo:', clientPosition.distanceTo(owner.position));
 
-		player.moving.moveClear();
+		owner.moving.moveClear();
 	}
 };

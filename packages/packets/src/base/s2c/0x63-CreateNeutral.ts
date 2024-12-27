@@ -23,7 +23,7 @@ export type CreateNeutralModel = BasePacketModel & {
 	team: TeamId,
 	damageBonus: number,
 	healthBonus: number,
-	minionRoamState: MinionRoamState,
+	roamState: MinionRoamState,
 	groupNumber: number,
 	buffSideTeamId: number,
 	revealEvent: number,
@@ -54,7 +54,7 @@ export default class CreateNeutral extends BasePacket {
 		payload.team = dvr.readInt32();
 		payload.damageBonus = dvr.readInt32();
 		payload.healthBonus = dvr.readInt32();
-		payload.minionRoamState = dvr.readUint32();
+		payload.roamState = dvr.readUint32();
 		payload.groupNumber = dvr.readInt32();
 		payload.buffSideTeamId = dvr.readInt32();
 		payload.revealEvent = dvr.readInt32();
@@ -80,7 +80,7 @@ export default class CreateNeutral extends BasePacket {
 		dvr.writeInt32(payload.team);
 		dvr.writeInt32(payload.damageBonus);
 		dvr.writeInt32(payload.healthBonus);
-		dvr.writeUint32(payload.minionRoamState);
+		dvr.writeUint32(payload.roamState);
 		dvr.writeInt32(payload.groupNumber);
 		dvr.writeInt32(payload.buffSideTeamId);
 		dvr.writeInt32(payload.revealEvent);

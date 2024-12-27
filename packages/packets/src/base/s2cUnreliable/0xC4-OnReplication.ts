@@ -30,7 +30,7 @@ class ReplicantBase {
 	static five = {};
 
 	static namesArray() {
-		let constructor = this;///** @//type {typeof ReplicantBase} */ (this.constructor);
+		let constructor = this;//this.constructor as ReplicantBase;
 
 		return [
 			Object.keys(constructor.zero) as (keyof typeof constructor.zero)[],
@@ -43,7 +43,7 @@ class ReplicantBase {
 	}
 
 	static valuesArray() {
-		let constructor = this;///** @//type {typeof ReplicantBase} */ (this.constructor);
+		let constructor = this;//this.constructor as ReplicantBase;
 
 		return [
 			Object.values(constructor.zero) as (typeof ReplicantBase.types[keyof typeof ReplicantBase.types])[],
@@ -173,7 +173,7 @@ class ReplicantTurret extends ReplicantBase {
 	};
 }
 
-class ReplicantMonster extends ReplicantBase {//(minionFlags & 8) != 0
+class ReplicantMonster extends ReplicantBase {//(minionFlags & 8) !== 0
 
 	static zero = {};
 
@@ -390,11 +390,11 @@ export default class OnReplication extends BasePacket {
 	}
 
 	static fillReplicant(unit: OnReplicationUnitModel) {
-		let nameList = replicantListNames[ReplicantUnitType.Hero];
+		let nameList = replicantListNames[unit.type!];
 		for (let i = 0; i < nameList.length; i++) {
-			let namesArray = nameList[i];
+			let namesArray = nameList[i]!;
 			for (let j = 0; j < namesArray.length; j++) {
-				let name = namesArray[j];
+				let name = namesArray[j]!;
 				let value = unit[name];
 				this.updateReplicant(unit, value, i, j);
 			}
@@ -402,13 +402,13 @@ export default class OnReplication extends BasePacket {
 	}
 
 	static updateReplicant(unit: OnReplicationUnitModel, value: ReplicantValTypes | undefined, primaryId: number, secondaryId: number) {
-		if (typeof value === 'undefined' || unit.replicant[primaryId][secondaryId] === value)
+		if (typeof value === 'undefined' || unit.replicant[primaryId]![secondaryId] === value)
 			return;
 
 		unit.primaryIdArray |= 1 << primaryId;
-		unit.seconadaryIdArray[primaryId] |= 1 << secondaryId;
+		unit.seconadaryIdArray[primaryId]! |= 1 << secondaryId;
 
-		unit.replicant[primaryId][secondaryId] = value as number;
+		unit.replicant[primaryId]![secondaryId] = value as number;
 	}
 
 	static recognizeReplicationUnitType(unit: OnReplicationUnitModel) {
@@ -479,12 +479,12 @@ export default class OnReplication extends BasePacket {
 
 	static readReplicantValue(dvr: RelativeDataView, type: ReplicantValTypes) {
 
-		if (type == ReplicantBase.types.bool) {
+		if (type === ReplicantBase.types.bool) {
 			let val = dvr.readUint8();
 			return val;
 		}
 
-		if (type == ReplicantBase.types.int) {
+		if (type === ReplicantBase.types.int) {
 
 			let num = 0;
 			let val = 0;
@@ -496,7 +496,7 @@ export default class OnReplication extends BasePacket {
 			return val;
 		}
 
-		if (type == ReplicantBase.types.float) {
+		if (type === ReplicantBase.types.float) {
 			let f = dvr.readUint8();
 			if (f < 0xFE)
 				--dvr.offset;
@@ -518,8 +518,8 @@ export default class OnReplication extends BasePacket {
 		let count = dvr.readUint8();
 		payload.replicationUnits = [];
 		for (let i = 0; i < count; i++) {
-			payload.replicationUnits[i] = payload.replicationUnits[i] || {};
-			let unit = payload.replicationUnits[i];
+			payload.replicationUnits[i] = payload.replicationUnits[i] || {} as OnReplicationUnitModel;
+			let unit = payload.replicationUnits[i]!;
 
 			unit.primaryIdArray = dvr.readUint8();
 			unit.netId = dvr.readUint32();
@@ -544,7 +544,7 @@ export default class OnReplication extends BasePacket {
 					continue;
 
 				unit.replicant[primaryId] = {};
-				let replicantPrimary = unit.replicant[primaryId];
+				let replicantPrimary = unit.replicant[primaryId]!;
 				let secondaryIdBit = unit.seconadaryIdArray[primaryId] = dvr.readUint32();
 				let dataCount = dvr.readUint8();
 				let sizeOffset = dvr.offset;
@@ -558,13 +558,13 @@ export default class OnReplication extends BasePacket {
 				//);
 				//console.log('unit.type', unit.type, primaryId, secondaryIdBit);
 
-				let ReplicantValTypesPrimary = replicantListTypes[unit.type][primaryId];
+				let ReplicantValTypesPrimary = replicantListTypes[unit.type][primaryId]!;
 
 				for (let secondaryId = 0; secondaryId < 32; secondaryId++) {
 					if ((secondaryIdBit & (1 << secondaryId >>> 0)) === 0)
 						continue;
 
-					let replicantType = ReplicantValTypesPrimary[secondaryId];
+					let replicantType = ReplicantValTypesPrimary[secondaryId]!;
 					//console.log(
 					//	'replicantType', replicantType,
 					//	'primaryId', primaryId,
@@ -581,8 +581,8 @@ export default class OnReplication extends BasePacket {
 					}
 				}
 
-				if (dvr.offset != (sizeOffset + dataCount)) {
-					console.log('dvr.offset != (sizeOffset + dataCount)', dvr.offset, sizeOffset, dataCount);
+				if (dvr.offset !== (sizeOffset + dataCount)) {
+					console.log('dvr.offset !== (sizeOffset + dataCount)', dvr.offset, sizeOffset, dataCount);
 				}
 
 				dvr.offset = sizeOffset + dataCount;
@@ -593,12 +593,12 @@ export default class OnReplication extends BasePacket {
 
 	static writeReplicantValue(dvr: RelativeDataView, type: ReplicantValTypes, val: number) {
 
-		if (type == ReplicantBase.types.bool) {
+		if (type === ReplicantBase.types.bool) {
 			dvr.writeUint8(val);
 			return;
 		}
 
-		if (type == ReplicantBase.types.int) {
+		if (type === ReplicantBase.types.int) {
 			let num = val;
 			while (num >= 0x80) {
 				dvr.writeUint8(num | 0x80);
@@ -608,7 +608,7 @@ export default class OnReplication extends BasePacket {
 			return;
 		}
 
-		if (type == ReplicantBase.types.float) {
+		if (type === ReplicantBase.types.float) {
 			if (val >= 0xFE000000)
 				dvr.writeUint8(0xFE);
 
@@ -616,12 +616,13 @@ export default class OnReplication extends BasePacket {
 			return;
 		}
 
+		//throw new Error('unknown ReplicantValType');
 		console.log('unknown ReplicantValType', type);
 	}
 
 	static writer(dvr: RelativeDataView, payload: OnReplicationModel) {
-		if (!payload.replicationUnits || payload.replicationUnits.length == 0)
-			return;
+		if (!payload.replicationUnits || payload.replicationUnits.length === 0)
+			throw new Error('no replication units');
 
 		super.writer(dvr, payload);
 
@@ -629,9 +630,12 @@ export default class OnReplication extends BasePacket {
 		dvr.writeInt32(syncId);
 
 		let count = payload.replicationUnits.length;
+		let resultCount = count;
+		let countOffset = dvr.offset;
 		dvr.writeUint8(count);
+
 		for (let i = 0; i < count; i++) {
-			let unit = payload.replicationUnits[i];
+			let unit = payload.replicationUnits[i]!;
 
 			unit.replicant = unit.replicant || [{}, {}, {}, {}, {}, {}];
 			unit.primaryIdArray = 0;
@@ -639,13 +643,18 @@ export default class OnReplication extends BasePacket {
 
 			this.fillReplicant(unit);
 
+			if (!unit.primaryIdArray) {
+				resultCount--;
+				continue;
+			}
+
 			dvr.writeUint8(unit.primaryIdArray);
 			dvr.writeUint32(unit.netId);
 
 			let unitType = unit.type || ReplicantUnitType.Base;
 
 			for (let primaryId = 0; primaryId < 6; primaryId++) {
-				if ((unit.primaryIdArray & (1 << primaryId)) == 0)
+				if ((unit.primaryIdArray & (1 << primaryId)) === 0)
 					continue;
 
 				let ReplicantValTypesUnit = replicantListTypes[unitType];
@@ -656,21 +665,27 @@ export default class OnReplication extends BasePacket {
 				if (!ReplicantValTypesPrimary)
 					continue;
 
-				let seconadaryIdVal = unit.seconadaryIdArray[primaryId];
+				let seconadaryIdVal = unit.seconadaryIdArray[primaryId]!;
 				dvr.writeUint32(seconadaryIdVal);
 				let sizeOffset = dvr.offset++;
 
 				for (let secondaryId = 0; secondaryId < 32; secondaryId++) {
-					if ((seconadaryIdVal & (1 << secondaryId >>> 0)) == 0)
+					if ((seconadaryIdVal & (1 << secondaryId >>> 0)) === 0)
 						continue;
 
-					let replicantType = ReplicantValTypesPrimary[secondaryId];
-					let val = unit.replicant[primaryId][secondaryId];
+					let replicantType = ReplicantValTypesPrimary[secondaryId]!;
+					let val = unit.replicant[primaryId]![secondaryId]!;
 					this.writeReplicantValue(dvr, replicantType, val);
 				}
 
 				dvr.dv.setUint8(sizeOffset, dvr.offset - (sizeOffset + 1));
 			}
 		}
+
+		if (!resultCount)
+			throw new Error('no replication units changed');
+
+		if (resultCount !== count)
+			dvr.dv.setUint8(countOffset, resultCount);
 	}
 }

@@ -1,10 +1,9 @@
 
-import Player from '../gameobjects/units/player';
 import * as packets from '@repo/packets/list';
+import Player from '../gameobjects/unit-ai/player';
 
 import Server from '../app/server';
-import loadingStages from '../constants/loading-stages';
-import GameObjectList from '../app/game-object-list';
+import loadingStages from '../constants/game-state';
 
 const MapId = {
 	SummonersRift_Original: 1, // Summoner's Rift / Original Summer variant
@@ -36,11 +35,11 @@ export default (player: Player, packet: packets.SynchVersionC2SModel) => {
 
 	let playerInfo = [];
 	for (let i = 0; i < 12; i++) {
-		let player = GameObjectList.players[i];
+		let player = Server.players[i];
 		if (!player)
 			continue;
 
-		playerInfo.push(player.playerInfo);
+		playerInfo.push((player.ai as Player).playerInfo);
 	}
 
 	const packet1 = packets.SynchVersion.create({

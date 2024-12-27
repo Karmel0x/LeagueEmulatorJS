@@ -1,5 +1,5 @@
-import ws from 'ws';
 import { IncomingMessage } from 'http';
+import ws from 'ws';
 
 class ExtendedWebSocket extends ws.WebSocket {
     sendJson(data: any) {
@@ -29,10 +29,10 @@ class ExtendedWebSocketServer extends ws.Server<typeof ExtendedWebSocket, typeof
         }
     }
 
-    onMessage(ws: ExtendedWebSocket, data: any) { }
+    onMessage(ws: ExtendedWebSocket, data: ws.RawData) { }
 }
 
 export {
     ExtendedWebSocket as WebSocket,
-    ExtendedWebSocketServer as WebSocketServer,
-}
+    ExtendedWebSocketServer as WebSocketServer
+};

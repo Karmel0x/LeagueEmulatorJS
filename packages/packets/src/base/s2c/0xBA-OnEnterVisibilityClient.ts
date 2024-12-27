@@ -1,10 +1,10 @@
 import BasePacket, { BasePacketModel } from '@repo/network/packets/base-packet';
 import type RelativeDataView from '@repo/network/relative-data-view';
-import type { NetId } from '../../types/player';
-import SVector3, { SVector3Model } from '../../shared/SVector3';
-import CMovementDataWithSpeed, { CMovementDataWithSpeedModel } from '../../shared/CMovementDataWithSpeed';
 import CMovementDataNormal, { CMovementDataNormalModel } from '../../shared/CMovementDataNormal';
+import CMovementDataWithSpeed, { CMovementDataWithSpeedModel } from '../../shared/CMovementDataWithSpeed';
 import SVector2, { SVector2Model } from '../../shared/SVector2';
+import SVector3, { SVector3Model } from '../../shared/SVector3';
+import type { NetId } from '../../types/player';
 
 export type PacketDataModel = {
 	data: number[],
@@ -138,13 +138,13 @@ export default class OnEnterVisibilityClient extends BasePacket {
 		payload.movementData.type = dvr.readUint8();
 		payload.movementData.syncId = dvr.readInt32();
 
-		if (payload.movementData.type == MovementDataType.withSpeed) {
+		if (payload.movementData.type === MovementDataType.withSpeed) {
 			CMovementDataWithSpeed.reader(dvr, payload.movementData);
 		}
-		else if (payload.movementData.type == MovementDataType.normal) {
+		else if (payload.movementData.type === MovementDataType.normal) {
 			CMovementDataNormal.reader(dvr, payload.movementData);
 		}
-		else if (payload.movementData.type == MovementDataType.stop) {
+		else if (payload.movementData.type === MovementDataType.stop) {
 			payload.movementData.position = SVector2.read(dvr);
 			payload.movementData.forward = SVector2.read(dvr);
 		}
@@ -207,13 +207,13 @@ export default class OnEnterVisibilityClient extends BasePacket {
 		dvr.writeUint8(payload.movementData.type);
 		dvr.writeInt32(payload.movementData.syncId);
 
-		if (payload.movementData.type == MovementDataType.withSpeed) {
+		if (payload.movementData.type === MovementDataType.withSpeed) {
 			CMovementDataWithSpeed.writer(dvr, payload.movementData);
 		}
-		else if (payload.movementData.type == MovementDataType.normal) {
+		else if (payload.movementData.type === MovementDataType.normal) {
 			CMovementDataNormal.writer(dvr, payload.movementData);
 		}
-		else if (payload.movementData.type == MovementDataType.stop) {
+		else if (payload.movementData.type === MovementDataType.stop) {
 			SVector2.writer(dvr, payload.movementData.position);
 			SVector2.writer(dvr, payload.movementData.forward);
 		}

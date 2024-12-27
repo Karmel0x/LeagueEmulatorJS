@@ -16,7 +16,7 @@ export default class PrimaryPacket extends Packet {
 
 	static writer(dvr: RelativeDataView, payload: PrimaryPacketModel) {
 		super.writer(dvr, payload);
-		dvr.writeUint8(payload.cmd || this.id);
+		dvr.writeUint8(payload.cmd ?? this.id);
 	}
 
 }

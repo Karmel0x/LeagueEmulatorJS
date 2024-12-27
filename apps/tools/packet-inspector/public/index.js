@@ -36,11 +36,14 @@ String.prototype.replaceAt = function (index, replacement) {
 };
 
 /**
+ * @param {MouseEvent} event
  * @param {HTMLElement} element 
  * @param {number} packetNum 
  */
-function getPacketSel(element, packetNum) {
-	let a = window.getSelection()?.toString();
+function getPacketSel(event, element, packetNum) {
+	let a = (/** @type {HTMLElement} */(event.target)).dataset.parsedKey;
+	console.log(a, debugOffsets[packetNum]);
+	//let a = window.getSelection()?.toString();
 	if (!a)
 		return;
 
@@ -56,12 +59,20 @@ function getPacketSel(element, packetNum) {
 	b.value = b.value.replace('<', ' ');
 	if (startOffset || endOffset) {
 		//b.value = strAtPos(b.value, c * 3, '>');
-		b.value = b.value.replaceAt(startOffset * 3 - 1, '>');
-		b.value = b.value.replaceAt(endOffset * 3 - 1, '<');
+
+		let s = startOffset * 3 - 1;
+		if (s > 0)
+			b.value = b.value.replaceAt(s, '>');
+
+		let e = endOffset * 3 - 1;
+		if (e > 0)
+			b.value = b.value.replaceAt(e, '<');
+
+		console.log(s, e);
 		b.value = b.value.trim();
 
 		b.focus();
-		b.setSelectionRange(startOffset * 3, endOffset * 3 - 1);
+		b.setSelectionRange(s + 1, e);
 	}
 
 }
@@ -72,7 +83,7 @@ function getPacketSel(element, packetNum) {
 function collapsePacket(element) {
 	let b = element.parentElement?.parentElement?.parentElement?.querySelector('.packetContentRow');
 	if (b)
-		b.style.display = b.style.display == 'none' ? null : 'none';
+		b.style.display = b.style.display === 'none' ? null : 'none';
 }
 
 /**
@@ -94,7 +105,7 @@ let debugOffsets = {};
 ws.addEventListener('message', (event) => {
 	//console.log('Message from server', event.data);
 	let res = JSON.parse(event.data);
-	if (res.cmd == 'newpacket') {
+	if (res.cmd === 'newpacket') {
 		//Controls.loadingspinnerTime();
 
 		/** @type {{
@@ -125,12 +136,15 @@ ws.addEventListener('message', (event) => {
 		newpacket.innerHTML = /* html */ `
 			<div class="packetrow">
 				<div class="row">
-					<div class="Id col">Id:${packet.num || 0}</div>
+					<div class="Id col">
+						Id:${packet.num || 0}
+						<button class="btn btn-sm btn-secondary d-none" style="padding: 0 5px" onclick="Messages.sendpacket(${JSON.stringify(packet.peerNums ?? [])}, '${packet.bytes || ''}', ${packet.packetChannel})">send packet</button>
+					</div>
 					<div class="Time col">
 						Time:${packet.time || ''} (${(new Date(parseFloat(packet.time || 0)).toISOString().slice(11, 19))})
 						${peerNums ? ` | PeerNums: ${peerNums}` : ''}
 					</div>
-					<div class="Channel col">${packet.channelName}.${packet.packetName} (size:${packet.bytes.length / 2})</div>
+					<div class="Channel col">${packet.channelName}.${packet.packetName} (size:${packet.bytes.length / 2}) ${packet.parsedJson ? '' : 'error parsing'}</div>
 					<div class="col text-end">
 						<button class="btn btn-sm btn-secondary" style="border:0;line-height:10px" onclick="collapsePacket(this)">collapse</button>
 						<button class="btn btn-sm btn-secondary" style="border:0;line-height:10px" onclick="highlightPacket(this)">highlight</button>
@@ -138,10 +152,7 @@ ws.addEventListener('message', (event) => {
 				</div>
 				<div class="row packetContentRow">
 					<div class="Bytes col"><textarea class="Bytes_Parsed_textarea Bytes_textarea">${(packet.bytes || '').match(/../g)?.join(' ')}</textarea></div>
-					<div class="Parsed col" ondblclick="getPacketSel(this.children[0], ${packet.num || 0})"></div>
-				</div>
-				<div class="row" style="display:none">
-					<div class="col"><button class="btn btn-sm btn-secondary" onclick="Messages.sendpacket(${packet.num || 0})">send packet</button></div>
+					<div class="Parsed col" ondblclick="getPacketSel(event, this.children[0], ${packet.num || 0})"></div>
 				</div>
 			</div>`;
 
@@ -169,7 +180,7 @@ ws.addEventListener('message', (event) => {
 
 		//console.log(packet.num, packet.packetId, packet.packetChannel, JSON.parse(packet.parsedJson));
 	}
-	else if (res.cmd == 'loadreplaylist') {
+	else if (res.cmd === 'loadreplaylist') {
 		let loadreplaylist = document.getElementById('loadreplaylist');
 
 		for (let option in res.list) {
@@ -180,7 +191,7 @@ ws.addEventListener('message', (event) => {
 				loadreplaylist.add(optionEl);
 		}
 	}
-	else if (res.cmd == 'endloading') {
+	else if (res.cmd === 'endloading') {
 		Controls.loadingspinner(false);
 	}
 });
@@ -189,15 +200,17 @@ class Messages {
 	static sendpacket_type(name, channel) {
 		ws.sendJson({
 			cmd: 'sendpacket_type',
-			name: name,
-			channel: channel,
+			name,
+			channel,
 		});
 	}
 
-	static sendpacket(Id) {
+	static sendpacket(peerNums, data, channel) {
 		ws.sendJson({
 			cmd: 'sendpacket',
-			Id: Id,
+			peerNums: peerNums?.length ? peerNums : [0],
+			data,
+			channel,
 		});
 	}
 
@@ -211,9 +224,18 @@ class Messages {
 	static loadpackets(offset = 0, limit = 2000, packetsearch = []) {
 		ws.sendJson({
 			cmd: 'loadpackets',
-			offset: offset,
-			limit: limit,
-			packetsearch: packetsearch,
+			offset,
+			limit,
+			packetsearch,
+		});
+	}
+
+	static loadpackets2(start = 0, end = 2000, packetsearch = []) {
+		ws.sendJson({
+			cmd: 'loadpackets2',
+			start,
+			end,
+			packetsearch,
 		});
 	}
 
@@ -227,6 +249,25 @@ class Messages {
 		Controls.loadingspinner(true);
 		ws.sendJson({
 			cmd: 'loadreplayfile',
+			name: name,
+		});
+		Messages.loadpackets(offset, limit, packetsearch);
+	}
+
+	static loadreplayinfo(name = '') {
+		Controls.loadingspinner(true);
+		ws.sendJson({
+			cmd: 'loadreplayfile',
+			name: name,
+		});
+
+		Messages.loadpackets2(0, 200, ['RequestReskin']);
+	}
+
+	static replayinfo(name = '', offset = undefined, limit = undefined, packetsearch = []) {
+		Controls.loadingspinner(true);
+		ws.sendJson({
+			cmd: 'loadreplayinfo',
 			name: name,
 		});
 		Messages.loadpackets(offset, limit, packetsearch);
@@ -264,7 +305,7 @@ class Messages {
 				if (channelName) {
 					for (let channel in this.channels) {
 						let channelId = this.channels[/** @type {keyof typeof this.channels} */(channel)];
-						if (channelName.toLowerCase() == channel.toLowerCase() || channelName == `${channelId}`) {
+						if (channelName.toLowerCase() === channel.toLowerCase() || channelName === `${channelId}`) {
 							packetChannel = channelId;
 							break;
 						}
@@ -323,6 +364,11 @@ class Controls {
 		Messages.loadreplayfile(replayFile, offset, limit, packetsearch);
 	}
 
+	static loadreplayinfo() {
+		let replayFile = document.getElementById('loadreplaylist').value;
+		Messages.loadreplayinfo(replayFile);
+	}
+
 	static addpacket() {
 		let packetData = document.getElementById('addpacket_packet').value;
 		let channel = document.getElementById('addpacket_channel').value;
@@ -330,9 +376,34 @@ class Controls {
 		Messages.addpacket(packetData, channel);
 	}
 
+	static sendpacket() {
+		let packetData = document.getElementById('addpacket_packet').value;
+		let channel = document.getElementById('addpacket_channel').value;
+
+		Messages.sendpacket([0], packetData, parseInt(channel));
+	}
+
 	static clear() {
 		let packetlist = document.getElementById('packetlist');
 		if (packetlist)
 			packetlist.innerHTML = '';
 	}
+}
+
+function HashString(path) {
+	path = path.toLowerCase();
+
+	let hash = 0;
+	const magic = 16;
+	const mask = 0xF0000000;
+
+	for (let i = 0; i < path.length; i++) {
+		hash = path.charCodeAt(i) + magic * hash;
+
+		let hm = (hash & mask) >>> 0;
+		if (hm > 0)
+			hash ^= hm ^ hm >>> 24;
+	}
+
+	return hash;
 }

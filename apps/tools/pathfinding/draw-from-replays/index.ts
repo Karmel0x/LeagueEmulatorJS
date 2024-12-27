@@ -1,21 +1,22 @@
 
-import fs from 'fs';
-import _replayreaders from '../../_replayreaders/index';
+
 import Parser from '@repo/network/parser';
-import WaypointsDrawer from '../waypoints-drawer';
-import { ReplayRecord } from '../../_replayreaders/replay-reader';
 import RelativeDataView from '@repo/network/relative-data-view';
 import { SynchVersionModel } from '@repo/packets/base/s2c/0x54-SynchVersion';
 import { WaypointGroupModel } from '@repo/packets/base/s2cUnreliable/0x61-WaypointGroup';
+import fs from 'fs';
+import _replayreaders from '../../_replayreaders/index';
+import { ReplayRecord } from '../../_replayreaders/replay-reader';
 import { delay } from '../../utils';
+import WaypointsDrawer from '../waypoints-drawer';
 
-let waypointsDrawer: { [mapId: number]: WaypointsDrawer } = {};
-
-let replayDir = '../temp/replays/';
+const replayDir = '../../temp/replays/';
 
 let replayList = fs.readdirSync(replayDir).filter((value) => {
 	return value.endsWith('.json') || value.endsWith('.lrpkt');
 });
+
+let waypointsDrawer: { [mapId: number]: WaypointsDrawer } = {};
 
 process();
 
@@ -26,17 +27,17 @@ function processReplay(replayUnpacked: ReplayRecord[]) {
 
 	let mapToLoad = 0;
 	for (let j = 0; j < replayUnpacked.length; j++) {
-		let packet = replayUnpacked[j];
+		let packet = replayUnpacked[j]!;
 
 		if (!packet.data || packet.data.byteLength < 6)
 			continue;
 
 		let dvr = RelativeDataView.from(packet.data);
 		let packetId = dvr.readUint8();
-		if (packetId != packetId_WaypointGroup && packetId != packetId_SynchVersion)
+		if (packetId !== packetId_WaypointGroup && packetId !== packetId_SynchVersion)
 			continue;
 
-		if (packetId == packetId_SynchVersion && packet.data.byteLength < 500)
+		if (packetId === packetId_SynchVersion && packet.data.byteLength < 500)
 			return;
 
 		let parsed = Parser.parse({
@@ -47,7 +48,7 @@ function processReplay(replayUnpacked: ReplayRecord[]) {
 		if (!parsed)
 			continue;
 
-		if (packetId == packetId_SynchVersion) {
+		if (packetId === packetId_SynchVersion) {
 			let parsed1 = parsed as SynchVersionModel;
 			if (!parsed1.mapToLoad)
 				continue;
@@ -58,12 +59,13 @@ function processReplay(replayUnpacked: ReplayRecord[]) {
 		}
 
 
-		if (packetId == packetId_WaypointGroup) {
+		if (packetId === packetId_WaypointGroup) {
 			let parsed1 = parsed as WaypointGroupModel;
 			if (!parsed1.movementData || parsed1.movementData.length < 1)
 				continue;
 
-			if (!waypointsDrawer[mapToLoad])
+			let mapWaypointsDrawer = waypointsDrawer[mapToLoad];
+			if (!mapWaypointsDrawer)
 				return;
 
 			for (let k = 0; k < parsed1.movementData.length; k++) {
@@ -71,7 +73,7 @@ function processReplay(replayUnpacked: ReplayRecord[]) {
 				if (!movementData || !movementData.waypoints || movementData.waypoints.length < 3)
 					continue;
 
-				waypointsDrawer[mapToLoad].drawWaypoints(movementData.waypoints);
+				mapWaypointsDrawer.drawWaypoints(movementData.waypoints);
 				//console.log(packet, parsed);
 			}
 		}

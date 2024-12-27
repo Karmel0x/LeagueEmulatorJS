@@ -1,4 +1,4 @@
-import { Vector2 } from 'three';
+import { Vector2 } from '@repo/geometry';
 
 let q = new Vector2(1000, 1000);
 let w = new Vector2(100, 100);

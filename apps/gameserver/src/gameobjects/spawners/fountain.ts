@@ -1,12 +1,18 @@
+import * as packets from '@repo/packets/list';
+import Server from '../../app/server';
+import { accurateDelay } from '../../core/timer';
 import { TeamId } from '../extensions/traits/team';
-import Player, { PlayerOptions } from '../units/player';
-import Spawner, { SpawnerOptions } from './spawner';
 import { players } from '../positions/index';
-import type { PlayerConfig } from '../units/player';
+import type { PlayerConfig } from '../unit-ai/player';
+import Player from '../unit-ai/player';
+import type AttackableUnit from '../units/attackable-unit';
+import Spawner, { SpawnerOptions } from './spawner';
 
+
+export type PlayerList = Omit<PlayerConfig, 'owner' | 'num'>[];
 
 export type FountainOptions = SpawnerOptions & {
-    players: PlayerConfig[];
+    players: PlayerList;
 };
 
 /**
@@ -17,87 +23,133 @@ export default class Fountain extends Spawner {
         return super.initialize(options) as Fountain;
     }
 
-    static spawnAll(players: PlayerConfig[]) {
-        Fountain.initialize({
+    static spawnAll(playerConfig: PlayerList) {
+        const fountain1 = Fountain.initialize({
             team: TeamId.order,
-            num: 0,
-            spawnPosition: { x: 25.9, y: 280 },
-            players: players.filter(p => p.match.team === TeamId.order),
+            position: players[TeamId.order]?.[5]?.position,
+            players: playerConfig.filter(p => p.match.team === TeamId.order),
         });
+        fountain1.spawn();
 
-        Fountain.initialize({
+        const fountain2 = Fountain.initialize({
             team: TeamId.chaos,
-            num: 0,
-            spawnPosition: { x: 13948, y: 14202 },
-            players: players.filter(p => p.match.team === TeamId.chaos),
+            position: players[TeamId.chaos]?.[5]?.position,
+            players: playerConfig.filter(p => p.match.team === TeamId.chaos),
         });
+        fountain2.spawn();
     }
 
     constructor(options: FountainOptions) {
         super(options);
 
-        this.spawnPlayers(options.players);
+        this.eventEmitter.once('spawn', () => this.spawnPlayers(options.players));
     }
 
-    spawnPlayers(playersConfig: PlayerConfig[]) {
+    spawnPlayers(playersConfig: PlayerList) {
 
-        for (let num in playersConfig) {
-            let playerConfig = playersConfig[num];
-            let team = playerConfig.match.team;
+        for (let i = 0; i < playersConfig.length; i++) {
+            const playerConfig = playersConfig[i];
+            if (!playerConfig) continue;
 
-            Player.initialize({
+            const team = playerConfig.match.team;
+
+            const unit = Player.initializeUnit({
                 character: playerConfig.match.champion,
-                position: players[team][num].position,
-                summoner: playerConfig.summoner,
+                position: players[team]?.[i]?.position,
                 spawner: this,
                 team,
+                name: playerConfig.summoner.name,
+            }, {
+                num: i,
+                summoner: playerConfig.summoner,
+                match: playerConfig.match,
+                runes: playerConfig.runes,
+                masteries: playerConfig.masteries,
             });
 
+            unit.spawn();
+            Server.players.push(unit);
+
+            unit.combat.respawnable = true;
+
+            unit.eventEmitter.on('death', async (attacker, assists) => {
+                const deathTime = this.getDeathDuration(unit);
+
+                for (let i = 0; i < deathTime; i++) {
+                    await accurateDelay(1000);
+                    if (!unit.combat.died)
+                        return;
+                }
+
+                this.respawn(unit);
+            });
         }
     }
 
-    onDie(player: Player) {
-        let respawnTime = this.getRespawnTime(player);
-        player.scoreboard.respawnAt = performance.now() + respawnTime;
-        player.scoreboard.totalRespawnTime += respawnTime;
-        this.respawnWaiter(player, respawnTime);
+    /**
+     * in seconds
+     */
+    getDeathDuration(unit: AttackableUnit) {
+        const level = unit.progress.level;
+        const deathTimes = [
+            7.5,
+            10,
+            12.5,
+            15,
+            17.5,
+            20,
+            22.5,
+            25,
+            27.5,
+            30,
+            32.5,
+            35,
+            37.5,
+            40,
+            42.5,
+            45,
+            47.5,
+            50,
+            50,
+            50,
+            50,
+            50,
+            50,
+            50,
+            50,
+            50,
+            50,
+            50,
+            50,
+            50,
+        ];
+        const deathTime = deathTimes[level - 1] || deathTimes[0]!;
+        return deathTime;
     }
 
-    respawnTimes = [
-        0,
-    ];
-
-    /**
-     * Respawn time in seconds
-     */
-    getRespawnTime(player: Player) {
-        return this.respawnTimes[player.progress.level] ?? this.respawnTimes[this.respawnTimes.length - 1];
-    }
-
-    /**
-     * Wait for respawn time to pass to respawn
-     * @todo should be in Unit loop ?
-     */
-    async respawnWaiter(player: Player, respawnTime: number) {
-        player.scoreboard.lastRespawnTime = respawnTime || 0;
-
-        if (!player.scoreboard.lastRespawnTime)
+    respawn(unit: AttackableUnit) {
+        if (!unit.combat.died)
             return;
 
-        player.scoreboard.totalRespawnTime += player.scoreboard.lastRespawnTime;
-        while (player.combat.died + player.scoreboard.lastRespawnTime < Date.now() / 1000) {
-            await Promise.delay(100);
-            continue;
-        }
+        unit.stats.health.current = unit.stats.health.total;
+        unit.stats.mana.current = unit.stats.mana.total;
+        unit.position.copy(unit.spawnPosition);
+        unit.combat.died = 0;
 
-        this.respawn(player);
+        unit.eventEmitter.emit('resurrect');
+
+        const packet1 = packets.HeroReincarnate.create({
+            netId: unit.netId,
+            position: unit.position,
+        });
+        unit.packets.toEveryone(packet1);
     }
 
-    /**
-     * @todo
-     */
-    respawn(player: Player) {
-
-    }
+    //onDie(player: Player) {
+    //    const respawnTime = this.getRespawnTime(player) ?? 0;
+    //    player.scoreboard.respawnAt = Timer.app.now() + respawnTime;
+    //    player.scoreboard.totalRespawnTime += respawnTime;
+    //    this.respawnWaiter(player, respawnTime);
+    //}
 
 }
