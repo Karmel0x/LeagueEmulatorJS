@@ -1,7 +1,7 @@
 
-// @ts-expect-error module
+// @ts-ignore
 export type { Vector3Like } from 'three/src/math/Vector3.js';
-// @ts-expect-error module
+// @ts-ignore
 export { MathUtils } from 'three/src/math/MathUtils.js';
 
 export { Rectangle } from './rectangle';

@@ -73,7 +73,7 @@ export class PacketDebugger {
 }
 
 export type PacketMessage = {
-	data: ArrayBuffer;
+	data: ArrayBufferLike;
 	channel: number;
 	flags?: number;
 };

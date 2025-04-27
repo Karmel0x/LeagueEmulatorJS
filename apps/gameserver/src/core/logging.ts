@@ -4,17 +4,36 @@
 // then open chrome browser and go to `chrome://inspect`
 // or use Visual Studio Code debugger
 
+import Network from '@repo/network/network';
+import Parser from '@repo/network/parser';
 import WebSocket from 'ws';
 import Server from '../app/server';
+import Timer from './timer';
 
 export type LoggingOutput = (...args: any[]) => void;
 //export type LoggingOutputType = 'none' | 'console' | 'websocket' | 'file';
 export type LoggingType = 'log' | 'warn' | 'error' | 'debug' | 'packet';
 
 
-function bufferToArrayBuffer(buffer: Buffer) {
+export function bufferToArrayBuffer(buffer: Buffer) {
 	return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
 }
+
+export type PacketLog = {
+	id: number;
+	time: number;
+	direction: 'sent' | 'recv';
+	peers: number[];
+	size: number;
+	channel: number;
+	channelName: string;
+	packet: number;
+	packetName: string;
+
+	parsed?: string;
+	bytes?: string;
+	debugOffsets: string;
+};
 
 export default class Logging {
 	static output = {
@@ -53,35 +72,37 @@ export default class Logging {
 		Logging._debug(...args);
 	}
 
-	/**
-	 * ...args printable arguments (packet ({channel, bytes, time}))
-	 */
-	static packet(...args: any[]) {
+	static packet(arg: { channel: number, data: ArrayBufferLike, peers: number[], direction: 'sent' | 'recv' }) {
 
 		if (Logging._packet === Logging.output.none)
 			return;
 
 		if (Logging._packet === Logging.output.console)
-			return Logging._packet(...args);
+			return Logging._packet(arg);
 
 		// send packet to packet-inspector with websocket
 		if (Logging._packet === Logging.output.websocket) {
-			if (!Logging.ws || Logging.ws.readyState !== 1)
+			if (!Logging.ws || Logging.ws.readyState !== WebSocket.OPEN)
 				return;
+
+			const { channel, data, peers, direction } = arg;
+			const bytes = Buffer.from(data).toString('hex');
+			const appTime = Timer.app.now();
 
 			Logging.ws.send(JSON.stringify({
 				cmd: 'addpacketforall',
 				data: {
-					channel: args[0].channel,
-					data: Buffer.from(args[0].data).toString('hex'),
-					time: args[0].time,
-					peerNums: args[0].peerNums,
-				},
+					channel,
+					bytes,
+					time: appTime,
+					peers,
+					direction,
+				} satisfies Partial<PacketLog>,
 			}));
 		}
 	}
 
-	static options = {};
+	static options: { [key in LoggingType]?: LoggingOutput } = {};
 
 	/**
 	 * Set where log should output (none/console/websocket/file)
@@ -92,14 +113,16 @@ export default class Logging {
 		for (const key in options) {
 			if (options[key as keyof typeof options] === Logging.output.websocket) {
 				try {
-					const ws = new WebSocket('ws://127.0.0.1/ws');
+					const ws = new WebSocket('ws://127.0.0.1:8080');
+					console.log('connecting to inspector...');
 					this.ws = ws;
 
 					ws.on('error', function (error) {
-
+						console.log('cannot connect to inspector');
 					});
 
 					ws.on('open', function () {
+						console.log('connected to inspector');
 						ws.send(JSON.stringify({
 							cmd: 'gs',
 						}));
@@ -109,10 +132,35 @@ export default class Logging {
 						const res = JSON.parse(data as unknown as string);
 						//console.log('message', data, res);
 						if (res.cmd === 'sendpacket') {
-							const { peerNums, data, channel } = res as { peerNums: number[], data: string, channel: number };
-							const packetBuffer = Buffer.from(data.replaceAll(' ', ''), 'hex');
-							console.log('sendpacket', peerNums, packetBuffer, channel);
-							Server.network.sendData(peerNums, bufferToArrayBuffer(packetBuffer), channel);
+							const packet = res.packet as PacketLog;
+							const { peers, bytes, channel, direction } = packet;
+							if (!bytes) return;
+
+							const data = Buffer.from(bytes, 'hex');
+							console.log('sendpacket', peers, data, channel);
+
+							if (direction === 'sent') {
+								Server.network.sendData(peers, bufferToArrayBuffer(data), channel);
+							}
+							else if (direction === 'recv') {
+								for (let i = 0; i < peers.length; i++) {
+									const peerNum = peers[i]!;
+									Network.logPacketReceive(peerNum, bufferToArrayBuffer(data), channel);
+
+									try {
+										const packet = Parser.parse({ data: bufferToArrayBuffer(data), channel });
+										if (!packet)
+											return;
+
+										this.emit('parse-received', peerNum, channel, packet);
+									}
+									catch (e) {
+										//if (e instanceof Error) {
+										//	console.log(e.message);
+										//}
+									}
+								}
+							}
 						}
 					});
 					break;

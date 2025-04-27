@@ -34,7 +34,7 @@ export default function (filePath: string) {
 		}
 
 		if (data instanceof Buffer)
-			data = data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength);
+			data = data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength) as ArrayBuffer;
 
 		return {
 			time: record.time,

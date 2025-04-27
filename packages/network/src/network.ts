@@ -25,11 +25,11 @@ export default class Network {
 		return this.instance;
 	}
 
-	static logPacketSend(peerNums: number[], data: ArrayBuffer, channel: number) {
-		console.log('sending packet of size', data.byteLength, 'to', peerNums, 'on channel', channel, 'data:', data);
+	static logPacketSend(peers: number[], data: ArrayBufferLike, channel: number) {
+		console.log('sending packet of size', data.byteLength, 'to', peers, 'on channel', channel, 'data:', data);
 	}
 
-	static logPacketReceive(peerNum: number, data: ArrayBuffer, channel: number) {
+	static logPacketReceive(peerNum: number, data: ArrayBufferLike, channel: number) {
 		console.log('received packet of size', data.byteLength, 'from', peerNum, 'on channel', channel, 'data:', data);
 	}
 
@@ -47,11 +47,18 @@ export default class Network {
 		this.networkApi.on('receive', (peerNum: number, data: ArrayBuffer, channel: number) => {
 			Network.logPacketReceive(peerNum, data, channel);
 
-			const packet = Parser.parse({ data, channel });
-			if (!packet)
-				return;
+			try {
+				const packet = Parser.parse({ data, channel });
+				if (!packet)
+					return;
 
-			this.emit('parse-received', peerNum, channel, packet);
+				this.emit('parse-received', peerNum, channel, packet);
+			}
+			catch (e) {
+				//if (e instanceof Error) {
+				//	console.log(e.message);
+				//}
+			}
 		});
 	}
 
@@ -75,9 +82,9 @@ export default class Network {
 		return this;
 	}
 
-	sendData(peerNums: number[], data: ArrayBuffer, channel: number, flags?: number) {
-		Network.logPacketSend(peerNums, data, channel);
-		peerNums.forEach((peerNum) => {
+	sendData(peers: number[], data: ArrayBufferLike, channel: number, flags?: number) {
+		Network.logPacketSend(peers, data, channel);
+		peers.forEach((peerNum) => {
 			if (peerNum < 0) {
 				console.error('invalid peerNum', peerNum);
 				//console.trace();
@@ -94,8 +101,8 @@ export default class Network {
 		});
 	}
 
-	sendPacket(peerNums: number[], packet: PacketMessage) {
-		this.sendData(peerNums, packet.data, packet.channel, packet.flags);
+	sendPacket(peers: number[], packet: PacketMessage) {
+		this.sendData(peers, packet.data, packet.channel, packet.flags);
 	}
 
 }

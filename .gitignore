@@ -106,5 +106,6 @@ dist
 
 package-lock.json
 
-enetcppjs/
-navmeshcppjs/
+packages/enetcppjs/
+packages/navmeshcppjs/
+apps/tools/LeaguePacketInspector/

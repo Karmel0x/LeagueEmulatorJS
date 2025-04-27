@@ -2,6 +2,7 @@ import type { NetId } from "@repo/packets/types/player";
 import type GameObject from "../gameobjects/game-object";
 import type Missile from "../gameobjects/missiles/missile";
 import type Barrack from "../gameobjects/spawners/barrack";
+import type Fountain from "../gameobjects/spawners/fountain";
 import type AttackableUnit from "../gameobjects/units/attackable-unit";
 
 
@@ -32,6 +33,7 @@ export default class GameObjectList {
     static attackableUnits: AttackableUnit[] = [];
     static missiles: Missile[] = [];
     static barracks: Barrack[] = [];
+    static fountains: Fountain[] = [];
 
     static objectByNetId: { [netId: NetId]: GameObject } = {};
 
@@ -54,6 +56,11 @@ export default class GameObjectList {
             const o = object as Barrack;
             this.barracks.push(o);
         }
+
+        if (protos.includes('Fountain')) {
+            const o = object as Fountain;
+            this.fountains.push(o);
+        }
     }
 
     static remove(object: GameObject) {
@@ -74,6 +81,11 @@ export default class GameObjectList {
         if (protos.includes('Barrack')) {
             const o = object as Barrack;
             arrayRemove(this.barracks, o);
+        }
+
+        if (protos.includes('Fountain')) {
+            const o = object as Fountain;
+            arrayRemove(this.fountains, o);
         }
     }
 

@@ -6,7 +6,7 @@ import { ReplayFileReader, ReplayRecord } from './replay-reader';
 
 const reader_lrpkt: ReplayFileReader = function (filePath) {
     const f = fs.readFileSync(filePath);
-    const dvr = RelativeDataView.from(f);
+    const dvr = RelativeDataView.fromBuffer(f);
 
     const header = ({
         magic: dvr.readUint8Array(4),

@@ -18,10 +18,6 @@ export default class YasuoRDummySpell extends _Spell {
 		designerTotalTime: 0.7,
 	};
 
-	static childSpellList = [
-		TempYasuoRMissile,
-	];
-
 	onCast(owner: AttackableUnit, castData: CastData, spellVars: any) {
 		if (!spellVars.anglePosition)
 			return false;

@@ -47,10 +47,6 @@ export default class EzrealEssenceFlux extends _Spell {
 		designerTotalTime: 1,
 	};
 
-	static childSpellList = [
-		EzrealEssenceFluxMissile,
-	];
-
 	preCast(owner: AttackableUnit, castData: CastData, spellVars: any) {
 		const targetPosition = castData.targetPosition;
 		if (!targetPosition)

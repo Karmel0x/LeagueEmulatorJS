@@ -23,19 +23,21 @@ function main() {
 		packet: Logging.output.websocket,
 	});
 
-	Network.logPacketSend = (peerNums: number[], data: ArrayBuffer, channel: number) => {
+	Network.logPacketSend = (peers: number[], data: ArrayBufferLike, channel: number) => {
 		Logging.packet({
-			peerNums,
+			peers,
 			data,
 			channel,
+			direction: 'sent',
 		});
 	};
 
-	Network.logPacketReceive = (peerNum: number, data: ArrayBuffer, channel: number) => {
+	Network.logPacketReceive = (peerNum: number, data: ArrayBufferLike, channel: number) => {
 		Logging.packet({
-			peerNums: [peerNum],
+			peers: [peerNum],
 			data,
 			channel,
+			direction: 'recv',
 		});
 	};
 

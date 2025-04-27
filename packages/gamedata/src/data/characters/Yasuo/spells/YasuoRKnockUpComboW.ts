@@ -10,10 +10,6 @@ import YasuoRDummySpell from './YasuoRDummySpell';
 export default class YasuoRKnockUpComboW extends _Spell {
 	castRange = 1200;
 
-	static childSpellList = [
-		YasuoRDummySpell,
-	];
-
 	collidedWith = [];
 	onCast(owner: AttackableUnit, castData: CastData, spellVars: any) {
 		if (!castData.targetPosition)

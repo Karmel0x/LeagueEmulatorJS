@@ -1,21 +1,15 @@
 
-export function ctrz(integer: number) {
-    integer >>>= 0;
-    if (integer === 0) {
-        return 32;
-    }
-    integer &= -integer;
-    return 31 - Math.clz32(integer);
-}
-
 export default class RelativeDataView {
 
-    static from(buffer: ArrayBufferLike | Buffer) {
-        if (buffer instanceof Buffer)
-            buffer = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
-
-        const dv = new DataView(buffer);
+    static from(arrayBuffer: ArrayBufferLike) {
+        const dv = new DataView(arrayBuffer);
         return new RelativeDataView(dv);
+    }
+
+    static fromBuffer(buffer: Buffer) {
+        const byteOffset = buffer.byteOffset;
+        const arrayBuffer = buffer.buffer.slice(byteOffset, byteOffset + buffer.byteLength);
+        return this.from(arrayBuffer);
     }
 
     static alloc(length: number) {
@@ -202,8 +196,7 @@ export default class RelativeDataView {
 
         for (const i in fields) {
             const field = fields[i]!;
-            const trailingZeros = ctrz(field);
-            result[i] = (bitfield >>> trailingZeros) & (field >>> trailingZeros);
+            result[i] = bitfield & ((1 << field) - 1);
             bitfield >>= field;
         }
 
@@ -363,15 +356,15 @@ export default class RelativeDataView {
 
     packIntegerBitfield<T extends { [name: string]: number }>(fields: T, values: { [K in keyof Partial<T>]: number }) {
         let bitfield = 0;
-        for (const i in values) {
-            if (values[i]) {
-                const value = values[i];
-                const field = fields[i]!;
-                if (value > field)
-                    throw new Error(`value of ${i} (${value}) is greater than the field (${field})`);
+        let shifted = 0;
+        for (const i in fields) {
+            const field = fields[i]!;
+            const value = values[i];
 
-                bitfield |= value << ctrz(field);
-            }
+            if (value)
+                bitfield |= value << shifted;
+
+            shifted += field;
         }
         return bitfield;
     }

@@ -41,6 +41,7 @@ export default class Parser {
 				//'readATM', JSON.stringify(PacketDebugger.readATM, null, 2),
 			);
 			console.log('packet', packet);
+			throw new Error(`error parsing packet on offset ${dvr.offset}`);
 		}
 		//finally {
 		//	console.log(

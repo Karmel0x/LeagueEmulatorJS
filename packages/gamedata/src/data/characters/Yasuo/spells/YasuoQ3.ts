@@ -12,10 +12,6 @@ import YasuoQ3Mis from './YasuoQ3Mis';
 
 export default class YasuoQ3 extends _Spell {
 
-	static childSpellList = [
-		YasuoQ3Mis,
-	];
-
 	packageHash = package1.packageHash;
 	spellSlot = SlotId.es2;
 	windup = 0;

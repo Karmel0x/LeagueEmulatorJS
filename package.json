@@ -6,7 +6,7 @@
         "packages/*"
     ],
     "devDependencies": {
-        "@types/node": "^22.10.2"
+        "@types/node": "^22.15.2"
     },
     "scripts": {
         "dev": "cd apps && cd gameserver && ts-node -T src/main",

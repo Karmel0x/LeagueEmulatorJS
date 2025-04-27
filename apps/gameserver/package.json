@@ -14,13 +14,13 @@
     "@repo/geometry": "*",
     "enetcppjs": "*",
     "navmeshcppjs": "*",
-    "three": "^0.171.0",
-    "ws": "^8.18.0"
+    "three": "^0.176.0",
+    "ws": "^8.18.1"
   },
   "devDependencies": {
-    "@types/three": "^0.171.0",
-    "@types/ws": "^8.5.13",
-    "esbuild": "0.24.2",
+    "@types/three": "^0.176.0",
+    "@types/ws": "^8.18.1",
+    "esbuild": "0.25.3",
     "typed-emitter": "^2.1.0"
   }
 }

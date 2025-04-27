@@ -2,10 +2,13 @@
 import { SlotId } from '@repo/gameserver/src/constants/slot-id';
 import _Spell, { type CastData } from '@repo/gameserver/src/game/basedata/spell';
 import { SpellCast } from '@repo/gameserver/src/game/scripting/spell-cast';
+import { BuffAddType } from '@repo/gameserver/src/gameobjects/extensions/traits/buff-manager';
 import type AttackableUnit from '@repo/gameserver/src/gameobjects/units/attackable-unit';
 import { Vector2 } from '@repo/geometry';
+import { BuffType } from '@repo/packets/base/s2c/0x68-BuffAddGroup';
 import package1 from '../package';
 import EzrealArcaneShiftMissile from './EzrealArcaneShiftMissile';
+import EzrealRisingSpellForce from './EzrealRisingSpellForce';
 
 
 export default class EzrealArcaneShift extends _Spell {
@@ -13,10 +16,6 @@ export default class EzrealArcaneShift extends _Spell {
 	packageHash = package1.packageHash;
 	spellSlot = SlotId.e;
 	canMoveWhenCast = true;
-
-	static childSpellList = [
-		EzrealArcaneShiftMissile,
-	];
 
 	onCast(owner: AttackableUnit, castData: CastData, spellVars: any) {
 		const { packet } = castData;
@@ -37,6 +36,18 @@ export default class EzrealArcaneShift extends _Spell {
 		spell.name = Spell.name;
 		const spellCast = new SpellCast(spell, owner, castData);
 		await spellCast.castSpell(spellVars);
+
+		const Spell2 = EzrealRisingSpellForce;
+		const spell2 = new Spell2();
+		spell2.name = Spell2.name;
+
+		owner.buffManager.addBuff(spell2, owner, {
+			addType: BuffAddType.stacksAndRenews,
+			buffType: BuffType.combatEnchancer,
+			maxStack: 5,
+			numberOfStacks: 1,
+			duration: 5,
+		});
 	}
 
 }

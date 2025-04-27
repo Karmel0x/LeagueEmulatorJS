@@ -1,3 +1,4 @@
+// ts-node tools/spectator-emulator/index.ts ../temp/replays/MeUrgot_and_MichaelCass_in_3v3_super_win__[GameReplays.org](1.0.0.126).rlp.json
 
 import Timer from '@repo/gameserver/src/core/timer';
 import NetworkApiEnet from '@repo/network/network-api/enet';
@@ -5,8 +6,8 @@ import { channels } from '@repo/packets/channels';
 import packetIds from '@repo/packets/ids';
 import '@repo/packets/register';
 import repl from 'repl';
+import { delay } from '../../utils';
 import _replayreaders from '../_replayreaders/index';
-import { delay } from '../utils';
 
 const replayDir = '../../temp/replays/';
 let replayName = process.argv[2] || (replayDir + 'LOL-REPLAY.rlp.json');
@@ -98,63 +99,105 @@ networkApi.once('receive', init_network_handler);
 let playerIds = findPlayerIds();
 console.log('run client with one of these playerIds:', ...playerIds);
 console.log(`ex.: start "" "League of Legends.exe" "" "" "" "127.0.0.1 5119 17BLOhi6KZsTtldTsizvHg== ${playerIds[0]}"`);
-console.log('available commands: .speed <num>, .pause, .resume, .timer');
 
-const local = repl.start('> ');
+if (repl.start) {
+	console.log('available commands: .speed <num>, .pause, .resume, .timer, .send [<channel>] <hex>');
 
-local.on('exit', () => {
-	process.exit(0);
-});
+	const local = repl.start('> ');
 
-local.defineCommand('speed', {
-	help: 'set speed',
-	action(input) {
-		this.clearBufferedCommand();
+	local.on('exit', () => {
+		process.exit(0);
+	});
 
-		// @todo send set frequency packet
-		let speed = parseFloat(input);
-		timer.speedUp(speed);
-		console.log('speed:', speed);
+	local.defineCommand('speed', {
+		help: 'set speed',
+		action(input) {
+			this.clearBufferedCommand();
 
-		this.displayPrompt();
-	},
-});
+			// @todo send set frequency packet
+			let speed = parseFloat(input);
+			timer.speedUp(speed);
+			console.log('speed:', speed);
 
-local.defineCommand('pause', {
-	help: 'pause',
-	action(input) {
-		this.clearBufferedCommand();
+			this.displayPrompt();
+		},
+	});
 
-		// @todo send pause packet
-		timer.pause();
-		console.log('paused');
+	local.defineCommand('pause', {
+		help: 'pause',
+		action(input) {
+			this.clearBufferedCommand();
 
-		this.displayPrompt();
-	},
-});
+			// @todo send pause packet
+			timer.pause();
+			console.log('paused');
 
-local.defineCommand('resume', {
-	help: 'resume',
-	action(input) {
-		this.clearBufferedCommand();
+			this.displayPrompt();
+		},
+	});
 
-		// @todo send resume packet
-		timer.resume();
-		console.log('resumed');
+	local.defineCommand('resume', {
+		help: 'resume',
+		action(input) {
+			this.clearBufferedCommand();
 
-		this.displayPrompt();
-	},
-});
+			// @todo send resume packet
+			timer.resume();
+			console.log('resumed');
 
+			this.displayPrompt();
+		},
+	});
 
-local.defineCommand('timer', {
-	help: 'resume',
-	action(input) {
-		this.clearBufferedCommand();
+	local.defineCommand('timer', {
+		help: 'timer',
+		action(input) {
+			this.clearBufferedCommand();
 
-		let s = Math.round(timer.now()) / 1000;
-		console.log('timer:', s);
+			let s = Math.round(timer.now()) / 1000;
+			console.log('timer:', s);
 
-		this.displayPrompt();
-	},
-});
+			this.displayPrompt();
+		},
+	});
+
+	local.defineCommand('send', {
+		help: 'send [<channel>] <hex>',
+		action(input) {
+			this.clearBufferedCommand();
+			if (!input || input.length < 2) return;
+
+			let channel = channels.s2c;
+			if (input[1] === ' ') {
+				channel = parseInt(input[0]!);
+				input = input.slice(2);
+			}
+
+			input = input.replaceAll(' ', '').replaceAll('-', '');
+			let packet = Buffer.from(input, 'hex');
+			for (let i in started) {
+				let peerNum = parseInt(i);
+				networkApi.send(peerNum, bufferToArrayBuffer(packet), channel);
+			}
+
+			console.log('sent', packet.length, 'bytes to channel', channel);
+
+			this.displayPrompt();
+		},
+	});
+
+	local.defineCommand('wait', {
+		help: 'wait',
+		action(input) {
+			this.clearBufferedCommand();
+
+			let ms = parseInt(input);
+			if (!ms) return;
+
+			setTimeout(() => {
+				this.displayPrompt();
+			}, ms);
+		},
+	});
+
+}

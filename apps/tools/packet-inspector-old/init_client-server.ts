@@ -1,7 +1,7 @@
 
 import fs from 'fs';
 import http from 'http';
-import * as exws from './extended-web-socket';
+import ws from 'ws';
 
 export const server = http.createServer((req, res) => {
 	let url = req.url;
@@ -53,7 +53,7 @@ export const server = http.createServer((req, res) => {
 });
 
 
-export const wss = new exws.WebSocketServer({ noServer: true });
+export const wss = new ws.WebSocketServer({ noServer: true });
 
 server.on('upgrade', function upgrade(request, socket, head) {
 	console.log(request.url);

@@ -24,10 +24,6 @@ export default class EzrealMysticShot extends _Spell {
 		//manaCost: 28,
 	};
 
-	static childSpellList = [
-		EzrealMysticShotMissile,
-	];
-
 	preCast(owner: AttackableUnit, castData: CastData, spellVars: any) {
 		const targetPosition = castData.targetPosition;
 		if (!targetPosition)
