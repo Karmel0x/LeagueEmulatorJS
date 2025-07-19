@@ -1,9 +1,9 @@
-import type { CastData } from '@repo/gameserver/src/game/basedata/spell';
-import SpellBuff from '@repo/gameserver/src/game/basedata/spell-buff';
 import { BuffAddType } from '@repo/gameserver/src/gameobjects/extensions/traits/buff-manager';
 import type AttackableUnit from '@repo/gameserver/src/gameobjects/units/attackable-unit';
 import { sendUnitStats } from '@repo/gameserver/src/packet-helpers/on-replication';
 import { BuffType } from '@repo/packets/base/s2c/0x68-BuffAddGroup';
+import type { CastData } from '@repo/scripting/base/spell';
+import SpellBuff from '@repo/scripting/base/spell-buff';
 
 
 export default class SummonerHeal extends SpellBuff {

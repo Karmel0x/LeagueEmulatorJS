@@ -1,6 +1,6 @@
 import { EventEmitter2 } from '../../core/event-emitter2';
 import Team from '../extensions/traits/team';
-import GameObject, { GameObjectOptions, type GameObjectEvents } from '../game-object';
+import GameObject, { type GameObjectEvents, type GameObjectOptions } from '../game-object';
 
 
 export type SpawnerOptions = GameObjectOptions & {

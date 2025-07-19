@@ -1,6 +1,6 @@
 
-import _Basicattack from '@repo/gameserver/src/game/basedata/basicattack';
-import { SCastInfoModel } from '@repo/packets/shared/SCastInfo';
+import type { SCastInfoModel } from '@repo/packets/shared/SCastInfo';
+import _Basicattack from '@repo/scripting/base/basicattack';
 
 
 /**

@@ -1,4 +1,4 @@
-import ChangeSlotSpellData, { ChangeSlotSpellDataModel } from './0x17-ChangeSlotSpellData';
+import ChangeSlotSpellData, { type ChangeSlotSpellDataModel } from './0x17-ChangeSlotSpellData';
 
 export type ChangeSlotSpellData_OwnerOnlyModel = ChangeSlotSpellDataModel;
 

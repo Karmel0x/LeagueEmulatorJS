@@ -1,6 +1,6 @@
-import BasePacket, { BasePacketModel } from '@repo/network/packets/base-packet';
+import BasePacket, { type BasePacketModel } from '@repo/network/packets/base-packet';
 import type RelativeDataView from '@repo/network/relative-data-view';
-import { Emote } from '../c2s/0x48-PlayEmote';
+import type { Emote } from '../c2s/0x48-PlayEmote';
 
 export type PlayContextualEmoteModel = BasePacketModel & {
 	emoteId: Emote,

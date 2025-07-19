@@ -1,4 +1,4 @@
-import AntiBot, { AntiBotModel } from '../s2c/0xDD-AntiBot';
+import AntiBot, { type AntiBotModel } from '../s2c/0xDD-AntiBot';
 
 export type AntiBotC2SModel = AntiBotModel & {
     /** max count = 1024 */

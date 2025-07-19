@@ -1,19 +1,19 @@
 
 import type { Vector2Like } from '@repo/geometry';
 import { IssueOrderType } from '@repo/packets/base/c2s/0x72-IssueOrderReq';
-import { NetId } from '@repo/packets/types/player';
+import type { NetId } from '@repo/packets/types/player';
 import GameObjectList from '../../../app/game-object-list';
 import Server from '../../../app/server';
 import { SlotId } from '../../../constants/slot-id';
 import Timer from '../../../core/timer';
 import { delay } from '../../../core/utils';
 import type { Player } from '../../unit-ai';
-import { AiType } from '../../unit-ai/base-ai';
+import { AiType } from '../../unit-ai/types';
 import type AttackableUnit from '../../units/attackable-unit';
 import Filters from '../filters/index';
 import * as Measure from '../measure';
 import BasicAttacks from './basic-attacks';
-import Spellable, { SpellableEvents } from './spellable';
+import Spellable, { type SpellableEvents } from './spellable';
 
 export type AttackableEvents = SpellableEvents & {
 	'noTargetsInRange': () => void;

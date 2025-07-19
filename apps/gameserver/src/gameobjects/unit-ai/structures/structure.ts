@@ -1,6 +1,7 @@
 
 import { EventEmitter2 } from '../../../core/event-emitter2';
-import BaseAi, { AiType, BaseAiEvents, BaseAiOptions } from '../base-ai';
+import BaseAi, { type BaseAiEvents, type BaseAiOptions } from '../base-ai';
+import { AiType } from '../types';
 
 
 export type StructureOptions = BaseAiOptions & {

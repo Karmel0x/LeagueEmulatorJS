@@ -3,7 +3,7 @@ import PartialPacket from '@repo/network/packets/partial-packet';
 import type RelativeDataView from '@repo/network/relative-data-view';
 import TranslateCenteredCoordinates from '../functions/translate-centered-coordinates';
 import type { NetId } from '../types/player';
-import CCompressedWaypoint, { CCompressedWaypointModel } from './CCompressedWaypoint';
+import CCompressedWaypoint, { type CCompressedWaypointModel } from './CCompressedWaypoint';
 
 export type CMovementDataNormalModel = {
 	teleportNetId?: NetId,

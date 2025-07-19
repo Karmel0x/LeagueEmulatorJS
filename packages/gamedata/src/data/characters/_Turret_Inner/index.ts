@@ -1,4 +1,4 @@
-import Character from '@repo/gameserver/src/game/basedata/character';
+import Character from '@repo/scripting/base/character';
 import package1 from './package';
 
 /**

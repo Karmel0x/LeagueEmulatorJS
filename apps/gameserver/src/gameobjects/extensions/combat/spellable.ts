@@ -1,10 +1,10 @@
 
-import * as packets from '@repo/packets/list';
+import type * as packets from '@repo/packets/list';
+import type { CastData } from '@repo/scripting/base/spell';
 import { SlotId } from '../../../constants/slot-id';
-import type { CastData } from '../../../game/basedata/spell';
 import type Hero from '../../unit-ai/hero';
 import type AttackableUnit from '../../units/attackable-unit';
-import Defendable, { DefendableEvents } from './defendable';
+import Defendable, { type DefendableEvents } from './defendable';
 
 
 export type SpellableEvents = DefendableEvents & {

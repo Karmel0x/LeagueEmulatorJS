@@ -7,7 +7,7 @@ import GameObjectList from '../../../app/game-object-list';
 import Timer from '../../../core/timer';
 import type Missile from '../../missiles/missile';
 import type { Hero, Player } from '../../unit-ai';
-import { AiSubType, AiType } from '../../unit-ai/base-ai';
+import { AiSubType, AiType } from '../../unit-ai/types';
 import type AttackableUnit from '../../units/attackable-unit';
 import * as Measure from '../measure';
 import Targetable from './targetable';

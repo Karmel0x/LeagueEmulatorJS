@@ -2,9 +2,9 @@ import * as packets from '@repo/packets/list';
 import { SlotId } from '../../../constants/slot-id';
 import { sendUnitStats } from '../../../packet-helpers/on-replication';
 import type { Player } from '../../unit-ai';
-import Hero from '../../unit-ai/hero';
-import AttackableUnit from '../../units/attackable-unit';
-import Unit from '../../units/unit';
+import type Hero from '../../unit-ai/hero';
+import type AttackableUnit from '../../units/attackable-unit';
+import type Unit from '../../units/unit';
 import Levelable, { type LevelableEvents } from './levelable';
 
 export type ProgressableEvents = LevelableEvents & {

@@ -1,5 +1,5 @@
 import { TeamId } from '../extensions/traits/team';
-import { JungleCampOptions } from '../spawners/jungle-camp';
+import type { JungleCampOptions } from '../spawners/jungle-camp';
 
 // @todo correct positions, rotations
 export const jungleCamps: JungleCampOptions[] = [

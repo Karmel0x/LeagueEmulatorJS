@@ -1,12 +1,12 @@
 
 import * as Characters from '@repo/gamedata/data/characters/index';
+import type Character from '@repo/scripting/base/character';
 import { EventEmitter2 } from '../../core/event-emitter2';
-import type Character from '../../game/basedata/character';
 import type { LevelableEvents } from '../extensions/progress/levelable';
 import Rewards from '../extensions/traits/rewards';
 import TeamArrangement, { TeamId } from '../extensions/traits/team';
-import GameObject, { GameObjectEvents, GameObjectOptions } from '../game-object';
-import Spawner from '../spawners/spawner';
+import GameObject, { type GameObjectEvents, type GameObjectOptions } from '../game-object';
+import type Spawner from '../spawners/spawner';
 
 export type UnitOptions = GameObjectOptions & {
 	spawner?: Spawner;

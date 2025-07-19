@@ -1,6 +1,6 @@
 
 import type GameObject from '../../game-object';
-import type { AiType } from '../../unit-ai/base-ai';
+import type { AiType } from '../../unit-ai/types';
 import type AttackableUnit from '../../units/attackable-unit';
 
 export default class Filters {

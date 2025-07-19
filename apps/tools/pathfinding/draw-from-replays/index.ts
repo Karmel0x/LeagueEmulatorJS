@@ -2,11 +2,11 @@
 
 import Parser from '@repo/network/parser';
 import RelativeDataView from '@repo/network/relative-data-view';
-import { SynchVersionModel } from '@repo/packets/base/s2c/0x54-SynchVersion';
-import { WaypointGroupModel } from '@repo/packets/base/s2cUnreliable/0x61-WaypointGroup';
+import type { SynchVersionModel } from '@repo/packets/base/s2c/0x54-SynchVersion';
+import type { WaypointGroupModel } from '@repo/packets/base/s2cUnreliable/0x61-WaypointGroup';
 import fs from 'fs';
 import _replayreaders from '../../packet-inspector-old/_replayreaders/index';
-import { ReplayRecord } from '../../packet-inspector-old/_replayreaders/replay-reader';
+import type { ReplayRecord } from '../../packet-inspector-old/_replayreaders/replay-reader';
 import { delay } from '../../utils';
 import WaypointsDrawer from '../waypoints-drawer';
 

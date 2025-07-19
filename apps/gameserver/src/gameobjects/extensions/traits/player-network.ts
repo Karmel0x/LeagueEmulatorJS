@@ -1,5 +1,5 @@
 
-import { PacketMessage } from '@repo/network/packets/packet';
+import type { PacketMessage } from '@repo/network/packets/packet';
 import * as packets from '@repo/packets/list';
 import Server from '../../../app/server';
 import UnitAiList from '../../../app/unit-ai-list';

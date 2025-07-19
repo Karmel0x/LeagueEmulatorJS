@@ -1,6 +1,6 @@
 
-import { Vector2Like } from '@repo/geometry';
-import { Vector2WithZLike } from '@repo/geometry/vector2-with-z';
+import type { Vector2Like } from '@repo/geometry';
+import type { Vector2WithZLike } from '@repo/geometry/vector2-with-z';
 
 
 export default class TranslateCenteredCoordinates {

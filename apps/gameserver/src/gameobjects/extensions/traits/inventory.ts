@@ -1,7 +1,7 @@
 
 import { getItem } from '@repo/gamedata/data/items/ItemList';
 import * as packets from '@repo/packets/list';
-import Item from '../../../game/basedata/item';
+import type Item from '@repo/scripting/base/item';
 import { sendUnitStats } from '../../../packet-helpers/on-replication';
 import type AttackableUnit from '../../units/attackable-unit';
 

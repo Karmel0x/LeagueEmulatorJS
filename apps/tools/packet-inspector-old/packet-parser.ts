@@ -5,7 +5,7 @@ import RelativeDataView from '@repo/network/relative-data-view';
 import { channels } from '@repo/packets/channels';
 import * as packets from '@repo/packets/list';
 import '@repo/packets/register';
-import { ReplayRecord } from './_replayreaders/replay-reader';
+import type { ReplayRecord } from './_replayreaders/replay-reader';
 
 
 export default function packetParser(packet1: ReplayRecord, i: number) {

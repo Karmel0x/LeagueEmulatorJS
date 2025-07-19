@@ -1,7 +1,7 @@
 import PartialPacket from '@repo/network/packets/partial-packet';
 import type RelativeDataView from '@repo/network/relative-data-view';
 import type { NetId } from '../types/player';
-import SVector2, { SVector2Model } from './SVector2';
+import SVector2, { type SVector2Model } from './SVector2';
 
 export type SSpeedParamsModel = {
 	pathSpeedOverride: number,

@@ -1,4 +1,4 @@
-import _Item from '@repo/gameserver/src/game/basedata/item';
+import _Item from '@repo/scripting/base/item';
 
 const ItemList1 = [
 	class Item extends _Item { //Boots of Speed

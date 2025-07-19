@@ -1,6 +1,7 @@
 import PartialPacket from '@repo/network/packets/partial-packet';
 import type RelativeDataView from '@repo/network/relative-data-view';
-import { OnEvent, OnEventArguments, OnEventParam } from '../types/on-event';
+import type { OnEvent } from '../types/on-event';
+import { OnEventArguments, OnEventParam } from '../types/on-event';
 import type { NetId } from '../types/player';
 
 export type SEventModelBase = {

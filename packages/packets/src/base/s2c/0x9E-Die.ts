@@ -1,4 +1,4 @@
-import Hero_Die, { Hero_DieModel } from './0x5E-Hero_Die';
+import Hero_Die, { type Hero_DieModel } from './0x5E-Hero_Die';
 
 export type DieModel = Hero_DieModel;
 

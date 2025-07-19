@@ -1,11 +1,11 @@
 
 import { SlotId } from '@repo/gameserver/src/constants/slot-id';
-import _Spell, { type CastData } from '@repo/gameserver/src/game/basedata/spell';
-import { SpellCast } from '@repo/gameserver/src/game/scripting/spell-cast';
 import Missile from '@repo/gameserver/src/gameobjects/missiles/missile';
 import type AttackableUnit from '@repo/gameserver/src/gameobjects/units/attackable-unit';
-import { SCastInfoModel } from '@repo/packets/shared/SCastInfo';
+import type { SCastInfoModel } from '@repo/packets/shared/SCastInfo';
 import { DamageSource, DamageType } from '@repo/packets/shared/SDeathData';
+import _Spell, { type CastData } from '@repo/scripting/base/spell';
+import { SpellCast } from '@repo/scripting/load/spell-cast';
 import TempYasuoRMissile from './TempYasuoRMissile';
 
 

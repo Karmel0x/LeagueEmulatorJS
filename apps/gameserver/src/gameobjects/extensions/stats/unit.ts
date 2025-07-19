@@ -1,6 +1,6 @@
 
 import type AttackableUnit from '../../units/attackable-unit';
-import StatsGameObject, { StatsGameObjectOptions } from './game-object';
+import StatsGameObject, { type StatsGameObjectOptions } from './game-object';
 import { IStat, IStatLevelable, IStatStateable } from './istat';
 
 

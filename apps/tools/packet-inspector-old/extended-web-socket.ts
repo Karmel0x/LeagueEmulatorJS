@@ -1,4 +1,4 @@
-import ws from 'ws';
+import type ws from 'ws';
 
 export function sendJson(ws: ws, data: any) {
     ws.send(JSON.stringify(data));

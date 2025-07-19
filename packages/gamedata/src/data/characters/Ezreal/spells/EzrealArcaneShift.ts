@@ -1,11 +1,11 @@
 
 import { SlotId } from '@repo/gameserver/src/constants/slot-id';
-import _Spell, { type CastData } from '@repo/gameserver/src/game/basedata/spell';
-import { SpellCast } from '@repo/gameserver/src/game/scripting/spell-cast';
 import { BuffAddType } from '@repo/gameserver/src/gameobjects/extensions/traits/buff-manager';
 import type AttackableUnit from '@repo/gameserver/src/gameobjects/units/attackable-unit';
 import { Vector2 } from '@repo/geometry';
 import { BuffType } from '@repo/packets/base/s2c/0x68-BuffAddGroup';
+import _Spell, { type CastData } from '@repo/scripting/base/spell';
+import { SpellCast } from '@repo/scripting/load/spell-cast';
 import package1 from '../package';
 import EzrealArcaneShiftMissile from './EzrealArcaneShiftMissile';
 import EzrealRisingSpellForce from './EzrealRisingSpellForce';

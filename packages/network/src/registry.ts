@@ -1,7 +1,7 @@
 
-import BasePacket from './packets/base-packet';
-import Packet from './packets/packet';
-import PrimaryPacket from './packets/primary-packet';
+import type BasePacket from './packets/base-packet';
+import type Packet from './packets/packet';
+import type PrimaryPacket from './packets/primary-packet';
 
 
 export default class Registry<Type extends typeof Packet> {

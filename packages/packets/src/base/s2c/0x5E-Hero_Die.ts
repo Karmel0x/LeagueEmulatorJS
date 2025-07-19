@@ -1,6 +1,6 @@
-import BasePacket, { BasePacketModel } from '@repo/network/packets/base-packet';
+import BasePacket, { type BasePacketModel } from '@repo/network/packets/base-packet';
 import type RelativeDataView from '@repo/network/relative-data-view';
-import SDeathData, { SDeathDataModel } from '../../shared/SDeathData';
+import SDeathData, { type SDeathDataModel } from '../../shared/SDeathData';
 
 export type Hero_DieModel = BasePacketModel & SDeathDataModel;
 

@@ -4,10 +4,10 @@ import * as packets from '@repo/packets/list';
 import Server from '../../app/server';
 import { EventEmitter2 } from '../../core/event-emitter2';
 import * as Measure from '../extensions/measure';
-import StatsMissile, { StatsMissileOptions } from '../extensions/stats/missile';
+import StatsMissile, { type StatsMissileOptions } from '../extensions/stats/missile';
 import { TeamId } from '../extensions/traits/team';
-import MovableGameObject, { MovableGameObjectEvents, MovableGameObjectOptions } from '../movable-game-object';
-import AttackableUnit from '../units/attackable-unit';
+import MovableGameObject, { type MovableGameObjectEvents, type MovableGameObjectOptions } from '../movable-game-object';
+import type AttackableUnit from '../units/attackable-unit';
 
 
 export type MissileEvents = MovableGameObjectEvents & {

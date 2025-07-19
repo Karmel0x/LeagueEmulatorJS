@@ -1,9 +1,9 @@
 
+import { EventEmitter2 } from "@repo/gameserver/src/core/event-emitter2";
+import type AttackableUnit from "@repo/gameserver/src/gameobjects/units/attackable-unit";
 import type { Vector2Like } from "@repo/geometry";
 import HashString from "@repo/packets/functions/hash-string";
 import type * as packets from "@repo/packets/list";
-import { EventEmitter2 } from "../../core/event-emitter2";
-import type AttackableUnit from "../../gameobjects/units/attackable-unit";
 
 
 export type CastData = {

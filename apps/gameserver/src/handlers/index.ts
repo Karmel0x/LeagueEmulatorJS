@@ -1,5 +1,6 @@
 
-import Packet, { PacketModel } from '@repo/network/packets/packet';
+import type Packet from '@repo/network/packets/packet';
+import type { PacketModel } from '@repo/network/packets/packet';
 import * as packets from '@repo/packets/list';
 import '@repo/packets/register';
 import type Player from '../gameobjects/unit-ai/player';

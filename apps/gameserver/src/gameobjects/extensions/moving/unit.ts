@@ -1,11 +1,11 @@
 
-import { Vector2 } from '@repo/geometry';
+import type { Vector2 } from '@repo/geometry';
 import * as packets from '@repo/packets/list';
-import { SSpeedParamsModel } from '@repo/packets/shared/SSpeedParams';
+import type { SSpeedParamsModel } from '@repo/packets/shared/SSpeedParams';
 import type { Player } from '../../unit-ai';
 import type AttackableUnit from '../../units/attackable-unit';
 import * as Measure from '../measure';
-import MovingGameObject, { MovingEvents, SpeedParams } from './game-object';
+import MovingGameObject, { type MovingEvents, SpeedParams } from './game-object';
 
 export type MovingUnitEvents = MovingEvents & {
 };

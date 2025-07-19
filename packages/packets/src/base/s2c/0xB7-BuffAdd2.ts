@@ -1,7 +1,7 @@
-import BasePacket, { BasePacketModel } from '@repo/network/packets/base-packet';
+import BasePacket, { type BasePacketModel } from '@repo/network/packets/base-packet';
 import type RelativeDataView from '@repo/network/relative-data-view';
 import type { NetId } from '../../types/player';
-import { BuffType } from './0x68-BuffAddGroup';
+import type { BuffType } from './0x68-BuffAddGroup';
 
 export type BuffAdd2Model = BasePacketModel & {
 	slot: number,

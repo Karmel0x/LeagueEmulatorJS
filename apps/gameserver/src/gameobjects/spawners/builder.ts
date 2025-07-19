@@ -3,7 +3,7 @@ import { inhibitors, nexuses, turrets, type SpawnConfig } from '../positions/ind
 import Inhibitor, { type InhibitorOptions } from '../unit-ai/structures/inhibitor';
 import Nexus, { type NexusOptions } from '../unit-ai/structures/nexus';
 import Turret, { type TurretOptions } from '../unit-ai/structures/turret';
-import Spawner, { SpawnerOptions } from './spawner';
+import Spawner, { type SpawnerOptions } from './spawner';
 
 
 export type BuilderOptions = SpawnerOptions & {

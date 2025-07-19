@@ -1,8 +1,8 @@
 
-import { EventEmitter2 } from "../../core/event-emitter2";
-import { IStat, IStatLevelable, IStatStateable } from "../../gameobjects/extensions/stats/istat";
-import type AttackableUnit from "../../gameobjects/units/attackable-unit";
-import { pinCastEvents } from "../scripting/spell-cast";
+import { EventEmitter2 } from "@repo/gameserver/src/core/event-emitter2";
+import { IStat, IStatLevelable, IStatStateable } from "@repo/gameserver/src/gameobjects/extensions/stats/istat";
+import type AttackableUnit from "@repo/gameserver/src/gameobjects/units/attackable-unit";
+import { pinCastEvents } from "../load/spell-cast";
 import type Spell from "./spell";
 
 export type CharacterEvents = {

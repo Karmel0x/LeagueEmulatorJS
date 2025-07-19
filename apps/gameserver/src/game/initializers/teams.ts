@@ -1,13 +1,13 @@
 
-import { PacketMessage } from '@repo/network/packets/packet';
+import type { PacketMessage } from '@repo/network/packets/packet';
 import * as packets from '@repo/packets/list';
 import Server from '../../app/server';
 import loadingStages from '../../constants/game-state';
 import { TeamId } from '../../gameobjects/extensions/traits/team';
-import { AiType } from '../../gameobjects/unit-ai/base-ai';
-import Player from '../../gameobjects/unit-ai/player';
-import AttackableUnit from '../../gameobjects/units/attackable-unit';
-import Unit from '../../gameobjects/units/unit';
+import type Player from '../../gameobjects/unit-ai/player';
+import { AiType } from '../../gameobjects/unit-ai/types';
+import type AttackableUnit from '../../gameobjects/units/attackable-unit';
+import type Unit from '../../gameobjects/units/unit';
 
 
 export default class Teams {

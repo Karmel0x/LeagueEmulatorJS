@@ -1,5 +1,5 @@
 
-import RelativeDataView from '../relative-data-view';
+import type RelativeDataView from '../relative-data-view';
 //import Packet, { PacketDebugger } from './packet';
 
 

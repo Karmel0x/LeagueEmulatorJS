@@ -1,7 +1,7 @@
 
 import Registry from '../registry';
-import RelativeDataView from '../relative-data-view';
-import BasePacket, { BasePacketModel } from './base-packet';
+import type RelativeDataView from '../relative-data-view';
+import BasePacket, { type BasePacketModel } from './base-packet';
 
 
 export type ExtendedPacketModel = BasePacketModel & {

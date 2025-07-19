@@ -1,6 +1,6 @@
-import BasePacket, { BasePacketModel } from '@repo/network/packets/base-packet';
+import BasePacket, { type BasePacketModel } from '@repo/network/packets/base-packet';
 import type RelativeDataView from '@repo/network/relative-data-view';
-import SBasicAttackData, { SBasicAttackDataModel } from '../../shared/SBasicAttackData';
+import SBasicAttackData, { type SBasicAttackDataModel } from '../../shared/SBasicAttackData';
 
 export type Basic_AttackModel = BasePacketModel & SBasicAttackDataModel;
 

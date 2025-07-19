@@ -1,6 +1,6 @@
 import { Vector2 } from '@repo/geometry';
 import { LaneId, TeamId } from '../extensions/traits/team';
-import { BarrackOptions } from '../spawners/barrack';
+import type { BarrackOptions } from '../spawners/barrack';
 
 export const barracks: BarrackOptions[] = [
     //0xFF000000 | Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(m.BarracksName));//{x: 1533.0, y: 1321.0}

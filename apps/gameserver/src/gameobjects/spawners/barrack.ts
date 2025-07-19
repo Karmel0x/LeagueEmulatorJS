@@ -2,7 +2,7 @@
 import type { PacketMessage } from '@repo/network/packets/packet';
 import { MinionType } from '@repo/packets/base/s2c/0x03-Barrack_SpawnUnit';
 import * as packets from '@repo/packets/list';
-import { NetId } from '@repo/packets/types/player';
+import type { NetId } from '@repo/packets/types/player';
 import Server from '../../app/server';
 import UnitAiList from '../../app/unit-ai-list';
 import { accurateDelay, runAccurateInterval } from '../../core/timer';
@@ -10,8 +10,8 @@ import { delay } from '../../core/utils';
 import { TeamId, type LaneId } from '../extensions/traits/team';
 import { barracks } from '../positions/index';
 import Minion, { type MinionOptions } from '../unit-ai/minion';
-import AttackableUnit, { AttackableUnitOptions } from '../units/attackable-unit';
-import Spawner, { SpawnerOptions } from './spawner';
+import AttackableUnit, { type AttackableUnitOptions } from '../units/attackable-unit';
+import Spawner, { type SpawnerOptions } from './spawner';
 
 
 export type BarrackOptions = SpawnerOptions & {

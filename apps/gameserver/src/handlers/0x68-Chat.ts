@@ -1,6 +1,6 @@
 
 import * as packets from '@repo/packets/list';
-import Player from '../gameobjects/unit-ai/player';
+import type Player from '../gameobjects/unit-ai/player';
 
 import _chat_admin from './_chat_admin';
 

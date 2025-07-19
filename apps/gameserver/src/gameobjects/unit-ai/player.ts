@@ -2,8 +2,8 @@
 import PlayerNetwork from '../extensions/traits/player-network';
 import type { TeamId } from '../extensions/traits/team';
 import type { AttackableUnitOptions } from '../units/attackable-unit';
-import { AiSubType } from './base-ai';
-import Hero, { HeroOptions } from './hero';
+import Hero, { type HeroOptions } from './hero';
+import { AiSubType } from './types';
 
 
 export type PlayerConfig = HeroOptions & {

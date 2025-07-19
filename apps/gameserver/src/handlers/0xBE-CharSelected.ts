@@ -1,7 +1,7 @@
 
-import * as packets from '@repo/packets/list';
+import type * as packets from '@repo/packets/list';
 import loadingStages from '../constants/game-state';
-import Player from '../gameobjects/unit-ai/player';
+import type Player from '../gameobjects/unit-ai/player';
 
 
 export default (player: Player, packet: packets.StartSpawnModel) => {

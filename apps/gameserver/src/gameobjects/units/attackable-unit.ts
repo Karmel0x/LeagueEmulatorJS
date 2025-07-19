@@ -1,12 +1,12 @@
 
 import { IssueOrderType } from '@repo/packets/base/c2s/0x72-IssueOrderReq';
+import type Spell from '@repo/scripting/base/spell';
 import Server from '../../app/server';
 import { SlotId } from '../../constants/slot-id';
 import { EventEmitter2 } from '../../core/event-emitter2';
-import type Spell from '../../game/basedata/spell';
 import { sendUnitStats } from '../../packet-helpers';
-import Attackable, { AttackableEvents } from '../extensions/combat/attackable';
-import MovingUnit, { MovingUnitEvents } from '../extensions/moving/unit';
+import Attackable, { type AttackableEvents } from '../extensions/combat/attackable';
+import MovingUnit, { type MovingUnitEvents } from '../extensions/moving/unit';
 import PUnit from '../extensions/packets/unit';
 import Progressable, { type ProgressableEvents } from '../extensions/progress/progressable';
 import StatsUnit from '../extensions/stats/unit';
@@ -14,7 +14,7 @@ import BuffManager from '../extensions/traits/buff-manager';
 import Inventory from '../extensions/traits/inventory';
 import type Missile from '../missiles/missile';
 import type BaseAi from '../unit-ai/base-ai';
-import Unit, { UnitEvents, UnitOptions } from './unit';
+import Unit, { type UnitEvents, type UnitOptions } from './unit';
 
 
 export type AttackableUnitOptions = UnitOptions & {

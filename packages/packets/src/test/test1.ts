@@ -1,10 +1,11 @@
 
 import Chat from '../primary/0x68-Chat';
 
+import type Packet from '@repo/network/packets/packet';
+import { PacketDebugger } from '@repo/network/packets/packet';
 import Registry from '@repo/network/registry';
-import { channels } from '../channels';
-import Packet, { PacketDebugger } from '@repo/network/packets/packet';
 import RelativeDataView from '@repo/network/relative-data-view';
+import { channels } from '../channels';
 
 Registry.primary.register(Chat, 104, channels.chat);
 

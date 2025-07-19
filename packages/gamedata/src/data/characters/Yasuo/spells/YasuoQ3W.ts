@@ -1,11 +1,11 @@
 
 import { SlotId } from '@repo/gameserver/src/constants/slot-id';
-import _Spell, { type CastData } from '@repo/gameserver/src/game/basedata/spell';
-import { SpellCast } from '@repo/gameserver/src/game/scripting/spell-cast';
 import * as Measure from '@repo/gameserver/src/gameobjects/extensions/measure';
 import type AttackableUnit from '@repo/gameserver/src/gameobjects/units/attackable-unit';
 import { Vector2 } from '@repo/geometry';
-import { SCastInfoModel } from '@repo/packets/shared/SCastInfo';
+import type { SCastInfoModel } from '@repo/packets/shared/SCastInfo';
+import _Spell, { type CastData } from '@repo/scripting/base/spell';
+import { SpellCast } from '@repo/scripting/load/spell-cast';
 import package1 from '../package';
 import YasuoQ3 from './YasuoQ3';
 

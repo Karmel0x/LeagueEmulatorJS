@@ -1,4 +1,4 @@
-import BasePacket, { BasePacketModel } from '@repo/network/packets/base-packet';
+import BasePacket, { type BasePacketModel } from '@repo/network/packets/base-packet';
 import type RelativeDataView from '@repo/network/relative-data-view';
 import type { TeamId } from '../../types/team';
 

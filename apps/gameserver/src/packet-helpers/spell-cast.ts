@@ -3,7 +3,7 @@ import HashString from '@repo/packets/functions/hash-string';
 import * as packets from '@repo/packets/list';
 import type { SCastInfoModel } from '@repo/packets/shared/SCastInfo';
 import type { Player } from '../gameobjects/unit-ai';
-import { AiType } from '../gameobjects/unit-ai/base-ai';
+import { AiType } from '../gameobjects/unit-ai/types';
 import type AttackableUnit from '../gameobjects/units/attackable-unit';
 
 

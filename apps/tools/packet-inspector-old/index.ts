@@ -1,9 +1,9 @@
 
 import registerPackets from '@repo/packets/register';
 import fs from 'fs';
-import ws from 'ws';
+import type ws from 'ws';
 import _replayreaders from './_replayreaders/index';
-import { ReplayRecord } from './_replayreaders/replay-reader';
+import type { ReplayRecord } from './_replayreaders/replay-reader';
 import { sendJson, sendJsonToAll } from './extended-web-socket';
 import { wss } from './init_client-server';
 import packetParser from './packet-parser';

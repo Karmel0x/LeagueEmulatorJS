@@ -1,7 +1,7 @@
 
-import BasePacket, { BasePacketModel } from '@repo/network/packets/base-packet';
+import BasePacket, { type BasePacketModel } from '@repo/network/packets/base-packet';
 import type RelativeDataView from '@repo/network/relative-data-view';
-import SConnectionInfo, { SConnectionInfoModel } from '../../shared/SConnectionInfo';
+import SConnectionInfo, { type SConnectionInfoModel } from '../../shared/SConnectionInfo';
 
 export type Ping_Load_InfoModel = BasePacketModel & SConnectionInfoModel;
 

@@ -1,14 +1,16 @@
 
 import type { PacketMessage } from '@repo/network/packets/packet';
 import * as packets from '@repo/packets/list';
+import type Character from '@repo/scripting/base/character';
 import Server from '../../app/server';
 import { EventEmitter2 } from '../../core/event-emitter2';
-import type Character from '../../game/basedata/character';
 import { TeamId } from '../extensions/traits/team';
 import type JungleCamp from '../spawners/jungle-camp';
-import AttackableUnit, { type AttackableUnitOptions } from '../units/attackable-unit';
-import BaseAi, { AiSubType, AiType, BaseAiEvents, BaseAiOptions } from './base-ai';
+import type AttackableUnit from '../units/attackable-unit';
+import type { AttackableUnitOptions } from '../units/attackable-unit';
+import BaseAi, { type BaseAiEvents, type BaseAiOptions } from './base-ai';
 import Player from './player';
+import { AiSubType, AiType } from './types';
 
 
 export type MonsterOptions = BaseAiOptions & {

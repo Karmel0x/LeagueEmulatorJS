@@ -1,4 +1,4 @@
-import SwapItemReq, { SwapItemReqModel } from '../c2s/0x20-SwapItemReq';
+import SwapItemReq, { type SwapItemReqModel } from '../c2s/0x20-SwapItemReq';
 
 export type SwapItemAnsModel = SwapItemReqModel;
 

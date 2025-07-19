@@ -1,5 +1,5 @@
 import type { Player } from "../gameobjects/unit-ai";
-import { AiSubType, AiType } from "../gameobjects/unit-ai/base-ai";
+import { AiSubType, AiType } from "../gameobjects/unit-ai/types";
 import type AttackableUnit from "../gameobjects/units/attackable-unit";
 
 type AiLiteralTypes = Lowercase<Extract<keyof typeof AiType, string>>;

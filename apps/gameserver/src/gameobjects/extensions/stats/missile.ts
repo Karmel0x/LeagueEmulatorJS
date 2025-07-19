@@ -1,6 +1,6 @@
 
 import type Missile from '../../missiles/missile';
-import StatsGameObject, { StatsGameObjectOptions } from './game-object';
+import StatsGameObject, { type StatsGameObjectOptions } from './game-object';
 import { IStat } from './istat';
 
 

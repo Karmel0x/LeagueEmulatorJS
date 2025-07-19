@@ -1,9 +1,9 @@
 
 import EventEmitter from 'events';
 import NetworkApiEnet from './network-api/enet';
-import { NetworkApi } from './network-api/network-api';
-import { PacketMessage } from './packets/packet';
-import { PrimaryPacketModel } from './packets/primary-packet';
+import type { NetworkApi } from './network-api/network-api';
+import type { PacketMessage } from './packets/packet';
+import type { PrimaryPacketModel } from './packets/primary-packet';
 import Parser from './parser';
 
 

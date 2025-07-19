@@ -1,6 +1,6 @@
-import BasePacket, { BasePacketModel } from '@repo/network/packets/base-packet';
+import BasePacket, { type BasePacketModel } from '@repo/network/packets/base-packet';
 import type RelativeDataView from '@repo/network/relative-data-view';
-import SCastInfo, { SCastInfoModel } from '../../shared/SCastInfo';
+import SCastInfo, { type SCastInfoModel } from '../../shared/SCastInfo';
 
 export type CastSpellAnsModel = BasePacketModel & {
 	casterPositionSyncId: number,

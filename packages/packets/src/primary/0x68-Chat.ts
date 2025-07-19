@@ -1,4 +1,4 @@
-import PrimaryPacket, { PrimaryPacketModel } from '@repo/network/packets/primary-packet';
+import PrimaryPacket, { type PrimaryPacketModel } from '@repo/network/packets/primary-packet';
 import type RelativeDataView from '@repo/network/relative-data-view';
 import type { ClientId, NetId } from '../types/player';
 

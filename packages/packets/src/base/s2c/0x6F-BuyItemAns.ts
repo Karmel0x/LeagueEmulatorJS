@@ -1,6 +1,6 @@
-import BasePacket, { BasePacketModel } from '@repo/network/packets/base-packet';
+import BasePacket, { type BasePacketModel } from '@repo/network/packets/base-packet';
 import type RelativeDataView from '@repo/network/relative-data-view';
-import SItemPacket, { SItemPacketModel } from '../../shared/SItemPacket';
+import SItemPacket, { type SItemPacketModel } from '../../shared/SItemPacket';
 
 export type BuyItemAnsModel = BasePacketModel & {
 	item: SItemPacketModel,

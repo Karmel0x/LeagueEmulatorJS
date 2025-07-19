@@ -1,8 +1,8 @@
 
-import _Spell, { type CastData } from '@repo/gameserver/src/game/basedata/spell';
 import type AttackableUnit from '@repo/gameserver/src/gameobjects/units/attackable-unit';
 import { Vector2 } from '@repo/geometry';
 import { DamageSource, DamageType } from '@repo/packets/shared/SDeathData';
+import _Spell, { type CastData } from '@repo/scripting/base/spell';
 
 
 export default class YasuoDashWrapper extends _Spell {

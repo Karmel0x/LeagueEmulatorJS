@@ -1,8 +1,8 @@
-import BasePacket, { BasePacketModel } from '@repo/network/packets/base-packet';
+import BasePacket, { type BasePacketModel } from '@repo/network/packets/base-packet';
 import type RelativeDataView from '@repo/network/relative-data-view';
-import SVector2, { SVector2Model } from '../../shared/SVector2';
+import SVector2, { type SVector2Model } from '../../shared/SVector2';
 import type { NetId } from '../../types/player';
-import { PingCategory } from '../s2c/0x40-MapPing';
+import type { PingCategory } from '../s2c/0x40-MapPing';
 
 export type MapPingC2SModel = BasePacketModel & {
 	position: SVector2Model,

@@ -1,6 +1,6 @@
 
-import PrimaryPacket, { PrimaryPacketModel } from './primary-packet';
 import type RelativeDataView from '../relative-data-view';
+import PrimaryPacket, { type PrimaryPacketModel } from './primary-packet';
 
 /**
  * uint32

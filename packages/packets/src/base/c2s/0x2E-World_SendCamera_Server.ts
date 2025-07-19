@@ -1,6 +1,6 @@
-import BasePacket, { BasePacketModel } from '@repo/network/packets/base-packet';
+import BasePacket, { type BasePacketModel } from '@repo/network/packets/base-packet';
 import type RelativeDataView from '@repo/network/relative-data-view';
-import SVector3, { SVector3Model } from '../../shared/SVector3';
+import SVector3, { type SVector3Model } from '../../shared/SVector3';
 import type { ClientId } from '../../types/player';
 
 export type World_SendCamera_ServerModel = BasePacketModel & {

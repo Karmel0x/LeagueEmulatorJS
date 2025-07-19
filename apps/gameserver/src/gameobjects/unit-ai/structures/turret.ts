@@ -5,8 +5,8 @@ import { OnEvent, OnEventArguments } from '@repo/packets/types/on-event';
 import loadingStages from '../../../constants/game-state';
 import { EventEmitter2 } from '../../../core/event-emitter2';
 import type AttackableUnit from '../../units/attackable-unit';
-import { AiSubType } from '../base-ai';
-import Structure, { StructureEvents, StructureOptions } from './structure';
+import { AiSubType } from '../types';
+import Structure, { type StructureEvents, type StructureOptions } from './structure';
 
 
 export type TurretOptions = StructureOptions & {

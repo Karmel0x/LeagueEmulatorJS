@@ -4,8 +4,8 @@ import * as packets from '@repo/packets/list';
 import GameObjectList from '../app/game-object-list';
 import { TeamId } from '../gameobjects/extensions/traits/team';
 import Minion from '../gameobjects/unit-ai/minion';
-import Player from '../gameobjects/unit-ai/player';
-import AttackableUnit from '../gameobjects/units/attackable-unit';
+import type Player from '../gameobjects/unit-ai/player';
+import type AttackableUnit from '../gameobjects/units/attackable-unit';
 
 
 export default (player: Player, packet: packets.MapPingC2SModel) => {

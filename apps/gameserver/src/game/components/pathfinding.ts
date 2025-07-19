@@ -1,5 +1,5 @@
 
-import { Vector2, Vector2Like } from '@repo/geometry';
+import { Vector2, type Vector2Like } from '@repo/geometry';
 import Navmeshcppjs from '../../../../../packages/navmeshcppjs/index2';
 import Server from '../../app/server';
 import Pathfinding_ScalarAIMesh from './pathfinding_scalar-ai-mesh';

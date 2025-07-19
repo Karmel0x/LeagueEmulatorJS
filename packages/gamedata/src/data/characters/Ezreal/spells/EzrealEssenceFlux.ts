@@ -1,13 +1,13 @@
 
 import { SlotId } from '@repo/gameserver/src/constants/slot-id';
-import _Spell, { type CastData } from '@repo/gameserver/src/game/basedata/spell';
-import { SpellCast } from '@repo/gameserver/src/game/scripting/spell-cast';
 import * as Measure from '@repo/gameserver/src/gameobjects/extensions/measure';
 import Missile from '@repo/gameserver/src/gameobjects/missiles/missile';
-import AttackableUnit from '@repo/gameserver/src/gameobjects/units/attackable-unit';
+import type AttackableUnit from '@repo/gameserver/src/gameobjects/units/attackable-unit';
 import HashString from '@repo/packets/functions/hash-string';
-import { SCastInfoModel } from '@repo/packets/shared/SCastInfo';
+import type { SCastInfoModel } from '@repo/packets/shared/SCastInfo';
 import { DamageSource, DamageType } from '@repo/packets/shared/SDeathData';
+import _Spell, { type CastData } from '@repo/scripting/base/spell';
+import { SpellCast } from '@repo/scripting/load/spell-cast';
 import package1 from '../package';
 import EzrealEssenceFluxMissile from './EzrealEssenceFluxMissile';
 

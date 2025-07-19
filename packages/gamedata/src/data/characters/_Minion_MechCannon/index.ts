@@ -1,8 +1,8 @@
 
 import { SlotId } from '@repo/gameserver/src/constants/slot-id';
-import _Basicattack from '@repo/gameserver/src/game/basedata/basicattack';
-import Character from '@repo/gameserver/src/game/basedata/character';
 import { MinionType } from '@repo/packets/base/s2c/0x03-Barrack_SpawnUnit';
+import _Basicattack from '@repo/scripting/base/basicattack';
+import Character from '@repo/scripting/base/character';
 import package1 from './package';
 //import BasicAttack from './spells/BasicAttack';
 

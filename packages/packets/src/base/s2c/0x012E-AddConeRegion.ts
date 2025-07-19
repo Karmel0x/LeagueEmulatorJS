@@ -1,6 +1,6 @@
+import ExtendedPacket, { type ExtendedPacketModel } from '@repo/network/packets/extended-packet';
 import type RelativeDataView from '@repo/network/relative-data-view';
-import ExtendedPacket, { ExtendedPacketModel } from '@repo/network/packets/extended-packet';
-import SVector2, { SVector2Model } from '../../shared/SVector2';
+import SVector2, { type SVector2Model } from '../../shared/SVector2';
 import type { ClientId, NetId } from '../../types/player';
 import type { TeamId } from '../../types/team';
 

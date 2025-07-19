@@ -1,8 +1,8 @@
 
 import { BuffType } from '@repo/packets/base/s2c/0x68-BuffAddGroup';
+import type Spell from '@repo/scripting/base/spell';
 import Server from '../../../app/server';
 import Timer, { accurateDelay } from '../../../core/timer';
-import type Spell from '../../../game/basedata/spell';
 import { sendBuffAdd, sendBuffRemove } from '../../../packet-helpers/buff';
 import type AttackableUnit from '../../units/attackable-unit';
 

@@ -4,7 +4,7 @@ import { DamageSource, DamageType } from '@repo/packets/shared/SDeathData';
 import loadingStages from '../../../constants/game-state';
 import { humanizeMS } from '../../../core/utils';
 import { sendUnitStats } from '../../../packet-helpers/on-replication';
-import Fountain from '../../spawners/fountain';
+import type Fountain from '../../spawners/fountain';
 import type Hero from '../../unit-ai/hero';
 import type AttackableUnit from '../../units/attackable-unit';
 import { TeamId } from '../traits/team';

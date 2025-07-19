@@ -1,4 +1,4 @@
-import Ping_Load_Info, { Ping_Load_InfoModel } from '../c2s/0x16-Ping_Load_Info';
+import Ping_Load_Info, { type Ping_Load_InfoModel } from '../c2s/0x16-Ping_Load_Info';
 
 export type Ping_Load_InfoS2CModel = Ping_Load_InfoModel;
 

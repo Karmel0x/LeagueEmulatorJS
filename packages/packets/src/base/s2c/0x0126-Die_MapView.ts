@@ -1,6 +1,6 @@
-import ExtendedPacket, { ExtendedPacketModel } from '@repo/network/packets/extended-packet';
+import ExtendedPacket, { type ExtendedPacketModel } from '@repo/network/packets/extended-packet';
 import type RelativeDataView from '@repo/network/relative-data-view';
-import SDeathData, { SDeathDataModel } from '../../shared/SDeathData';
+import SDeathData, { type SDeathDataModel } from '../../shared/SDeathData';
 
 export type Die_MapViewModel = ExtendedPacketModel & {
 	deathData: SDeathDataModel,

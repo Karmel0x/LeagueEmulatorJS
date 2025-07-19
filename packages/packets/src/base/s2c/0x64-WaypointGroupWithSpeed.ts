@@ -1,6 +1,6 @@
-import BasePacket, { BasePacketModel } from '@repo/network/packets/base-packet';
+import BasePacket, { type BasePacketModel } from '@repo/network/packets/base-packet';
 import type RelativeDataView from '@repo/network/relative-data-view';
-import CMovementDataWithSpeed, { CMovementDataWithSpeedModel } from '../../shared/CMovementDataWithSpeed';
+import CMovementDataWithSpeed, { type CMovementDataWithSpeedModel } from '../../shared/CMovementDataWithSpeed';
 
 export type WaypointGroupWithSpeedModel = BasePacketModel & {
 	syncId: number,

@@ -1,8 +1,8 @@
 
 import { Vector2, type Vector2Like } from '@repo/geometry';
-import { MovementData, MovementDataType } from '@repo/packets/base/s2c/0xBA-OnEnterVisibilityClient';
-import { CMovementDataNormalModel } from '@repo/packets/shared/CMovementDataNormal';
-import { SSpeedParamsModel } from '@repo/packets/shared/SSpeedParams';
+import { type MovementData, MovementDataType } from '@repo/packets/base/s2c/0xBA-OnEnterVisibilityClient';
+import type { CMovementDataNormalModel } from '@repo/packets/shared/CMovementDataNormal';
+import type { SSpeedParamsModel } from '@repo/packets/shared/SSpeedParams';
 import GameObjectList from '../../../app/game-object-list';
 import type GameObject from '../../game-object';
 import type MovableGameObject from '../../movable-game-object';

@@ -1,5 +1,5 @@
 
-import { pinCastEvents } from '@repo/gameserver/src/game/scripting/spell-cast';
+import { pinCastEvents } from '@repo/scripting/load/spell-cast';
 import package1 from './package';
 
 import SummonerBarrier from './spells/SummonerBarrier';

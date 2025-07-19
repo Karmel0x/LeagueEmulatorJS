@@ -1,7 +1,7 @@
-import BasePacket, { BasePacketModel } from '@repo/network/packets/base-packet';
+import BasePacket, { type BasePacketModel } from '@repo/network/packets/base-packet';
 import type RelativeDataView from '@repo/network/relative-data-view';
-import SVector2, { SVector2Model } from '../../shared/SVector2';
-import CMovementDataNormal, { CMovementDataNormalModel } from '../../shared/CMovementDataNormal';
+import CMovementDataNormal, { type CMovementDataNormalModel } from '../../shared/CMovementDataNormal';
+import SVector2, { type SVector2Model } from '../../shared/SVector2';
 import type { NetId } from '../../types/player';
 
 /** orders_e */

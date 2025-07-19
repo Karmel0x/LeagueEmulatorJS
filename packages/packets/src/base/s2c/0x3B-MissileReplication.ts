@@ -1,7 +1,7 @@
-import BasePacket, { BasePacketModel } from '@repo/network/packets/base-packet';
+import BasePacket, { type BasePacketModel } from '@repo/network/packets/base-packet';
 import type RelativeDataView from '@repo/network/relative-data-view';
-import SVector3, { SVector3Model } from '../../shared/SVector3';
-import SCastInfo, { SCastInfoModel } from '../../shared/SCastInfo';
+import SCastInfo, { type SCastInfoModel } from '../../shared/SCastInfo';
+import SVector3, { type SVector3Model } from '../../shared/SVector3';
 
 export type MissileReplicationModel = BasePacketModel & {
 	position: SVector3Model,

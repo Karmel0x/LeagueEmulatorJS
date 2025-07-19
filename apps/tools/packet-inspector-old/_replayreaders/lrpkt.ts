@@ -1,7 +1,7 @@
 
 import RelativeDataView from '@repo/network/relative-data-view';
 import fs from 'fs';
-import { ReplayFileReader, ReplayRecord } from './replay-reader';
+import type { ReplayFileReader, ReplayRecord } from './replay-reader';
 
 
 const reader_lrpkt: ReplayFileReader = function (filePath) {

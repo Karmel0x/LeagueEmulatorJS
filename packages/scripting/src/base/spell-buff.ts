@@ -1,5 +1,5 @@
 
-import type AttackableUnit from "../../gameobjects/units/attackable-unit";
+import type AttackableUnit from "@repo/gameserver/src/gameobjects/units/attackable-unit";
 import Spell from "./spell";
 
 

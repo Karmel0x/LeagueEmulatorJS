@@ -1,4 +1,4 @@
-import ExtendedPacket, { ExtendedPacketModel } from '@repo/network/packets/extended-packet';
+import ExtendedPacket, { type ExtendedPacketModel } from '@repo/network/packets/extended-packet';
 
 export type ResetClientModel = ExtendedPacketModel;
 

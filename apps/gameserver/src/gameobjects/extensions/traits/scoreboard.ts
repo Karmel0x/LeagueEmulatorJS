@@ -1,4 +1,4 @@
-import Hero from '../../unit-ai/hero';
+import type Hero from '../../unit-ai/hero';
 
 export default class Scoreboard {
     readonly owner;

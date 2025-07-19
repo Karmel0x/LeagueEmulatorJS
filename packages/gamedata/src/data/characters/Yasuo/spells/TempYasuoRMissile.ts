@@ -1,7 +1,7 @@
 
-import _Spell, { type CastData } from '@repo/gameserver/src/game/basedata/spell';
 import type AttackableUnit from '@repo/gameserver/src/gameobjects/units/attackable-unit';
-import { SCastInfoModel } from '@repo/packets/shared/SCastInfo';
+import type { SCastInfoModel } from '@repo/packets/shared/SCastInfo';
+import _Spell, { type CastData } from '@repo/scripting/base/spell';
 
 
 export default class TempYasuoRMissile extends _Spell {

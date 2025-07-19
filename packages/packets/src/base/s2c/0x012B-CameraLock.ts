@@ -1,6 +1,6 @@
 
+import ExtendedPacket, { type ExtendedPacketModel } from '@repo/network/packets/extended-packet';
 import type RelativeDataView from '@repo/network/relative-data-view';
-import ExtendedPacket, { ExtendedPacketModel } from '@repo/network/packets/extended-packet';
 
 export type CameraLockModel = ExtendedPacketModel & {
 	unknown1: boolean,

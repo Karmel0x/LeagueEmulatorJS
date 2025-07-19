@@ -1,7 +1,7 @@
 
-import BasePacket, { BasePacketModel } from '@repo/network/packets/base-packet';
+import BasePacket, { type BasePacketModel } from '@repo/network/packets/base-packet';
 import type RelativeDataView from '@repo/network/relative-data-view';
-import SEvent, { SEventModel } from '../../shared/SEvent';
+import SEvent, { type SEventModel } from '../../shared/SEvent';
 
 export type OnEventModel = BasePacketModel & {
 	eventData: SEventModel,

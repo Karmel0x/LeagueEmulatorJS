@@ -1,6 +1,6 @@
 
-import RelativeDataView from '../relative-data-view';
-import Packet, { PacketModel } from './packet';
+import type RelativeDataView from '../relative-data-view';
+import Packet, { type PacketModel } from './packet';
 
 
 export type PrimaryPacketModel = PacketModel & {

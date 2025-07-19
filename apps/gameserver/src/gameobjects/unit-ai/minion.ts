@@ -3,18 +3,19 @@ import type { PacketMessage } from '@repo/network/packets/packet';
 import { IssueOrderType } from '@repo/packets/base/c2s/0x72-IssueOrderReq';
 import type { MinionType } from '@repo/packets/base/s2c/0x03-Barrack_SpawnUnit';
 import * as packets from '@repo/packets/list';
+import type Character from '@repo/scripting/base/character';
 import GameObjectList from '../../app/game-object-list';
 import Server from '../../app/server';
 import { EventEmitter2 } from '../../core/event-emitter2';
-import Character from '../../game/basedata/character';
 import * as Measure from '../extensions/measure';
-import { LaneId, TeamId } from '../extensions/traits/team';
+import { type LaneId, TeamId } from '../extensions/traits/team';
 import { minionLanePaths } from '../positions/index';
 import type Barrack from '../spawners/barrack';
 import type AttackableUnit from '../units/attackable-unit';
 import type { AttackableUnitOptions } from '../units/attackable-unit';
-import BaseAi, { AiSubType, AiType, BaseAiEvents, BaseAiOptions } from './base-ai';
+import BaseAi, { type BaseAiEvents, type BaseAiOptions } from './base-ai';
 import Player from './player';
+import { AiSubType, AiType } from './types';
 
 export type MinionOptions = BaseAiOptions & {
 	spawner: Barrack;

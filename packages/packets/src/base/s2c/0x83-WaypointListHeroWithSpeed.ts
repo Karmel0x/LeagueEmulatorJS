@@ -1,7 +1,7 @@
-import BasePacket, { BasePacketModel } from '@repo/network/packets/base-packet';
+import BasePacket, { type BasePacketModel } from '@repo/network/packets/base-packet';
 import type RelativeDataView from '@repo/network/relative-data-view';
-import SSpeedParams, { SSpeedParamsModel } from '../../shared/SSpeedParams';
-import SVector2, { SVector2Model } from '../../shared/SVector2';
+import SSpeedParams, { type SSpeedParamsModel } from '../../shared/SSpeedParams';
+import SVector2, { type SVector2Model } from '../../shared/SVector2';
 
 export type WaypointListHeroWithSpeedModel = BasePacketModel & {
 	syncId: number,

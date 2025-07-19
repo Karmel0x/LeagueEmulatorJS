@@ -1,0 +1,8 @@
+{
+  "name": "@repo/scripting",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
+  }
+}

@@ -1,6 +1,6 @@
-import BasePacket, { BasePacketModel } from '@repo/network/packets/base-packet';
+import BasePacket, { type BasePacketModel } from '@repo/network/packets/base-packet';
 import type RelativeDataView from '@repo/network/relative-data-view';
-import STipConfig, { STipConfigModel } from '../../shared/STipConfig';
+import STipConfig, { type STipConfigModel } from '../../shared/STipConfig';
 
 export type ClientReadyModel = BasePacketModel & {
 	dummy1: string,

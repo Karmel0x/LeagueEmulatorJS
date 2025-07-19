@@ -1,7 +1,7 @@
 import PartialPacket from '@repo/network/packets/partial-packet';
 import type RelativeDataView from '@repo/network/relative-data-view';
 import type { NetId } from '../types/player';
-import SVector3, { SVector3Model } from './SVector3';
+import SVector3, { type SVector3Model } from './SVector3';
 
 export type SBasicAttackDataModel = {
 	targetNetId: NetId,

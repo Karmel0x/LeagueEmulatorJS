@@ -1,8 +1,8 @@
 
-import BasePacket, { BasePacketModel } from '@repo/network/packets/base-packet';
+import BasePacket, { type BasePacketModel } from '@repo/network/packets/base-packet';
 import type RelativeDataView from '@repo/network/relative-data-view';
-import STipConfig, { STipConfigModel } from '../../shared/STipConfig';
-import { PlayerId } from '../../types/player';
+import STipConfig, { type STipConfigModel } from '../../shared/STipConfig';
+import type { PlayerId } from '../../types/player';
 import type { TeamId } from '../../types/team';
 
 export type SPlayerInfoModel = {

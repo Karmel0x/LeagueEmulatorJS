@@ -1,5 +1,4 @@
-import type RelativeDataView from '@repo/network/relative-data-view';
-import PlayEmote, { PlayEmoteModel } from '../s2c/0x42-PlayEmote';
+import PlayEmote, { type PlayEmoteModel } from '../s2c/0x42-PlayEmote';
 
 export enum Emote {
 	dance = 0x0,

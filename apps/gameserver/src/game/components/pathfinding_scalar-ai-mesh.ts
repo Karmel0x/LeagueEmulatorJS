@@ -1,4 +1,4 @@
-import { Vector2Like } from '@repo/geometry';
+import type { Vector2Like } from '@repo/geometry';
 
 export default class Pathfinding_ScalarAIMesh {
 

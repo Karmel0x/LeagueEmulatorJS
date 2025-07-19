@@ -1,5 +1,5 @@
 
-import _Basicattack from '@repo/gameserver/src/game/basedata/basicattack';
+import _Basicattack from '@repo/scripting/base/basicattack';
 
 
 export default class YasuoBasicAttack extends _Basicattack {

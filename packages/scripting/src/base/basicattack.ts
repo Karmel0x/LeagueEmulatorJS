@@ -1,8 +1,8 @@
 
+import Missile from "@repo/gameserver/src/gameobjects/missiles/missile";
+import type AttackableUnit from "@repo/gameserver/src/gameobjects/units/attackable-unit";
 import { Vector2 } from "@repo/geometry";
 import { DamageSource, DamageType } from "@repo/packets/shared/SDeathData";
-import Missile from "../../gameobjects/missiles/missile";
-import type AttackableUnit from "../../gameobjects/units/attackable-unit";
 import Spell, { type CastData } from "./spell";
 
 export default class BasicAttack extends Spell {

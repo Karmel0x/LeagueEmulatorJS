@@ -1,4 +1,4 @@
-import { Vector2 } from '@repo/geometry';
+import type { Vector2 } from '@repo/geometry';
 import * as packets from '@repo/packets/list';
 import GameObjectList from '../app/game-object-list';
 import type AttackableUnit from '../gameobjects/units/attackable-unit';

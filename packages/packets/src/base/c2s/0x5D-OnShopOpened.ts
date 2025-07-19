@@ -1,4 +1,4 @@
-import BasePacket, { BasePacketModel } from '@repo/network/packets/base-packet';
+import BasePacket, { type BasePacketModel } from '@repo/network/packets/base-packet';
 
 export type OnShopOpenedModel = BasePacketModel;
 

@@ -2,7 +2,7 @@
 import { PingCategory } from '@repo/packets/base/s2c/0x40-MapPing';
 import * as packets from '@repo/packets/list';
 import GameObjectList from '../app/game-object-list';
-import Player from '../gameobjects/unit-ai/player';
+import type Player from '../gameobjects/unit-ai/player';
 import AttackableUnit from '../gameobjects/units/attackable-unit';
 
 export default (player: Player, packet: packets.SendSelectedObjIdModel) => {

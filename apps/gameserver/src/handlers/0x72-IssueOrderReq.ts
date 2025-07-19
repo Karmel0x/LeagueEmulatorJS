@@ -1,8 +1,8 @@
 
 import { Vector2 } from '@repo/geometry';
 import { IssueOrderType } from '@repo/packets/base/c2s/0x72-IssueOrderReq';
-import * as packets from '@repo/packets/list';
-import Player from '../gameobjects/unit-ai/player';
+import type * as packets from '@repo/packets/list';
+import type Player from '../gameobjects/unit-ai/player';
 
 //import WaypointsDrawer from '@repo/tools/pathfinding/waypoints-drawer.js';
 //let waypointsDrawer = new WaypointsDrawer();

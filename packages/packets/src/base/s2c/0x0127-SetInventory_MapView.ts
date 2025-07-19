@@ -1,4 +1,4 @@
-import SetInventory, { SetInventoryModel } from './0x010C-SetInventory';
+import SetInventory, { type SetInventoryModel } from './0x010C-SetInventory';
 
 export type SetInventory_MapViewModel = SetInventoryModel;
 

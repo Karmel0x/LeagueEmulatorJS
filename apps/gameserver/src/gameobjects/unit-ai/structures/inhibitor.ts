@@ -6,8 +6,8 @@ import { EventEmitter2 } from '../../../core/event-emitter2';
 import { LaneId } from '../../extensions/traits/team';
 import type AttackableUnit from '../../units/attackable-unit';
 import type { AttackableUnitOptions } from '../../units/attackable-unit';
-import { AiSubType } from '../base-ai';
-import Structure, { StructureEvents, StructureOptions } from './structure';
+import { AiSubType } from '../types';
+import Structure, { type StructureEvents, type StructureOptions } from './structure';
 
 export enum DampenerState {
 	regeneration = 0x0,

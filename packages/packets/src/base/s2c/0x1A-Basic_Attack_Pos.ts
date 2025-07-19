@@ -1,7 +1,7 @@
-import BasePacket, { BasePacketModel } from '@repo/network/packets/base-packet';
+import BasePacket, { type BasePacketModel } from '@repo/network/packets/base-packet';
 import type RelativeDataView from '@repo/network/relative-data-view';
-import SBasicAttackData, { SBasicAttackDataModel } from '../../shared/SBasicAttackData';
-import SVector2, { SVector2Model } from '../../shared/SVector2';
+import SBasicAttackData, { type SBasicAttackDataModel } from '../../shared/SBasicAttackData';
+import SVector2, { type SVector2Model } from '../../shared/SVector2';
 
 export type Basic_Attack_PosModel = BasePacketModel & SBasicAttackDataModel & {
 	position: SVector2Model,

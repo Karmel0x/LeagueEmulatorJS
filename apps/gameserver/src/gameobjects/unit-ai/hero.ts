@@ -1,14 +1,16 @@
 
 import Summoners from '@repo/gamedata/data/summoners/index';
-import { SPlayerInfoModel } from '@repo/packets/base/s2c/0x54-SynchVersion';
+import type { SPlayerInfoModel } from '@repo/packets/base/s2c/0x54-SynchVersion';
 import * as packets from '@repo/packets/list';
 import { OnEvent, OnEventArguments } from '@repo/packets/types/on-event';
+import type Spell from '@repo/scripting/base/spell';
 import { EventEmitter2 } from '../../core/event-emitter2';
-import type Spell from '../../game/basedata/spell';
 import PHero from '../extensions/packets/hero';
 import Scoreboard from '../extensions/traits/scoreboard';
-import AttackableUnit, { type AttackableUnitOptions } from '../units/attackable-unit';
-import BaseAi, { AiSubType, AiType, BaseAiEvents, BaseAiOptions } from './base-ai';
+import type AttackableUnit from '../units/attackable-unit';
+import type { AttackableUnitOptions } from '../units/attackable-unit';
+import BaseAi, { type BaseAiEvents, type BaseAiOptions } from './base-ai';
+import { AiSubType, AiType } from './types';
 
 export type SummonerConfig = {
 	id: number;

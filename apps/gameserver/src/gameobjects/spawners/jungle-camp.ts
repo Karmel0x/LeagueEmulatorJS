@@ -7,8 +7,8 @@ import { accurateDelay } from '../../core/timer';
 import { TeamId } from '../extensions/traits/team';
 import { jungleCamps } from '../positions';
 import Monster from '../unit-ai/monster';
-import { AttackableUnitOptions } from '../units/attackable-unit';
-import Spawner, { SpawnerOptions, type SpawnerEvents } from './spawner';
+import type { AttackableUnitOptions } from '../units/attackable-unit';
+import Spawner, { type SpawnerEvents, type SpawnerOptions } from './spawner';
 
 //enum CampLevel {
 //	none = 0x0,

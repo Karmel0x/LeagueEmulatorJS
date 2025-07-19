@@ -1,7 +1,7 @@
 
 import { getItem } from "@repo/gamedata/data/items/ItemList";
-import { EventEmitter2 } from "../../core/event-emitter2";
-import type AttackableUnit from "../../gameobjects/units/attackable-unit";
+import { EventEmitter2 } from "@repo/gameserver/src/core/event-emitter2";
+import type AttackableUnit from "@repo/gameserver/src/gameobjects/units/attackable-unit";
 
 export type ItemEvents = {
     'acquire': (owner: AttackableUnit) => void;

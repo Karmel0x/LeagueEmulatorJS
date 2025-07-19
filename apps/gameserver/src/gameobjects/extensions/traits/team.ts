@@ -1,6 +1,6 @@
 import Server from '../../../app/server';
 import type Teams from '../../../game/initializers/teams';
-import GameObject from '../../game-object';
+import type GameObject from '../../game-object';
 
 
 export enum TeamId {

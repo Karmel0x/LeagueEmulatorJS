@@ -6,13 +6,13 @@ import * as packetHelpers from '../../src/packet-helpers';
 import GameObjectList from '../app/game-object-list';
 import Server from '../app/server';
 import { SlotId } from '../constants/slot-id';
-import Logging, { LoggingOutput, LoggingType } from '../core/logging';
+import Logging, { type LoggingOutput, type LoggingType } from '../core/logging';
 import Timer from '../core/timer';
-import { IStat } from '../gameobjects/extensions/stats/istat';
+import type { IStat } from '../gameobjects/extensions/stats/istat';
 import { TeamId } from '../gameobjects/extensions/traits/team';
 import Minion from '../gameobjects/unit-ai/minion';
-import Player from '../gameobjects/unit-ai/player';
-import AttackableUnit from '../gameobjects/units/attackable-unit';
+import type Player from '../gameobjects/unit-ai/player';
+import type AttackableUnit from '../gameobjects/units/attackable-unit';
 import { filterUnitsForCommand } from './_chat_admin_helper';
 
 

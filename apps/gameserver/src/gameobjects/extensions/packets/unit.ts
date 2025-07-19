@@ -1,12 +1,12 @@
 
-import { Vector2 } from '@repo/geometry';
-import { PacketMessage } from '@repo/network/packets/packet';
+import type { Vector2 } from '@repo/geometry';
+import type { PacketMessage } from '@repo/network/packets/packet';
 import type { FXCreateDataModel } from '@repo/packets/base/s2c/0x87-FX_Create_Group';
 import HashString from '@repo/packets/functions/hash-string';
 import TranslateCenteredCoordinates from '@repo/packets/functions/translate-centered-coordinates';
 import * as packets from '@repo/packets/list';
 import { DamageSource, DamageType } from '@repo/packets/shared/SDeathData';
-import { NetId } from '@repo/packets/types/player';
+import type { NetId } from '@repo/packets/types/player';
 import GameObjectList from '../../../app/game-object-list';
 import Server from '../../../app/server';
 import loadingStages from '../../../constants/game-state';

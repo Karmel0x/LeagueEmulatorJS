@@ -1,9 +1,9 @@
-import BasePacket, { BasePacketModel } from '@repo/network/packets/base-packet';
+import BasePacket, { type BasePacketModel } from '@repo/network/packets/base-packet';
 import type RelativeDataView from '@repo/network/relative-data-view';
-import CMovementDataNormal, { CMovementDataNormalModel } from '../../shared/CMovementDataNormal';
-import CMovementDataWithSpeed, { CMovementDataWithSpeedModel } from '../../shared/CMovementDataWithSpeed';
-import SVector2, { SVector2Model } from '../../shared/SVector2';
-import SVector3, { SVector3Model } from '../../shared/SVector3';
+import CMovementDataNormal, { type CMovementDataNormalModel } from '../../shared/CMovementDataNormal';
+import CMovementDataWithSpeed, { type CMovementDataWithSpeedModel } from '../../shared/CMovementDataWithSpeed';
+import SVector2, { type SVector2Model } from '../../shared/SVector2';
+import SVector3, { type SVector3Model } from '../../shared/SVector3';
 import type { NetId } from '../../types/player';
 
 export type PacketDataModel = {

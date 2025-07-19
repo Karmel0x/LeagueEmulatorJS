@@ -1,5 +1,5 @@
 
-import _Map from '@repo/gameserver/src/game/basedata/map';
+import _Map from '@repo/scripting/base/map';
 
 export default class SummonersRift extends _Map {
 

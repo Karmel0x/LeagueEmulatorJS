@@ -1,5 +1,6 @@
 
-import Packet, { PacketDebugger, PacketMessage } from './packets/packet';
+import type Packet from './packets/packet';
+import { PacketDebugger, type PacketMessage } from './packets/packet';
 import Registry from './registry';
 import RelativeDataView from './relative-data-view';
 

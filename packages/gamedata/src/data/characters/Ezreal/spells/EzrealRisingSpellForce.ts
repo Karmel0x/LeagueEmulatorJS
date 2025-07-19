@@ -1,5 +1,5 @@
 
-import _Spell from '@repo/gameserver/src/game/basedata/spell';
+import _Spell from '@repo/scripting/base/spell';
 import package1 from '../package';
 
 

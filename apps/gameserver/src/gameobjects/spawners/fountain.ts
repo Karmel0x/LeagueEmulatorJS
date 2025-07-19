@@ -6,7 +6,7 @@ import { players } from '../positions/index';
 import type { PlayerConfig } from '../unit-ai/player';
 import Player from '../unit-ai/player';
 import type AttackableUnit from '../units/attackable-unit';
-import Spawner, { SpawnerOptions } from './spawner';
+import Spawner, { type SpawnerOptions } from './spawner';
 
 
 export type PlayerList = Omit<PlayerConfig, 'owner' | 'num'>[];

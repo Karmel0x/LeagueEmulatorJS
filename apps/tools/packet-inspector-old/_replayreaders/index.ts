@@ -1,6 +1,6 @@
 import reader_json from './json';
 import reader_lrpkt from './lrpkt';
-import { ReplayFileReader, ReplayRecord } from './replay-reader';
+import type { ReplayFileReader, ReplayRecord } from './replay-reader';
 
 const readers = {
 	json: reader_json,

@@ -8,7 +8,7 @@ import loadingStages from '../constants/game-state';
 import Game from '../game/initializers/game';
 import { TeamId } from '../gameobjects/extensions/traits/team';
 import type { Minion } from '../gameobjects/unit-ai';
-import Player from '../gameobjects/unit-ai/player';
+import type Player from '../gameobjects/unit-ai/player';
 
 let started = false;
 export default (player: Player, packet: packets.ClientReadyModel) => {

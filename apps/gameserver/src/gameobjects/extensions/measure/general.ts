@@ -1,7 +1,7 @@
 
 import { Vector2, type Vector2Like } from '@repo/geometry';
 import Server from '../../../app/server';
-import GameObject from '../../game-object';
+import type GameObject from '../../game-object';
 
 export default class MeasureGeneral {
 
