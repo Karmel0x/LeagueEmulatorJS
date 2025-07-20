@@ -9,5 +9,4 @@ export default (player: Player, packet: packets.SwapItemReqModel) => {
 
 	const owner = player.owner;
 	owner.inventory.swapItems(packet.source, packet.destination);
-
 };

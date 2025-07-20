@@ -1,5 +1,5 @@
 
-import * as Measure from '@repo/gameserver/src/gameobjects/extensions/measure';
+import * as Measure from '@repo/gameserver/src/gameobjectextensions/measure';
 import type AttackableUnit from '@repo/gameserver/src/gameobjects/units/attackable-unit';
 import { Vector2 } from '@repo/geometry';
 import _Spell, { type CastData } from '@repo/scripting/base/spell';

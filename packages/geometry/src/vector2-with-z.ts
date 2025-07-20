@@ -1,5 +1,8 @@
 import { Vector2, type Vector2Like } from './vector2';
 
+// TODO: height map
+export const defaultHeight = 100;
+
 export type Vector2WithZLike = Vector2Like & {
     z?: number;
 };
@@ -7,7 +10,7 @@ export type Vector2WithZLike = Vector2Like & {
 export class Vector2WithZ extends Vector2 {
 
     static from(v: Vector2WithZLike, z: number | undefined = undefined) {
-        return new this(v.x, v.y, z ?? v.z);
+        return new this(v.x, v.y, z ?? v.z ?? defaultHeight);
     }
 
     z;
@@ -25,7 +28,7 @@ export class Vector2WithZ extends Vector2 {
 
     copy(v: Vector2WithZLike) {
         super.copy(v);
-        this.z = v.z ?? 0;
+        this.z = v.z ?? defaultHeight;
         return this;
     }
 

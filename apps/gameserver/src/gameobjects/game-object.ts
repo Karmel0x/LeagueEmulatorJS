@@ -2,8 +2,8 @@
 import { Vector2, type Vector2Like } from '@repo/geometry';
 import GameObjectList from '../app/game-object-list';
 import { EventEmitter2 } from '../core/event-emitter2';
-import type { StatsGameObjectEvents, StatsGameObjectOptions } from './extensions/stats/game-object';
-import StatsGameObject from './extensions/stats/game-object';
+import type { StatsGameObjectEvents, StatsGameObjectOptions } from '../gameobjectextensions/stats/game-object';
+import StatsGameObject from '../gameobjectextensions/stats/game-object';
 
 
 export type GameObjectEvents = StatsGameObjectEvents & {

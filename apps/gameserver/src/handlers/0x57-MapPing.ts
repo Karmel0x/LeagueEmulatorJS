@@ -2,7 +2,7 @@
 import { Vector2 } from '@repo/geometry';
 import * as packets from '@repo/packets/list';
 import GameObjectList from '../app/game-object-list';
-import { TeamId } from '../gameobjects/extensions/traits/team';
+import { TeamId } from '../gameobjectextensions/traits/team';
 import Minion from '../gameobjects/unit-ai/minion';
 import type Player from '../gameobjects/unit-ai/player';
 import type AttackableUnit from '../gameobjects/units/attackable-unit';

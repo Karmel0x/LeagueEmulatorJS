@@ -5,7 +5,7 @@ import loadingStages from '../../constants/game-state';
 import { EventEmitter2 } from '../../core/event-emitter2';
 import Timer from '../../core/timer';
 import { delay } from '../../core/utils';
-import { TeamId } from '../../gameobjects/extensions/traits/team';
+import { TeamId } from '../../gameobjectextensions/traits/team';
 import Barrack from '../../gameobjects/spawners/barrack';
 import Builder from '../../gameobjects/spawners/builder';
 import Fountain, { type PlayerList } from '../../gameobjects/spawners/fountain';
@@ -45,7 +45,7 @@ export default class Game {
 			ping: packet.ping,
 			ready: packet.ready,
 		});
-		Server.teams[TeamId.max]?.sendPacket(packet1, loadingStages.notConnected, loadingStages.loaded);
+		Server.teams[TeamId.all]?.sendPacket(packet1, loadingStages.notConnected, loadingStages.loaded);
 	}
 
 	/**
@@ -65,7 +65,7 @@ export default class Game {
 			teamChaosPlayerIds: redPlayers.map(p => p.summoner.id),
 		});
 
-		Server.teams[TeamId.max]?.sendPacket(packet1, loadingStages.notConnected);
+		Server.teams[TeamId.all]?.sendPacket(packet1, loadingStages.notConnected);
 	}
 
 	/**
@@ -74,11 +74,11 @@ export default class Game {
 	static RequestRename(player: Player) {
 		const packet1 = packets.RequestRename.create({
 			playerId: player.summoner.id,
-			skinId: 0,
+			skinId: player.skin,
 			playerName: player.summoner.name,
 		});
 
-		Server.teams[TeamId.max]?.sendPacket(packet1, loadingStages.notConnected);
+		Server.teams[TeamId.all]?.sendPacket(packet1, loadingStages.notConnected);
 	}
 
 	/**
@@ -87,11 +87,11 @@ export default class Game {
 	static RequestReskin(player: Player) {
 		const packet1 = packets.RequestReskin.create({
 			playerId: player.summoner.id,
-			skinId: 0,
+			skinId: player.skin,
 			skinName: player.owner.skin,
 		});
 
-		Server.teams[TeamId.max]?.sendPacket(packet1, loadingStages.notConnected);
+		Server.teams[TeamId.all]?.sendPacket(packet1, loadingStages.notConnected);
 	}
 
 	static connected(player: Player) {
@@ -110,7 +110,7 @@ export default class Game {
 			enablePause: true,
 		});
 
-		//Server.teams[TeamId.max]?.sendPacket(packet1, loadingStages.notConnected);
+		//Server.teams[TeamId.all]?.sendPacket(packet1, loadingStages.notConnected);
 		player.network.sendPacket(packet1, loadingStages.notConnected);
 	}
 
@@ -185,8 +185,6 @@ export default class Game {
 
 
 	static async run() {
-
-		//GameComponents.Fountain();//instead of component, create perma buff for fountain turret
 
 		const ambientGain = new GameComponents.AmbientGain();
 		ambientGain.start();

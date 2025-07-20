@@ -8,6 +8,7 @@
     "dev2": "node .esbuild.cjs && node --enable-source-maps --trace-warnings dist/main"
   },
   "dependencies": {
+    "@repo/scripting": "*",
     "@repo/gamedata": "*",
     "@repo/network": "*",
     "@repo/packets": "*",

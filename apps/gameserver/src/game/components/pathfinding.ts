@@ -2,12 +2,15 @@
 import { Vector2, type Vector2Like } from '@repo/geometry';
 import Navmeshcppjs from '../../../../../packages/navmeshcppjs/index2';
 import Server from '../../app/server';
+import { NavigationCellFlags } from '../../gameobjectextensions/moving/game-object';
 import Pathfinding_ScalarAIMesh from './pathfinding_scalar-ai-mesh';
-// @ts-ignore
-import Pathfinding_TerrainEscape from './pathfinding_terrain-escape.json' assert { type: "json" };
+
+import TerrainEscape from '@repo/gamedata/maps/map1/scene/terrain-escape.json'; // assert { type: "json" };
 
 Navmeshcppjs.initialize();
 
+// TODO: generate wallOfGrass in terrain-escape.json
+type TerrainEscapeCell = [number, number] | NavigationCellFlags.none | NavigationCellFlags.wallOfGrass;
 
 export default class Pathfinding extends Navmeshcppjs {
 	static initialize(inflate = 0) {
@@ -20,14 +23,18 @@ export default class Pathfinding extends Navmeshcppjs {
 	 */
 	static terrainEscape(position: Vector2Like) {
 		if (!Server.useTerrainEscape)
-			return position;
+			return;
 
-		let pos = Pathfinding_ScalarAIMesh.toAIMesh(position);
-		let posEscaped = Pathfinding_TerrainEscape[pos.x]![pos.y] as number[];
-		if (!posEscaped)
-			return position;
+		const pos = Pathfinding_ScalarAIMesh.toAIMesh(position);
+		const posEscapedX = TerrainEscape[pos.x];
+		if (!posEscapedX)
+			return;
 
-		return Pathfinding_ScalarAIMesh.toCoordinates({ x: posEscaped[0]!, y: posEscaped[1]! });
+		const posEscaped = posEscapedX[pos.y] as TerrainEscapeCell;
+		if (!posEscaped || posEscaped === NavigationCellFlags.wallOfGrass)
+			return;
+
+		return Pathfinding_ScalarAIMesh.toCoordinates({ x: posEscaped[0], y: posEscaped[1] });
 	}
 
 	/**
@@ -37,11 +44,11 @@ export default class Pathfinding extends Navmeshcppjs {
 	 * atm character is bugging near some blocks
 	 */
 	static getPath(startPoint: Vector2Like, endPoint: Vector2Like) {
-		let startPointEscaped = Pathfinding.terrainEscape(startPoint);
-		let endPointEscaped = Pathfinding.terrainEscape(endPoint);
+		const startPointEscaped = Pathfinding.terrainEscape(startPoint) || startPoint;
+		const endPointEscaped = Pathfinding.terrainEscape(endPoint) || endPoint;
 
-		let path = Navmeshcppjs.getPath(startPointEscaped, endPointEscaped);
-		let pathV2 = path = path.map(p => new Vector2(p.x, p.y));
+		const path = Navmeshcppjs.getPath(startPointEscaped, endPointEscaped);
+		const pathV2 = path.map(p => new Vector2(p.x, p.y));
 		return pathV2;
 	}
 }

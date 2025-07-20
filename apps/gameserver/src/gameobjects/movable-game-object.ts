@@ -1,7 +1,7 @@
 
 import { EventEmitter2 } from '../core/event-emitter2';
-import MovingGameObject, { type MovingEvents } from './extensions/moving/game-object';
-import StatsMovableGameObject from './extensions/stats/movable-game-object';
+import MovingGameObject, { type MovingEvents } from '../gameobjectextensions/moving/game-object';
+import StatsMovableGameObject from '../gameobjectextensions/stats/movable-game-object';
 import GameObject, { type GameObjectEvents, type GameObjectOptions } from './game-object';
 
 

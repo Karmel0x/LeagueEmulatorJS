@@ -1,8 +1,8 @@
 import { IssueOrderType } from '@repo/packets/base/c2s/0x72-IssueOrderReq';
 import GameObjectList from '../../app/game-object-list';
 import Server from '../../app/server';
-import { runAccurateInterval } from '../../core/timer';
-import { TeamId } from '../../gameobjects/extensions/traits/team';
+import { runAccurateInterval, TIMER_FPS_DELAY } from '../../core/timer';
+import { TeamId } from '../../gameobjectextensions/traits/team';
 import type MovableGameObject from '../../gameobjects/movable-game-object';
 import type AttackableUnit from '../../gameobjects/units/attackable-unit';
 
@@ -16,9 +16,7 @@ const defaultVisionRange = 1350;
  */
 export default class MovementSimulation {
 
-	static moveInterval = 33;// ~30hz
-
-	//Map = new Vector2(14000, 14000);
+	static readonly moveInterval = TIMER_FPS_DELAY;
 
 	lastSeenUnitsByTeam: { [n: number]: AttackableUnit[]; } = {};
 
@@ -28,8 +26,10 @@ export default class MovementSimulation {
 	 * @todo improve loop to not repeat same unit pairs
 	 */
 	visionProcess() {
+		const units = GameObjectList.aliveUnits;
+
 		const seenUnitsByTeam: { [n: number]: AttackableUnit[]; } = {};
-		GameObjectList.aliveUnits.forEach(unit => {
+		units.forEach(unit => {
 			if (unit.team.id === TeamId.neutral)
 				return;
 
@@ -43,17 +43,17 @@ export default class MovementSimulation {
 			const seenUnits = seenUnitsByTeam[unitTeamId] || [];
 			seenUnitsByTeam[unitTeamId] = seenUnits;
 
-			GameObjectList.aliveUnits.forEach(unit2 => {
+			units.forEach(unit2 => {
 				if (unitTeamId === unit2.team.id)
 					return;
 
 				if (unit2.combat.died)
 					return;
 
-				if (unitPosition.distanceTo(unit2.position) > unitVisionRange)
+				if (seenUnits.includes(unit2))
 					return;
 
-				if (seenUnits.includes(unit2))
+				if (unitPosition.distanceTo(unit2.position) > unitVisionRange)
 					return;
 
 				seenUnits.push(unit2);
@@ -162,7 +162,7 @@ export default class MovementSimulation {
 			for (let j = 0, l = objects.length; j < l; j++) {
 				const object2 = objects[j];
 
-				//TODO
+				// TODO: check why object2 may be undefined
 				if (!object2)
 					continue;
 
@@ -224,6 +224,7 @@ export default class MovementSimulation {
 	}
 
 	async start() {
-		runAccurateInterval((diff) => this.update(diff), MovementSimulation.moveInterval);
+		const intervalTime = MovementSimulation.moveInterval;
+		runAccurateInterval(() => this.update(intervalTime), intervalTime);
 	}
 }

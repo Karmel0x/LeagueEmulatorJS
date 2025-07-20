@@ -8,8 +8,9 @@ import Server from '../app/server';
 import { SlotId } from '../constants/slot-id';
 import Logging, { type LoggingOutput, type LoggingType } from '../core/logging';
 import Timer from '../core/timer';
-import type { IStat } from '../gameobjects/extensions/stats/istat';
-import { TeamId } from '../gameobjects/extensions/traits/team';
+import { humanizePosition } from '../core/utils';
+import { IStat } from '../gameobjectextensions/stats/istat';
+import { TeamId } from '../gameobjectextensions/traits/team';
 import Minion from '../gameobjects/unit-ai/minion';
 import type Player from '../gameobjects/unit-ai/player';
 import type AttackableUnit from '../gameobjects/units/attackable-unit';
@@ -103,10 +104,8 @@ const commandList: { [s: string]: Command; } = {
 		arguments: ['speed'],
 		handler: function (player, args) {
 			let speed = Number(args[1] || '1');
-			if (speed <= 0) {
-				player.packets.chatBoxDebugMessage('speed must be greater than 0');
-				return;
-			}
+			if (speed <= 0)
+				throw new Error('speed must be greater than 0');
 
 			const packet1 = packets.SetFrequency.create({
 				newFrequency: speed,
@@ -157,7 +156,7 @@ const commandList: { [s: string]: Command; } = {
 		handler: function (player, args) {
 			let unitType = args[1];
 			if (!unitType)
-				return;
+				throw new Error('no unitType');
 
 			let units = filterUnitsForCommand(player, GameObjectList.aliveUnits, unitType);
 
@@ -298,18 +297,30 @@ const commandList: { [s: string]: Command; } = {
 			}
 
 			if (type === 'position') {
-				player.packets.chatBoxDebugMessage(...args, {
-					x: Math.round(owner.position.x * 1e3) / 1e3,
-					y: Math.round(owner.position.y * 1e3) / 1e3,
-				});
+				player.packets.chatBoxDebugMessage(...args, humanizePosition(owner.position));
+				return;
+			}
+
+			if (type === 'base-stats') {
+				let message = '';
+				const stats = owner.stats;
+				const base = owner.stats.base;
+				for (let i in base) {
+					let playerStat = stats[i as keyof typeof stats] as IStat;
+					if (playerStat)
+						message += ` | ${i}: ${playerStat.total}`;
+				}
+
+				player.packets.chatBoxDebugMessage(message);
 				return;
 			}
 
 			if (type === 'stats') {
 				let message = '';
-				for (let i in owner.stats.base) {
-					let playerStat = owner.stats[i as keyof typeof owner.stats] as IStat;
-					if (playerStat)
+				const stats = owner.stats;
+				for (let i in stats) {
+					let playerStat = stats[i as keyof typeof stats] as IStat;
+					if (playerStat && playerStat instanceof IStat)
 						message += ` | ${i}: ${playerStat.total}`;
 				}
 
@@ -319,8 +330,9 @@ const commandList: { [s: string]: Command; } = {
 
 			if (type === 'buffs') {
 				let message = '';
-				for (let i in owner.buffManager.buffs) {
-					let buff = owner.buffManager.buffs[i as keyof typeof owner.buffManager.buffs]!;
+				const buffs = owner.buffManager.buffs;
+				for (let i in buffs) {
+					let buff = buffs[i as keyof typeof buffs]!;
 					message += ` | ${buff.spell.name}: ${buff.stacks}`;
 				}
 
@@ -337,7 +349,7 @@ const commandList: { [s: string]: Command; } = {
 			let netId = parseInt(args[1] || '0');
 			let unit = GameObjectList.unitByNetId(netId);
 			if (!unit)
-				return;
+				throw new Error('no unit');
 
 			const owner = player.owner;
 			owner.moving.teleport(unit.position);
@@ -360,7 +372,8 @@ const commandList: { [s: string]: Command; } = {
 		description: '',
 		arguments: ['00-11 pathfinding terrainEscape'],
 		handler: function (player, args) {
-			if (!args[1]) {
+			let firstArg = args[1];
+			if (!firstArg) {
 				player.packets.chatBoxDebugMessage({
 					pathFinding: Server.usePathFinding,
 					terrainEscape: Server.useTerrainEscape,
@@ -368,14 +381,14 @@ const commandList: { [s: string]: Command; } = {
 				return;
 			}
 
-			let bits = (args[1] || '').split('');
+			let bits = firstArg.split('');
 			Server.usePathFinding = bits[0] === '1';
 			Server.useTerrainEscape = bits[1] === '1';
 		},
 	},
-	'setCharacter': {
+	'character': {
 		description: '',
-		arguments: ['characterName'],
+		arguments: ['name'],
 		handler: function (player, args) {
 			const owner = player.owner;
 			owner.switchCharacter(args[1] || 'Ezreal');
@@ -385,15 +398,18 @@ const commandList: { [s: string]: Command; } = {
 		description: '',
 		arguments: ['team'],
 		handler: function (player, args) {
-			if (!args[1])
-				args[1] = 'order,chaos';
+			let teams = args[1];
+			if (!teams)
+				teams = 'order,chaos';
 
-			if (args[1].includes('order')) {
-				GameObjectList.barracks.find(barrack => barrack.team.id === TeamId.order)?.spawnWave();
+			if (teams.includes('order')) {
+				const barrack = GameObjectList.barracks.find(barrack => barrack.team.id === TeamId.order);
+				barrack?.spawnWave();
 			}
 
-			if (args[1].includes('chaos')) {
-				GameObjectList.barracks.find(barrack => barrack.team.id === TeamId.chaos)?.spawnWave();
+			if (teams.includes('chaos')) {
+				const barrack = GameObjectList.barracks.find(barrack => barrack.team.id === TeamId.chaos);
+				barrack?.spawnWave();
 			}
 		}
 	},
@@ -404,8 +420,11 @@ const commandList: { [s: string]: Command; } = {
 			let count = parseInt(args[1] || '22');
 			for (let i = count; i > 0; i--) {
 				const barrack = GameObjectList.barracks.find(barrack => barrack.team.id === TeamId.chaos);
-				const unit = barrack!.spawnUnit(MinionType.melee);
+				if (!barrack) continue;
+
+				const unit = barrack.spawnUnit(MinionType.melee);
 				(unit.ai as Minion).moveLane = () => { };
+				unit.combat.autoAttackToggle = false;
 				unit.moving.teleport(new Vector2(1000 + (i * 150), 600));
 			}
 
@@ -421,19 +440,46 @@ const commandList: { [s: string]: Command; } = {
 			const owner = player.owner;
 			let team = (args[1] || owner.team.getEnemyTeamId());
 			player.packets.chatBoxDebugMessage('spawnMinion', team);
-			GameObjectList.barracks.find(barrack => barrack.team.id === team)?.spawnUnit(MinionType.melee, {
+			const barrack = GameObjectList.barracks.find(barrack => barrack.team.id === team);
+			if (!barrack) return;
+
+			const unit = barrack.spawnUnit(MinionType.melee, {
 				spawnPosition: owner.position,
 			});
+			(unit.ai as Minion).moveLane = () => { };
+			unit.combat.autoAttackToggle = false;
+		},
+	},
+	'tpc': {
+		description: 'teleport to center of map',
+		arguments: [],
+		handler: function (player, args) {
+			const owner = player.owner;
+			owner.moving.teleport(new Vector2(7000, 7000));
 		},
 	},
 	'q': {
 		description: 'spawn BLUE and RED minions',
 		arguments: ['minionsAmount'],
 		handler: function (player, args) {
-			for (let i = parseInt(args[1] || '1'); i > 0; i--) {
-				GameObjectList.barracks.find(barrack => barrack.team.id === TeamId.order)?.spawnUnit(MinionType.melee);
-				GameObjectList.barracks.find(barrack => barrack.team.id === TeamId.chaos)?.spawnUnit(MinionType.melee);
-				//await delay(2);
+			const l = parseInt(args[1] || '1');
+
+			for (let i = 0; i < l; i++) {
+				const barrack = GameObjectList.barracks.find(barrack => barrack.team.id === TeamId.order);
+				if (!barrack) continue;
+
+				const unit = barrack.spawnUnit(MinionType.melee);
+				//(unit.ai as Minion).moveLane = () => { };
+				unit.combat.autoAttackToggle = false;
+			}
+
+			for (let i = 0; i < l; i++) {
+				const barrack = GameObjectList.barracks.find(barrack => barrack.team.id === TeamId.chaos);
+				if (!barrack) continue;
+
+				const unit = barrack.spawnUnit(MinionType.melee);
+				//(unit.ai as Minion).moveLane = () => { };
+				unit.combat.autoAttackToggle = false;
 			}
 		},
 	},
@@ -443,8 +489,11 @@ const commandList: { [s: string]: Command; } = {
 		handler: function (player, args) {
 			for (let i = parseInt(args[1] || '1'); i > 0; i--) {
 				const barrack = GameObjectList.barracks.find(barrack => barrack.team.id === TeamId.chaos);
-				const unit = barrack!.spawnUnit(MinionType.melee);
+				if (!barrack) continue;
+
+				const unit = barrack.spawnUnit(MinionType.melee);
 				(unit.ai as Minion).moveLane = () => { };
+				unit.combat.autoAttackToggle = false;
 				unit.moving.teleport(new Vector2(1000 + (i * 150), 600));
 			}
 		},
@@ -459,8 +508,11 @@ const commandList: { [s: string]: Command; } = {
 			let j = parseInt(args[2] || '0');
 			for (let i = parseInt(args[1] || '1'); i > 0; i--) {
 				const barrack = GameObjectList.barracks.find(barrack => barrack.team.id === TeamId.chaos);
-				const unit = barrack!.spawnUnit(j % 4);
+				if (!barrack) continue;
+
+				const unit = barrack.spawnUnit(j % 4);
 				(unit.ai as Minion).moveLane = () => { };
+				unit.combat.autoAttackToggle = false;
 				unit.moving.teleport(new Vector2(1000 + (i * 150), 600));
 			}
 		},
@@ -482,7 +534,9 @@ const commandList: { [s: string]: Command; } = {
 			let count = parseInt(args[1] || '5');
 			for (let i = count; i > 0; i--) {
 				const barrack = GameObjectList.barracks.find(barrack => barrack.team.id === TeamId.chaos);
-				const unit = barrack!.spawnUnit(MinionType.melee);
+				if (!barrack) continue;
+
+				const unit = barrack.spawnUnit(MinionType.melee);
 				(unit.ai as Minion).moveLane = () => { };
 				unit.moving.teleport(new Vector2(1000 + (i * 150), 600));
 			}
@@ -582,7 +636,7 @@ const commandList: { [s: string]: Command; } = {
 			const owner = player.owner;
 			let target = GameObjectList.unitByNetId(player.lastSelectedNetId);
 			if (!target)
-				return;
+				throw new Error('no target');
 
 			owner.combat.basicAttacks.attackAns(target, SlotId.a, extraTimeS);
 		}
@@ -624,6 +678,14 @@ export default (player: Player, packet: packets.ChatModel) => {
 	}
 
 	if (commandObject) {
-		commandObject.handler(player, commandArgs);
+		try {
+			commandObject.handler(player, commandArgs);
+		}
+		catch (e) {
+			console.warn(e);
+			if (e instanceof Error) {
+				player.packets.chatBoxDebugMessage('error:', e.message);
+			}
+		}
 	}
 };

@@ -6,7 +6,7 @@ import GameObjectList from '../app/game-object-list';
 import Server from '../app/server';
 import loadingStages from '../constants/game-state';
 import Game from '../game/initializers/game';
-import { TeamId } from '../gameobjects/extensions/traits/team';
+import { TeamId } from '../gameobjectextensions/traits/team';
 import type { Minion } from '../gameobjects/unit-ai';
 import type Player from '../gameobjects/unit-ai/player';
 
@@ -27,9 +27,7 @@ export default (player: Player, packet: packets.ClientReadyModel) => {
 	if (player.owner.team.id === TeamId.order) {
 		let blueUnits = GameObjectList.aliveUnits.filter(unit => unit.team.id === TeamId.order);
 		for (let i = 0, l = blueUnits.length; i < l; i++) {
-			let unit = blueUnits[i];
-			if (!unit) continue;
-
+			let unit = blueUnits[i]!;
 			Server.teams[TeamId.order]?.vision(unit, true);// todo
 		}
 	}
@@ -37,9 +35,7 @@ export default (player: Player, packet: packets.ClientReadyModel) => {
 	if (player.owner.team.id === TeamId.chaos) {
 		let redUnits = GameObjectList.aliveUnits.filter(unit => unit.team.id === TeamId.chaos);
 		for (let i = 0, l = redUnits.length; i < l; i++) {
-			let unit = redUnits[i];
-			if (!unit) continue;
-
+			let unit = redUnits[i]!;
 			Server.teams[TeamId.chaos]?.vision(unit, true);// todo
 		}
 	}
@@ -72,6 +68,7 @@ export default (player: Player, packet: packets.ClientReadyModel) => {
 
 		const unit = barrack.spawnUnit(MinionType.melee);
 		(unit.ai as Minion).moveLane = () => { };
+		unit.combat.autoAttackToggle = false;
 		unit.moving.teleport(new Vector2(1000 + (i * 150), 600));
 	}
 
@@ -79,19 +76,21 @@ export default (player: Player, packet: packets.ClientReadyModel) => {
 		const barrack = GameObjectList.barracks.find(barrack => barrack.team.id === TeamId.order);
 		if (!barrack) continue;
 
-		const unit = barrack?.spawnUnit(MinionType.melee);
+		const unit = barrack.spawnUnit(MinionType.melee);
 		(unit.ai as Minion).moveLane = () => { };
-		unit?.moving.teleport(new Vector2(500, 1100 + (i * 150)));
+		unit.combat.autoAttackToggle = false;
+		unit.moving.teleport(new Vector2(500, 1100 + (i * 150)));
 	}
 
-	const players = Server.players.map(player => player.ai as Player);
+	const players = Server.players;
 
-	players.forEach(player => {
-		for (let i = 5; i > 0; i--) {
-			player.owner.progress.levelUp();
-			player.owner.progress.skillUpgrade(i % 4);
+	players.forEach(unit => {
+		for (let i = 0; i <= 8; i++) {
+			unit.progress.levelUp();
+			unit.progress.skillUpgrade(i % 4);
 		}
 	});
 
-	players[1]?.owner.moving.teleport(new Vector2(1000 + (6 * 150), 600));
+	players[2]?.moving.teleport(new Vector2(1000 + (6 * 150), 600));
+	players[1]?.moving.teleport(new Vector2(500, 1100 + (6 * 150)));
 };

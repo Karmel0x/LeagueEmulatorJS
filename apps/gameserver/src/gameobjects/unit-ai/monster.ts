@@ -4,7 +4,7 @@ import * as packets from '@repo/packets/list';
 import type Character from '@repo/scripting/base/character';
 import Server from '../../app/server';
 import { EventEmitter2 } from '../../core/event-emitter2';
-import { TeamId } from '../extensions/traits/team';
+import { TeamId } from '../../gameobjectextensions/traits/team';
 import type JungleCamp from '../spawners/jungle-camp';
 import type AttackableUnit from '../units/attackable-unit';
 import type { AttackableUnitOptions } from '../units/attackable-unit';
@@ -60,10 +60,11 @@ export default class Monster extends BaseAi {
 	}
 
 	stopAttack() {
+		const owner = this.owner;
 		const packet1 = packets.InstantStop_Attack.create({
-			netId: this.owner.netId,
+			netId: owner.netId,
 		});
-		this.owner.packets.toEveryone(packet1);
+		owner.packets.toEveryone(packet1);
 	}
 
 	//setCooldown({slot, cooldown}){
@@ -81,7 +82,7 @@ export default class Monster extends BaseAi {
 	/**
 	 * @todo send this packet on first visibility ?
 	 */
-	onSpawnPackets(to: (packet: PacketMessage | undefined) => void = (packet) => Server.teams[TeamId.max]?.sendPacket(packet)) {
+	onSpawnPackets(to: (packet: PacketMessage | undefined) => void = (packet) => Server.teams[TeamId.all]?.sendPacket(packet)) {
 		const owner = this.owner;
 		if (!owner.character)
 			return;
@@ -139,7 +140,8 @@ export default class Monster extends BaseAi {
 	}
 
 	get characterBase() {
-		return this.owner.character?.constructor as typeof Character | undefined;
+		const character = this.owner.character;
+		return character?.constructor as typeof Character | undefined;
 	}
 
 	get rewardExp() {

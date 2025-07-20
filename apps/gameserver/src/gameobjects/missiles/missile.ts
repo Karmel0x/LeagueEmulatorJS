@@ -3,9 +3,9 @@ import type { Vector2, Vector2Like } from '@repo/geometry';
 import * as packets from '@repo/packets/list';
 import Server from '../../app/server';
 import { EventEmitter2 } from '../../core/event-emitter2';
-import * as Measure from '../extensions/measure';
-import StatsMissile, { type StatsMissileOptions } from '../extensions/stats/missile';
-import { TeamId } from '../extensions/traits/team';
+import * as Measure from '../../gameobjectextensions/measure';
+import StatsMissile, { type StatsMissileOptions } from '../../gameobjectextensions/stats/missile';
+import { TeamId } from '../../gameobjectextensions/traits/team';
 import MovableGameObject, { type MovableGameObjectEvents, type MovableGameObjectOptions } from '../movable-game-object';
 import type AttackableUnit from '../units/attackable-unit';
 
@@ -82,6 +82,6 @@ export default class Missile extends MovableGameObject {
 		const packet1 = packets.DestroyClientMissile.create({
 			netId: this.netId,
 		});
-		Server.teams[TeamId.max]!.sendPacket_withVision(packet1);
+		Server.teams[TeamId.all]!.sendPacket_withVision(packet1);
 	}
 }

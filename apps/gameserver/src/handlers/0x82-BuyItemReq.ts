@@ -9,5 +9,4 @@ export default (player: Player, packet: packets.BuyItemReqModel) => {
 
 	const owner = player.owner;
 	owner.inventory.buyItem(packet.itemId);
-
 };

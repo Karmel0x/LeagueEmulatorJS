@@ -2,7 +2,7 @@ import { ReplicantUnitType, type OnReplicationBaseModel, type OnReplicationBuild
 import * as packets from '@repo/packets/list';
 import Server from '../app/server';
 import loadingStages from '../constants/game-state';
-import { TeamId } from '../gameobjects/extensions/traits/team';
+import { TeamId } from '../gameobjectextensions/traits/team';
 import Hero from '../gameobjects/unit-ai/hero';
 import Minion from '../gameobjects/unit-ai/minion';
 import Monster from '../gameobjects/unit-ai/monster';
@@ -110,5 +110,5 @@ export function sendUnitStats(units: AttackableUnit | AttackableUnit[]) {
         units = [units];
 
     const packet1 = create(units);
-    Server.teams[TeamId.max]?.sendPacket(packet1, loadingStages.inGame);
+    Server.teams[TeamId.all]?.sendPacket(packet1, loadingStages.inGame);
 }

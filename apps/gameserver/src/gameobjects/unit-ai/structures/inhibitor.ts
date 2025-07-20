@@ -3,7 +3,7 @@ import * as packets from '@repo/packets/list';
 import { OnEvent, OnEventArguments } from '@repo/packets/types/on-event';
 import loadingStages from '../../../constants/game-state';
 import { EventEmitter2 } from '../../../core/event-emitter2';
-import { LaneId } from '../../extensions/traits/team';
+import { LaneId } from '../../../gameobjectextensions/traits/team';
 import type AttackableUnit from '../../units/attackable-unit';
 import type { AttackableUnitOptions } from '../../units/attackable-unit';
 import { AiSubType } from '../types';

@@ -9,5 +9,4 @@ export default (player: Player, packet: packets.UndoItemReqModel) => {
 
 	//const owner = player.owner;
 	//owner.inventory.undoHistory.remUndoHistory();
-
 };

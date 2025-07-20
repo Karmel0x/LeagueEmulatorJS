@@ -68,7 +68,8 @@ export function spellCast(caster: AttackableUnit, castInfo1: Partial<SCastInfoMo
 
     const packet1 = packets.CastSpellAns.create({
         netId: caster.netId,
-        casterPositionSyncId: performance.now(), //
+        // do not set it unless you can send position in this packet?
+        casterPositionSyncId: 0,//performance.now(),
         castInfo: castInfo,
     });
 

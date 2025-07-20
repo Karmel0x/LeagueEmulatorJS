@@ -1,8 +1,7 @@
 import * as packets from '@repo/packets/list';
 import Server from '../../app/server';
 import { accurateDelay } from '../../core/timer';
-import { TeamId } from '../extensions/traits/team';
-import { players } from '../positions/index';
+import { TeamId } from '../../gameobjectextensions/traits/team';
 import type { PlayerConfig } from '../unit-ai/player';
 import Player from '../unit-ai/player';
 import type AttackableUnit from '../units/attackable-unit';
@@ -24,16 +23,18 @@ export default class Fountain extends Spawner {
     }
 
     static spawnAll(playerConfig: PlayerList) {
+        const { heroes } = Server.map.positions;
+
         const fountain1 = Fountain.initialize({
             team: TeamId.order,
-            position: players[TeamId.order]?.[5]?.position,
+            position: heroes[TeamId.order]?.[5]?.position,
             players: playerConfig.filter(p => p.match.team === TeamId.order),
         });
         fountain1.spawn();
 
         const fountain2 = Fountain.initialize({
             team: TeamId.chaos,
-            position: players[TeamId.chaos]?.[5]?.position,
+            position: heroes[TeamId.chaos]?.[5]?.position,
             players: playerConfig.filter(p => p.match.team === TeamId.chaos),
         });
         fountain2.spawn();
@@ -46,6 +47,7 @@ export default class Fountain extends Spawner {
     }
 
     spawnPlayers(playersConfig: PlayerList) {
+        const { heroes } = Server.map.positions;
 
         for (let i = 0; i < playersConfig.length; i++) {
             const playerConfig = playersConfig[i];
@@ -55,7 +57,7 @@ export default class Fountain extends Spawner {
 
             const unit = Player.initializeUnit({
                 character: playerConfig.match.champion,
-                position: players[team]?.[i]?.position,
+                position: heroes[team]?.[i]?.position,
                 spawner: this,
                 team,
                 name: playerConfig.summoner.name,
@@ -91,38 +93,7 @@ export default class Fountain extends Spawner {
      */
     getDeathDuration(unit: AttackableUnit) {
         const level = unit.progress.level;
-        const deathTimes = [
-            7.5,
-            10,
-            12.5,
-            15,
-            17.5,
-            20,
-            22.5,
-            25,
-            27.5,
-            30,
-            32.5,
-            35,
-            37.5,
-            40,
-            42.5,
-            45,
-            47.5,
-            50,
-            50,
-            50,
-            50,
-            50,
-            50,
-            50,
-            50,
-            50,
-            50,
-            50,
-            50,
-            50,
-        ];
+        const deathTimes = Server.map.deathTimes;
         const deathTime = deathTimes[level - 1] || deathTimes[0]!;
         return deathTime;
     }

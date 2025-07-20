@@ -5,8 +5,8 @@ import * as packets from '@repo/packets/list';
 import { OnEvent, OnEventArguments } from '@repo/packets/types/on-event';
 import type Spell from '@repo/scripting/base/spell';
 import { EventEmitter2 } from '../../core/event-emitter2';
-import PHero from '../extensions/packets/hero';
-import Scoreboard from '../extensions/traits/scoreboard';
+import PHero from '../../gameobjectextensions/packets/hero';
+import Scoreboard from '../../gameobjectextensions/traits/scoreboard';
 import type AttackableUnit from '../units/attackable-unit';
 import type { AttackableUnitOptions } from '../units/attackable-unit';
 import BaseAi, { type BaseAiEvents, type BaseAiOptions } from './base-ai';
@@ -52,6 +52,7 @@ export default class Hero extends BaseAi {
 	type = AiType.Hero;
 	subType = AiSubType.Bot;
 
+	skin: number = 0;
 	summoner!: SummonerConfig;
 	clientId = -1;
 	declare packets: PHero;
@@ -91,8 +92,9 @@ export default class Hero extends BaseAi {
 	 * It sends a packet to everyone in the game that the hero has died
 	 */
 	announceDie(source: AttackableUnit, assists: AttackableUnit[]) {
+		const owner = this.owner;
 		const packet1 = packets.OnEvent.create({
-			netId: this.owner.netId,
+			netId: owner.netId,
 			eventData: {
 				eventId: OnEvent.onChampionDie,
 				onEventParam: OnEventArguments[OnEvent.onChampionDie],
@@ -102,7 +104,7 @@ export default class Hero extends BaseAi {
 				assists: assists.map(a => a.netId),
 			},
 		});
-		this.owner.packets.toEveryone(packet1);
+		owner.packets.toEveryone(packet1);
 	}
 
 	async onDie(attacker: AttackableUnit, assists: AttackableUnit[]) {

@@ -3,7 +3,7 @@ import type { PacketMessage } from '@repo/network/packets/packet';
 import * as packets from '@repo/packets/list';
 import Server from '../../app/server';
 import loadingStages from '../../constants/game-state';
-import { TeamId } from '../../gameobjects/extensions/traits/team';
+import { TeamId } from '../../gameobjectextensions/traits/team';
 import type Player from '../../gameobjects/unit-ai/player';
 import { AiType } from '../../gameobjects/unit-ai/types';
 import type AttackableUnit from '../../gameobjects/units/attackable-unit';
@@ -21,7 +21,7 @@ export default class Teams {
 		Server.teams[TeamId.order] = new Teams(TeamId.order);
 		Server.teams[TeamId.chaos] = new Teams(TeamId.chaos);
 		Server.teams[TeamId.neutral] = new Teams(TeamId.neutral);
-		Server.teams[TeamId.max] = new Teams(TeamId.max);
+		Server.teams[TeamId.all] = new Teams(TeamId.all);
 	}
 
 	static initialize() {
@@ -49,7 +49,7 @@ export default class Teams {
 
 		const players = Server.players.map(player => player.ai as Player);
 		let currentTeamPlayers = players;
-		if (this.id !== TeamId.max)
+		if (this.id !== TeamId.all)
 			currentTeamPlayers = currentTeamPlayers.filter(p => p.owner.team.id === this.id);
 
 		const playersToSend: Player[] = [];

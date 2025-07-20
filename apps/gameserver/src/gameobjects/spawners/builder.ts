@@ -1,9 +1,9 @@
-import { TeamId } from '../extensions/traits/team';
-import { inhibitors, nexuses, turrets, type SpawnConfig } from '../positions/index';
+import Server from '../../app/server';
+import { TeamId } from '../../gameobjectextensions/traits/team';
 import Inhibitor, { type InhibitorOptions } from '../unit-ai/structures/inhibitor';
 import Nexus, { type NexusOptions } from '../unit-ai/structures/nexus';
 import Turret, { type TurretOptions } from '../unit-ai/structures/turret';
-import Spawner, { type SpawnerOptions } from './spawner';
+import Spawner, { type SpawnConfig, type SpawnerOptions } from './spawner';
 
 
 export type BuilderOptions = SpawnerOptions & {
@@ -21,6 +21,8 @@ export default class Builder extends Spawner {
     }
 
     static spawnAll() {
+        const { nexuses, inhibitors, turrets } = Server.map.positions;
+
         const builder1 = Builder.initialize({
             team: TeamId.order,
             position: { x: 6500, y: 6500 },

@@ -4,24 +4,25 @@ import type Player from '../gameobjects/unit-ai/player';
 
 import Server from '../app/server';
 import loadingStages from '../constants/game-state';
+import config from '../game/game.config.json';
 
-const MapId = {
-	SummonersRift_Original: 1, // Summoner's Rift / Original Summer variant
-	//summonersRift_OriginalAutumn: 2, // Summoner's Rift / Original Autumn variant
-	//TheProvingGrounds: 3, // The Proving Grounds / Tutorial Map
-	//TwistedTreeline_Original: 4, // Twisted Treeline / Original Version
-	TheCrystalScar: 8, // The Crystal Scar / Dominion map
-	TwistedTreeline: 10, // Twisted Treeline / Last TT map
-	SummonersRift: 11, // Summoner's Rift / Current Version
-	HowlingAbyss: 12, // Howling Abyss / ARAM map
-	//ButchersBridge: 14, // Butcher's Bridge / Alternate ARAM map
-	//CosmicRuins: 16, // Cosmic Ruins / Dark Star: Singularity map
-	//ValoranCityPark: 18, // Valoran City Park / Star Guardian Invasion map
-	//Substructure43: 19, // Substructure 43 / PROJECT: Hunters map
-	//CrashSite: 20, // Crash Site / Odyssey: Extraction map
-	//Convergence: 20, // Convergence / Teamfight Tactics map
-	//NexusBlitz: 21, // Nexus Blitz / Nexus Blitz map
-};
+//const MapId = {
+//	SummonersRift_Original: 1, // Summoner's Rift / Original Summer variant
+//	//summonersRift_OriginalAutumn: 2, // Summoner's Rift / Original Autumn variant
+//	//TheProvingGrounds: 3, // The Proving Grounds / Tutorial Map
+//	//TwistedTreeline_Original: 4, // Twisted Treeline / Original Version
+//	TheCrystalScar: 8, // The Crystal Scar / Dominion map
+//	TwistedTreeline: 10, // Twisted Treeline / Last TT map
+//	SummonersRift: 11, // Summoner's Rift / Current Version
+//	HowlingAbyss: 12, // Howling Abyss / ARAM map
+//	//ButchersBridge: 14, // Butcher's Bridge / Alternate ARAM map
+//	//CosmicRuins: 16, // Cosmic Ruins / Dark Star: Singularity map
+//	//ValoranCityPark: 18, // Valoran City Park / Star Guardian Invasion map
+//	//Substructure43: 19, // Substructure 43 / PROJECT: Hunters map
+//	//CrashSite: 20, // Crash Site / Odyssey: Extraction map
+//	//Convergence: 20, // Convergence / Teamfight Tactics map
+//	//NexusBlitz: 21, // Nexus Blitz / Nexus Blitz map
+//};
 
 const VersionString = 'Version 4.20.0.315 [PUBLIC]';
 
@@ -44,7 +45,7 @@ export default (player: Player, packet: packets.SynchVersionC2SModel) => {
 
 	const packet1 = packets.SynchVersion.create({
 		versionMatches: true,
-		mapToLoad: MapId.SummonersRift_Original,
+		mapToLoad: config.map,
 		versionString: VersionString,
 		playerInfo,
 		mapMode: 'CLASSIC',

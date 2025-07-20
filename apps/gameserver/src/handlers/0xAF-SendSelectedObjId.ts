@@ -2,6 +2,7 @@
 import { PingCategory } from '@repo/packets/base/s2c/0x40-MapPing';
 import * as packets from '@repo/packets/list';
 import GameObjectList from '../app/game-object-list';
+import { humanizePosition } from '../core/utils';
 import type Player from '../gameobjects/unit-ai/player';
 import AttackableUnit from '../gameobjects/units/attackable-unit';
 
@@ -24,11 +25,11 @@ export default (player: Player, packet: packets.SendSelectedObjIdModel) => {
 	if (unit instanceof AttackableUnit) {
 		let characterName = unit.character?.name;
 		let distance = Math.round(owner.distanceTo(unit) * 1e3) / 1e3;
-		player.packets.chatBoxDebugMessage('selected unit', characterName, unit.netId, unit.position, 'distance:', distance);
+		player.packets.chatBoxDebugMessage('selected unit', characterName, unit.netId, humanizePosition(unit.position), 'distance:', distance);
 	}
 	else {
 		let distance = Math.round(owner.distanceTo(unit) * 1e3) / 1e3;
-		player.packets.chatBoxDebugMessage('selected object', unit.netId, unit.position, 'distance:', distance);
+		player.packets.chatBoxDebugMessage('selected object', unit.netId, humanizePosition(unit.position), 'distance:', distance);
 	}
 
 	player.lastSelectedNetId = packet.selectedNetId;

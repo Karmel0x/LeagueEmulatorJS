@@ -10,5 +10,4 @@ export default (player: Player, packet: packets.RemoveItemReqModel) => {
 	const owner = player.owner;
 	if (packet.sell)
 		owner.inventory.sellItem(packet.slot);
-
 };

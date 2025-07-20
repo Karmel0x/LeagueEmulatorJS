@@ -47,8 +47,9 @@ export default class Turret extends Structure {
 	 * It sends a packet to everyone that the turret has died
 	 */
 	announceDie(source: AttackableUnit, assists: AttackableUnit[]) {
+		const owner = this.owner;
 		const packet1 = packets.OnEvent.create({
-			netId: this.owner.netId,
+			netId: owner.netId,
 			eventData: {
 				eventId: OnEvent.onTurretDie,
 				onEventParam: OnEventArguments[OnEvent.onTurretDie],
@@ -58,7 +59,7 @@ export default class Turret extends Structure {
 				assists: assists.map(a => a.netId),
 			},
 		});
-		this.owner.packets.toEveryone(packet1);
+		owner.packets.toEveryone(packet1);
 	}
 
 	async onDie(source: AttackableUnit, assists: AttackableUnit[]) {

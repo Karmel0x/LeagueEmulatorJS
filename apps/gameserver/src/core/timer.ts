@@ -37,8 +37,15 @@ export default class Timer {
         return result;
     }
 
-    s() {
+    /**
+     * dev
+     */
+    ss() {
         return Math.round(this.now()) / 1000;
+    }
+
+    s() {
+        return Math.round(this.now() / 1000);
     }
 
     pause() {
@@ -57,6 +64,16 @@ export default class Timer {
         this.pauseTime += performance.now() - this.pausedAt;
         this.pausedAt = 0;
         return this;
+    }
+
+    running() {
+        if (this.pausedAt)
+            return false;
+
+        if (this.startedAt === null)
+            return false;
+
+        return true;
     }
 
     speedUp(speed = 1) {
@@ -85,6 +102,8 @@ export default class Timer {
 
 }
 
+export const TIMER_FPS_DELAY = 33;// ~30hz
+
 export async function accurateDelay(ms: number) {
     const lastUpdate = Timer.app.now();
 
@@ -100,14 +119,74 @@ export async function accurateDelay(ms: number) {
     }
 }
 
-export function runAccurateInterval<T extends number>(callback: (fixedDiff: T) => void, ms: T) {
+export function runAppInterval<T extends number>(callback: (diff: T) => void, ms: T) {
     let lastUpdate = Timer.app.now();
     let stop = false;
 
     (async () => {
         for (; ;) {
-            await delay(1);
+            await delay(ms);
             if (stop)
+                return;
+
+            if (!Timer.app.running())
+                continue;
+
+            const now = Timer.app.now();
+            let diff = now - lastUpdate;
+
+            callback(diff as T);
+            lastUpdate = now;
+        }
+    })();
+
+    return () => {
+        stop = true;
+    };
+}
+
+export function runAccurateInterval(callback: (updateTime: number) => Promise<void>, ms: number) {
+    let lastUpdate = Timer.app.now();
+    let stop = false;
+
+    (async () => {
+        for (; ;) {
+            await delay(2);
+            if (stop)
+                return;
+
+            const now = Timer.app.now();
+            let diff = now - lastUpdate;
+
+            while (diff >= ms) {
+                diff -= ms;
+                lastUpdate = now - diff;
+                await callback(lastUpdate);
+            }
+        }
+    })();
+
+    return () => {
+        stop = true;
+    };
+}
+
+export function runAccurateTimedInterval<T extends number>(callback: (fixedDiff: T) => void, ms: T, timeout: number) {
+    let startedAt = Timer.app.now();
+    let lastUpdate = startedAt;
+
+    let e = {
+        runUntil: startedAt + timeout,
+        stop: function () {
+            this.runUntil = Timer.app.now();
+        },
+        f: undefined as Promise<void> | undefined,
+    };
+
+    e.f = (async () => {
+        for (; ;) {
+            await delay(2);
+            if (e.runUntil < lastUpdate + ms)
                 return;
 
             const now = Timer.app.now();
@@ -122,7 +201,6 @@ export function runAccurateInterval<T extends number>(callback: (fixedDiff: T) =
         }
     })();
 
-    return () => {
-        stop = true;
-    };
+    return e;
 }
+

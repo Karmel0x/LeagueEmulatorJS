@@ -1,4 +1,3 @@
-
 import type { PacketMessage } from '@repo/network/packets/packet';
 import { IssueOrderType } from '@repo/packets/base/c2s/0x72-IssueOrderReq';
 import type { MinionType } from '@repo/packets/base/s2c/0x03-Barrack_SpawnUnit';
@@ -7,9 +6,8 @@ import type Character from '@repo/scripting/base/character';
 import GameObjectList from '../../app/game-object-list';
 import Server from '../../app/server';
 import { EventEmitter2 } from '../../core/event-emitter2';
-import * as Measure from '../extensions/measure';
-import { type LaneId, TeamId } from '../extensions/traits/team';
-import { minionLanePaths } from '../positions/index';
+import * as Measure from '../../gameobjectextensions/measure';
+import { type LaneId, TeamId } from '../../gameobjectextensions/traits/team';
 import type Barrack from '../spawners/barrack';
 import type AttackableUnit from '../units/attackable-unit';
 import type { AttackableUnitOptions } from '../units/attackable-unit';
@@ -69,12 +67,13 @@ export default class Minion extends BaseAi {
 	}
 
 	stopAttack() {
+		const owner = this.owner;
 		const packet1 = packets.InstantStop_Attack.create({
-			netId: this.owner.netId,
+			netId: owner.netId,
 			keepAnimating: true,
 			destroyMissile: false,
 		});
-		this.owner.packets.toEveryone(packet1);
+		owner.packets.toEveryone(packet1);
 	}
 
 	onSpawnPackets(to: (packet: PacketMessage | undefined) => void) {
@@ -90,7 +89,7 @@ export default class Minion extends BaseAi {
 	}
 
 	onSpawn() {
-		this.onSpawnPackets((packet) => Server.teams[TeamId.max]?.sendPacket(packet));
+		this.onSpawnPackets((packet) => Server.teams[TeamId.all]?.sendPacket(packet));
 	}
 
 	/**
@@ -99,7 +98,7 @@ export default class Minion extends BaseAi {
 	moveLane(teamId: TeamId | undefined = undefined, laneId: LaneId | undefined = undefined) {
 		const owner = this.owner;
 		const spawner = owner.spawner as Barrack;
-		//console.log('moveLane', this.constructor.name, this.owner.netId);
+		//console.log('moveLane', this.constructor.name, owner.netId);
 
 		teamId = teamId ?? spawner.team.id;
 		laneId = laneId ?? spawner.lane;
@@ -107,18 +106,19 @@ export default class Minion extends BaseAi {
 		if (teamId === undefined || laneId === undefined)
 			return;
 
+		const { minionLanePaths } = Server.map.positions;
 		const minionLanePath = minionLanePaths[teamId as keyof typeof minionLanePaths]?.[laneId];
 		if (!minionLanePath)
 			return;
 
 		let lanePath = minionLanePath.map(a => a.clone());
-		lanePath = Measure.general.getFromNearestToEnd(this.owner, lanePath);
+		lanePath = Measure.general.getFromNearestToEnd(owner, lanePath);
 
 		//@todo make path more precise
 		if (lanePath.length > 1)
 			lanePath.shift();
 
-		this.owner.moving.setWaypoints(lanePath);
+		owner.moving.setWaypoints(lanePath);
 	}
 
 	/**
@@ -129,7 +129,8 @@ export default class Minion extends BaseAi {
 	}
 
 	get characterBase() {
-		return this.owner.character?.constructor as typeof Character | undefined;
+		const character = this.owner.character;
+		return character?.constructor as typeof Character | undefined;
 	}
 
 	get rewardExp() {
@@ -149,7 +150,7 @@ export default class Minion extends BaseAi {
 		if (source.team.id === owner.team.id)
 			return;
 
-		const range = 1600;
+		const range = Server.map.constants.dieExpRadius;
 		const thisUnitTeamId = owner.team.id;
 		const enemyUnitsInRange = GameObjectList.aliveUnits.filter(unit => unit.team.id !== thisUnitTeamId && unit.position.distanceTo(owner.position) <= range);
 		const enemyPlayersInRange = enemyUnitsInRange.filter(v => v.ai instanceof Player && v !== source);

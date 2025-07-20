@@ -2,9 +2,9 @@
 import * as Characters from '@repo/gamedata/data/characters/index';
 import type Character from '@repo/scripting/base/character';
 import { EventEmitter2 } from '../../core/event-emitter2';
-import type { LevelableEvents } from '../extensions/progress/levelable';
-import Rewards from '../extensions/traits/rewards';
-import TeamArrangement, { TeamId } from '../extensions/traits/team';
+import type { LevelableEvents } from '../../gameobjectextensions/progress/levelable';
+import Rewards from '../../gameobjectextensions/traits/rewards';
+import TeamArrangement, { TeamId } from '../../gameobjectextensions/traits/team';
 import GameObject, { type GameObjectEvents, type GameObjectOptions } from '../game-object';
 import type Spawner from '../spawners/spawner';
 

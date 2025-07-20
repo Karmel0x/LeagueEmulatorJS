@@ -15,16 +15,17 @@ type FXCreateDataModelHelper = Partial<FXCreateDataModel & {
     //orientTowards: AttackableUnit | Vector2,
 }>;
 
-type FXCreateGroupDataModelHelper = Partial<Omit<FXCreateGroupDataModel, 'effectNameHash' | 'boneNameHash' | 'createData'> & {
+type FXCreateGroupDataModelHelper = Partial<Omit<FXCreateGroupDataModel, 'effectNameHash' | 'boneNameHash' | 'targetBoneNameHash' | 'createData'> & {
     effectNameHash: number | string,
     boneNameHash: number | string,
+    targetBoneNameHash: number | string,
     createData: FXCreateDataModelHelper[],
 }>;
 
 export function spellEffectCreate(bindObj: AttackableUnit, fxCreateGroupDataH: FXCreateGroupDataModelHelper[]) {
 
     const groupData = fxCreateGroupDataH.map((groupDataH) => {
-        let { effectNameHash, boneNameHash, createData: createDataH } = groupDataH;
+        let { effectNameHash, boneNameHash, targetBoneNameHash, createData: createDataH } = groupDataH;
 
         if (effectNameHash && typeof effectNameHash === 'string') {
             const effectName = effectNameHash.split('.')[0]!;
@@ -33,6 +34,10 @@ export function spellEffectCreate(bindObj: AttackableUnit, fxCreateGroupDataH: F
 
         if (boneNameHash && typeof boneNameHash === 'string') {
             boneNameHash = HashString.HashString(boneNameHash);
+        }
+
+        if (targetBoneNameHash && typeof targetBoneNameHash === 'string') {
+            targetBoneNameHash = HashString.HashString(targetBoneNameHash);
         }
 
         const createData = createDataH!.map((createDataH) => {
@@ -51,8 +56,7 @@ export function spellEffectCreate(bindObj: AttackableUnit, fxCreateGroupDataH: F
             //    }
             //}
 
-            if (!createDataH.netAssignedNetId)
-                createDataH.netAssignedNetId = ++GameObjectList.lastNetId;
+            const netAssignedNetId = createDataH.netAssignedNetId || ++GameObjectList.lastNetId;
 
             return {
                 bindNetId: bindObj.netId,
@@ -61,6 +65,7 @@ export function spellEffectCreate(bindObj: AttackableUnit, fxCreateGroupDataH: F
                 ownerPosition,
                 targetPosition,
                 //orientationVector,
+                netAssignedNetId,
             } as FXCreateDataModel;
         });
 
@@ -68,12 +73,13 @@ export function spellEffectCreate(bindObj: AttackableUnit, fxCreateGroupDataH: F
             ...groupDataH,
             effectNameHash,
             boneNameHash,
+            targetBoneNameHash,
             createData,
         } as FXCreateGroupDataModel;
     });
 
     const packet = packets.FX_Create_Group.create({
-        netId: bindObj.netId,
+        netId: 0,
         groupData,
     });
 
@@ -100,6 +106,6 @@ export function spellEffectRemove(effectId: number) {
 
 export function sendUnitParticleRemove(owner: AttackableUnit, effectId: number) {
     const packet = spellEffectRemove(effectId);
-    //TODO: should send where previous sent
+    //TODO: should send where previous sent?
     owner.packets.toVision(packet);
 }

@@ -9,5 +9,4 @@ export default (player: Player, packet: packets.UpdateGameOptionsModel) => {
 
 	const owner = player.owner;
 	owner.combat.autoAttackToggle = packet.autoAttackEnabled;
-
 };

@@ -1,6 +1,6 @@
 
 import { SlotId } from '@repo/gameserver/src/constants/slot-id';
-import * as Measure from '@repo/gameserver/src/gameobjects/extensions/measure';
+import * as Measure from '@repo/gameserver/src/gameobjectextensions/measure';
 import Missile from '@repo/gameserver/src/gameobjects/missiles/missile';
 import type AttackableUnit from '@repo/gameserver/src/gameobjects/units/attackable-unit';
 import HashString from '@repo/packets/functions/hash-string';

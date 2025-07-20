@@ -1,6 +1,6 @@
 
 import { SlotId } from '@repo/gameserver/src/constants/slot-id';
-import { BuffAddType } from '@repo/gameserver/src/gameobjects/extensions/traits/buff-manager';
+import { BuffAddType } from '@repo/gameserver/src/gameobjectextensions/traits/buff-manager';
 import type AttackableUnit from '@repo/gameserver/src/gameobjects/units/attackable-unit';
 import { Vector2 } from '@repo/geometry';
 import { BuffType } from '@repo/packets/base/s2c/0x68-BuffAddGroup';

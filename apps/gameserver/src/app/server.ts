@@ -1,6 +1,7 @@
 
-import SummonersRift from '@repo/gamedata/maps/summoners-rift';
+import SummonersRift from '@repo/gamedata/maps/map1/general';
 import type Network from '@repo/network/network';
+import TranslateCenteredCoordinates, { TranslateCenteredCoordinatesV3 } from '@repo/packets/functions/translate-centered-coordinates';
 import type MovementSimulation from '../game/components/movement-simulation';
 import type Game from '../game/initializers/game';
 import type Teams from '../game/initializers/teams';
@@ -23,3 +24,6 @@ export default class Server {
     static players: AttackableUnit[] = [];
 
 }
+
+TranslateCenteredCoordinates.middleOfMap = Server.map.middleOfMap;
+TranslateCenteredCoordinatesV3.middleOfMap = Server.map.middleOfMap;

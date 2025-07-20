@@ -1,7 +1,9 @@
 import { EventEmitter2 } from '../../core/event-emitter2';
-import Team from '../extensions/traits/team';
+import Team from '../../gameobjectextensions/traits/team';
 import GameObject, { type GameObjectEvents, type GameObjectOptions } from '../game-object';
+import type { AttackableUnitOptions } from '../units/attackable-unit';
 
+export type SpawnConfig<T> = AttackableUnitOptions & { aiOptions?: Omit<T, 'owner'> };
 
 export type SpawnerOptions = GameObjectOptions & {
     name?: string;

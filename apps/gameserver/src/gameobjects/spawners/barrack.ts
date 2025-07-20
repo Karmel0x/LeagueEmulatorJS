@@ -7,8 +7,7 @@ import Server from '../../app/server';
 import UnitAiList from '../../app/unit-ai-list';
 import { accurateDelay, runAccurateInterval } from '../../core/timer';
 import { delay } from '../../core/utils';
-import { TeamId, type LaneId } from '../extensions/traits/team';
-import { barracks } from '../positions/index';
+import { TeamId, type LaneId } from '../../gameobjectextensions/traits/team';
 import Minion, { type MinionOptions } from '../unit-ai/minion';
 import AttackableUnit, { type AttackableUnitOptions } from '../units/attackable-unit';
 import Spawner, { type SpawnerOptions } from './spawner';
@@ -204,14 +203,14 @@ export default class Barrack extends Spawner {
 
 		const interval = 30 * 1000;
 
-		runAccurateInterval(() => {
+		runAccurateInterval(async () => {
 			this.spawnWave(list);
 		}, interval);
 
 		this.spawnWave(list);
 	}
 
-	static spawnAll(spawnList = barracks) {
+	static spawnAll(spawnList = Server.map.positions.barracks) {
 		const list: Barrack[] = [];
 
 		for (let i = 0; i < spawnList.length; i++) {

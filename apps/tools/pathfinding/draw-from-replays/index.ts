@@ -40,42 +40,49 @@ function processReplay(replayUnpacked: ReplayRecord[]) {
 		if (packetId === packetId_SynchVersion && packet.data.byteLength < 500)
 			return;
 
-		let parsed = Parser.parse({
-			channel: packet.channel || 0,
-			data: packet.data,
-		});
+		try {
+			let parsed = Parser.parse({
+				channel: packet.channel || 0,
+				data: packet.data,
+			});
 
-		if (!parsed)
-			continue;
-
-		if (packetId === packetId_SynchVersion) {
-			let parsed1 = parsed as SynchVersionModel;
-			if (!parsed1.mapToLoad)
+			if (!parsed)
 				continue;
 
-			mapToLoad = parsed1.mapToLoad;
-			//console.log('mapToLoad:', mapToLoad);
-			waypointsDrawer[mapToLoad] = waypointsDrawer[mapToLoad] || new WaypointsDrawer(mapToLoad);
-		}
-
-
-		if (packetId === packetId_WaypointGroup) {
-			let parsed1 = parsed as WaypointGroupModel;
-			if (!parsed1.movementData || parsed1.movementData.length < 1)
-				continue;
-
-			let mapWaypointsDrawer = waypointsDrawer[mapToLoad];
-			if (!mapWaypointsDrawer)
-				return;
-
-			for (let k = 0; k < parsed1.movementData.length; k++) {
-				let movementData = parsed1.movementData[k];
-				if (!movementData || !movementData.waypoints || movementData.waypoints.length < 3)
+			if (packetId === packetId_SynchVersion) {
+				let parsed1 = parsed as SynchVersionModel;
+				if (!parsed1.mapToLoad)
 					continue;
 
-				mapWaypointsDrawer.drawWaypoints(movementData.waypoints);
-				//console.log(packet, parsed);
+				mapToLoad = parsed1.mapToLoad;
+				//console.log('mapToLoad:', mapToLoad);
+				waypointsDrawer[mapToLoad] = waypointsDrawer[mapToLoad] || new WaypointsDrawer(mapToLoad);
 			}
+
+
+			if (packetId === packetId_WaypointGroup) {
+				let parsed1 = parsed as WaypointGroupModel;
+				if (!parsed1.movementData || parsed1.movementData.length < 1)
+					continue;
+
+				let mapWaypointsDrawer = waypointsDrawer[mapToLoad];
+				if (!mapWaypointsDrawer)
+					return;
+
+				for (let k = 0; k < parsed1.movementData.length; k++) {
+					let movementData = parsed1.movementData[k];
+					if (!movementData || !movementData.waypoints || movementData.waypoints.length < 3)
+						continue;
+
+					mapWaypointsDrawer.drawWaypoints(movementData.waypoints);
+					//console.log(packet, parsed);
+				}
+			}
+		}
+		catch (e) {
+			//if (e instanceof Error) {
+			//	console.log(e.message);
+			//}
 		}
 
 	}

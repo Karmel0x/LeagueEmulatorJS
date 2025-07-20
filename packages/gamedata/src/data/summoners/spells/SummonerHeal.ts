@@ -1,4 +1,4 @@
-import { BuffAddType } from '@repo/gameserver/src/gameobjects/extensions/traits/buff-manager';
+import { BuffAddType } from '@repo/gameserver/src/gameobjectextensions/traits/buff-manager';
 import type AttackableUnit from '@repo/gameserver/src/gameobjects/units/attackable-unit';
 import { sendUnitStats } from '@repo/gameserver/src/packet-helpers/on-replication';
 import { BuffType } from '@repo/packets/base/s2c/0x68-BuffAddGroup';

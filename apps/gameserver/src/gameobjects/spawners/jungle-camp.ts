@@ -1,11 +1,9 @@
-
 import * as packets from '@repo/packets/list';
 import Server from '../../app/server';
 import loadingStages from '../../constants/game-state';
 import { EventEmitter2 } from '../../core/event-emitter2';
 import { accurateDelay } from '../../core/timer';
-import { TeamId } from '../extensions/traits/team';
-import { jungleCamps } from '../positions';
+import { TeamId } from '../../gameobjectextensions/traits/team';
 import Monster from '../unit-ai/monster';
 import type { AttackableUnitOptions } from '../units/attackable-unit';
 import Spawner, { type SpawnerEvents, type SpawnerOptions } from './spawner';
@@ -89,7 +87,7 @@ export default class JungleCamp extends Spawner {
 			campIndex: this.num,
 		});
 
-		Server.teams[TeamId.max]?.sendPacket(packet1, loadingStages.loading);
+		Server.teams[TeamId.all]?.sendPacket(packet1, loadingStages.loading);
 	}
 
 	notifyActivate() {
@@ -102,7 +100,7 @@ export default class JungleCamp extends Spawner {
 			campIndex: this.num,
 		});
 
-		Server.teams[TeamId.max]?.sendPacket(packet1, loadingStages.loading);
+		Server.teams[TeamId.all]?.sendPacket(packet1, loadingStages.loading);
 	}
 
 	notifyDeactivate() {
@@ -110,10 +108,10 @@ export default class JungleCamp extends Spawner {
 			campIndex: this.num,
 		});
 
-		Server.teams[TeamId.max]?.sendPacket(packet1, loadingStages.loading);
+		Server.teams[TeamId.all]?.sendPacket(packet1, loadingStages.loading);
 	}
 
-	//static spawnAll(spawnList = jungleCamps) {
+	//static spawnAll(spawnList = Server.map.positions.jungleCamps) {
 	//	for (let i = 0; i < spawnList.length; i++) {
 	//		let spawn = spawnList[i]!;
 	//
@@ -148,6 +146,7 @@ export default class JungleCamp extends Spawner {
 	}
 
 	static spawnAll() {
+		const { jungleCamps } = Server.map.positions;
 		const list: JungleCamp[] = [];
 
 		for (let i = 0; i < jungleCamps.length; i++) {

@@ -2,9 +2,9 @@ import type { Vector2Like } from '@repo/geometry';
 
 export default class Pathfinding_ScalarAIMesh {
 
-	static coordinatesMinX = -328.90;
+	static coordinatesMinX = -328.903;
 	static coordinatesMaxX = 14311.77;
-	static coordinatesMinY = -110.19;
+	static coordinatesMinY = -110.1923;
 	static coordinatesMaxY = 14556.88;
 
 	static aimeshMinX = 0;

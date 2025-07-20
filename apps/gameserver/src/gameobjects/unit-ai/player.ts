@@ -1,6 +1,6 @@
 
-import PlayerNetwork from '../extensions/traits/player-network';
-import type { TeamId } from '../extensions/traits/team';
+import PlayerNetwork from '../../gameobjectextensions/traits/player-network';
+import type { TeamId } from '../../gameobjectextensions/traits/team';
 import type { AttackableUnitOptions } from '../units/attackable-unit';
 import Hero, { type HeroOptions } from './hero';
 import { AiSubType } from './types';
@@ -27,6 +27,7 @@ export default class Player extends Hero {
 		return super.initializeUnit(unitOptions, aiOptions);
 	}
 
+	declare options: PlayerConfig;
 	network!: PlayerNetwork;
 	subType = AiSubType.Player;
 

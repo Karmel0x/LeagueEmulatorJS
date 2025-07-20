@@ -48,6 +48,27 @@
 			},
 			"runes": [],
 			"masteries": []
+		},
+		{
+			"summoner": {
+				"id": 3,
+				"name": "Player3",
+				"level": 30,
+				"iconId": 666,
+				"rankId": 0,
+				"ribbonId": 0,
+				"spells": {
+					"d": "SummonerHeal",
+					"f": "SummonerFlash"
+				}
+			},
+			"match": {
+				"team": 100,
+				"champion": "Yasuo",
+				"skin": 0
+			},
+			"runes": [],
+			"masteries": []
 		}
 	]
 }
