@@ -4,7 +4,7 @@ import loadingStages from '../../constants/game-state';
 import { EventEmitter2 } from '../../core/event-emitter2';
 import { accurateDelay } from '../../core/timer';
 import { TeamId } from '../../gameobjectextensions/traits/team';
-import Monster from '../unit-ai/monster';
+import NeutralMinion from '../unit-ai/neutral-minion';
 import type { AttackableUnitOptions } from '../units/attackable-unit';
 import Spawner, { type SpawnerEvents, type SpawnerOptions } from './spawner';
 
@@ -53,9 +53,9 @@ export default class JungleCamp extends Spawner {
 		let killedMonstersCount = 0;
 
 		options.monsters.forEach((v, i) => {
-			const unit = Monster.initializeUnit({
+			const unit = NeutralMinion.initializeUnit({
 				team: options.team,
-				position: v.position,
+				spawnPosition: v.spawnPosition,
 				facePosition: v.facePosition,
 				height: v.height,
 				name: v.name,

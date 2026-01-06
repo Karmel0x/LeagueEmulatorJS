@@ -15,11 +15,11 @@ export enum TeamId {
 
 export enum LaneId {
 	/** right */
-	top = 0,
+	bot = 0,
 	/** center */
 	mid = 1,
 	/** left */
-	bot = 2,
+	top = 2,
 	unknown = 11,
 };
 
@@ -42,7 +42,7 @@ export default class TeamArrangement {
 			[TeamId.order]: 'order',
 			[TeamId.chaos]: 'chaos',
 			[TeamId.neutral]: 'neutral',
-			[TeamId.all]: 'max',
+			[TeamId.all]: 'all',
 		};
 		return teamsR[this.id as keyof typeof teamsR] || 'unknown';
 	}

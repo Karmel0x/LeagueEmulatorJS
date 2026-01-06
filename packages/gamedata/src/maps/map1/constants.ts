@@ -17,6 +17,9 @@ const constants = {
     fountainRegenRadius: 1100,
 
     dieExpRadius: 1600,
+    startingGold: 475,
+    wavesInitialTimeToSpawn: 90,
+    waveSpawnRate: 30,
 };
 
 export default constants;

@@ -42,7 +42,7 @@ export default class EzrealTrueshotBarrage extends _Spell {
 
 
 		let collidedWith: number[] = [];
-		skillshot.eventEmitter.on('collision', (target: AttackableUnit) => {
+		skillshot.eventEmitter.on('collisionUnit', (target: AttackableUnit) => {
 			if (owner === target || collidedWith.includes(target.netId))
 				return;
 

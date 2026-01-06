@@ -1,5 +1,6 @@
 
 import type { Vector2 } from '@repo/geometry';
+import { IssueOrderType } from '@repo/packets/base/c2s/0x72-IssueOrderReq';
 import { DamageResultType } from '@repo/packets/base/s2c/0x65-UnitApplyDamage';
 import * as packets from '@repo/packets/list';
 import { DamageSource, DamageType } from '@repo/packets/shared/SDeathData';
@@ -7,7 +8,7 @@ import GameObjectList from '../../app/game-object-list';
 import Timer from '../../core/timer';
 import type Missile from '../../gameobjects/missiles/missile';
 import type { Hero, Player } from '../../gameobjects/unit-ai';
-import { AiSubType, AiType } from '../../gameobjects/unit-ai/types';
+import { AiType } from '../../gameobjects/unit-ai/types';
 import type AttackableUnit from '../../gameobjects/units/attackable-unit';
 import * as Measure from '../measure';
 import Targetable from './targetable';
@@ -62,42 +63,28 @@ export default class Defendable extends Targetable {
 		super(owner);
 		this.respawnable = respawnable;
 
-		this.owner.eventEmitter.once('spawn', () => {
-			const ai = owner.ai;
-			if (ai) {
-				// do not die while testing @todo remove it
-				this.unkillable = ai.subType === AiSubType.Player;
-			}
-		});
-
-		this.owner.eventEmitter.on('death', (attacker, assists) => {
-			this.owner.eventEmitter.emit('changeOrder');
-			this.owner.onDie(attacker, assists);
+		owner.eventEmitter.on('death', (attacker, assists) => {
+			owner.issueOrder(IssueOrderType.orderNone);
+			owner.onDie(attacker, assists);
 
 			if (!this.respawnable)
-				this.owner.eventEmitter.emit('destroy');
+				owner.eventEmitter.emit('destroy');
 		});
-	}
-
-	get unkillable() {
-		return this.owner.stats.health.minimum > 0;
-	}
-
-	set unkillable(value: boolean) {
-		this.owner.stats.health.minimum = value ? 1 : 0;
 	}
 
 	sendUnitApplyDamage(source: AttackableUnit, damage: { resultType?: number; type?: number; amount?: number; }) {
+		const target = this.owner;
+
 		const packet1 = packets.UnitApplyDamage.create({
-			netId: this.owner.netId,
-			damageResultType: damage.resultType || DamageResultType.normal,
+			netId: target.netId,
+			damageResultType: damage.resultType ?? DamageResultType.normal,
 			//unknown1: 125,
-			//damageType: damage.type || DamageType.mixed,
+			//damageType: damage.type ?? DamageType.mixed,
 			damage: damage.amount || 0,
-			targetNetId: this.owner.netId,
+			targetNetId: target.netId,
 			sourceNetId: source.netId,
 		});
-		this.owner.packets.toEveryone(packet1);
+		target.packets.toEveryone(packet1);
 	}
 
 	private damageModPlus(mod: number) {
@@ -109,18 +96,19 @@ export default class Defendable extends Targetable {
 	}
 
 	private mitigateDamage(source: AttackableUnit, e: DamageData) {
-		source.eventEmitter.emit('preMitigationDamage', this.owner, e);
+		const target = this.owner;
+		source.eventEmitter.emit('preMitigationDamage', target, e);
 
 		let defense = 0;
 
 		if (e.damageType === DamageType.physical) {
-			const defAmount = this.owner.stats.armor.total;
+			const defAmount = target.stats.armor.total;
 			const penetration = source.stats.armorPenetration;
 
 			defense = (defAmount - penetration.flatBonus) * (1 - penetration.percentBonus);
 		}
 		else if (e.damageType === DamageType.magic) {
-			const defAmount = this.owner.stats.magicResist.total;
+			const defAmount = target.stats.magicResist.total;
 			const penetration = source.stats.magicPenetration;
 
 			defense = (defAmount - penetration.flatBonus) * (1 - penetration.percentBonus);
@@ -139,25 +127,22 @@ export default class Defendable extends Targetable {
 	}
 
 	private dealDamage(source: AttackableUnit, e: DamageData) {
-		source.eventEmitter.emit('preDealDamage', this.owner, e);
+		const target = this.owner;
+		source.eventEmitter.emit('preDealDamage', target, e);
 
-		this.owner.stats.health.current -= e.damageAmount;
-		this.assistMarkers.push({
-			unit: source,
-			time: Timer.app.now(),
-			duration: 10,
-		});
+		target.stats.health.current -= e.damageAmount;
+		this.addAssistMarker(source);
 
 		this.sendUnitApplyDamage(source, {
 			amount: e.damageAmount,
 		});
 
-		this.owner.packets.OnEnterLocalVisibilityClient();
+		target.packets.OnEnterLocalVisibilityClient();
 
-		source.eventEmitter.emit('dealDamage', this.owner, e);
-		this.owner.eventEmitter.emit('takeDamage', source, e);
+		source.eventEmitter.emit('dealDamage', target, e);
+		target.eventEmitter.emit('takeDamage', source, e);
 
-		if (this.owner.stats.health.current <= 0)
+		if (target.stats.health.current <= 0)
 			this.die(source);
 	}
 
@@ -177,6 +162,24 @@ export default class Defendable extends Targetable {
 		return 1;
 	}
 
+	checkIfMiss(source: AttackableUnit, e: DamageData) {
+		if (e.damageSource !== DamageSource.attack)
+			return false;
+
+		const missChance = source.stats.missChance.total;
+		const missed = Math.random() < missChance;
+		if (missed)
+			return true;
+
+		const target = this.owner;
+		const dodge = target.stats.dodge.total;
+		const dodged = Math.random() < dodge;
+		if (dodged)
+			return true;
+
+		return false;
+	}
+
 	damage(source: AttackableUnit, e: DamageData) {
 		const target = this.owner;
 
@@ -194,6 +197,14 @@ export default class Defendable extends Targetable {
 		source.eventEmitter.emit('preDamage', source, e);
 
 		if (e.damageSource === DamageSource.attack) {
+			// TODO: move it to basic attack only
+			const isMiss = this.checkIfMiss(source, e);
+			if (isMiss) {
+				source.eventEmitter.emit('miss', target);
+				target.eventEmitter.emit('dodge', source);
+				return;
+			}
+
 			source.eventEmitter.emit('hitUnit', target, e);
 			target.eventEmitter.emit('beingHit', source, e);
 		}
@@ -215,14 +226,17 @@ export default class Defendable extends Targetable {
 	}
 
 	private getKillers(clean = false) {
+		const target = this.owner;
+		const appTime = Timer.app.now();
+
 		const killers = this.assistMarkers.filter(assist => {
-			if (assist.unit === this.owner)
+			if (assist.unit === target)
 				return false;
 
-			if (assist.unit.team.id === this.owner.team.id)
+			if (assist.unit.team.id === target.team.id)
 				return false;
 
-			if (assist.time + (assist.duration * 1000) < Timer.app.now())
+			if (assist.time + (assist.duration * 1000) < appTime)
 				return false;
 
 			return true;
@@ -237,6 +251,7 @@ export default class Defendable extends Targetable {
 
 	private getKillerAssistants(killers: AssistMarker[]) {
 		let killerAssistants: AssistMarker[] = [];
+		const appTime = Timer.app.now();
 
 		killers.forEach(killer => {
 			const killerAssistants1 = killer.unit.combat.assistMarkers.filter(assist => {
@@ -246,7 +261,7 @@ export default class Defendable extends Targetable {
 				if (assist.unit.team.id !== killer.unit.team.id)
 					return false;
 
-				if (assist.time + (assist.duration * 1000) < Timer.app.now())
+				if (assist.time + (assist.duration * 1000) < appTime)
 					return false;
 
 				return true;
@@ -276,12 +291,14 @@ export default class Defendable extends Targetable {
 
 	sendDie(source: AttackableUnit) {
 		// @todo
-		const heroPackets = (this.owner.ai as Hero).packets;
+		const target = this.owner;
+
+		const heroPackets = (target.ai as Hero).packets;
 		if (heroPackets) {
 			heroPackets.Die(source);
 		}
 		else {
-			this.owner.packets.Die(source);
+			target.packets.Die(source);
 		}
 	}
 
@@ -300,22 +317,25 @@ export default class Defendable extends Targetable {
 
 		this.sendDie(source);
 
-		source.eventEmitter.emit('kill', this.owner);
-		this.owner.eventEmitter.emit('death', source, assists.map(a => a.unit));
+		const target = this.owner;
+		source.eventEmitter.emit('kill', target);
+		target.eventEmitter.emit('death', source, assists.map(a => a.unit));
 
-		for (let i = 0; i < assists.length; i++) {
-			const assist = assists[i]!;
-			assist.unit.eventEmitter.emit('assist', this.owner);
+		if (target.ai.type === AiType.Hero) {
+			for (let i = 0; i < assists.length; i++) {
+				const assist = assists[i]!;
+				assist.unit.eventEmitter.emit('assist', target);
+			}
 		}
 
 		const units = GameObjectList.aliveUnits;
-		const nearbyUnits = Measure.centerToCenter.filterByRange(this.owner, units, 1000);
+		const nearbyUnits = Measure.centerToCenter.filterByRange(target, units, 1000);
 		for (let i = 0; i < nearbyUnits.length; i++) {
 			const nearbyUnit = nearbyUnits[i]!;
-			if (nearbyUnit === this.owner)
+			if (nearbyUnit === target)
 				continue;
 
-			nearbyUnit.eventEmitter.emit('nearbyDeath', this.owner);
+			nearbyUnit.eventEmitter.emit('nearbyDeath', target);
 		}
 	}
 
@@ -324,29 +344,28 @@ export default class Defendable extends Targetable {
 	}
 
 	heal(source: AttackableUnit, healAmount: number) {
+		const target = this.owner;
+
 		const e = { healAmount };
-		source.eventEmitter.emit('heal', this.owner, e);
+		source.eventEmitter.emit('heal', target, e);
 		healAmount = e.healAmount;
 
-		this.owner.stats.health.current += healAmount;
-		this.assistMarkers.push({
-			unit: source,
-			time: Timer.app.now(),
-			duration: 10,
-		});
+		target.stats.health.current += healAmount;
+		this.addAssistMarker(source);
 
-		this.owner.packets.OnEnterLocalVisibilityClient();
+		target.packets.OnEnterLocalVisibilityClient();
 	}
 
 	healPercent(source: AttackableUnit, hpPercent: number) {
-		this.heal(source, this.owner.stats.health.total * hpPercent / 100);
+		const target = this.owner;
+		this.heal(source, target.stats.health.total * hpPercent / 100);
 	}
 
-	addAssistMarker(unit: AttackableUnit, addDuration = 0) {
+	addAssistMarker(unit: AttackableUnit, duration = 10) {
 		this.assistMarkers.push({
 			unit,
 			time: Timer.app.now(),
-			duration: 10 + addDuration,
+			duration,
 		});
 	}
 

@@ -45,7 +45,7 @@ export default class YasuoQ3 extends _Spell {
 		});
 
 		let collidedWith: number[] = [];
-		skillshot.eventEmitter.on('collision', (target) => {
+		skillshot.eventEmitter.on('collisionUnit', (target) => {
 			if (!(target instanceof AttackableUnit))
 				return;
 

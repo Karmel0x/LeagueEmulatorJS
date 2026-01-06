@@ -3,9 +3,9 @@ import * as packets from '@repo/packets/list';
 import Server from '../app/server';
 import loadingStages from '../constants/game-state';
 import { TeamId } from '../gameobjectextensions/traits/team';
+import { LaneMinion } from '../gameobjects/unit-ai';
 import Hero from '../gameobjects/unit-ai/hero';
-import Minion from '../gameobjects/unit-ai/minion';
-import Monster from '../gameobjects/unit-ai/monster';
+import NeutralMinion from '../gameobjects/unit-ai/neutral-minion';
 import Inhibitor from '../gameobjects/unit-ai/structures/inhibitor';
 import Nexus from '../gameobjects/unit-ai/structures/nexus';
 import Turret from '../gameobjects/unit-ai/structures/turret';
@@ -46,7 +46,7 @@ export default function create(units: AttackableUnit[]) {
                 moveSpeed: unit.stats.moveSpeed.total,
                 health_total: unit.stats.health.total,
                 health_current: unit.stats.health.current,
-                exp: unit.progress.exp,
+                exp: unit.progress.expTotal,
                 mana_current: unit.stats.mana.current,
                 mana_total: unit.stats.mana.total,
                 attackSpeedMultiplier: 1 + unit.stats.attackSpeed.total - 0.625,
@@ -78,7 +78,7 @@ export default function create(units: AttackableUnit[]) {
             } satisfies OnReplicationBuildingModel;
         }
 
-        if (unit.ai instanceof Minion) {
+        if (unit.ai instanceof LaneMinion) {
             return {
                 ...data,
                 type: ReplicantUnitType.Minion,
@@ -87,7 +87,7 @@ export default function create(units: AttackableUnit[]) {
             } satisfies OnReplicationMinionModel;
         }
 
-        if (unit.ai instanceof Monster) {
+        if (unit.ai instanceof NeutralMinion) {
             return {
                 ...data,
                 type: ReplicantUnitType.Monster,

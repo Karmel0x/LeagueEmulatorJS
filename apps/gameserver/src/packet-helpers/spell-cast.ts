@@ -1,7 +1,9 @@
 import { Vector2WithZ } from '@repo/geometry';
+import { defaultHeight } from '@repo/geometry/vector2-with-z';
 import HashString from '@repo/packets/functions/hash-string';
 import * as packets from '@repo/packets/list';
 import type { SCastInfoModel } from '@repo/packets/shared/SCastInfo';
+import { humanizePosition } from '../core/utils';
 import type { Player } from '../gameobjects/unit-ai';
 import { AiType } from '../gameobjects/unit-ai/types';
 import type AttackableUnit from '../gameobjects/units/attackable-unit';
@@ -44,7 +46,7 @@ export function makeCastInfo(caster: AttackableUnit, castInfo1: Partial<SCastInf
         spellCastLaunchPosition: {
             x: caster.position.x,
             y: caster.position.y,
-            z: 60,
+            z: defaultHeight,
         },
         ammoUsed: 0,
         ammoRechargeTime: 0,
@@ -53,10 +55,7 @@ export function makeCastInfo(caster: AttackableUnit, castInfo1: Partial<SCastInf
     };
 
     if (caster.ai && caster.ai.type === AiType.Hero) {
-        (caster.ai as Player).packets.chatBoxDebugMessage('caster.position', {
-            x: Math.round(caster.position.x * 1e3) / 1e3,
-            y: Math.round(caster.position.y * 1e3) / 1e3,
-        });
+        (caster.ai as Player).packets.chatBoxDebugMessage('caster.position', humanizePosition(caster.position));
     }
 
     return castInfo;

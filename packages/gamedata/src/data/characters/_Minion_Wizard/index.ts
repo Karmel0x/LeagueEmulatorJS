@@ -25,29 +25,21 @@ export default class _Minion_Wizard extends Character {
 	};
 
 	static stats = {
-		health: {
-			baseValue: 290,
-			perLevel: 15,
-		},
+		health: 290,
+		healthPerLevel: 15,
 		healthRegen: 0,
 		mana: 0,
 		manaRegen: 0,
-		attackDamage: {
-			baseValue: 23,
-			perLevel: 2,
-		},
+		attackDamage: 23,
+		attackDamagePerLevel: 2,
 		attackSpeed: 0.67,
 		attackSpeedOffset: 0,
 		crit: 0,
 		attackRange: 600,
-		armor: {
-			baseValue: 0,
-			perLevel: 1.25,
-		},
-		resist: {
-			baseValue: 0,
-			perLevel: 2,
-		},
+		armor: 0,
+		armorPerLevel: 1.25,
+		resist: 0,
+		resistPerLevel: 2,
 		moveSpeed: 325,
 
 		collisionRadius: 48,

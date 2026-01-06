@@ -18,30 +18,22 @@ export default class AncientGolem extends Character {
 	};
 
 	static stats = {
-		health: {
-			baseValue: 1500,
-			perLevel: 0,
-		},
+		health: 1500,
+		healthPerLevel: 0,
 		healthRegen: 0,
 		mana: 0,
 		manaRegen: 0,
-		attackDamage: {
-			baseValue: 60,
-			perLevel: 0,
-		},
+		attackDamage: 60,
+		attackDamagePerLevel: 0,
 		abilityPower: 0,
 		attackSpeed: 0.613,
 		attackSpeedOffset: 0,
 		crit: 0,
 		attackRange: 100,
-		armor: {
-			baseValue: 20,
-			perLevel: 0,
-		},
-		resist: {
-			baseValue: 0,
-			perLevel: 0,
-		},
+		armor: 20,
+		armorPerLevel: 0,
+		resist: 0,
+		resistPerLevel: 0,
 		moveSpeed: 180,
 
 		collisionRadius: 48,

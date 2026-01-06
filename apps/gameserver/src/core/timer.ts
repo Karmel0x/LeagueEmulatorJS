@@ -145,7 +145,7 @@ export function runAppInterval<T extends number>(callback: (diff: T) => void, ms
     };
 }
 
-export function runAccurateInterval(callback: (updateTime: number) => Promise<void>, ms: number) {
+export function runAccurateInterval(callback: (updateTime: number) => Promise<void> | void, ms: number) {
     let lastUpdate = Timer.app.now();
     let stop = false;
 

@@ -25,29 +25,21 @@ export default class _Minion_MechCannon extends Character {
 	};
 
 	static stats = {
-		health: {
-			baseValue: 700,
-			perLevel: 27,
-		},
+		health: 700,
+		healthPerLevel: 27,
 		healthRegen: 0,
 		mana: 0,
 		manaRegen: 0,
-		attackDamage: {
-			baseValue: 40,
-			perLevel: 3,
-		},
+		attackDamage: 40,
+		attackDamagePerLevel: 3,
 		attackSpeed: 1,
 		attackSpeedOffset: 0,
 		crit: 0,
 		attackRange: 450,
-		armor: {
-			baseValue: 15,
-			perLevel: 3,
-		},
-		resist: {
-			baseValue: 0,
-			perLevel: 3,
-		},
+		armor: 15,
+		armorPerLevel: 3,
+		resist: 0,
+		resistPerLevel: 3,
 		moveSpeed: 325,
 
 		collisionRadius: 65,

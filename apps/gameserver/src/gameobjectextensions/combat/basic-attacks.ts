@@ -31,7 +31,7 @@ export default class BasicAttacks {
 			e.sendMissileReplication = false;
 
 			// TODO
-			const attackTotalTime = 1.6;
+			const attackTotalTime = 0.2;//1.6;
 
 			// TODO: check why owner.stats.attackSpeed.total may be NaN
 			const attackSpeedTotal = owner.stats.attackSpeed.total || 0.625;
@@ -43,7 +43,9 @@ export default class BasicAttacks {
 
 			// TODO: extraTime [-0.14, 0]
 			const extraTime = 0;
-			this.attackAns(target, SlotId.a, extraTime);
+
+			const attackSlot = SlotId.a;
+			this.attackAns(target, attackSlot, extraTime);
 			//(owner.ai as Player)?.packets?.chatBoxDebugMessage('aa extraTime', extraTime);
 		});
 

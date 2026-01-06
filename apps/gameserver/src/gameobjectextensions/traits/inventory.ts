@@ -191,9 +191,10 @@ export default class Inventory {
 	buyItemAns(slot: number) {
 		const itemOnSlot = this.items[slot]!;
 		const item = itemOnSlot.item;
+		const owner = this.owner;
 
 		const packet1 = packets.BuyItemAns.create({
-			netId: this.owner.netId,
+			netId: owner.netId,
 			item: {
 				itemId: item.itemId,
 				slot,
@@ -201,7 +202,7 @@ export default class Inventory {
 				spellCharges: 0,
 			},
 		});
-		this.owner.packets.toVision(packet1);
+		owner.packets.toVision(packet1);
 	}
 
 	getEffectiveGoldCost(item: Item, itemsToRemove: Item[] | null) {
@@ -313,12 +314,13 @@ export default class Inventory {
 	}
 
 	removeItemAns(slot: number) {
+		const owner = this.owner;
 		const packet1 = packets.RemoveItemAns.create({
-			netId: this.owner.netId,
+			netId: owner.netId,
 			slot,
 			itemsInSlot: this.items[slot]?.stacks,
 		});
-		this.owner.packets.toVision(packet1);
+		owner.packets.toVision(packet1);
 	}
 
 	removeItem(slot: number) {

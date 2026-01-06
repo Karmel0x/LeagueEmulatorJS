@@ -8,17 +8,20 @@ const readers = {
 };
 
 export default function (filePath: string) {
+	if (!filePath.includes('.'))
+		throw new Error(`no replay file extension`);
+
 	const ext = filePath.split('.').pop();
 	if (!ext)
 		throw new Error('unknown replay file extension');
 
 	const reader = readers[ext as keyof typeof readers];
 	if (!reader)
-		throw new Error('unknown replay file extension');
+		throw new Error(`unknown replay file extension: ${ext}`);
 
 	const replay: ReturnType<ReplayFileReader> = reader(filePath);
 
-	const replay2 = replay.map((record, i) => {
+	const packets2 = replay.packets.map((record, i) => {
 		let data: ArrayBuffer | Buffer | undefined = undefined;
 		if (record.data)
 			data = record.data;
@@ -39,18 +42,19 @@ export default function (filePath: string) {
 		return {
 			time: record.time,
 			peerNums: record.peerNums,
-			data,
 			channel: record.channel,
+			direction: record.direction,
+			data,
 		} as ReplayRecord;
 	});
 
-	const replay3 = replay2.filter(Boolean) as ReplayRecord[];
+	const packets3 = packets2.filter(Boolean) as ReplayRecord[];
 
-	if (replay3.every(v => v.time < 10 * 1000)) {
-		replay3.forEach(v => {
+	if (packets3.every(v => v.time < 10 * 1000)) {
+		packets3.forEach(v => {
 			v.time *= 1000;
 		});
 	}
 
-	return replay3;
+	return packets3;
 }

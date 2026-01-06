@@ -1,14 +1,14 @@
 {
   "name": "@repo/tools",
   "scripts": {
-    "pi": "ts-node -T packet-inspector-old"
+    "pi": "tsx packet-inspector-old"
   },
   "dependencies": {
-    "three": "^0.176.0",
-    "ws": "^8.18.1"
+    "three": "^0.182.0",
+    "ws": "^8.18.3"
   },
   "devDependencies": {
-    "@types/three": "^0.176.0",
+    "@types/three": "^0.182.0",
     "@types/ws": "^8.18.1"
   }
 }

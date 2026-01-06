@@ -1,4 +1,4 @@
-// ts-node tools/spectator-emulator/index.ts ../temp/replays/MeUrgot_and_MichaelCass_in_3v3_super_win__[GameReplays.org](1.0.0.126).rlp.json
+// tsx tools/spectator-emulator/index.ts ../temp/replays/MeUrgot_and_MichaelCass_in_3v3_super_win__[GameReplays.org](1.0.0.126).rlp.json
 
 import Timer from '@repo/gameserver/src/core/timer';
 import NetworkApiEnet from '@repo/network/network-api/enet';

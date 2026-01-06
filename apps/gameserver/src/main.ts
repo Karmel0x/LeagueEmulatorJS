@@ -19,8 +19,8 @@ function main() {
 
 	// if using websocket at first run `node tools/packet-inspector` and open your browser at `127.0.0.1`
 	Logging.changeOptions({
-		debug: Logging.output.console,
-		packet: Logging.output.websocket,
+		debug: Logging.output[config.logging.debug as keyof typeof Logging.output] || Logging.output.none,
+		packet: Logging.output[config.logging.packet as keyof typeof Logging.output] || Logging.output.none,
 	});
 
 	Network.logPacketSend = (peers: number[], data: ArrayBufferLike, channel: number) => {

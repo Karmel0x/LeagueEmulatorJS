@@ -67,7 +67,7 @@ export default class Builder extends Spawner {
         }
     }
 
-    spawnInhibitors(spawnList: SpawnConfig<TurretOptions>[]) {
+    spawnInhibitors(spawnList: SpawnConfig<InhibitorOptions>[]) {
 
         for (let i = 0; i < spawnList.length; i++) {
             const spawn = spawnList[i]!;

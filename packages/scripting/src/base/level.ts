@@ -11,5 +11,6 @@ export default class Level {
 
     middleOfMap!: Vector2Like;
 
+    expCurve!: number[];
     deathTimes!: number[];
 }

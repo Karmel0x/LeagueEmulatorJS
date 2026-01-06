@@ -7,8 +7,9 @@ import Server from '../../app/server';
 import UnitAiList from '../../app/unit-ai-list';
 import { accurateDelay, runAccurateInterval } from '../../core/timer';
 import { delay } from '../../core/utils';
+import config from '../../game/game.config.json';
 import { TeamId, type LaneId } from '../../gameobjectextensions/traits/team';
-import Minion, { type MinionOptions } from '../unit-ai/minion';
+import LaneMinion, { type LaneMinionOptions } from '../unit-ai/lane-minion';
 import AttackableUnit, { type AttackableUnitOptions } from '../units/attackable-unit';
 import Spawner, { type SpawnerOptions } from './spawner';
 
@@ -67,16 +68,15 @@ export default class Barrack extends Spawner {
 		//console.debug(packet1);
 	}
 
-	spawnUnit2(spawn: AttackableUnitOptions, aiOptions: Omit<MinionOptions, 'spawner' | 'owner'>) {
+	spawnUnit2(spawn: AttackableUnitOptions, aiOptions: Omit<LaneMinionOptions, 'spawner' | 'owner'>) {
 		const unit = AttackableUnit.initialize({
 			...spawn,
 			spawner: this,
 			team: this.team.id,
 		});
-		unit.ai = Minion.initialize({
+		unit.ai = LaneMinion.initialize({
 			...aiOptions,
 			owner: unit,
-			spawner: this,
 		});
 
 		unit.spawn();
@@ -197,11 +197,14 @@ export default class Barrack extends Spawner {
 	}
 
 	static async runSpawners(list: Barrack[]) {
-		const startAt = 1; // 90
+		const mapConstants = Server.map.constants;
+
+		const startAtS = config.testing.enabled && config.testing.wavesInitialTimeToSpawn ? config.testing.wavesInitialTimeToSpawn : mapConstants.wavesInitialTimeToSpawn;
+		const startAt = startAtS * 1000;
 		while (startAt > Server.game.timer.now())
 			await delay(100);
 
-		const interval = 30 * 1000;
+		const interval = mapConstants.waveSpawnRate * 1000;
 
 		runAccurateInterval(async () => {
 			this.spawnWave(list);

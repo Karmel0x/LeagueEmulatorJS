@@ -45,7 +45,7 @@ export default (player: Player, packet: packets.SynchVersionC2SModel) => {
 
 	const packet1 = packets.SynchVersion.create({
 		versionMatches: true,
-		mapToLoad: config.map,
+		mapToLoad: config.game.map,
 		versionString: VersionString,
 		playerInfo,
 		mapMode: 'CLASSIC',

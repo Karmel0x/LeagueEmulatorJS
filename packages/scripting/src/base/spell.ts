@@ -19,7 +19,7 @@ export type CastData = {
 export type SpellEvents = {
     'activate': (owner: AttackableUnit) => void;
     'deactivate': (owner: AttackableUnit) => void;
-    'cast': (owner: AttackableUnit, castData: CastData) => void;
+    'cast': (owner: AttackableUnit, castData: CastData, onSuccessCast?: () => void) => void;
     'buffAdd': (owner: AttackableUnit) => void;
     'buffRemove': (owner: AttackableUnit) => void;
     'buffUpdateActions': (owner: AttackableUnit) => void;
@@ -59,6 +59,21 @@ export default class Spell {
      */
     async postCast(owner: AttackableUnit, castData: CastData, spellVars: any) {
 
+    }
+
+    getCastRange(spellLevel: number) {
+        // TODO
+        return 25000;
+    }
+
+    getManaCost(spellLevel: number) {
+        // TODO
+        return 0;
+    }
+
+    getCooldown(spellLevel: number) {
+        // TODO
+        return 0;
     }
 
 }

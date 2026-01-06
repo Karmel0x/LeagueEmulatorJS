@@ -1,81 +1,181 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "properties": {
-        "map": {
+    "definitions": {
+        "Omit<PlayerConfig,\"owner\"|\"num\">": {
+            "properties": {
+                "masteries": {
+                    "items": {
+                        "type": "number"
+                    },
+                    "type": "array"
+                },
+                "match": {
+                    "properties": {
+                        "champion": {
+                            "type": "string"
+                        },
+                        "skin": {
+                            "type": "number"
+                        },
+                        "team": {
+                            "$ref": "#/definitions/TeamId"
+                        }
+                    },
+                    "type": "object"
+                },
+                "runes": {
+                    "items": {
+                        "type": "number"
+                    },
+                    "type": "array"
+                },
+                "summoner": {
+                    "properties": {
+                        "iconId": {
+                            "type": "number"
+                        },
+                        "id": {
+                            "type": "number"
+                        },
+                        "level": {
+                            "type": "number"
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "rankId": {
+                            "type": "number"
+                        },
+                        "ribbonId": {
+                            "type": "number"
+                        },
+                        "spells": {
+                            "properties": {
+                                "d": {
+                                    "type": "string"
+                                },
+                                "f": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "type": "object"
+        },
+        "TeamId": {
+            "enum": [
+                -100,
+                0,
+                100,
+                200,
+                300
+            ],
             "type": "number"
+        }
+    },
+    "properties": {
+        "debugging": {
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "noPathFinding": {
+                    "type": "boolean"
+                },
+                "noSpawners": {
+                    "type": "boolean"
+                },
+                "noTerrainEscape": {
+                    "type": "boolean"
+                }
+            },
+            "type": "object"
+        },
+        "game": {
+            "properties": {
+                "map": {
+                    "type": "number"
+                },
+                "version": {
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "logging": {
+            "properties": {
+                "debug": {
+                    "enum": [
+                        "console",
+                        "file",
+                        "none",
+                        "websocket"
+                    ],
+                    "type": "string"
+                },
+                "packet": {
+                    "enum": [
+                        "console",
+                        "file",
+                        "none",
+                        "websocket"
+                    ],
+                    "type": "string"
+                }
+            },
+            "type": "object"
         },
         "players": {
             "items": {
-                "properties": {
-                    "masteries": {
-                        "maxItems": 0,
-                        "minItems": 0,
-                        "type": "array"
-                    },
-                    "match": {
-                        "properties": {
-                            "champion": {
-                                "type": "string"
-                            },
-                            "num": {
-                                "type": "number"
-                            },
-                            "skin": {
-                                "type": "number"
-                            },
-                            "team": {
-                                "type": "number"
-                            }
-                        },
-                        "type": "object"
-                    },
-                    "runes": {
-                        "maxItems": 0,
-                        "minItems": 0,
-                        "type": "array"
-                    },
-                    "summoner": {
-                        "properties": {
-                            "iconId": {
-                                "type": "number"
-                            },
-                            "id": {
-                                "type": "number"
-                            },
-                            "level": {
-                                "type": "number"
-                            },
-                            "name": {
-                                "type": "string"
-                            },
-                            "rankId": {
-                                "type": "number"
-                            },
-                            "ribbonId": {
-                                "type": "number"
-                            },
-                            "spells": {
-                                "properties": {
-                                    "d": {
-                                        "type": "string"
-                                    },
-                                    "f": {
-                                        "type": "string"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        },
-                        "type": "object"
-                    }
-                },
-                "type": "object"
+                "$ref": "#/definitions/Omit%3CPlayerConfig%2C%22owner%22%7C%22num%22%3E"
             },
             "type": "array"
         },
         "server": {},
-        "version": {
-            "type": "number"
+        "testing": {
+            "properties": {
+                "adminCommands": {
+                    "type": "boolean"
+                },
+                "bringHeroesToLine": {
+                    "type": "boolean"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "levelUpPlayers": {
+                    "type": "number"
+                },
+                "noAutoGameStart": {
+                    "type": "boolean"
+                },
+                "noCooldowns": {
+                    "type": "boolean"
+                },
+                "noHeroDying": {
+                    "type": "boolean"
+                },
+                "noManaCosts": {
+                    "type": "boolean"
+                },
+                "noSpellRangeCheck": {
+                    "type": "boolean"
+                },
+                "spawnMinionsLine": {
+                    "type": "number"
+                },
+                "startingGold": {
+                    "type": "number"
+                },
+                "wavesInitialTimeToSpawn": {
+                    "type": "number"
+                }
+            },
+            "type": "object"
         }
     },
     "type": "object"

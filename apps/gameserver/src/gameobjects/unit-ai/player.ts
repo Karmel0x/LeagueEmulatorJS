@@ -6,33 +6,38 @@ import Hero, { type HeroOptions } from './hero';
 import { AiSubType } from './types';
 
 
-export type PlayerConfig = HeroOptions & {
+export type PlayerOptions = HeroOptions & {
+	runes: number[];
+	masteries: number[];
+};
+
+export type PlayerConfig = Omit<PlayerOptions, 'owner' | 'skin'> & {
 	match: {
 		team: TeamId;
 		champion: string;
 		skin: number;
 	};
-	runes: [];
-	masteries: [];
 };
-
-export type PlayerOptions = HeroOptions;
 
 export default class Player extends Hero {
 	static initialize(options: PlayerOptions) {
 		return super.initialize(options) as Player;
 	}
 
-	static initializeUnit(unitOptions: AttackableUnitOptions, aiOptions: Omit<PlayerConfig, 'owner'>) {
+	static initializeUnit(unitOptions: AttackableUnitOptions, aiOptions: Omit<PlayerOptions, 'owner'>) {
 		return super.initializeUnit(unitOptions, aiOptions);
 	}
 
-	declare options: PlayerConfig;
+	declare options: PlayerOptions;
 	network!: PlayerNetwork;
 	subType = AiSubType.Player;
 
 	lastChatCommand = '';
 	lastSelectedNetId = 0;
+
+	constructor(options: PlayerOptions) {
+		super(options);
+	}
 
 	loader(options: PlayerOptions) {
 		this.network = new PlayerNetwork(this);

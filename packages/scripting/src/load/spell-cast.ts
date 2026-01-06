@@ -5,13 +5,14 @@ import { AiSubType } from "@repo/gameserver/src/gameobjects/unit-ai/types";
 import type AttackableUnit from "@repo/gameserver/src/gameobjects/units/attackable-unit";
 import { sendMissileReplication, sendSpellCast } from "@repo/gameserver/src/packet-helpers/spell-cast";
 import { Vector2WithZ } from "@repo/geometry";
+import { defaultHeight } from "@repo/geometry/vector2-with-z";
 import { HitResult } from "@repo/packets/shared/SCastInfo";
 import type Spell from "../base/spell";
 import type { CastData } from "../base/spell";
 
 
 export function pinCastEvents(spell: Spell) {
-	spell.eventEmitter.on('cast', async (owner, castData) => {
+	spell.eventEmitter.on('cast', async (owner, castData, onSuccessCast) => {
 		const haltedMovement = owner.moving.haltMovement();
 		(owner.ai as Player)?.packets?.chatBoxDebugMessage(`waypointsHalt`, owner.moving.waypointsHalt);
 		owner.moving.sendWaypoints();
@@ -19,7 +20,8 @@ export function pinCastEvents(spell: Spell) {
 		try {
 			//console.log('spell cast', spell.name, '(', HashString.HashString(spell.name), ')', 'at', Math.round(performance.now()));
 			const spellCast = new SpellCast(spell, owner, castData);
-			await spellCast.castSpell();
+			const spellVars = {};
+			await spellCast.castSpell(spellVars, onSuccessCast);
 		}
 		catch (e) {
 			if (e instanceof Error) {
@@ -57,7 +59,7 @@ export class SpellCast {
 		}));
 	}
 
-	async castSpell(spellVars: any = {}) {
+	async castSpell(spellVars: any = {}, onSuccessCast = () => { }) {
 		const { spell, owner, castData } = this;
 		const { packet } = castData;
 
@@ -70,6 +72,8 @@ export class SpellCast {
 		 * - emit events in correct order
 		 * - etc.
 		 */
+
+		onSuccessCast();
 
 		castData.targetPosition = castData.packet.endPosition;
 		owner.eventEmitter.emit('spellCast', castData);
@@ -99,7 +103,7 @@ export class SpellCast {
 		castTime = e.castTime;
 		totalTime = e.totalTime;
 
-		const windupTime = castTime / totalTime;
+		const windupTime = Math.min(castTime / totalTime, castTime);
 		const lastOrderId = owner.lastOrderId;
 
 		await delay(windupTime * 1000);
@@ -147,7 +151,7 @@ export class SpellCast {
 			const startPoint = {
 				x: missile.position.x,
 				y: missile.position.y,
-				z: 60,
+				z: defaultHeight,
 			};
 
 			sendMissileReplication(owner, {

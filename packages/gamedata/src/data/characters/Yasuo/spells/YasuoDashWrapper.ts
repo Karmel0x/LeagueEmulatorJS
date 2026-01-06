@@ -38,10 +38,10 @@ export default class YasuoDashWrapper extends _Spell {
 				damageSource: DamageSource.spell,
 			});
 		};
-		owner.eventEmitter.on('collision', onCollision);
+		owner.eventEmitter.on('collisionUnit', onCollision);
 
 		owner.eventEmitter.on('dashed', () => {
-			owner.eventEmitter.off('collision', onCollision);
+			owner.eventEmitter.off('collisionUnit', onCollision);
 			//onCollision(castData.packet.targetNetId);//@todo
 
 			owner.packets.SetAnimStates([

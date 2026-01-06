@@ -139,7 +139,12 @@ export default class MovementSimulation {
 			remainingDistance -= nextWaypointDistance;
 		}
 
-		if (!nextWaypoint || remainingDistance <= 0)
+		if (!nextWaypoint) {
+			object.eventEmitter.emit('reachDestination');
+			return true;
+		}
+
+		if (remainingDistance <= 0)
 			return true;
 
 		let direction = nextWaypoint.clone().sub(objectPosition).normalize();
@@ -153,12 +158,11 @@ export default class MovementSimulation {
 	 */
 	emitEvents(object: MovableGameObject, diff: number) {
 
-		// @todo missiles only
-		if (object.eventEmitter.listenerCount('collision') > 0) {
+		if (object.eventEmitter.listenerCount('collisionUnit') > 0) {
 			const objectPosition = object.position;
 			const collisionRadius = object.collisionRadius;
 
-			const objects = GameObjectList.objects;
+			const objects = GameObjectList.attackableUnits;
 			for (let j = 0, l = objects.length; j < l; j++) {
 				const object2 = objects[j];
 
@@ -177,15 +181,13 @@ export default class MovementSimulation {
 
 				const dist2 = objectPosition.distanceTo(object2.position);
 				if (dist2 <= (collisionRadius + object2.collisionRadius)) {
-					object.eventEmitter.emit('collision', object2);
+					object.eventEmitter.emit('collisionUnit', object2);
 				}
 			}
 		}
 
-		const unitWaypoints = object.moving.waypoints;
-		if (unitWaypoints.length < 1) {
-			object.eventEmitter.emit('reachDestination');
-
+		const unitWaypointsOrdered = object.moving.waypointsOrdered;
+		if (unitWaypointsOrdered.length < 1) {
 			const attackableUnit = object as AttackableUnit;
 			if (attackableUnit.ai) {
 				if (attackableUnit.issuedOrder === IssueOrderType.moveTo)

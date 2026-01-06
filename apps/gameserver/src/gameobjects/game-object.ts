@@ -1,5 +1,6 @@
 
 import { Vector2, type Vector2Like } from '@repo/geometry';
+import type { IssueOrderType } from '@repo/packets/base/c2s/0x72-IssueOrderReq';
 import GameObjectList from '../app/game-object-list';
 import { EventEmitter2 } from '../core/event-emitter2';
 import type { StatsGameObjectEvents, StatsGameObjectOptions } from '../gameobjectextensions/stats/game-object';
@@ -9,7 +10,7 @@ import StatsGameObject from '../gameobjectextensions/stats/game-object';
 export type GameObjectEvents = StatsGameObjectEvents & {
 	'spawn': () => void;
 	'destroy': () => void;
-	'changeOrder': () => void;
+	'changeOrder': (issuedOrder: IssueOrderType) => void;
 }
 
 export type GameObjectOptions = {
@@ -110,7 +111,7 @@ export default class GameObject {
 	/**
 	 * Get distance from this unit to target unit
 	 */
-	distanceTo(target: GameObject | Vector2) {
+	distanceTo(target: GameObject | Vector2Like) {
 		return this.position.distanceTo((target as GameObject).position || target);
 	}
 

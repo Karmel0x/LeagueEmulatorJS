@@ -9,7 +9,7 @@ export const barracks: BarrackOptions[] = [
         position: { x: 917.7302, y: 1720.3623 },//,z:140.0677
         name: '__P_Order_Spawn_Barracks__L01',
         team: TeamId.order,
-        lane: LaneId.bot,
+        lane: LaneId.top,
     },
     {
         netId: 0xFFB77171,//0x49B77171
@@ -23,14 +23,14 @@ export const barracks: BarrackOptions[] = [
         position: { x: 1487.0896, y: 1302.0958 },//,z:144.2386
         name: '__P_Order_Spawn_Barracks__R01',
         team: TeamId.order,
-        lane: LaneId.top,
+        lane: LaneId.bot,
     },
     {
         netId: 0xFFE647D5,//0x72E647D5
         position: { x: 12451.051, y: 13217.542 },//,z:143.9473
         name: '__P_Chaos_Spawn_Barracks__L01',
         team: TeamId.chaos,
-        lane: LaneId.bot,
+        lane: LaneId.top,
     },
     {
         netId: 0xFFBA00E8,//0x79BA00E8
@@ -44,7 +44,7 @@ export const barracks: BarrackOptions[] = [
         position: { x: 13062.496, y: 12760.784 },//,z:134.706 
         name: '__P_Chaos_Spawn_Barracks__R01',
         team: TeamId.chaos,
-        lane: LaneId.top,
+        lane: LaneId.bot,
     },
 ];
 

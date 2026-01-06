@@ -5,12 +5,89 @@ import * as packets from '@repo/packets/list';
 import GameObjectList from '../app/game-object-list';
 import Server from '../app/server';
 import loadingStages from '../constants/game-state';
+import Timer from '../core/timer';
+import config from '../game/game.config.json';
 import Game from '../game/initializers/game';
 import { TeamId } from '../gameobjectextensions/traits/team';
-import type { Minion } from '../gameobjects/unit-ai';
+import type { LaneMinion } from '../gameobjects/unit-ai';
 import type Player from '../gameobjects/unit-ai/player';
 
-let started = false;
+
+function debugPerform() {
+	if (!config.testing.enabled)
+		return;
+
+	let olpi = 0;
+	let clpi = 0;
+
+	if (config.testing.spawnMinionsLine) {
+		for (let i = config.testing.spawnMinionsLine; i > 0; i--) {
+			const barrack = GameObjectList.barracks.find(barrack => barrack.team.id === TeamId.order);
+			if (!barrack) continue;
+
+			const unit = barrack.spawnUnit(MinionType.melee);
+			(unit.ai as LaneMinion).moveLane = () => { };
+			unit.combat.autoAttackToggle = false;
+			unit.moving.teleport(new Vector2(500, 1300 + (olpi * 150)));
+			olpi++;
+		}
+
+		for (let i = config.testing.spawnMinionsLine; i > 0; i--) {
+			const barrack = GameObjectList.barracks.find(barrack => barrack.team.id === TeamId.chaos);
+			if (!barrack) continue;
+
+			const unit = barrack.spawnUnit(MinionType.melee);
+			(unit.ai as LaneMinion).moveLane = () => { };
+			unit.combat.autoAttackToggle = false;
+			unit.moving.teleport(new Vector2(1200 + (clpi * 150), 600));
+			clpi++;
+		}
+	}
+
+	const players = Server.players;
+
+	if (config.testing.bringHeroesToLine) {
+		const playersWoFirst = players.slice(1);
+
+		const orderPlayers = playersWoFirst.filter(unit => unit.team.id === TeamId.order);
+		orderPlayers.forEach(unit => {
+			unit.moving.teleport(new Vector2(500, 1300 + (olpi * 150)));
+			olpi++;
+		});
+
+		const chaosPlayers = playersWoFirst.filter(unit => unit.team.id === TeamId.chaos);
+		chaosPlayers.forEach(unit => {
+			unit.moving.teleport(new Vector2(1200 + (clpi * 150), 600));
+			clpi++;
+		});
+	}
+
+	players.forEach(unit => {
+		if (config.testing.levelUpPlayers) {
+			const levelExp = Server.map.expCurve[config.testing.levelUpPlayers]!;
+			unit.progress.expUp(levelExp);
+
+			for (let i = 0; i <= config.testing.levelUpPlayers; i++) {
+				unit.progress.skillUpgrade(i % 4);
+			}
+		}
+
+		if (config.testing.noCooldowns) {
+			unit.stats.cooldownMod.baseValue = -1;
+			unit.stats.cooldownMod.minTotal = -1;
+		}
+
+		if (config.testing.noManaCosts) {
+			unit.stats.manaCostReduction.baseValue = -1;
+			unit.stats.manaCostReduction.minTotal = -1;
+		}
+
+		if (config.testing.noHeroDying) {
+			unit.stats.health.minimum = 1;
+		}
+	});
+}
+
 export default (player: Player, packet: packets.ClientReadyModel) => {
 	console.log('handle: c2s.ClientReady');
 	//console.log(packet);
@@ -57,40 +134,9 @@ export default (player: Player, packet: packets.ClientReadyModel) => {
 
 	// test -------------------------------
 
-	if (started)
+	if (Server.game.admitted)
 		return;
 
-	started = true;
-
-	for (let i = 5; i > 0; i--) {
-		const barrack = GameObjectList.barracks.find(barrack => barrack.team.id === TeamId.chaos);
-		if (!barrack) continue;
-
-		const unit = barrack.spawnUnit(MinionType.melee);
-		(unit.ai as Minion).moveLane = () => { };
-		unit.combat.autoAttackToggle = false;
-		unit.moving.teleport(new Vector2(1000 + (i * 150), 600));
-	}
-
-	for (let i = 5; i > 0; i--) {
-		const barrack = GameObjectList.barracks.find(barrack => barrack.team.id === TeamId.order);
-		if (!barrack) continue;
-
-		const unit = barrack.spawnUnit(MinionType.melee);
-		(unit.ai as Minion).moveLane = () => { };
-		unit.combat.autoAttackToggle = false;
-		unit.moving.teleport(new Vector2(500, 1100 + (i * 150)));
-	}
-
-	const players = Server.players;
-
-	players.forEach(unit => {
-		for (let i = 0; i <= 8; i++) {
-			unit.progress.levelUp();
-			unit.progress.skillUpgrade(i % 4);
-		}
-	});
-
-	players[2]?.moving.teleport(new Vector2(1000 + (6 * 150), 600));
-	players[1]?.moving.teleport(new Vector2(500, 1100 + (6 * 150)));
+	Server.game.admitted = Timer.app.now();
+	debugPerform();
 };

@@ -6,8 +6,11 @@
 
 import Network from '@repo/network/network';
 import Parser from '@repo/network/parser';
+import fs from 'fs';
+import path from 'path';
 import WebSocket from 'ws';
 import Server from '../app/server';
+import LrpktWriter from './lrpkt-writer';
 import Timer from './timer';
 
 export type LoggingOutput = (...args: any[]) => void;
@@ -52,11 +55,16 @@ export default class Logging {
 		},
 
 		file(...args: any[]) {
-			//fs.appendFileSync('../log.json', JSON.stringify(args) + ",\n");
+			const logDir = path.join(process.cwd(), 'logs');
+			const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+			const filePath = path.join(logDir, `log-${timestamp}.json`);
+
+			fs.appendFileSync(filePath, JSON.stringify(args) + ",\n");
 		}
 	};
 
 	static ws?: WebSocket;
+	static lrpktWriter?: LrpktWriter;
 
 	static _log = Logging.output.none;
 	static _warn = Logging.output.none;
@@ -99,6 +107,29 @@ export default class Logging {
 					direction,
 				} satisfies Partial<PacketLog>,
 			}));
+		}
+
+		// write packet to lrpkt file
+		if (Logging._packet === Logging.output.file) {
+			if (!Logging.lrpktWriter) {
+				const logDir = path.join(process.cwd(), 'logs');
+				const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+				const filePath = path.join(logDir, `replay-${timestamp}.lrpkt`);
+
+				Logging.lrpktWriter = LrpktWriter.initialize(filePath);
+				console.log(`Packet logging to: ${filePath}`);
+			}
+
+			const { channel, data, direction, peers } = arg;
+			const appTime = Timer.app.now();
+
+			Logging.lrpktWriter.writePacket({
+				time: appTime,
+				channel,
+				direction,
+				peers,
+				data,
+			});
 		}
 	}
 

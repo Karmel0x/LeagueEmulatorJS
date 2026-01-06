@@ -6,15 +6,15 @@
         "packages/*"
     ],
     "devDependencies": {
-        "@eslint/js": "^9.31.0",
-        "@types/node": "^24",
-        "eslint": "^9.31.0",
-        "globals": "^16.3.0",
-        "typescript-eslint": "^8.37.0"
+        "@eslint/js": "^9.39.2",
+        "@types/node": "^25",
+        "eslint": "^9.39.2",
+        "globals": "^17.0.0",
+        "typescript-eslint": "^8.51.0"
     },
     "scripts": {
-        "dev": "cd apps && cd gameserver && ts-node -T src/main",
-        "pi": "cd apps && cd tools && ts-node -T packet-inspector",
+        "dev": "cd apps && cd gameserver && tsx src/main",
+        "pi": "cd apps && cd tools && tsx packet-inspector",
         "check-types": "cd apps && cd gameserver && tsc --noEmit"
     }
 }

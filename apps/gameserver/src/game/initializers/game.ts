@@ -197,10 +197,13 @@ export default class Game {
 
 		Server.game.loaded = Timer.app.now();
 
-		Builder.spawnAll();
-		Barrack.spawnAll();
-		JungleCamp.spawnAll();
+		if (!config.debugging.enabled || !config.debugging.noSpawners) {
+			Builder.spawnAll();
+			Barrack.spawnAll();
+			JungleCamp.spawnAll();
+		}
 
+		this.run();
 	}
 
 	static started() {
@@ -208,8 +211,6 @@ export default class Game {
 			return;
 
 		Server.game.start();
-
-		this.run();
 	}
 
 	static checkPlayersLoaded() {
@@ -273,6 +274,7 @@ export default class Game {
 
 	initialized = 0;
 	loaded = 0;
+	admitted = 0;
 	started = 0;
 	timer = new Timer().notYet();
 

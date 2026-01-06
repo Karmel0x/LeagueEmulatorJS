@@ -17,6 +17,7 @@ type FXCreateDataModelHelper = Partial<FXCreateDataModel & {
 
 type FXCreateGroupDataModelHelper = Partial<Omit<FXCreateGroupDataModel, 'effectNameHash' | 'boneNameHash' | 'targetBoneNameHash' | 'createData'> & {
     effectNameHash: number | string,
+    /** 497252 = root */
     boneNameHash: number | string,
     targetBoneNameHash: number | string,
     createData: FXCreateDataModelHelper[],

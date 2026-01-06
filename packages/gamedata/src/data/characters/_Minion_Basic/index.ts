@@ -25,30 +25,22 @@ export default class _Minion_Basic extends Character {
 	};
 
 	static stats = {
-		health: {
-			baseValue: 455,
-			perLevel: 20,
-		},
+		health: 455,
+		healthPerLevel: 20,
 		healthRegen: 0,
 		mana: 0,
 		manaRegen: 0,
-		attackDamage: {
-			baseValue: 12,
-			perLevel: 1,
-		},
+		attackDamage: 12,
+		attackDamagePerLevel: 1,
 		abilityPower: 0,
 		attackSpeed: 1.25,
 		attackSpeedOffset: 0,
 		crit: 0,
 		attackRange: 100,
-		armor: {
-			baseValue: 0,
-			perLevel: 2,
-		},
-		resist: {
-			baseValue: 0,
-			perLevel: 1.25,
-		},
+		armor: 0,
+		armorPerLevel: 2,
+		resist: 0,
+		resistPerLevel: 1.25,
 		moveSpeed: 325,
 
 		collisionRadius: 48,

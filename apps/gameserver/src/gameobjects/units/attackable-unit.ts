@@ -141,4 +141,10 @@ export default class AttackableUnit extends Unit {
 		return true;
 	}
 
+	issueOrder(order: IssueOrderType) {
+		this.lastOrderId++;
+		this.issuedOrder = order;
+		this.eventEmitter.emit('changeOrder', order);
+	}
+
 }

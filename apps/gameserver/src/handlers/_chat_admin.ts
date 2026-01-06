@@ -1,5 +1,5 @@
 
-import { Vector2 } from '@repo/geometry';
+import { Vector2, type Vector2Like } from '@repo/geometry';
 import { MinionType } from '@repo/packets/base/s2c/0x03-Barrack_SpawnUnit';
 import * as packets from '@repo/packets/list';
 import * as packetHelpers from '../../src/packet-helpers';
@@ -9,9 +9,11 @@ import { SlotId } from '../constants/slot-id';
 import Logging, { type LoggingOutput, type LoggingType } from '../core/logging';
 import Timer from '../core/timer';
 import { humanizePosition } from '../core/utils';
+import config from '../game/game.config.json';
+import MeasureGeneral from '../gameobjectextensions/measure/general';
 import { IStat } from '../gameobjectextensions/stats/istat';
 import { TeamId } from '../gameobjectextensions/traits/team';
-import Minion from '../gameobjects/unit-ai/minion';
+import LaneMinion from '../gameobjects/unit-ai/lane-minion';
 import type Player from '../gameobjects/unit-ai/player';
 import type AttackableUnit from '../gameobjects/units/attackable-unit';
 import { filterUnitsForCommand } from './_chat_admin_helper';
@@ -150,6 +152,59 @@ const commandList: { [s: string]: Command; } = {
 			});
 		},
 	},
+	'attackDamage': {
+		description: 'set attack damage',
+		arguments: ['attackDamage', 'all/me/unitType/netId'],
+		handler: function (player, args) {
+			let attackDamage = parseFloat(args[1] || '100');
+			let unitType = args[2] || 'me';
+
+			let units = filterUnitsForCommand(player, GameObjectList.aliveUnits, unitType);
+
+			units.forEach(unit => {
+				unit.stats.attackDamage.baseValue = attackDamage;
+				unit.stats.attackDamage.flatBonus = 0;
+				unit.stats.attackDamage.percentBonus = 0;
+				packetHelpers.sendUnitStats(unit);
+			});
+		},
+	},
+	'armor': {
+		description: 'set armor',
+		arguments: ['armor', 'all/me/unitType/netId'],
+		handler: function (player, args) {
+			let armor = parseFloat(args[1] || '100');
+			let unitType = args[2] || 'me';
+
+			let units = filterUnitsForCommand(player, GameObjectList.aliveUnits, unitType);
+
+			units.forEach(unit => {
+				unit.stats.armor.baseValue = armor;
+				unit.stats.armor.flatBonus = 0;
+				unit.stats.armor.percentBonus = 0;
+				packetHelpers.sendUnitStats(unit);
+			});
+		},
+	},
+	'god': {
+		description: 'set god stats',
+		arguments: ['all/me/unitType/netId'],
+		handler: function (player, args) {
+			let unitType = args[1] || 'me';
+
+			let units = filterUnitsForCommand(player, GameObjectList.aliveUnits, unitType);
+
+			units.forEach(unit => {
+				unit.stats.health.baseValue = 7500;
+				unit.stats.health.current = 6000;
+				unit.stats.moveSpeed.baseValue = 600;
+				unit.stats.attackSpeed.baseValue = 2;
+				unit.stats.attackDamage.baseValue = 600;
+				unit.stats.armor.baseValue = 900;
+				packetHelpers.sendUnitStats(unit);
+			});
+		},
+	},
 	'kill': {
 		description: 'kill unit',
 		arguments: ['all/me/unitType/netId'],
@@ -175,7 +230,10 @@ const commandList: { [s: string]: Command; } = {
 			let units = filterUnitsForCommand(player, GameObjectList.aliveUnits, unitType);
 
 			units.forEach(unit => {
-				unit.combat.unkillable = unkillable ?? !unit.combat.unkillable;
+				if (unkillable === undefined)
+					unkillable = !(unit.stats.health.minimum > 0);
+
+				unit.stats.health.minimum = unkillable ? 1 : 0;
 			});
 		},
 	},
@@ -191,14 +249,15 @@ const commandList: { [s: string]: Command; } = {
 		description: '',
 		arguments: ['websocket/console/none'],
 		handler: function (player, args) {
+			const dest = args[1] as keyof typeof Logging.output || 'websocket';
 			Logging.changeOptions({
-				packet: Logging.output[args[1] as keyof typeof Logging.output] || Logging.output.websocket,
+				packet: Logging.output[dest],
 			});
 			player.packets.chatBoxDebugMessage(`packet logging: ${(Logging.options as { [key in LoggingType]?: LoggingOutput }).packet?.name}`);
 		},
 	},
 	'levelup': {
-		description: 'levelup current player',
+		description: 'levelup unit',
 		arguments: ['levelCount', 'all/me/unitType/netId'],
 		handler: function (player, args) {
 			let amount = parseInt(args[1] || '1');
@@ -213,7 +272,7 @@ const commandList: { [s: string]: Command; } = {
 		},
 	},
 	'expup': {
-		description: 'add experience for current player',
+		description: 'add experience for unit',
 		arguments: ['expAmount', 'all/me/unitType/netId'],
 		handler: function (player, args) {
 			let amount = parseInt(args[1] || '50');
@@ -227,7 +286,7 @@ const commandList: { [s: string]: Command; } = {
 		},
 	},
 	'gold': {
-		description: 'set player gold',
+		description: 'set unit gold',
 		arguments: ['amount', 'all/me/unitType/netId'],
 		handler: function (player, args) {
 			let amount = parseInt(args[1] || '10000');
@@ -241,7 +300,7 @@ const commandList: { [s: string]: Command; } = {
 		},
 	},
 	'hp': {
-		description: 'set current player health',
+		description: 'set unit health',
 		arguments: ['amount/value%', 'all/me/unitType/netId'],
 		handler: function (player, args) {
 			let amountArg = args[1] || '100%';
@@ -263,7 +322,7 @@ const commandList: { [s: string]: Command; } = {
 		},
 	},
 	'mp': {
-		description: 'set current player mana',
+		description: 'set unit mana',
 		arguments: ['amount/value%', 'all/me/unitType/netId'],
 		handler: function (player, args) {
 			let amountArg = args[1] || '100%';
@@ -375,15 +434,15 @@ const commandList: { [s: string]: Command; } = {
 			let firstArg = args[1];
 			if (!firstArg) {
 				player.packets.chatBoxDebugMessage({
-					pathFinding: Server.usePathFinding,
-					terrainEscape: Server.useTerrainEscape,
+					pathFinding: !config.debugging.noPathFinding,
+					terrainEscape: !config.debugging.noTerrainEscape,
 				});
 				return;
 			}
 
 			let bits = firstArg.split('');
-			Server.usePathFinding = bits[0] === '1';
-			Server.useTerrainEscape = bits[1] === '1';
+			config.debugging.noPathFinding = bits[0] === '0';
+			config.debugging.noTerrainEscape = bits[1] === '0';
 		},
 	},
 	'character': {
@@ -413,8 +472,41 @@ const commandList: { [s: string]: Command; } = {
 			}
 		}
 	},
+	'no': {
+		description: '',
+		arguments: ['cd/mp'],
+		handler: function (player, args) {
+			let resources = args[1];
+			if (!resources)
+				resources = 'cd,mp';
+
+			const stats = player.owner.stats;
+
+			if (resources.includes('cd')) {
+				if (stats.cooldownMod.minTotal === -1) {
+					stats.cooldownMod.baseValue = 0;
+					stats.cooldownMod.minTotal = -0.4;
+				}
+				else {
+					stats.cooldownMod.baseValue = -1;
+					stats.cooldownMod.minTotal = -1;
+				}
+			}
+
+			if (resources.includes('mp')) {
+				if (stats.manaCostReduction.minTotal === -1) {
+					stats.manaCostReduction.baseValue = 0;
+					stats.manaCostReduction.minTotal = -0.4;
+				}
+				else {
+					stats.manaCostReduction.baseValue = -1;
+					stats.manaCostReduction.minTotal = -1;
+				}
+			}
+		}
+	},
 	'test': {
-		description: 'levelUp player 5 levels and spawn 22 RED minions in BLUE base',
+		description: 'levelUp player 5 levels and spawn 22 CHAOS minions in ORDER base',
 		arguments: [],
 		handler: function (player, args) {
 			let count = parseInt(args[1] || '22');
@@ -423,7 +515,7 @@ const commandList: { [s: string]: Command; } = {
 				if (!barrack) continue;
 
 				const unit = barrack.spawnUnit(MinionType.melee);
-				(unit.ai as Minion).moveLane = () => { };
+				(unit.ai as LaneMinion).moveLane = () => { };
 				unit.combat.autoAttackToggle = false;
 				unit.moving.teleport(new Vector2(1000 + (i * 150), 600));
 			}
@@ -446,20 +538,56 @@ const commandList: { [s: string]: Command; } = {
 			const unit = barrack.spawnUnit(MinionType.melee, {
 				spawnPosition: owner.position,
 			});
-			(unit.ai as Minion).moveLane = () => { };
+			(unit.ai as LaneMinion).moveLane = () => { };
 			unit.combat.autoAttackToggle = false;
 		},
 	},
-	'tpc': {
-		description: 'teleport to center of map',
-		arguments: [],
+	'spawnMinionAround': {
+		description: '',
+		arguments: ['team'],
 		handler: function (player, args) {
 			const owner = player.owner;
-			owner.moving.teleport(new Vector2(7000, 7000));
+			let team = (args[1] || owner.team.getEnemyTeamId());
+			player.packets.chatBoxDebugMessage('spawnMinion', team);
+			const barrack = GameObjectList.barracks.find(barrack => barrack.team.id === team);
+			if (!barrack) return;
+
+			const radius = owner.stats.acquisitionRange.total + 50;
+			const pointsAround = MeasureGeneral.getPointsAround(owner, radius);
+
+			pointsAround.forEach(point => {
+				const unit = barrack.spawnUnit(MinionType.melee, {
+					spawnPosition: point,
+				});
+				(unit.ai as LaneMinion).moveLane = () => { };
+				unit.combat.autoAttackToggle = false;
+			});
+		},
+	},
+	'teleport': {
+		description: '',
+		arguments: ['top/mid/bot/order/chaos'],
+		handler: function (player, args) {
+			const owner = player.owner;
+			const point = args[1] || 'mid';
+
+			const points: Record<string, Vector2Like> = {
+				'top': { x: 2400, y: 11700 },
+				'mid': { x: 7000, y: 7000 },
+				'bot': { x: 11700, y: 2400 },
+				'order': { x: 200, y: 400 },
+				'chaos': { x: 13800, y: 14000 },
+			};
+
+			const p = points[point];
+			if (!p)
+				throw new Error('teleport point does not exist');
+
+			owner.moving.teleport(p);
 		},
 	},
 	'q': {
-		description: 'spawn BLUE and RED minions',
+		description: 'spawn ORDER and CHAOS minions',
 		arguments: ['minionsAmount'],
 		handler: function (player, args) {
 			const l = parseInt(args[1] || '1');
@@ -469,7 +597,7 @@ const commandList: { [s: string]: Command; } = {
 				if (!barrack) continue;
 
 				const unit = barrack.spawnUnit(MinionType.melee);
-				//(unit.ai as Minion).moveLane = () => { };
+				//(unit.ai as LaneMinion).moveLane = () => { };
 				unit.combat.autoAttackToggle = false;
 			}
 
@@ -478,13 +606,13 @@ const commandList: { [s: string]: Command; } = {
 				if (!barrack) continue;
 
 				const unit = barrack.spawnUnit(MinionType.melee);
-				//(unit.ai as Minion).moveLane = () => { };
+				//(unit.ai as LaneMinion).moveLane = () => { };
 				unit.combat.autoAttackToggle = false;
 			}
 		},
 	},
 	'qq': {
-		description: 'spawn RED minion and teleport to BLUE base',
+		description: 'spawn CHAOS minion and teleport to ORDER base',
 		arguments: ['minionsAmount'],
 		handler: function (player, args) {
 			for (let i = parseInt(args[1] || '1'); i > 0; i--) {
@@ -492,7 +620,7 @@ const commandList: { [s: string]: Command; } = {
 				if (!barrack) continue;
 
 				const unit = barrack.spawnUnit(MinionType.melee);
-				(unit.ai as Minion).moveLane = () => { };
+				(unit.ai as LaneMinion).moveLane = () => { };
 				unit.combat.autoAttackToggle = false;
 				unit.moving.teleport(new Vector2(1000 + (i * 150), 600));
 			}
@@ -505,24 +633,25 @@ const commandList: { [s: string]: Command; } = {
 			//let characters = [
 			//	'Basic', 'MechCannon', 'Wizard', 'MechMelee', //'MechRange',
 			//];
+			let i = parseInt(args[1] || '1');
 			let j = parseInt(args[2] || '0');
-			for (let i = parseInt(args[1] || '1'); i > 0; i--) {
+			for (; i > 0; i--) {
 				const barrack = GameObjectList.barracks.find(barrack => barrack.team.id === TeamId.chaos);
 				if (!barrack) continue;
 
 				const unit = barrack.spawnUnit(j % 4);
-				(unit.ai as Minion).moveLane = () => { };
+				(unit.ai as LaneMinion).moveLane = () => { };
 				unit.combat.autoAttackToggle = false;
 				unit.moving.teleport(new Vector2(1000 + (i * 150), 600));
 			}
 		},
 	},
 	'ww': {
-		description: 'move all RED minions to x: 10200, y: 13200',
+		description: 'move all CHAOS minions to x: 10200, y: 13200',
 		arguments: [],
 		handler: function (player, args) {
 			let pos = new Vector2(10200, 13200);
-			let redMinions = GameObjectList.aliveUnits.filter(unit => unit.ai instanceof Minion && unit.team.id === TeamId.chaos) as AttackableUnit[];
+			let redMinions = GameObjectList.aliveUnits.filter(unit => unit.ai instanceof LaneMinion && unit.team.id === TeamId.chaos) as AttackableUnit[];
 			for (let i = 0, l = redMinions.length; i < l; i++)
 				redMinions[i]!.moving.setWaypoints([pos.clone()]);
 		},
@@ -537,7 +666,7 @@ const commandList: { [s: string]: Command; } = {
 				if (!barrack) continue;
 
 				const unit = barrack.spawnUnit(MinionType.melee);
-				(unit.ai as Minion).moveLane = () => { };
+				(unit.ai as LaneMinion).moveLane = () => { };
 				unit.moving.teleport(new Vector2(1000 + (i * 150), 600));
 			}
 
@@ -648,9 +777,13 @@ const aliasList: { [s: string]: string; } = {
 	'ms': 'moveSpeed',
 	'as': 'attackSpeed',
 	'pi': 'packetInspector',
+	'sma': 'spawnMinionAround',
+	'tp': 'teleport',
 };
 
 export default (player: Player, packet: packets.ChatModel) => {
+	if (!config.testing.enabled || !config.testing.adminCommands)
+		return;
 
 	if (!packet.message || packet.message[0] !== '.')
 		return;
@@ -677,15 +810,19 @@ export default (player: Player, packet: packets.ChatModel) => {
 		commandObject = commandList[commandName];
 	}
 
-	if (commandObject) {
-		try {
-			commandObject.handler(player, commandArgs);
-		}
-		catch (e) {
-			console.warn(e);
-			if (e instanceof Error) {
-				player.packets.chatBoxDebugMessage('error:', e.message);
-			}
+	if (!commandObject) {
+		player.packets.chatBoxDebugMessage('command does not exist');
+		return;
+	}
+
+	try {
+		commandObject.handler(player, commandArgs);
+		//player.packets.chatBoxDebugMessage(commandArgs);
+	}
+	catch (e) {
+		console.warn(e);
+		if (e instanceof Error) {
+			player.packets.chatBoxDebugMessage('error:', e.message);
 		}
 	}
 };

@@ -18,30 +18,22 @@ export default class Golem extends Character {
 	};
 
 	static stats = {
-		health: {
-			baseValue: 1200,
-			perLevel: 48,
-		},
+		health: 1200,
+		healthPerLevel: 48,
 		healthRegen: 0,
 		mana: 0,
 		manaRegen: 0,
-		attackDamage: {
-			baseValue: 60,
-			perLevel: 1.6,
-		},
+		attackDamage: 60,
+		attackDamagePerLevel: 1.6,
 		abilityPower: 0,
 		attackSpeed: 0.613,
 		attackSpeedOffset: 0,
 		crit: 0,
 		attackRange: 150,
-		armor: {
-			baseValue: 12,
-			perLevel: 0,
-		},
-		resist: {
-			baseValue: -10,
-			perLevel: 0,
-		},
+		armor: 12,
+		armorPerLevel: 0,
+		resist: -10,
+		resistPerLevel: 0,
 		moveSpeed: 285,
 
 		collisionRadius: 48,

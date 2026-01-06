@@ -6,6 +6,8 @@ export class IStat {
 	flatPermanent = 0;
 	percentBonus = 0;
 	percentPermanent = 0;
+	minTotal?: number;
+	maxTotal?: number;
 
 	get baseTotalValue() {
 		return this.baseValue;
@@ -21,16 +23,26 @@ export class IStat {
 
 	get total(): number {
 		const baseTotalValue = this.baseTotalValue;
-		return baseTotalValue + this.flatBonusValue + (baseTotalValue * this.percentBonusValue / 100);
+		let total = baseTotalValue + this.flatBonusValue + (baseTotalValue * this.percentBonusValue);
+
+		if (this.minTotal !== undefined)
+			total = Math.max(total, this.minTotal);
+		if (this.maxTotal !== undefined)
+			total = Math.min(total, this.maxTotal);
+
+		return total;
 	}
 
-	constructor(baseValue: number | object = 0) {
-		if (typeof baseValue === 'object') {
-			Object.assign(this, baseValue);
-		} else {
-			this.baseValue = baseValue;
-		}
+	constructor(baseValue = 0) {
+		this.baseValue = baseValue;
 	}
+
+	static from(baseValue: Partial<InstanceType<typeof IStat>>) {
+		const iStat = new IStat();
+		Object.assign(iStat, baseValue);
+		return iStat;
+	}
+
 }
 
 export class IStatLevelable extends IStat {
@@ -67,6 +79,28 @@ export class IStatStateable extends IStatLevelable {
 			value = this.minimum;
 		if (value > this.total)
 			value = this.total;
+
+		this._current = value;
+	}
+}
+
+export class IStatShield {
+	minimum = 0;
+	maximum = 10000;
+	_current = 0;
+
+	get current() {
+		return this._current;
+	}
+
+	set current(value) {
+		if (value < this.minimum)
+			value = this.minimum;
+		if (value > this.maximum)
+			value = this.maximum;
+
+		if (this._current === value)
+			return;
 
 		this._current = value;
 	}

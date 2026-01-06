@@ -1,5 +1,6 @@
 
 import type { Vector2 } from '@repo/geometry';
+import { defaultHeight } from '@repo/geometry/vector2-with-z';
 import type { PacketMessage } from '@repo/network/packets/packet';
 import type { FXCreateDataModel } from '@repo/packets/base/s2c/0x87-FX_Create_Group';
 import HashString from '@repo/packets/functions/hash-string';
@@ -43,18 +44,22 @@ export default class PUnit {
 	}
 
 	OnEnterLocalVisibilityClient(to: (packet: PacketMessage | undefined) => void = (packet) => this.owner.packets.toEveryone(packet)) {
+		const owner = this.owner;
+
 		const packet1 = packets.OnEnterLocalVisibilityClient.create({
-			netId: this.owner.netId,
-			health: this.owner.stats.health.total,
-			currentHealth: this.owner.stats.health.current,
+			netId: owner.netId,
+			health: owner.stats.health.total,
+			currentHealth: owner.stats.health.current,
 		});
 		to(packet1);
 		//console.log(packet1);
 	}
 
 	ChangeCharacterData(character: string) {
+		const owner = this.owner;
+
 		const packet1 = packets.ChangeCharacterData.create({
-			netId: this.owner.netId,
+			netId: owner.netId,
 			//overrideSpells: true,
 			//modelOnly: false,
 			//replaceCharacterPackage: true,
@@ -62,12 +67,14 @@ export default class PUnit {
 			//skinId: 0,
 			skinName: character,
 		});
-		this.owner.packets.toVision(packet1);
+		owner.packets.toVision(packet1);
 	}
 
 	SetAnimStates(animPairs: [string, string][]) {
+		const owner = this.owner;
+
 		const packet1 = packets.SetAnimStates.create({
-			netId: this.owner.netId,
+			netId: owner.netId,
 			overrides: animPairs.map(pair => {
 				return {
 					from: pair[0],
@@ -75,7 +82,7 @@ export default class PUnit {
 				};
 			}),
 		});
-		this.owner.packets.toVision(packet1);
+		owner.packets.toVision(packet1);
 	}
 
 	// 497252 = root
@@ -111,12 +118,12 @@ export default class PUnit {
 					position: {
 						x: ownerPositionCC.x,
 						y: ownerPositionCC.y,
-						z: 50,
+						z: defaultHeight,
 					},
 					ownerPosition: {
 						x: ownerPositionCC.x,
 						y: ownerPositionCC.y,
-						z: 50,
+						z: defaultHeight,
 					},
 					targetPosition: {
 						x: targetPositionCC.x,
@@ -142,14 +149,16 @@ export default class PUnit {
 	}
 
 	Die(source: AttackableUnit) {
+		const owner = this.owner;
+
 		const packet1 = packets.Die.create({
-			netId: this.owner.netId,
+			netId: owner.netId,
 			killerNetId: source.netId,
 			damageType: DamageType.physical,
 			damageSource: DamageSource.attack,
 			deathDuration: 0,
 			becomeZombie: false,
 		});
-		this.owner.packets.toEveryone(packet1);
+		owner.packets.toEveryone(packet1);
 	}
 }

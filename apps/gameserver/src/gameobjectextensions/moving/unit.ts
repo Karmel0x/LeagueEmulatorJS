@@ -2,12 +2,17 @@
 import type { Vector2 } from '@repo/geometry';
 import * as packets from '@repo/packets/list';
 import type { SSpeedParamsModel } from '@repo/packets/shared/SSpeedParams';
+import Server from '../../app/server';
+import { humanizeWaypoints } from '../../core/utils';
+import type GameObject from '../../gameobjects/game-object';
 import type { Player } from '../../gameobjects/unit-ai';
 import type AttackableUnit from '../../gameobjects/units/attackable-unit';
 import * as Measure from '../measure';
+import { TeamId } from '../traits/team';
 import MovingGameObject, { type MovingEvents, SpeedParams } from './game-object';
 
 export type MovingUnitEvents = MovingEvents & {
+	'followRangeFulfill': () => void;
 };
 
 /**
@@ -17,6 +22,8 @@ export default class MovingUnit extends MovingGameObject {
 
 	declare readonly owner: AttackableUnit;
 	forceSendWaypoints = false;
+	followUnit?: AttackableUnit = undefined;
+	followRange = 0;
 
 	constructor(owner: AttackableUnit) {
 		super(owner);
@@ -28,6 +35,61 @@ export default class MovingUnit extends MovingGameObject {
 		//owner.eventEmitter.on('spellCast', (castData) => {
 		//	this.forceSendWaypoints = true;
 		//});
+
+		setInterval(() => {
+			const followUnit = this.followUnit;
+			if (!followUnit)
+				return;
+
+			const followRange = this.followRange || 1;
+			const distanceToTarget = this.owner.distanceTo(followUnit);
+			if (distanceToTarget <= followRange) {
+				//this.moveType = MoveType.followingIsInRange;
+				this.owner.eventEmitter.emit('followRangeFulfill');
+				this.waypointsOrdered = [];
+				return;
+			}
+
+			if (!this.ableToFollow(followUnit))
+				return;
+
+			if (followUnit.combat.died)
+				return;
+
+			this.waypointsOrdered = [followUnit.position.clone()];
+		}, 250);
+	}
+
+	ableToFollow(target: GameObject) {
+		const unit = target as AttackableUnit;
+		const ai = unit.ai;
+		if (!ai)
+			return false;
+
+		const owner = this.owner;
+		if (owner.team.id !== TeamId.neutral) {
+			const lastSeenUnitByTeam = Server.movement.lastSeenUnitsByTeam[owner.team.id];
+			if (!lastSeenUnitByTeam)
+				return false;
+
+			const isLastSeen = lastSeenUnitByTeam.includes(unit);
+			if (!isLastSeen)
+				return false;
+		}
+
+		return true;
+	}
+
+	setWaypoints(waypoints: Vector2[]) {
+		this.followUnit = undefined;
+		this.followRange = 0;
+		super.setWaypoints(waypoints);
+	}
+
+	moveClear() {
+		this.followUnit = undefined;
+		this.followRange = 0;
+		super.moveClear();
 	}
 
 	sendWaypoints(waypoints: Vector2[] | undefined = undefined) {
@@ -74,11 +136,9 @@ export default class MovingUnit extends MovingGameObject {
 		// this should be in Movement_Simulation so we can resend if destination will change (following moveable unit)
 		// or following should be made with dash.speedParams.followNetId ?
 
-		waypoints = [this.owner.position, ...waypoints];
-		(this.owner.ai as Player)?.packets?.chatBoxDebugMessage('moveAns:', waypoints.map(p => ({
-			x: p.x.toFixed(4),
-			y: p.y.toFixed(4),
-		})));
+		const owner = this.owner;
+		waypoints = [owner.position, ...waypoints];
+		(owner.ai as Player)?.packets?.chatBoxDebugMessage('moveAns:', humanizeWaypoints(waypoints));
 
 		if (teleport) {
 			if (this.speedParams && this.speedParams.pathSpeedOverride) {
@@ -87,41 +147,41 @@ export default class MovingUnit extends MovingGameObject {
 					syncId: performance.now(),
 					netId: 0,
 					movementData: [{
-						teleportNetId: this.owner.netId,
+						teleportNetId: owner.netId,
 						teleportId: teleport ? this.getNextTeleportId() : 0,
 						waypoints,
 						speedParams: this.speedParams,
 					}],
 				});
-				this.owner.packets.toVision(packet1);
+				owner.packets.toVision(packet1);
 			} else {
 				const packet1 = packets.WaypointGroup.create({
 					syncId: performance.now(),
 					netId: 0,
 					movementData: [{
-						teleportNetId: this.owner.netId,
+						teleportNetId: owner.netId,
 						teleportId: teleport ? this.getNextTeleportId() : 0,
 						waypoints,
 					}],
 				});
-				this.owner.packets.toVision(packet1);
+				owner.packets.toVision(packet1);
 			}
 		} else {
 			if (this.speedParams && this.speedParams.pathSpeedOverride) {
 				const packet1 = packets.WaypointListHeroWithSpeed.create({
 					syncId: performance.now(),
-					netId: this.owner.netId,
+					netId: owner.netId,
 					waypoints,
 					speedParams: this.speedParams,
 				});
-				this.owner.packets.toVision(packet1);
+				owner.packets.toVision(packet1);
 			} else {
 				const packet1 = packets.WaypointList.create({
 					syncId: performance.now(),
-					netId: this.owner.netId,
+					netId: owner.netId,
 					waypoints,
 				});
-				this.owner.packets.toVision(packet1);
+				owner.packets.toVision(packet1);
 			}
 		}
 
@@ -134,14 +194,15 @@ export default class MovingUnit extends MovingGameObject {
 	 * dash to position, but you should use dashTo probably
 	 */
 	dash(position: Vector2, speedParams: Partial<SSpeedParamsModel>) {
+		const owner = this.owner;
 		this.speedParams = new SpeedParams(speedParams);
 
 		this.waypointsForced = [position];
 
-		this.owner.eventEmitter.once('reachDestination', () => {
+		owner.eventEmitter.once('reachDestination', () => {
 			//this.waypointsForced = [];
 			this.speedParams = undefined;
-			this.owner.eventEmitter.emit('dashed');
+			owner.eventEmitter.emit('dashed');
 		});
 	}
 
@@ -185,6 +246,67 @@ export default class MovingUnit extends MovingGameObject {
 
 		const position = Measure.general.getRandomPositionClamped(this.owner, 10);
 		this.dash(position, options);
+	}
+
+	follow(target: AttackableUnit, followRange: number) {
+		this.followRange = followRange;
+		if (this.followUnit === target)
+			return;
+
+		if (target.combat.died)
+			return;
+
+		if (this.owner.distanceTo(target) <= followRange) {
+			this.waypointsOrdered = [];
+			this.followUnit = target;
+			return;
+		}
+
+		this.waypointsOrdered = [target.position.clone()];
+		this.followUnit = target;
+
+		//this.speedParams = new SpeedParams({
+		//	followTarget: target,
+		//	followDistance: range,
+		//});
+	}
+
+	onceInRange(callback: () => void) {
+		const owner = this.owner;
+		const listener = () => {
+			try {
+				callback();
+			}
+			catch (e) {
+				console.log('onceInRange callback error', e);
+			}
+		};
+		owner.eventEmitter.once('followRangeFulfill', listener);
+		owner.eventEmitter.once('changeOrder', (issuedOrder) => {
+			owner.eventEmitter.off('followRangeFulfill', listener);
+		});
+	}
+
+	onceWhenInRange(target: AttackableUnit, range: number, callback: () => void) {
+		const owner = this.owner;
+		const listener = () => {
+			try {
+				callback();
+			}
+			catch (e) {
+				console.log('onceWhenInRange callback error', e);
+			}
+		};
+		const interval1 = setInterval(() => {
+			const distanceToTarget = this.owner.distanceTo(target);
+			if (distanceToTarget <= range) {
+				clearInterval(interval1);
+				listener();
+			}
+		}, 250);
+		owner.eventEmitter.once('changeOrder', (issuedOrder) => {
+			clearInterval(interval1);
+		});
 	}
 
 }

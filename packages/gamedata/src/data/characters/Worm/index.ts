@@ -20,30 +20,22 @@ export default class Worm extends Character {
 	};
 
 	static stats = {
-		health: {
-			baseValue: 8800,
-			perLevel: 140,
-		},
+		health: 8800,
+		healthPerLevel: 140,
 		healthRegen: 0,
 		mana: 0,
 		manaRegen: 0,
-		attackDamage: {
-			baseValue: 460,
-			perLevel: 0,
-		},
+		attackDamage: 460,
+		attackDamagePerLevel: 0,
 		abilityPower: 0,
 		attackSpeed: 0.208,
 		attackSpeedOffset: 0,
 		crit: 0,
 		attackRange: 955,
-		armor: {
-			baseValue: 120,
-			perLevel: 0,
-		},
-		resist: {
-			baseValue: 70,
-			perLevel: 0,
-		},
+		armor: 120,
+		armorPerLevel: 0,
+		resist: 70,
+		resistPerLevel: 0,
 		moveSpeed: 0,
 
 		collisionRadius: 48,

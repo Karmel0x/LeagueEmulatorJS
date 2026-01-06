@@ -6,6 +6,7 @@ import type { SSpeedParamsModel } from '@repo/packets/shared/SSpeedParams';
 import GameObjectList from '../../app/game-object-list';
 import type GameObject from '../../gameobjects/game-object';
 import type MovableGameObject from '../../gameobjects/movable-game-object';
+import type AttackableUnit from '../../gameobjects/units/attackable-unit';
 
 
 export enum ActionStates {
@@ -15,6 +16,8 @@ export enum ActionStates {
 	defaultStates = 0x7,
 	immovable = 0x8,
 };
+
+const WAYPOINTS_EMPTY: Vector2[] = [];
 
 export enum MoveType {
 	unknown,
@@ -36,7 +39,11 @@ export enum NavigationCellFlags {
 export type MovingEvents = {
 	'setWaypoints': (waypoints: Vector2[]) => void;
 	'reachDestination': () => void;
-	'collision': (target: GameObject) => void;
+	'collisionUnit': (target: AttackableUnit) => void;
+	/**
+	 * @todo
+	 */
+	'collisionTerrain': (position: Vector2) => void;
 	'dashed': () => void;
 	'moveEnd': () => void;
 	/** should be emitted before moveEnd */
@@ -105,27 +112,27 @@ export default class MovingGameObject {
 		this.owner = owner;
 	}
 
-	_waypoints: Vector2[] = [];
-	moveSyncId = 0;
-	collisionWaypoint = false;
-	collisionIteration = 0;
+	waypointsOrdered: Vector2[] = [];
 
-	private _waypointsForced: Vector2[] = [];
+	_waypointsForced: Vector2[] = [];
 	lastWaypointsForcedCount = 0;
 
 	set waypointsForced(waypoints: Vector2[]) {
 		if (this._waypointsForced.length !== 0) {
-			this.owner.eventEmitter.emit('moveFailure');
-			this.owner.eventEmitter.emit('moveEnd');
+			const owner = this.owner;
+			owner.eventEmitter.emit('moveFailure');
+			owner.eventEmitter.emit('moveEnd');
 		}
 
+		this.lastWaypointsForcedCount = waypoints.length;
 		this._waypointsForced = waypoints;
 	}
 
 	get waypointsForced() {
 		if (this._waypointsForced.length === 0 && this.lastWaypointsForcedCount !== 0) {
-			this.owner.eventEmitter.emit('moveSuccess');
-			this.owner.eventEmitter.emit('moveEnd');
+			const owner = this.owner;
+			owner.eventEmitter.emit('moveSuccess');
+			owner.eventEmitter.emit('moveEnd');
 		}
 
 		this.lastWaypointsForcedCount = this._waypointsForced.length;
@@ -158,7 +165,7 @@ export default class MovingGameObject {
 	get waypoints() {
 		if (this.waypointsHalt) {
 			this.moveType = MoveType.halted;
-			return [];
+			return WAYPOINTS_EMPTY;
 		}
 
 		const waypointsForced = this.waypointsForced;
@@ -176,7 +183,7 @@ export default class MovingGameObject {
 				const distanceToTarget = this.owner.distanceTo(destination);
 				if (distanceToTarget <= followDistance) {
 					this.moveType = MoveType.followingIsInRange;
-					return [];
+					return WAYPOINTS_EMPTY;
 				}
 
 				this.moveType = MoveType.following;
@@ -184,26 +191,15 @@ export default class MovingGameObject {
 			}
 		}
 
-		const waypoints = this._waypoints;
-		if (waypoints.length < 1) {
+		const waypointsOrdered = this.waypointsOrdered;
+		if (waypointsOrdered.length < 1) {
 			this.moveType = MoveType.idle;
-			return [];
+			return waypointsOrdered;
 		}
 
 		this.speedParams = undefined;
 		this.moveType = MoveType.moving;
-		return this._waypoints;
-	}
-
-	set waypoints(value) {
-		if (!value)
-			value = [];
-
-		if (!Array.isArray(value))
-			value = [value];
-
-		this._waypoints = value;
-		this.moveSyncId++;
+		return waypointsOrdered;
 	}
 
 	sendWaypoints(waypoints: Vector2[] | undefined = undefined) {
@@ -215,7 +211,7 @@ export default class MovingGameObject {
 	 * @todo repath if needed
 	 */
 	setWaypoints(waypoints: Vector2[]) {
-		this.waypoints = waypoints;
+		this.waypointsOrdered = waypoints;
 		this.speedParams = undefined;
 		this.owner.eventEmitter.emit('setWaypoints', this.waypoints);
 	}
@@ -227,7 +223,7 @@ export default class MovingGameObject {
 	/**
 	 * Teleport to position (..)
 	 */
-	teleport(position: Vector2, send: boolean = true) {
+	teleport(position: Vector2Like, send: boolean = true) {
 		this.owner.position.copy(position);
 
 		if (send)
@@ -273,7 +269,7 @@ export default class MovingGameObject {
 		if (!newWaipoints || !newWaipoints.length)
 			return;
 
-		//if (Server.usePathFinding) {
+		//if (!config.debugging.enabled || !config.debugging.noPathFinding) {
 		//	// idk if it's even necessary here but MoveData.waypoints are wrong when character is dashing
 		//	newWaipoints = Pathfinding.getPath(this.owner.position, packet.position);
 		//	//console.log({waypoints: movementData.waypoints, newWaipoints});
@@ -288,27 +284,38 @@ export default class MovingGameObject {
 	}
 
 	moveClear() {
-		this.waypoints = [];
+		this.waypointsOrdered = WAYPOINTS_EMPTY;
 		this.speedParams = undefined;
 	}
 
 	get movementData(): MovementData {
+		const owner = this.owner;
+
+		if (this.waypointsForced.length > 0) {
+			const unitWaypoints = this.waypointsForced;
+			return {
+				type: MovementDataType.withSpeed,
+				teleportNetId: owner.netId,
+				syncId: performance.now(),
+				waypoints: [owner.position, ...unitWaypoints],
+				speedParams: this.speedParams,
+			};
+		}
 
 		const unitWaypoints = this.waypoints;
 		if (unitWaypoints.length) {
 			return {
-				type: this.speedParams ? MovementDataType.withSpeed : MovementDataType.normal,
-				teleportNetId: this.owner.netId,
+				type: MovementDataType.normal,
+				teleportNetId: owner.netId,
 				syncId: performance.now(),
-				waypoints: [this.owner.position, ...unitWaypoints],
-				speedParams: this.speedParams,
+				waypoints: [owner.position, ...unitWaypoints],
 			};
 		}
 
 		return {
 			type: MovementDataType.stop,
 			syncId: performance.now(),
-			position: this.owner.position,
+			position: owner.position,
 			forward: { x: 1, y: 0 },
 		};
 	}
@@ -326,18 +333,19 @@ export default class MovingGameObject {
 	// * @throws {Error} if order changed
 	// */
 	//async moveToRange(target: Vector2 | GameObject, range: number = 0) {
-	//	if (this.owner.distanceTo(target) <= range)
+	//	const owner = this.owner;
+	//	if (owner.distanceTo(target) <= range)
 	//		return;
 	//
-	//	let movePosition = Measure.centerToCenter.getPositionToTargetMinusRange(this.owner, target, Math.max(range - 0.1, 0));
+	//	let movePosition = Measure.centerToCenter.getPositionToTargetMinusRange(owner, target, Math.max(range - 0.1, 0));
 	//	this.move1(movePosition);
 	//
 	//	let orderChanged = false;
-	//	this.owner.eventEmitter.once('changeOrder', () => {
+	//	owner.eventEmitter.once('changeOrder', (issuedOrder) => {
 	//		orderChanged = true;
 	//	});
 	//
-	//	while (this.owner.distanceTo(target) > range) {
+	//	while (owner.distanceTo(target) > range) {
 	//		await delay(MovementSimulation.moveInterval);
 	//
 	//		if (orderChanged)
@@ -350,14 +358,15 @@ export default class MovingGameObject {
 	//}
 	//
 	//inRangeOrFollow(range: number, target: GameObject, reachDestinationCallback: () => void) {
-	//	let rangeSum = range + this.owner.collisionRadius + target.collisionRadius;
-	//	if (this.owner.distanceTo(target) > rangeSum) {
+	//	const owner = this.owner;
+	//	let rangeSum = range + owner.collisionRadius + target.collisionRadius;
+	//	if (owner.distanceTo(target) > rangeSum) {
 	//
 	//		this.followUnit = target;
-	//		this.owner.eventEmitter.once('reachDestination', reachDestinationCallback);
-	//		(this.owner.eventEmitter as EventEmitter2<SpellableEvents>).once('cancelSpell', () => {
+	//		owner.eventEmitter.once('reachDestination', reachDestinationCallback);
+	//		(owner.eventEmitter as EventEmitter2<SpellableEvents>).once('cancelSpell', () => {
 	//			this.stopFollowing();
-	//			this.owner.eventEmitter.removeListener('reachDestination', reachDestinationCallback);
+	//			owner.eventEmitter.removeListener('reachDestination', reachDestinationCallback);
 	//		});
 	//
 	//		return false;
@@ -365,13 +374,5 @@ export default class MovingGameObject {
 	//
 	//	return true;
 	//}
-
-	follow(target: GameObject, range: number) {
-		this.waypoints = [];
-		this.speedParams = new SpeedParams({
-			followTarget: target,
-			followDistance: range,
-		});
-	}
 
 }

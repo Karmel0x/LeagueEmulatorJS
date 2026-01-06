@@ -25,17 +25,13 @@ export default class _Minion_MechMelee extends Character {
 	};
 
 	static stats = {
-		health: {
-			baseValue: 1500,
-			perLevel: 200,
-		},
+		health: 1500,
+		healthPerLevel: 200,
 		healthRegen: 0,
 		mana: 0,
 		manaRegen: 0,
-		attackDamage: {
-			baseValue: 190,
-			perLevel: 10,
-		},
+		attackDamage: 190,
+		attackDamagePerLevel: 10,
 		attackSpeed: 0.694,
 		attackSpeedOffset: 0,
 		crit: 0,

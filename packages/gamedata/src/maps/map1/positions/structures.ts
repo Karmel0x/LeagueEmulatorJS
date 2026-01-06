@@ -83,6 +83,14 @@ export const inhibitors: SpawnConfig<InhibitorOptions>[] = [
     },
 ];
 
+export enum TowerDepth {
+    fountain = -1,
+    hq = 0,
+    back = 1,
+    middle = 2,
+    front = 3,
+};
+
 export const turrets: SpawnConfig<TurretOptions>[] = [
     {
         //type: 'outer',
@@ -92,6 +100,7 @@ export const turrets: SpawnConfig<TurretOptions>[] = [
         team: TeamId.order,
         aiOptions: {
             lane: LaneId.top,
+            depth: TowerDepth.front,
             num: 3,
         },
     },
@@ -103,6 +112,7 @@ export const turrets: SpawnConfig<TurretOptions>[] = [
         team: TeamId.order,
         aiOptions: {
             lane: LaneId.top,
+            depth: TowerDepth.middle,
             num: 2,
         },
     },
@@ -114,6 +124,7 @@ export const turrets: SpawnConfig<TurretOptions>[] = [
         team: TeamId.order,
         aiOptions: {
             lane: LaneId.top,
+            depth: TowerDepth.back,
             num: 1,
         },
     },
@@ -125,7 +136,8 @@ export const turrets: SpawnConfig<TurretOptions>[] = [
         character: 'OrderTurretNormal2',
         team: TeamId.order,
         aiOptions: {
-            lane: LaneId.top,
+            lane: LaneId.mid,
+            depth: TowerDepth.front,
             num: 3,
         },
     },
@@ -136,7 +148,8 @@ export const turrets: SpawnConfig<TurretOptions>[] = [
         character: 'OrderTurretNormal',
         team: TeamId.order,
         aiOptions: {
-            lane: LaneId.top,
+            lane: LaneId.mid,
+            depth: TowerDepth.middle,
             num: 2,
         },
     },
@@ -147,7 +160,8 @@ export const turrets: SpawnConfig<TurretOptions>[] = [
         character: 'OrderTurretDragon',
         team: TeamId.order,
         aiOptions: {
-            lane: LaneId.top,
+            lane: LaneId.mid,
+            depth: TowerDepth.back,
             num: 1,
         },
     },
@@ -158,7 +172,8 @@ export const turrets: SpawnConfig<TurretOptions>[] = [
         character: 'OrderTurretAngel',
         team: TeamId.order,
         aiOptions: {
-            lane: LaneId.top,
+            lane: LaneId.unknown,
+            depth: TowerDepth.hq,
             num: 5,
         },
     },
@@ -169,7 +184,8 @@ export const turrets: SpawnConfig<TurretOptions>[] = [
         character: 'OrderTurretAngel',
         team: TeamId.order,
         aiOptions: {
-            lane: LaneId.top,
+            lane: LaneId.unknown,
+            depth: TowerDepth.hq,
             num: 4,
         },
     },
@@ -181,7 +197,8 @@ export const turrets: SpawnConfig<TurretOptions>[] = [
         character: 'OrderTurretShrine',
         team: TeamId.order,
         aiOptions: {
-            lane: LaneId.top,
+            lane: LaneId.unknown,
+            depth: TowerDepth.fountain,
             num: 0,
         },
     },
@@ -193,7 +210,8 @@ export const turrets: SpawnConfig<TurretOptions>[] = [
         character: 'OrderTurretNormal2',
         team: TeamId.order,
         aiOptions: {
-            lane: LaneId.top,
+            lane: LaneId.bot,
+            depth: TowerDepth.front,
             num: 3,
         },
     },
@@ -204,7 +222,8 @@ export const turrets: SpawnConfig<TurretOptions>[] = [
         character: 'OrderTurretNormal',
         team: TeamId.order,
         aiOptions: {
-            lane: LaneId.top,
+            lane: LaneId.bot,
+            depth: TowerDepth.middle,
             num: 2,
         },
     },
@@ -215,7 +234,8 @@ export const turrets: SpawnConfig<TurretOptions>[] = [
         character: 'OrderTurretDragon',
         team: TeamId.order,
         aiOptions: {
-            lane: LaneId.top,
+            lane: LaneId.bot,
+            depth: TowerDepth.back,
             num: 1,
         },
     },
@@ -228,6 +248,7 @@ export const turrets: SpawnConfig<TurretOptions>[] = [
         team: TeamId.chaos,
         aiOptions: {
             lane: LaneId.top,
+            depth: TowerDepth.front,
             num: 3,
         },
     },
@@ -239,6 +260,7 @@ export const turrets: SpawnConfig<TurretOptions>[] = [
         team: TeamId.chaos,
         aiOptions: {
             lane: LaneId.top,
+            depth: TowerDepth.middle,
             num: 2,
         },
     },
@@ -250,6 +272,7 @@ export const turrets: SpawnConfig<TurretOptions>[] = [
         team: TeamId.chaos,
         aiOptions: {
             lane: LaneId.top,
+            depth: TowerDepth.back,
             num: 1,
         },
     },
@@ -261,7 +284,8 @@ export const turrets: SpawnConfig<TurretOptions>[] = [
         character: 'ChaosTurretWorm2',
         team: TeamId.chaos,
         aiOptions: {
-            lane: LaneId.top,
+            lane: LaneId.mid,
+            depth: TowerDepth.front,
             num: 3,
         },
     },
@@ -272,7 +296,8 @@ export const turrets: SpawnConfig<TurretOptions>[] = [
         character: 'ChaosTurretWorm',
         team: TeamId.chaos,
         aiOptions: {
-            lane: LaneId.top,
+            lane: LaneId.mid,
+            depth: TowerDepth.middle,
             num: 2,
         },
     },
@@ -283,7 +308,8 @@ export const turrets: SpawnConfig<TurretOptions>[] = [
         character: 'ChaosTurretGiant',
         team: TeamId.chaos,
         aiOptions: {
-            lane: LaneId.top,
+            lane: LaneId.mid,
+            depth: TowerDepth.back,
             num: 1,
         },
     },
@@ -294,7 +320,8 @@ export const turrets: SpawnConfig<TurretOptions>[] = [
         character: 'ChaosTurretNormal',
         team: TeamId.chaos,
         aiOptions: {
-            lane: LaneId.top,
+            lane: LaneId.unknown,
+            depth: TowerDepth.hq,
             num: 5,
         },
     },
@@ -305,7 +332,8 @@ export const turrets: SpawnConfig<TurretOptions>[] = [
         character: 'ChaosTurretNormal',
         team: TeamId.chaos,
         aiOptions: {
-            lane: LaneId.top,
+            lane: LaneId.unknown,
+            depth: TowerDepth.hq,
             num: 4,
         },
     },
@@ -317,7 +345,8 @@ export const turrets: SpawnConfig<TurretOptions>[] = [
         character: 'ChaosTurretShrine',
         team: TeamId.chaos,
         aiOptions: {
-            lane: LaneId.top,
+            lane: LaneId.unknown,
+            depth: TowerDepth.fountain,
             num: 0,
         },
     },
@@ -329,7 +358,8 @@ export const turrets: SpawnConfig<TurretOptions>[] = [
         character: 'ChaosTurretWorm2',
         team: TeamId.chaos,
         aiOptions: {
-            lane: LaneId.top,
+            lane: LaneId.bot,
+            depth: TowerDepth.front,
             num: 3,
         },
     },
@@ -340,7 +370,8 @@ export const turrets: SpawnConfig<TurretOptions>[] = [
         character: 'ChaosTurretWorm',
         team: TeamId.chaos,
         aiOptions: {
-            lane: LaneId.top,
+            lane: LaneId.bot,
+            depth: TowerDepth.middle,
             num: 2,
         },
     },
@@ -351,7 +382,8 @@ export const turrets: SpawnConfig<TurretOptions>[] = [
         character: 'ChaosTurretGiant',
         team: TeamId.chaos,
         aiOptions: {
-            lane: LaneId.top,
+            lane: LaneId.bot,
+            depth: TowerDepth.back,
             num: 1,
         },
     },

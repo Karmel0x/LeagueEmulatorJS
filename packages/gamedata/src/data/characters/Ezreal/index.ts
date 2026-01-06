@@ -14,38 +14,24 @@ export default class Ezreal extends Character {
 	static package = package1;
 
 	static stats = {
-		health: {
-			baseValue: 350,
-			perLevel: 80,
-		},
-		healthRegen: {
-			baseValue: 5.5,
-			perLevel: 0.55,
-		},
-		mana: {
-			baseValue: 235,
-			perLevel: 45,
-		},
-		manaRegen: {
-			baseValue: 7,
-			perLevel: 0.65,
-		},
-		attackDamage: {
-			baseValue: 47.2,
-			perLevel: 3,
-		},
+		health: 350,
+		healthPerLevel: 80,
+		healthRegen: 5.5,
+		healthRegenPerLevel: 0.55,
+		mana: 235,
+		manaPerLevel: 45,
+		manaRegen: 7,
+		manaRegenPerLevel: 0.65,
+		attackDamage: 47.2,
+		attackDamagePerLevel: 3,
 		abilityPower: 0,
-		attackSpeed: {
-			baseValue: 0.625,
-			perLevel: 0,//2.8%
-		},
+		attackSpeed: 0.625,
+		attackSpeedPerLevel: 0,//2.8%
 		attackSpeedOffset: 0,
 		crit: 0,
 		attackRange: 550,
-		armor: {
-			baseValue: 16,
-			perLevel: 3.5,
-		},
+		armor: 16,
+		armorPerLevel: 3.5,
 		resist: 30,
 		moveSpeed: 325,
 	};

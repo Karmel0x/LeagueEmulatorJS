@@ -18,23 +18,17 @@ export default class _Turret_Inner extends Character {
 		healthRegen: 0,
 		mana: 0,
 		manaRegen: 0,
-		attackDamage: {
-			baseValue: 170,
-			perLevel: 4,
-		},
+		attackDamage: 170,
+		attackDamagePerLevel: 4,
 		abilityPower: 0,
 		attackSpeed: 1,
 		attackSpeedOffset: 0,
 		crit: 0,
 		attackRange: 775,//750,
-		armor: {
-			baseValue: 60,
-			perLevel: 1,
-		},
-		resist: {
-			baseValue: 100,
-			perLevel: 1,
-		},
+		armor: 60,
+		armorPerLevel: 1,
+		resist: 100,
+		resistPerLevel: 1,
 		moveSpeed: 0,
 	};
 

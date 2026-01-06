@@ -17,23 +17,17 @@ export default class _Turret_Inhibitor extends Character {
 		healthRegen: 0,
 		mana: 0,
 		manaRegen: 0,
-		attackDamage: {
-			baseValue: 190,
-			perLevel: 4,
-		},
+		attackDamage: 190,
+		attackDamagePerLevel: 4,
 		abilityPower: 0,
 		attackSpeed: 1,
 		attackSpeedOffset: 0,
 		crit: 0,
 		attackRange: 775,//750,
-		armor: {
-			baseValue: 67,
-			perLevel: 1,
-		},
-		resist: {
-			baseValue: 100,
-			perLevel: 1,
-		},
+		armor: 67,
+		armorPerLevel: 1,
+		resist: 100,
+		resistPerLevel: 1,
 		moveSpeed: 0,
 	};
 

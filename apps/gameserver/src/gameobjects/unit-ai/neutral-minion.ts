@@ -6,65 +6,47 @@ import Server from '../../app/server';
 import { EventEmitter2 } from '../../core/event-emitter2';
 import { TeamId } from '../../gameobjectextensions/traits/team';
 import type JungleCamp from '../spawners/jungle-camp';
-import type AttackableUnit from '../units/attackable-unit';
-import type { AttackableUnitOptions } from '../units/attackable-unit';
-import BaseAi, { type BaseAiEvents, type BaseAiOptions } from './base-ai';
-import Player from './player';
+import Minion, { type MinionAttackableUnitOptions, type MinionEvents, type MinionOptions } from './minion';
 import { AiSubType, AiType } from './types';
 
 
-export type MonsterOptions = BaseAiOptions & {
+export type NeutralMinionAttackableUnitOptions = MinionAttackableUnitOptions & {
+	spawner: JungleCamp;
+};
+
+export type NeutralMinionOptions = MinionOptions & {
 
 };
 
-export type MonsterEvents = BaseAiEvents & {
+export type NeutralMinionEvents = MinionEvents & {
 
 }
 
-export default class Monster extends BaseAi {
-	static initialize(options: MonsterOptions) {
-		return super.initialize(options) as Monster;
+export default class NeutralMinion extends Minion {
+	static initialize(options: NeutralMinionOptions) {
+		return super.initialize(options) as NeutralMinion;
 	}
 
-	static initializeUnit(unitOptions: AttackableUnitOptions, aiOptions: Omit<MonsterOptions, 'owner'> = {}) {
+	static initializeUnit(unitOptions: NeutralMinionAttackableUnitOptions, aiOptions: Omit<NeutralMinionOptions, 'owner'> = {}) {
 		return super.initializeUnit(unitOptions, aiOptions);
 	}
 
-	readonly eventEmitter = new EventEmitter2<MonsterEvents>();
+	readonly eventEmitter = new EventEmitter2<NeutralMinionEvents>();
 
-	declare options: MonsterOptions;
+	declare options: NeutralMinionOptions;
 	type = AiType.Minion;
-	subType = AiSubType.JungleMonster;
+	subType = AiSubType.NeutralMinion;
 
-	constructor(options: MonsterOptions) {
+	constructor(options: NeutralMinionOptions) {
 		super(options);
 	}
 
-	loader(options: MonsterOptions) {
+	loader(options: NeutralMinionOptions) {
 		super.loader(options);
-		this.pinEvents();
 	}
 
 	pinEvents() {
-		const owner = this.owner;
-
-		owner.eventEmitter.on('death', (source, assists) => this.onDie(source, assists));
-
-		owner.eventEmitter.on('noTargetsInRange', () => {
-			this.stopAttack();
-		});
-
-		owner.eventEmitter.on('spawn', () => {
-			this.onSpawnPackets();
-		});
-	}
-
-	stopAttack() {
-		const owner = this.owner;
-		const packet1 = packets.InstantStop_Attack.create({
-			netId: owner.netId,
-		});
-		owner.packets.toEveryone(packet1);
+		super.pinEvents();
 	}
 
 	//setCooldown({slot, cooldown}){
@@ -144,31 +126,9 @@ export default class Monster extends BaseAi {
 		return character?.constructor as typeof Character | undefined;
 	}
 
-	get rewardExp() {
-		const character = this.owner.character;
-		return 0;
-	}
-
-	get rewardGold() {
-		const character = this.owner.character;
-		return 0;
-	}
-
-	onDieRewards(source: AttackableUnit, assists: AttackableUnit[]) {
-		const owner = this.owner;
-		console.log('onDieRewards', source.team.id, owner.team.id, source.type);
-		// make sure once again if we should reward killer
-		if (source.team.id === owner.team.id)
-			return;
-
-		if (source.ai instanceof Player) {
-			source.progress.expUp(this.rewardExp);
-			source.progress.goldUp(this.rewardGold, owner);
-		}
-	}
-
-	onDie(source: AttackableUnit, assists: AttackableUnit[]) {
-		this.onDieRewards(source, assists);
+	get expRadius() {
+		const range = 800;
+		return range;
 	}
 
 }

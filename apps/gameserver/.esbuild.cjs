@@ -10,7 +10,7 @@ async function build() {
     outdir: __dirname + '/dist',
     //packages: 'external',
     format: 'cjs',
-    target: 'node20',
+    target: 'node24',
     platform: 'node',
     sourcemap: true,
     loader: {

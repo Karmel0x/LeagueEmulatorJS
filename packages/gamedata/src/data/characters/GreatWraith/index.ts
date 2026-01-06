@@ -18,30 +18,22 @@ export default class GreatWraith extends Character {
 	};
 
 	static stats = {
-		health: {
-			baseValue: 1400,
-			perLevel: 0,
-		},
+		health: 1400,
+		healthPerLevel: 0,
 		healthRegen: 0,
 		mana: 0,
 		manaRegen: 0,
-		attackDamage: {
-			baseValue: 75,
-			perLevel: 0,
-		},
+		attackDamage: 75,
+		attackDamagePerLevel: 0,
 		abilityPower: 0,
 		attackSpeed: 0.638,
 		attackSpeedOffset: 0,
 		crit: 0,
 		attackRange: 100,
-		armor: {
-			baseValue: 15,
-			perLevel: 0,
-		},
-		resist: {
-			baseValue: 0,
-			perLevel: 0,
-		},
+		armor: 15,
+		armorPerLevel: 0,
+		resist: 0,
+		resistPerLevel: 0,
 		moveSpeed: 330,
 
 		collisionRadius: 48,

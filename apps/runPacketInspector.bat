@@ -1,4 +1,4 @@
 
 cd tools
-cmd /c ts-node -T packet-inspector
+cmd /c tsx packet-inspector
 pause

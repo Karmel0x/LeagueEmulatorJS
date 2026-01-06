@@ -1,5 +1,5 @@
 
-import { Vector2, type Vector2Like } from '@repo/geometry';
+import { MathUtils, Vector2, type Vector2Like } from '@repo/geometry';
 import Server from '../../app/server';
 import type GameObject from '../../gameobjects/game-object';
 
@@ -60,12 +60,14 @@ export default class MeasureGeneral {
 		return list.slice(nearest);
 	}
 
-	static getPointsAround(object: GameObject, startAngle = -180, maxAngle = 360, angleStep = 15) {
+	static getPointsAround(object: GameObject, radius = 0, startAngle = -180, maxAngle = 360, angleStep = 15) {
 		const objectPosition = object.position;
-		const collisionRadius = object.collisionRadius;
+
+		if (!radius)
+			radius = object.collisionRadius * 2;
 
 		const rotationPoint = objectPosition.clone();
-		rotationPoint.add(object.direction.clone().multiplyScalar(collisionRadius * 2));
+		rotationPoint.add(object.direction.clone().multiplyScalar(radius));
 
 		const points: Vector2[] = [];
 
@@ -109,6 +111,18 @@ export default class MeasureGeneral {
 		});
 
 		return points;
+	}
+
+	static filterByAngle<T extends GameObject>(source: Vector2 | GameObject, targets: T[], direction: Vector2, maxAngle: number) {
+		const sourcePosition = (source as GameObject).position || source;
+		const cosThreshold = Math.cos(MathUtils.degToRad(maxAngle));
+
+		return targets.filter(target => {
+			const targetPosition = target.position;
+			const toTarget = targetPosition.clone().sub(sourcePosition).normalize();
+			const dot = direction.dot(toTarget);
+			return dot >= cosThreshold;
+		});
 	}
 
 }

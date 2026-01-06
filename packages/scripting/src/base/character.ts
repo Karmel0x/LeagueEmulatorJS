@@ -1,6 +1,7 @@
 
 import { EventEmitter2 } from "@repo/gameserver/src/core/event-emitter2";
 import { IStat, IStatLevelable, IStatStateable } from "@repo/gameserver/src/gameobjectextensions/stats/istat";
+import type StatsUnit from "@repo/gameserver/src/gameobjectextensions/stats/unit";
 import type AttackableUnit from "@repo/gameserver/src/gameobjects/units/attackable-unit";
 import { pinCastEvents } from "../load/spell-cast";
 import type Spell from "./spell";
@@ -28,14 +29,23 @@ export default class Character {
 
         const config = this.base.stats;
 
-        const baseAttackSpeed = /*config.attackSpeed ??*/ 0.625;
-        const attackSpeed = baseAttackSpeed / (config.attackDelayOffset ?? 0);
+        const baseAttackSpeed = config.attackSpeed ?? 0.625;
+        const attackSpeed = baseAttackSpeed / (config.attackDelayOffset ?? 1);
         const attackSpeedPerLevel = attackSpeed * ((config.attackSpeedPerLevel ?? 0) / 100);
 
-        const stats = {
+        const stats: Partial<Record<keyof StatsUnit, IStat>> = {
             health: new IStatStateable(owner, config.health, config.healthPerLevel),
+            healthRegen: new IStatLevelable(owner, config.healthRegen ?? 0, config.healthRegenPerLevel ?? 0),
+            mana: new IStatStateable(owner, config.mana ?? 0, config.manaPerLevel ?? 0),
+            manaRegen: new IStatLevelable(owner, config.manaRegen ?? 0, config.manaRegenPerLevel ?? 0),
+            attackDamage: new IStatLevelable(owner, config.attackDamage ?? 0, config.attackDamagePerLevel ?? 0),
+            abilityPower: new IStatLevelable(owner, config.abilityPower ?? 0, 0),
+            armor: new IStatLevelable(owner, config.armor ?? 0, config.armorPerLevel ?? 0),
+            magicResist: new IStatLevelable(owner, config.resist ?? 0, config.resistPerLevel ?? 0),
             attackSpeed: new IStatLevelable(owner, attackSpeed, attackSpeedPerLevel),
-            attackRange: new IStat(config.attackRange),
+            critChance: new IStatLevelable(owner, config.crit ?? 0, config.critPerLevel ?? 0),
+            attackRange: new IStat(config.attackRange ?? 175),
+            moveSpeed: new IStat(config.moveSpeed ?? 325),
         };
 
         return stats;

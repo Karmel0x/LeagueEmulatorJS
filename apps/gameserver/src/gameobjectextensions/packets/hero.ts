@@ -23,25 +23,29 @@ export default class PHero {
 	//}
 
 	OnEnterLocalVisibilityClient() {
-		sendUnitStats(this.owner.owner);
+		const ai = this.owner;
+		const unit = ai.owner;
+		sendUnitStats(unit);
 	}
 
 	CreateHero(dest: { sendPacket: Function }) {
-		//todo
+		const ai = this.owner;
+		const unit = ai.owner;
 
+		//todo
 		const packet1 = packets.CreateHero.create({
 			//netId : this.netId,
-			objectNetId: this.owner.owner.netId,
-			clientId: this.owner.clientId,
+			objectNetId: unit.netId,
+			clientId: ai.clientId,
 			netNodeId: 0x40,
 			skillLevel: 0,
-			teamIsOrder: this.owner.owner.team.id === TeamId.order,
+			teamIsOrder: unit.team.id === TeamId.order,
 			isBot: false,
 			botRank: 0,
-			spawnPosIndex: this.owner.num,
+			spawnPosIndex: ai.num,
 			skinId: 0,
-			name: this.owner.summoner?.name,
-			skinName: this.owner.owner.skin,
+			name: ai.summoner?.name,
+			skinName: unit.skin,
 			//deathDurationRemaining: 0,
 			//timeSinceDeath: 0,
 			//createHeroDeath: DeathState.alive,
@@ -53,13 +57,16 @@ export default class PHero {
 	}
 
 	AvatarInfo_Server(dest: { sendPacket: Function }) {
+		const ai = this.owner;
+		const unit = ai.owner;
+
 		//todo
 		const packet1 = packets.AvatarInfo_Server.create({
-			netId: this.owner.owner.netId,
+			netId: unit.netId,
 			itemIds: [],
 			summonerIds: [
-				this.owner.summonerSpells[0]!.spellHash,
-				this.owner.summonerSpells[1]!.spellHash,
+				ai.summonerSpells[0]!.spellHash,
+				ai.summonerSpells[1]!.spellHash,
 			],
 			talents: [],
 			level: 1,
@@ -69,12 +76,15 @@ export default class PHero {
 	}
 
 	chatBoxMessage(message: string) {
+		const ai = this.owner;
+		const unit = ai.owner;
+
 		const packet1 = packets.Chat.create({
-			//netId: this.owner.netId,
-			clientId: this.owner.clientId,
+			//netId: ai.netId,
+			clientId: ai.clientId,
 			message,
 		});
-		this.owner.owner.packets.toSelf(packet1);
+		unit.packets.toSelf(packet1);
 	}
 
 	chatBoxDebugMessage(...args: any[]) {
@@ -87,31 +97,38 @@ export default class PHero {
 	}
 
 	skillUpgrade_send(slot: number) {
+		const ai = this.owner;
+		const unit = ai.owner;
+
 		const packet1 = packets.UpgradeSpellAns.create({
-			netId: this.owner.owner.netId,
+			netId: unit.netId,
 			slot: slot,
-			level: this.owner.owner.progress.spellLevel[slot],
-			pointsLeft: this.owner.owner.progress.skillPoints,
+			level: unit.progress.spellLevel[slot],
+			pointsLeft: unit.progress.skillPoints,
 		});
-		this.owner.owner.packets.toSelf(packet1);
+		unit.packets.toSelf(packet1);
 		//console.debug(packet1);
 	}
 
 	setCooldown(slot: number, cooldown = 0) {//return;
+		const ai = this.owner;
+		const unit = ai.owner;
+
 		const packet1 = packets.SetCooldown.create({
-			netId: this.owner.owner.netId,
+			netId: unit.netId,
 			slot,
 			//playVOWhenCooldownReady: false,
 			isSummonerSpell: false,
 			cooldown,
 			//maxCooldownForDisplay: cooldown,
 		});
-		this.owner.owner.packets.toSelf(packet1);
+		unit.packets.toSelf(packet1);
 		//console.log(packet1);
 	}
 
 	Die(source: AttackableUnit) {
-		const unit = this.owner.owner;
+		const ai = this.owner;
+		const unit = ai.owner;
 		const spawner = unit.spawner as Fountain;
 		if (!spawner) return;
 
@@ -125,7 +142,7 @@ export default class PHero {
 			deathDuration,
 			becomeZombie: false,
 		});
-		this.owner.owner.packets.toEveryone(packet1);
+		unit.packets.toEveryone(packet1);
 	}
 
 }

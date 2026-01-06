@@ -16,8 +16,10 @@ export default (peerNum: number, packet: packets.KeyCheckModel) => {
 		p => p.summoner.id === packet.playerId
 	);
 
-	if (!player)
-		return console.warn('player not found');
+	if (!player) {
+		console.warn('player not found');
+		return;
+	}
 
 	UnitAiList.playerByPeer[peerNum] = player;
 	player.network.peerNum = peerNum;

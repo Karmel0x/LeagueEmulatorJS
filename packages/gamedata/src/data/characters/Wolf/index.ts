@@ -18,30 +18,22 @@ export default class Wolf extends Character {
 	};
 
 	static stats = {
-		health: {
-			baseValue: 350,
-			perLevel: 0,
-		},
+		health: 350,
+		healthPerLevel: 0,
 		healthRegen: 0,
 		mana: 0,
 		manaRegen: 0,
-		attackDamage: {
-			baseValue: 14,
-			perLevel: 0,
-		},
+		attackDamage: 14,
+		attackDamagePerLevel: 0,
 		abilityPower: 0,
 		attackSpeed: 0.658,
 		attackSpeedOffset: 0,
 		crit: 0,
 		attackRange: 100,
-		armor: {
-			baseValue: 6,
-			perLevel: 0,
-		},
-		resist: {
-			baseValue: 0,
-			perLevel: 0,
-		},
+		armor: 6,
+		armorPerLevel: 0,
+		resist: 0,
+		resistPerLevel: 0,
 		moveSpeed: 450,
 
 		collisionRadius: 48,

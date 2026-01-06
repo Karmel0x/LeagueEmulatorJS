@@ -105,6 +105,7 @@ dist
 
 
 package-lock.json
+CLAUDE.md
 
 packages/enetcppjs/
 packages/navmeshcppjs/

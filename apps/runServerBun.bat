@@ -1,5 +1,5 @@
+pushd "%~dp0"
 
 cd gameserver
-bun .esbuild.cjs
-bun dist/main.js
+bun src/main.ts
 pause

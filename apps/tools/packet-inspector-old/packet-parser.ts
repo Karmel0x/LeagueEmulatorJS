@@ -45,6 +45,7 @@ export default function packetParser(packet1: ReplayRecord, i: number) {
 		let packetDetails = {
 			num: i,
 			time: packet1.time,
+			direction: packet1.direction,
 			packetId,
 			packetChannel,
 			bytes,

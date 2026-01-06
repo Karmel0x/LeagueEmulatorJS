@@ -4,18 +4,50 @@ import * as positions from "./positions";
 
 export default class SummonersRift extends Level {
 
-    static id = 1;
-    static diagonal = 25000;
-    static positions = positions;
-    static constants = constants;
+    id = 1;
+    diagonal = 25000;
+    positions = positions;
+    constants = constants;
 
     // TODO: need to verify
-    static middleOfMap = {
+    middleOfMap = {
         x: 6991.434,
         y: 7223.3438
     };
 
-    static deathTimes = [
+    expCurve = [
+        280,
+        660,
+        1140,
+        1720,
+        2400,
+        3180,
+        4060,
+        5040,
+        6120,
+        7300,
+        8580,
+        9960,
+        11440,
+        13020,
+        14700,
+        16480,
+        18360,
+        19060,
+        19760,
+        20460,
+        21160,
+        21860,
+        22560,
+        23260,
+        23960,
+        24660,
+        25360,
+        26060,
+        26760,
+    ];
+
+    deathTimes = [
         7.5,
         10,
         12.5,

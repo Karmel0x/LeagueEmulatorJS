@@ -1,8 +1,8 @@
 
 import { Vector2, type Vector2Like } from '@repo/geometry';
 import Navmeshcppjs from '../../../../../packages/navmeshcppjs/index2';
-import Server from '../../app/server';
 import { NavigationCellFlags } from '../../gameobjectextensions/moving/game-object';
+import config from '../game.config.json';
 import Pathfinding_ScalarAIMesh from './pathfinding_scalar-ai-mesh';
 
 import TerrainEscape from '@repo/gamedata/maps/map1/scene/terrain-escape.json'; // assert { type: "json" };
@@ -22,19 +22,21 @@ export default class Pathfinding extends Navmeshcppjs {
 	 * @todo better precalculation of terrain escape
 	 */
 	static terrainEscape(position: Vector2Like) {
-		if (!Server.useTerrainEscape)
+		if (config.debugging.enabled && config.debugging.noTerrainEscape)
 			return;
 
+		const mapGrid = TerrainEscape as TerrainEscapeCell[][];
 		const pos = Pathfinding_ScalarAIMesh.toAIMesh(position);
-		const posEscapedX = TerrainEscape[pos.x];
-		if (!posEscapedX)
+
+		const row = mapGrid[pos.x];
+		if (!row)
 			return;
 
-		const posEscaped = posEscapedX[pos.y] as TerrainEscapeCell;
-		if (!posEscaped || posEscaped === NavigationCellFlags.wallOfGrass)
+		const cell = row[pos.y];
+		if (!cell || cell === NavigationCellFlags.wallOfGrass)
 			return;
 
-		return Pathfinding_ScalarAIMesh.toCoordinates({ x: posEscaped[0], y: posEscaped[1] });
+		return Pathfinding_ScalarAIMesh.toCoordinates({ x: cell[0], y: cell[1] });
 	}
 
 	/**

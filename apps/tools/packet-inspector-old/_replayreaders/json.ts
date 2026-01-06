@@ -1,14 +1,14 @@
 
 import fs from 'fs';
-import type { ReplayFileReader } from './replay-reader';
+import type { ReplayFileReader, ReplayFileRecord } from './replay-reader';
 
 
 const reader_json: ReplayFileReader = function (filePath) {
     const data = fs.readFileSync(filePath, 'utf8');
-    const replay: ReturnType<ReplayFileReader> = JSON.parse(data);
+    const packets: ReplayFileRecord[] = JSON.parse(data);
 
     /** @deprecated */
-    replay.forEach(record => {
+    packets.forEach(record => {
         // @ts-ignore
         record.time = record.time ?? record.Time ?? (record.TimeS * 1000);
         // @ts-ignore
@@ -21,7 +21,10 @@ const reader_json: ReplayFileReader = function (filePath) {
         record.flags = record.flags ?? record.Flags;
     });
 
-    return replay;
+    return {
+        info: '',
+        packets,
+    };
 };
 
 export default reader_json;

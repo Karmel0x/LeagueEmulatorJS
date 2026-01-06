@@ -10,7 +10,11 @@ export default class BasicAttack extends Spell {
 	canCancel = true;
 
 	onCast(owner: AttackableUnit, castData: CastData, spellVars: any) {
-		const targetPosition = castData.targetPosition;
+		const target = castData.target;
+		if (!target)
+			throw new Error('No target for basic attack');
+
+		const targetPosition = target.position;// ?? castData.targetPosition;
 		if (!targetPosition)
 			throw new Error('No target position');
 
@@ -25,16 +29,19 @@ export default class BasicAttack extends Spell {
 		});
 
 		let collidedWith: number[] = [];
-		skillshot.eventEmitter.on('collision', (target: AttackableUnit) => {
-			if (owner === target || collidedWith.includes(target.netId))
+		skillshot.eventEmitter.on('collisionUnit', (target2: AttackableUnit) => {
+			if (target !== target2)
 				return;
 
-			collidedWith.push(target.netId);
-
-			if (!target.combat)
+			if (owner === target2 || collidedWith.includes(target2.netId))
 				return;
 
-			target.combat.damage(owner, {
+			collidedWith.push(target2.netId);
+
+			if (!target2.combat)
+				return;
+
+			target2.combat.damage(owner, {
 				damageAmount: 100,
 				damageType: DamageType.physical,
 				damageSource: DamageSource.spell,

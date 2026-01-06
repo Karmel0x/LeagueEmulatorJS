@@ -1,5 +1,7 @@
 import * as packets from '@repo/packets/list';
+import Server from '../../app/server';
 import { SlotId } from '../../constants/slot-id';
+import config from '../../game/game.config.json';
 import type { Player } from '../../gameobjects/unit-ai';
 import type Hero from '../../gameobjects/unit-ai/hero';
 import type AttackableUnit from '../../gameobjects/units/attackable-unit';
@@ -13,37 +15,9 @@ export type ProgressableEvents = LevelableEvents & {
 };
 
 const spellLevelMax = [5, 5, 5, 3];
-const expCurve = [
-    280,
-    660,
-    1140,
-    1720,
-    2400,
-    3180,
-    4060,
-    5040,
-    6120,
-    7300,
-    8580,
-    9960,
-    11440,
-    13020,
-    14700,
-    16480,
-    18360,
-    19060,
-    19760,
-    20460,
-    21160,
-    21860,
-    22560,
-    23260,
-    23960,
-    24660,
-    25360,
-    26060,
-    26760,
-];
+const expCurve = Server.map.expCurve;
+const rLevelRequirements = [6, 11, 16];
+const startingGold = config.testing.enabled && config.testing.startingGold ? config.testing.startingGold : Server.map.constants.startingGold;
 
 /**
  * Trait for units that can be leveled up
@@ -51,9 +25,9 @@ const expCurve = [
 export default class Progressable extends Levelable {
     declare readonly owner: AttackableUnit;
 
-    exp = 0;
+    //exp = 0;
     expTotal = 0;
-    gold = 475 * 100;// TODO: remove * 100
+    gold = startingGold;
     goldTotal = this.gold;
     redirectGold?: AttackableUnit;
 
@@ -79,61 +53,72 @@ export default class Progressable extends Levelable {
         if (championWithEvolvePoints && (this.level === 6 || this.level === 11 || this.level === 16))
             ++this.evolvePoints;
 
-        (this.owner.ai as Hero)?.packets.skillUpgrade_send(0);//for now
+        const owner = this.owner;
+        (owner.ai as Hero)?.packets.skillUpgrade_send(0);//for now
         if (sendStats)
             sendUnitStats(this.owner);
 
-        this.owner.eventEmitter.emit('levelUp');
+        owner.eventEmitter.emit('levelUp');
     }
 
     /**
      * Increase gold
      */
     goldUp(amount: number, source: Unit | number = 0, notify = true) {
+        if (!amount)
+            return;
+
         if (this.redirectGold) {
             this.redirectGold.progress.goldUp(amount, source);
             return;
         }
 
+        amount = Math.round(amount * 100) / 100;
         this.gold += amount;
+        this.goldTotal += amount;
+        const owner = this.owner;
 
         if (notify) {
             console.log('goldUp', amount);
 
             const packet1 = packets.UnitAddGold.create({
                 sourceNetId: (source as Unit).netId || source as number,
-                targetNetId: this.owner.netId,
+                targetNetId: owner.netId,
                 amount: amount,
             });
-            (this.owner.ai as Player)?.network?.sendPacket(packet1);
+            (owner.ai as Player)?.network?.sendPacket(packet1);
         }
 
-        sendUnitStats(this.owner);
+        sendUnitStats(owner);
     }
 
     /**
      * Increase exp and level up if needed
      */
     expUp(amount: number, notify = true) {
-        this.exp += amount;
+        if (!amount)
+            return;
+
+        amount = Math.round(amount * 100) / 100;
         this.expTotal += amount;
 
-        while (this.exp >= expCurve[this.level - 1]!) {
-            this.exp -= expCurve[this.level - 1]!;
+        while (this.expTotal >= expCurve[this.level - 1]!) {
             this.levelUp(false);
         }
+
+        const owner = this.owner;
 
         if (notify) {
             console.log('expUp', amount);
 
             const packet1 = packets.UnitAddEXP.create({
-                targetNetId: this.owner.netId,
+                targetNetId: owner.netId,
                 amount: amount,
             });
-            (this.owner.ai as Player)?.network?.sendPacket(packet1);
+            (owner.ai as Player)?.network?.sendPacket(packet1);
         }
 
-        sendUnitStats(this.owner);
+        sendUnitStats(owner);
     }
 
     /**
@@ -156,18 +141,27 @@ export default class Progressable extends Levelable {
         if (this.skillPoints < 1)
             return;
 
-        if (slot === SlotId.r && this.level < 6)
+        const currentSpellLevel = this.spellLevel[slot] || 0;
+        if (currentSpellLevel >= spellLevelMax[slot]!)
             return;
+
+        if (slot === SlotId.r) {
+            if (this.level < rLevelRequirements[currentSpellLevel]!) {
+                return;
+            }
+        }
 
         if (this.spellLevel[slot]! >= spellLevelMax[slot]!)
             return;
 
         ++this.spellLevel[slot]!;
         --this.skillPoints;
-        (this.owner.ai as Hero)?.packets.skillUpgrade_send(slot);
-        sendUnitStats(this.owner);
 
-        this.owner.eventEmitter.emit('levelUpSpell', slot);
+        const owner = this.owner;
+        (owner.ai as Hero)?.packets.skillUpgrade_send(slot);
+        sendUnitStats(owner);
+
+        owner.eventEmitter.emit('levelUpSpell', slot);
     }
 
 }

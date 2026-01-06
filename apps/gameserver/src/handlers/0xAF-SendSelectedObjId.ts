@@ -23,9 +23,10 @@ export default (player: Player, packet: packets.SendSelectedObjIdModel) => {
 	const owner = player.owner;
 
 	if (unit instanceof AttackableUnit) {
+		let unitName = unit.name;
 		let characterName = unit.character?.name;
 		let distance = Math.round(owner.distanceTo(unit) * 1e3) / 1e3;
-		player.packets.chatBoxDebugMessage('selected unit', characterName, unit.netId, humanizePosition(unit.position), 'distance:', distance);
+		player.packets.chatBoxDebugMessage('selected unit', unitName, characterName, unit.netId, humanizePosition(unit.position), 'distance:', distance);
 	}
 	else {
 		let distance = Math.round(owner.distanceTo(unit) * 1e3) / 1e3;

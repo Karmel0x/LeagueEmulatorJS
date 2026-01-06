@@ -20,30 +20,22 @@ export default class Dragon extends Character {
 	};
 
 	static stats = {
-		health: {
-			baseValue: 3500,
-			perLevel: 240,
-		},
+		health: 3500,
+		healthPerLevel: 240,
 		healthRegen: 0,
 		mana: 0,
 		manaRegen: 0,
-		attackDamage: {
-			baseValue: 110,
-			perLevel: 0,
-		},
+		attackDamage: 110,
+		attackDamagePerLevel: 0,
 		abilityPower: 0,
 		attackSpeed: 0.658,
 		attackSpeedOffset: 0,
 		crit: 0,
 		attackRange: 350,
-		armor: {
-			baseValue: 21,
-			perLevel: 13,
-		},
-		resist: {
-			baseValue: 30,
-			perLevel: 5.85,
-		},
+		armor: 21,
+		armorPerLevel: 13,
+		resist: 30,
+		resistPerLevel: 5.85,
 		moveSpeed: 330,
 
 		collisionRadius: 48,
