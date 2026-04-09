@@ -1,12 +1,11 @@
 import * as packets from '@repo/packets/list';
 import Server from '../../app/server';
 import { SlotId } from '../../constants/slot-id';
-import config from '../../game/game.config.json';
+import config from '../../game/game.config';
 import type { Player } from '../../gameobjects/unit-ai';
 import type Hero from '../../gameobjects/unit-ai/hero';
 import type AttackableUnit from '../../gameobjects/units/attackable-unit';
 import type Unit from '../../gameobjects/units/unit';
-import { sendUnitStats } from '../../packet-helpers/on-replication';
 import Levelable, { type LevelableEvents } from './levelable';
 
 export type ProgressableEvents = LevelableEvents & {
@@ -54,9 +53,16 @@ export default class Progressable extends Levelable {
             ++this.evolvePoints;
 
         const owner = this.owner;
-        (owner.ai as Hero)?.packets.skillUpgrade_send(0);//for now
-        if (sendStats)
-            sendUnitStats(this.owner);
+        (owner.ai as Hero).packets?.skillUpgrade_send(0);//for now
+
+        if (owner.stats.health)
+            owner.stats.health.current += owner.stats.health.perLevel;
+        if (owner.stats.mana)
+            owner.stats.mana.current += owner.stats.mana.perLevel;
+
+        if (sendStats) {
+            owner.markReplicateStats();
+        }
 
         owner.eventEmitter.emit('levelUp');
     }
@@ -89,7 +95,7 @@ export default class Progressable extends Levelable {
             (owner.ai as Player)?.network?.sendPacket(packet1);
         }
 
-        sendUnitStats(owner);
+        owner.markReplicateStats();
     }
 
     /**
@@ -118,13 +124,15 @@ export default class Progressable extends Levelable {
             (owner.ai as Player)?.network?.sendPacket(packet1);
         }
 
-        sendUnitStats(owner);
+        owner.markReplicateStats();
     }
 
     /**
      * Skill upgrade by 1
      */
-    skillUpgrade(slot: number, isEvolve = false) {
+    skillUpgrade(slot: number, checkRequirements = true, isEvolve = false) {
+        if (slot < SlotId.q || slot > SlotId.r)
+            return;
 
         if (isEvolve) {
             if (this.evolvePoints < 1)
@@ -145,21 +153,20 @@ export default class Progressable extends Levelable {
         if (currentSpellLevel >= spellLevelMax[slot]!)
             return;
 
-        if (slot === SlotId.r) {
-            if (this.level < rLevelRequirements[currentSpellLevel]!) {
-                return;
+        if (checkRequirements) {
+            if (slot === SlotId.r) {
+                if (this.level < rLevelRequirements[currentSpellLevel]!) {
+                    return;
+                }
             }
         }
-
-        if (this.spellLevel[slot]! >= spellLevelMax[slot]!)
-            return;
 
         ++this.spellLevel[slot]!;
         --this.skillPoints;
 
         const owner = this.owner;
-        (owner.ai as Hero)?.packets.skillUpgrade_send(slot);
-        sendUnitStats(owner);
+        (owner.ai as Hero).packets?.skillUpgrade_send(slot);
+        owner.markReplicateStats();
 
         owner.eventEmitter.emit('levelUpSpell', slot);
     }

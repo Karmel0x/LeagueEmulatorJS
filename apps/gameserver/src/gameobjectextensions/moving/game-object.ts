@@ -4,6 +4,8 @@ import { type MovementData, MovementDataType } from '@repo/packets/base/s2c/0xBA
 import type { CMovementDataNormalModel } from '@repo/packets/shared/CMovementDataNormal';
 import type { SSpeedParamsModel } from '@repo/packets/shared/SSpeedParams';
 import GameObjectList from '../../app/game-object-list';
+import Server from '../../app/server';
+import Pathfinding from '../../game/components/pathfinding';
 import type GameObject from '../../gameobjects/game-object';
 import type MovableGameObject from '../../gameobjects/movable-game-object';
 import type AttackableUnit from '../../gameobjects/units/attackable-unit';
@@ -110,12 +112,15 @@ export default class MovingGameObject {
 
 	constructor(owner: MovableGameObject) {
 		this.owner = owner;
+		this.destination = owner.spawnPosition.clone();
 	}
 
+	destination: Vector2;
 	waypointsOrdered: Vector2[] = [];
 
 	_waypointsForced: Vector2[] = [];
 	lastWaypointsForcedCount = 0;
+	premovePosition?: Vector2;
 
 	set waypointsForced(waypoints: Vector2[]) {
 		if (this._waypointsForced.length !== 0) {
@@ -130,6 +135,7 @@ export default class MovingGameObject {
 
 	get waypointsForced() {
 		if (this._waypointsForced.length === 0 && this.lastWaypointsForcedCount !== 0) {
+			this.speedParams = undefined;
 			const owner = this.owner;
 			owner.eventEmitter.emit('moveSuccess');
 			owner.eventEmitter.emit('moveEnd');
@@ -139,40 +145,28 @@ export default class MovingGameObject {
 		return this._waypointsForced;
 	}
 
-	waypointsHaltList: any[] = [];
-	get waypointsHalt() {
-		return this.waypointsHaltList.length > 0
-	}
-
-	haltMovement() {
-		this.waypointsHaltList.push(true);
-		return [true];
-	}
-
-	unhaltMovement(list: boolean[]) {
-		while (list.length > 0) {
-			this.waypointsHaltList.pop();
-			list.pop();
-		}
-	}
-
+	sentWaypoints = '';
 	sentWaypointsType = -1;
-	sentWaypoint = new Vector2();
+	//sentWaypoint = new Vector2();
 	speedParams?: SpeedParams = undefined;
 	placeFlag = NavigationCellFlags.none;
 	moveType = MoveType.unknown;
 
+	waypointsHalted() {
+		return false;
+	}
+
 	get waypoints() {
-		if (this.waypointsHalt) {
+		if (this.waypointsHalted()) {
 			this.moveType = MoveType.halted;
 			return WAYPOINTS_EMPTY;
 		}
 
-		const waypointsForced = this.waypointsForced;
-		if (waypointsForced.length) {
-			this.moveType = MoveType.dashing;
-			return waypointsForced;
-		}
+		//const waypointsForced = this._waypointsForced;
+		//if (waypointsForced.length) {
+		//	this.moveType = MoveType.dashing;
+		//	return waypointsForced;
+		//}
 
 		if (this.speedParams) {
 			const followTarget = this.speedParams.followTarget;
@@ -197,7 +191,7 @@ export default class MovingGameObject {
 			return waypointsOrdered;
 		}
 
-		this.speedParams = undefined;
+		//this.speedParams = undefined;
 		this.moveType = MoveType.moving;
 		return waypointsOrdered;
 	}
@@ -212,8 +206,10 @@ export default class MovingGameObject {
 	 */
 	setWaypoints(waypoints: Vector2[]) {
 		this.waypointsOrdered = waypoints;
-		this.speedParams = undefined;
-		this.owner.eventEmitter.emit('setWaypoints', this.waypoints);
+
+		const owner = this.owner;
+		this.destination = waypoints[waypoints.length - 1] || owner.position.clone();
+		owner.eventEmitter.emit('setWaypoints', this.waypoints);
 	}
 
 	get speed() {
@@ -224,7 +220,9 @@ export default class MovingGameObject {
 	 * Teleport to position (..)
 	 */
 	teleport(position: Vector2Like, send: boolean = true) {
-		this.owner.position.copy(position);
+		const escapedPosition = Pathfinding.terrainEscape(position);
+		const position2 = escapedPosition || position;
+		this.owner.position.copy(position2);
 
 		if (send)
 			this.moveAns([], true);
@@ -252,6 +250,18 @@ export default class MovingGameObject {
 		//this.owner.packets.chatBoxDebugMessage(message);
 	}
 
+	moveTo2(waypoints: Vector2Like[]) {
+		if (!waypoints.length)
+			return;
+
+		// first waypoint is current position
+		waypoints.shift();
+
+		if (waypoints && waypoints.length) {
+			this.setWaypoints(waypoints.map(p => new Vector2(p.x, p.y)));
+		}
+	}
+
 	moveTo(packet: {
 		//position: SVector3Model;
 		movementData?: {
@@ -275,17 +285,12 @@ export default class MovingGameObject {
 		//	//console.log({waypoints: movementData.waypoints, newWaipoints});
 		//}
 
-		// first waypoint is current position
-		newWaipoints.shift();
-
-		if (newWaipoints && newWaipoints.length) {
-			this.setWaypoints(newWaipoints.map(p => new Vector2(p.x, p.y)));
-		}
+		this.moveTo2(newWaipoints);
 	}
 
 	moveClear() {
 		this.waypointsOrdered = WAYPOINTS_EMPTY;
-		this.speedParams = undefined;
+		this.destination = this.owner.position.clone();
 	}
 
 	get movementData(): MovementData {
@@ -296,7 +301,7 @@ export default class MovingGameObject {
 			return {
 				type: MovementDataType.withSpeed,
 				teleportNetId: owner.netId,
-				syncId: performance.now(),
+				syncId: ++Server.syncId,
 				waypoints: [owner.position, ...unitWaypoints],
 				speedParams: this.speedParams,
 			};
@@ -307,14 +312,14 @@ export default class MovingGameObject {
 			return {
 				type: MovementDataType.normal,
 				teleportNetId: owner.netId,
-				syncId: performance.now(),
+				syncId: ++Server.syncId,
 				waypoints: [owner.position, ...unitWaypoints],
 			};
 		}
 
 		return {
 			type: MovementDataType.stop,
-			syncId: performance.now(),
+			syncId: ++Server.syncId,
 			position: owner.position,
 			forward: { x: 1, y: 0 },
 		};

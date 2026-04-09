@@ -5,7 +5,7 @@ import type AttackableUnit from '@repo/gameserver/src/gameobjects/units/attackab
 import type { SCastInfoModel } from '@repo/packets/shared/SCastInfo';
 import { DamageSource, DamageType } from '@repo/packets/shared/SDeathData';
 import _Spell, { type CastData } from '@repo/scripting/base/spell';
-import { SpellCast } from '@repo/scripting/load/spell-cast';
+import { SpellCast, type CastVars } from '@repo/scripting/load/spell-cast';
 import TempYasuoRMissile from './TempYasuoRMissile';
 
 
@@ -18,16 +18,16 @@ export default class YasuoRDummySpell extends _Spell {
 		designerTotalTime: 0.7,
 	};
 
-	onCast(owner: AttackableUnit, castData: CastData, spellVars: any) {
-		if (!spellVars.anglePosition)
+	onCast(owner: AttackableUnit, castData: CastData, castVars: CastVars) {
+		if (!castVars.anglePosition)
 			return false;
 
-		spellVars._CastInfo.targets = [{
+		castVars._CastInfo.targets = [{
 			unitNetId: owner.netId,
 			hitResult: 1,
 		}];
 
-		let skillshotTargetPosition = spellVars.anglePosition.add(owner.position);
+		let skillshotTargetPosition = castVars.anglePosition.add(owner.position);
 
 		let skillshot = Missile.initialize({
 			spawner: owner,
@@ -64,15 +64,14 @@ export default class YasuoRDummySpell extends _Spell {
 		});
 
 		skillshot.fire(skillshotTargetPosition);
-		spellVars.missile = skillshot;
+		castVars.missile = skillshot;
 	}
 
-	async postCast(owner: AttackableUnit, castData: CastData, spellVars: any) {
-		const Spell = TempYasuoRMissile;
-		const spell = new Spell();
-		spell.name = Spell.name;
-		const spellCast = new SpellCast(spell, owner, castData);
-		await spellCast.castSpell(spellVars);
+	async postCast(owner: AttackableUnit, castData: CastData, castVars: CastVars) {
+		const spell1 = new TempYasuoRMissile();
+		const spellCast = new SpellCast(spell1, owner, castData);
+		spellCast.castVars = castVars;
+		await spellCast.castSpell();
 	}
 
 }

@@ -4,7 +4,7 @@ import SItemPacket, { type SItemPacketModel } from '../../shared/SItemPacket';
 
 export type BuyItemAnsModel = BasePacketModel & {
 	item: SItemPacketModel,
-	unknown1: boolean,
+	useOnBought: boolean,
 	unknown2: boolean,
 };
 
@@ -14,7 +14,7 @@ export default class BuyItemAns extends BasePacket {
 	}
 
 	static bitfield1 = {
-		unknown1: 1 << 0,
+		useOnBought: 1 << 0,
 		unknown2: 1 << 1,
 	};
 
@@ -24,7 +24,7 @@ export default class BuyItemAns extends BasePacket {
 		payload.item = SItemPacket.read(dvr);
 
 		let bitfield1 = dvr.readBitfield(this.bitfield1);
-		payload.unknown1 = bitfield1.unknown1;
+		payload.useOnBought = bitfield1.useOnBought;
 		payload.unknown2 = bitfield1.unknown2;
 	}
 
@@ -34,7 +34,7 @@ export default class BuyItemAns extends BasePacket {
 		SItemPacket.writer(dvr, payload.item);
 
 		dvr.writeBitfield(this.bitfield1, {
-			unknown1: payload.unknown1,
+			useOnBought: payload.useOnBought,
 			unknown2: payload.unknown2,
 		});
 	}

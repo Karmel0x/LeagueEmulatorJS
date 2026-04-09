@@ -1,9 +1,9 @@
 import { BuffAddType } from '@repo/gameserver/src/gameobjectextensions/traits/buff-manager';
 import type AttackableUnit from '@repo/gameserver/src/gameobjects/units/attackable-unit';
-import { sendUnitStats } from '@repo/gameserver/src/packet-helpers/on-replication';
 import { BuffType } from '@repo/packets/base/s2c/0x68-BuffAddGroup';
 import type { CastData } from '@repo/scripting/base/spell';
 import SpellBuff from '@repo/scripting/base/spell-buff';
+import type { CastVars } from '@repo/scripting/load/spell-cast';
 
 
 export default class SummonerHeal extends SpellBuff {
@@ -25,7 +25,7 @@ export default class SummonerHeal extends SpellBuff {
 		duration: 5,
 	};
 
-	onCast(owner: AttackableUnit, castData: CastData, spellVars: any) {
+	onCast(owner: AttackableUnit, castData: CastData, castVars: CastVars) {
 
 		let healAmount = this.effect.heal + (owner.progress.level * this.effect.healPerLevel);
 		if (owner.buffManager.hasBuff(this))
@@ -43,12 +43,12 @@ export default class SummonerHeal extends SpellBuff {
 
 	buffActivate(owner: AttackableUnit, attacker?: AttackableUnit, buffVars?: any) {
 		owner.stats.moveSpeed.percentBonus += 30;
-		sendUnitStats(owner);
+		owner.markReplicateStats();
 	}
 
 	buffDeactivate(owner: AttackableUnit, attacker?: AttackableUnit, buffVars?: any) {
 		owner.stats.moveSpeed.percentBonus -= 30;
-		sendUnitStats(owner);
+		owner.markReplicateStats();
 	}
 
 }

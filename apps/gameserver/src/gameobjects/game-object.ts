@@ -37,12 +37,13 @@ export default class GameObject {
 			GameObjectList.add(object);
 		});
 
-		object.eventEmitter.once('destroy', () => {
-			GameObjectList.remove(object);
-			object.eventEmitter.removeAllListeners();
-		});
-
 		return object;
+	}
+
+	destroy() {
+		this.eventEmitter.emit('destroy');
+		GameObjectList.remove(this);
+		this.eventEmitter.removeAllListeners();
 	}
 
 	readonly eventEmitter = new EventEmitter2<GameObjectEvents>();
@@ -55,7 +56,7 @@ export default class GameObject {
 	/**
 	 * @todo set direction on attack and spell cast
 	 */
-	readonly direction = new Vector2(1, 0);
+	readonly direction = new Vector2(0, 1);
 
 	stats!: StatsGameObject;
 	ignoreCollision = false;
@@ -67,7 +68,7 @@ export default class GameObject {
 
 	set facePosition(v: Vector2Like) {
 		const facing = new Vector2(v.x, v.y);
-		facing.sub(this.position).normalize();
+		facing.sub(this.position).forceNormalize();
 		this.direction.copy(facing);
 	}
 
@@ -75,13 +76,27 @@ export default class GameObject {
 		return this.constructor.name;
 	}
 
-	get collisionRadius() {
-		return this.stats.collisionRadius.total || 1;
+	_selectionRadius: number | undefined = undefined;
+
+	get selectionRadius() {
+		if (this._selectionRadius === undefined) {
+			this._selectionRadius = this.stats.selectionRadius.total || 1;
+		}
+		return this._selectionRadius;
 	}
 
-	get pathfindingRadius() {
-		return this.stats.pathfindingRadius.total || 1;
+	_collisionRadius: number | undefined = undefined;
+
+	get collisionRadius() {
+		if (this._collisionRadius === undefined) {
+			this._collisionRadius = this.stats.collisionRadius.total || 1;
+		}
+		return this._collisionRadius;
 	}
+
+	//get pathfindingRadius() {
+	//	return this.stats.pathfindingRadius.total || 1;
+	//}
 
 	loader(options: GameObjectOptions = {}) {
 		this.stats = this.stats || new StatsGameObject(this, options.stats);
@@ -123,13 +138,11 @@ export default class GameObject {
 		this.eventEmitter.emit('spawn');
 	}
 
-	waitForSpawn() {
-		return new Promise<void>(resolve => {
-			if (this.spawned)
-				resolve();
-			else
-				this.eventEmitter.once('spawn', () => resolve());
-		});
+	atBeforeSpawned(callback: (() => void)) {
+		if (this.spawned)
+			callback();
+		else
+			this.eventEmitter.prependOnceListener('spawn', () => callback());
 	}
 
 }

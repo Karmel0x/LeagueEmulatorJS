@@ -4,7 +4,7 @@ import type Player from '../gameobjects/unit-ai/player';
 
 import Server from '../app/server';
 import loadingStages from '../constants/game-state';
-import config from '../game/game.config.json';
+import config from '../game/game.config';
 
 //const MapId = {
 //	SummonersRift_Original: 1, // Summoner's Rift / Original Summer variant

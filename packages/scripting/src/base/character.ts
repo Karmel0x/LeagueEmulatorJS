@@ -3,7 +3,6 @@ import { EventEmitter2 } from "@repo/gameserver/src/core/event-emitter2";
 import { IStat, IStatLevelable, IStatStateable } from "@repo/gameserver/src/gameobjectextensions/stats/istat";
 import type StatsUnit from "@repo/gameserver/src/gameobjectextensions/stats/unit";
 import type AttackableUnit from "@repo/gameserver/src/gameobjects/units/attackable-unit";
-import { pinCastEvents } from "../load/spell-cast";
 import type Spell from "./spell";
 
 export type CharacterEvents = {
@@ -18,8 +17,18 @@ export default class Character {
 
     readonly eventEmitter = new EventEmitter2<CharacterEvents>();
 
-    name: string = '';
     spells: Record<string, Spell> | undefined = this.createSpells();
+
+    get name() {
+        return this.constructor.name;
+    }
+
+    // placemarkers
+    neverRender = false;
+    expGivenOnDeath = 0;
+    goldGivenOnDeath = 0;
+    globalExpGivenOnDeath = 0;
+    globalGoldGivenOnDeath = 0;
 
     get base() {
         return this.constructor as typeof Character;
@@ -56,8 +65,6 @@ export default class Character {
         for (const slot in this.base.spells) {
             const Spell = this.base.spells[slot]!;
             const spell = new Spell();
-            spell.name = Spell.name;
-            pinCastEvents(spell);
             spells[slot] = spell;
         }
         return spells;

@@ -1,4 +1,5 @@
 
+export { default as Ahri } from './Ahri/index';
 export { default as AncientGolem } from './AncientGolem/index';
 export { default as Blue_Minion_Basic } from './Blue_Minion_Basic/index';
 export { default as Blue_Minion_MechCannon } from './Blue_Minion_MechCannon/index';
@@ -18,6 +19,7 @@ export { default as Golem } from './Golem/index';
 export { default as GreatWraith } from './GreatWraith/index';
 export { default as LesserWraith } from './LesserWraith/index';
 export { default as LizardElder } from './LizardElder/index';
+export { default as Nidalee } from './Nidalee/index';
 export { default as OrderInhibitor } from './OrderInhibitor/index';
 export { default as OrderNexus } from './OrderNexus/index';
 export { default as OrderTurretAngel } from './OrderTurretAngel/index';
@@ -35,3 +37,4 @@ export { default as Worm } from './Worm/index';
 export { default as Wraith } from './Wraith/index';
 export { default as Yasuo } from './Yasuo/index';
 export { default as YoungLizard } from './YoungLizard/index';
+

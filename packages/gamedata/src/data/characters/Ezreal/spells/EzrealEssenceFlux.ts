@@ -3,11 +3,12 @@ import { SlotId } from '@repo/gameserver/src/constants/slot-id';
 import * as Measure from '@repo/gameserver/src/gameobjectextensions/measure';
 import Missile from '@repo/gameserver/src/gameobjects/missiles/missile';
 import type AttackableUnit from '@repo/gameserver/src/gameobjects/units/attackable-unit';
+import { sendUnitParticle } from '@repo/gameserver/src/packet-helpers';
 import HashString from '@repo/packets/functions/hash-string';
 import type { SCastInfoModel } from '@repo/packets/shared/SCastInfo';
 import { DamageSource, DamageType } from '@repo/packets/shared/SDeathData';
 import _Spell, { type CastData } from '@repo/scripting/base/spell';
-import { SpellCast } from '@repo/scripting/load/spell-cast';
+import { SpellCast, type CastVars } from '@repo/scripting/load/spell-cast';
 import package1 from '../package';
 import EzrealEssenceFluxMissile from './EzrealEssenceFluxMissile';
 
@@ -24,16 +25,31 @@ class ezreal_bow_yellow extends _Particle {
 	//particleHash = HashString.HashString(this.constructor.name + '.troy');
 	//boneHash = HashString.HashString('L_HAND');
 	//
-	//onCast(owner: AttackableUnit, castData: CastData, spellVars: any) {
+	//onCast(owner: AttackableUnit, castData: CastData, castVars: CastVars) {
 	//
-	//	this.owner.packets.AddParticleTarget(this.packageHash, this.particleHash, this.boneHash);
+	//	sendUnitParticle(owner, [{
+	//		packageHash: this.packageHash,
+	//		effectNameHash: this.particleHash,
+	//		boneNameHash: this.boneHash,
+	//		createData: [],
+	//	}]);
 	//}
 
 	static tempOnCast(owner: AttackableUnit, castData: CastData) {
 		let particleHash = HashString.HashString(this.constructor.name + '.troy');
 		let boneHash = HashString.HashString('L_HAND');
 
-		owner.packets.AddParticleTarget(package1.packageHash, particleHash, boneHash);
+		sendUnitParticle(owner, [{
+			packageHash: package1.packageHash,
+			effectNameHash: particleHash,
+			flags: 32,
+			boneNameHash: boneHash,
+			createData: [{
+				positionNCC: owner.position,
+				ownerPositionNCC: owner.position,
+				targetPositionNCC: owner.position,
+			}],
+		}]);
 	}
 }
 
@@ -47,7 +63,7 @@ export default class EzrealEssenceFlux extends _Spell {
 		designerTotalTime: 1,
 	};
 
-	preCast(owner: AttackableUnit, castData: CastData, spellVars: any) {
+	preCast(owner: AttackableUnit, castData: CastData, castVars: CastVars) {
 		const targetPosition = castData.targetPosition;
 		if (!targetPosition)
 			throw new Error('No target position');
@@ -82,20 +98,19 @@ export default class EzrealEssenceFlux extends _Spell {
 		});
 
 		skillshot.fire(maxRangePosition);
-		spellVars.missile = skillshot;
+		castVars.missile = skillshot;
 	}
 
-	onCast(owner: AttackableUnit, castData: CastData, spellVars: any) {
+	onCast(owner: AttackableUnit, castData: CastData, castVars: CastVars) {
 		ezreal_bow_yellow.tempOnCast(owner, castData);
 
 	}
 
-	async postCast(owner: AttackableUnit, castData: CastData, spellVars: any) {
-		const Spell = EzrealEssenceFluxMissile;
-		const spell = new Spell();
-		spell.name = Spell.name;
-		const spellCast = new SpellCast(spell, owner, castData);
-		await spellCast.castSpell(spellVars);
+	async postCast(owner: AttackableUnit, castData: CastData, castVars: CastVars) {
+		const spell1 = new EzrealEssenceFluxMissile();
+		const spellCast = new SpellCast(spell1, owner, castData);
+		spellCast.castVars = castVars;
+		await spellCast.castSpell();
 	}
 
 }

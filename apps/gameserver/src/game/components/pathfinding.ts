@@ -1,11 +1,10 @@
 
 import { Vector2, type Vector2Like } from '@repo/geometry';
-import Navmeshcppjs from '../../../../../packages/navmeshcppjs/index2';
+import { defaultHeight } from '@repo/geometry/vector2-with-z';
+import Navmeshcppjs, { type Point } from 'navmeshcppjs/index2';
 import { NavigationCellFlags } from '../../gameobjectextensions/moving/game-object';
-import config from '../game.config.json';
-import Pathfinding_ScalarAIMesh from './pathfinding_scalar-ai-mesh';
 
-import TerrainEscape from '@repo/gamedata/maps/map1/scene/terrain-escape.json'; // assert { type: "json" };
+//import TerrainEscape from '@repo/gamedata/maps/map1/scene/terrain-escape.json'; // assert { type: "json" };
 
 Navmeshcppjs.initialize();
 
@@ -18,25 +17,40 @@ export default class Pathfinding extends Navmeshcppjs {
 	}
 
 	/**
+	 * @todo
+	 */
+	static getHeight(position: Vector2Like) {
+		return defaultHeight;
+	}
+
+	/**
 	 * Get closest walkable point to position
 	 * @todo better precalculation of terrain escape
 	 */
 	static terrainEscape(position: Vector2Like) {
-		if (config.debugging.enabled && config.debugging.noTerrainEscape)
-			return;
+		return undefined;
+		//if (config.debugging.enabled && config.debugging.noTerrainEscape)
+		//	return;
+		//
+		//const mapGrid = TerrainEscape as TerrainEscapeCell[][];
+		//const pos = Pathfinding_ScalarAIMesh.toAIMesh(position);
+		//
+		//const row = mapGrid[pos.x];
+		//if (!row)
+		//	return;
+		//
+		//const cell = row[pos.y];
+		//if (!cell || cell === NavigationCellFlags.wallOfGrass)
+		//	return;
+		//
+		//return Pathfinding_ScalarAIMesh.toCoordinates({ x: cell[0], y: cell[1] });
+	}
 
-		const mapGrid = TerrainEscape as TerrainEscapeCell[][];
-		const pos = Pathfinding_ScalarAIMesh.toAIMesh(position);
-
-		const row = mapGrid[pos.x];
-		if (!row)
-			return;
-
-		const cell = row[pos.y];
-		if (!cell || cell === NavigationCellFlags.wallOfGrass)
-			return;
-
-		return Pathfinding_ScalarAIMesh.toCoordinates({ x: cell[0], y: cell[1] });
+	/**
+	 * @todo
+	 */
+	static isInGrass(position: Vector2Like, radius = 1) {
+		return false;
 	}
 
 	/**
@@ -46,11 +60,18 @@ export default class Pathfinding extends Navmeshcppjs {
 	 * atm character is bugging near some blocks
 	 */
 	static getPath(startPoint: Vector2Like, endPoint: Vector2Like) {
-		const startPointEscaped = Pathfinding.terrainEscape(startPoint) || startPoint;
-		const endPointEscaped = Pathfinding.terrainEscape(endPoint) || endPoint;
+		const startPointEscaped = /*Pathfinding.terrainEscape(startPoint) ||*/ startPoint;
+		const endPointEscaped = /*Pathfinding.terrainEscape(endPoint) ||*/ endPoint;
 
 		const path = Navmeshcppjs.getPath(startPointEscaped, endPointEscaped);
 		const pathV2 = path.map(p => new Vector2(p.x, p.y));
 		return pathV2;
+	}
+
+	/**
+	 * @todo
+	 */
+	static isPointVisible(center: Point, point: Point): boolean {
+		return true;
 	}
 }

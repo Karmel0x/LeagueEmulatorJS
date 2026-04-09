@@ -8,7 +8,7 @@
     "incremental": false,
     "isolatedModules": true,
     "lib": [
-      "ES2024"
+      "ES2025"
     ],
     "module": "NodeNext",
     "moduleDetection": "force",
@@ -17,7 +17,7 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
-    "target": "ES2024",
+    "target": "es2025",
     "checkJs": true,
     "noEmit": true,
     "allowJs": true

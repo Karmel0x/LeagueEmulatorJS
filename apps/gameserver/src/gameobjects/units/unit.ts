@@ -1,6 +1,6 @@
 
-import * as Characters from '@repo/gamedata/data/characters/index';
-import type Character from '@repo/scripting/base/character';
+import Character from '@repo/scripting/base/character';
+import Server from '../../app/server';
 import { EventEmitter2 } from '../../core/event-emitter2';
 import type { LevelableEvents } from '../../gameobjectextensions/progress/levelable';
 import Rewards from '../../gameobjectextensions/traits/rewards';
@@ -31,16 +31,18 @@ export default class Unit extends GameObject {
 	spawner?: Spawner;
 	name!: string;
 	character!: Character;
+	characterId = 0;
 	rewards!: Rewards;
 	team!: TeamArrangement;
 
 	id = 0;
 
+	revealedUntil = 0;
 	visionRange = 0;
-	visibleForEnemy = false;
-	visibleForEnemy2 = false;
-	visibleForTeam = false;
-	visibleForTeam2 = true;
+	//visibleForEnemy = false;
+	//visibleForEnemy2 = false;
+	//visibleForTeam = false;
+	//visibleForTeam2 = true;
 
 	slots: { [s: string]: any; } = {};
 
@@ -63,15 +65,10 @@ export default class Unit extends GameObject {
 	}
 
 	switchCharacter(characterName: string) {
-		let Character1 = Characters[characterName as keyof typeof Characters] as unknown as typeof Character;
-		if (!Character1) {
-			console.error('Character not found:', characterName);
-			return;
-		}
-
-		let character = new Character1();
-		character.name = characterName;
-		this.character = character;
+		const character1 = new Character();
+		//character1.name = characterName;
+		this.character = character1;
+		this.characterId++;
 	}
 
 	loader(options: UnitOptions) {
@@ -87,6 +84,15 @@ export default class Unit extends GameObject {
 	respawn() {
 		if (this.position)
 			this.position.copy(this.spawnPosition);
+	}
+
+	revealUntil(time: number) {
+		this.revealedUntil = Math.max(this.revealedUntil, time);
+	}
+
+	reveal(duration: number) {
+		const now = Server.gameLoop.timer;
+		this.revealUntil(now + duration);
 	}
 
 }

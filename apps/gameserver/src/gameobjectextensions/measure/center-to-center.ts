@@ -4,6 +4,10 @@ import type GameObject from '../../gameobjects/game-object';
 
 export default class MeasureCenterToCenter {
 
+	static getRange(object: GameObject) {
+		return 0;
+	}
+
 	/**
 	 * Get the sum of range and collisionRadius if we should use EDGE instead of CENTER
 	 */
@@ -26,8 +30,8 @@ export default class MeasureCenterToCenter {
 	static sortByDistance(source: Vector2 | GameObject, targets: GameObject[]) {
 		const sourcePosition = (source as GameObject).position || source;
 		targets.sort((a, b) => {
-			return (sourcePosition.distanceTo(a.position) - this.getRangeSum(source as GameObject, a))
-				- (sourcePosition.distanceTo(b.position) - this.getRangeSum(source as GameObject, b));
+			return (sourcePosition.distanceTo(a.position) - this.getRange(a))
+				- (sourcePosition.distanceTo(b.position) - this.getRange(b));
 		});
 	}
 
@@ -36,22 +40,23 @@ export default class MeasureCenterToCenter {
 		return targets[0] || undefined;
 	}
 
-	static isInRangeFlat(source: Vector2 | GameObject, target: Vector2 | GameObject, range = 0) {
-		const sourcePosition = (source as GameObject).position || source;
-		const targetPosition = (target as GameObject).position || target;
-
-		const distance = sourcePosition.distanceTo(targetPosition);
+	static isInRangeFlat(source: Vector2, target: Vector2, range = 0) {
+		const distance = source.distanceTo(target);
 		return distance <= range;
 	}
 
-	static isInRange(source: Vector2 | GameObject, target: Vector2 | GameObject, range = 0) {
-		const rangeSum = this.getRangeSum((source as GameObject), (target as GameObject), range);
-		const result = this.isInRangeFlat(source, target, rangeSum);
+	static isInRange(source: Vector2, target: GameObject, range = 0) {
+		const targetRange = this.getRange(target as GameObject);
+		const rangeSum = targetRange + range;
+		const result = this.isInRangeFlat(source, target.position, rangeSum);
 		return result;
 	}
 
 	static filterByRange<T extends GameObject>(source: Vector2 | GameObject, targets: T[], range: number) {
-		return targets.filter(target => this.isInRange(source, target, range));
+		const sourcePosition = (source as GameObject).position || source;
+		const sourceRange = (source as GameObject).position ? this.getRange(source as GameObject) : 0;
+		const rangeSum = sourceRange + range;
+		return targets.filter(target => this.isInRange(sourcePosition, target, rangeSum));
 	}
 
 	static getPositionBetweenRange(source: Vector2Like | GameObject, target: Vector2Like | GameObject, range: number | { minimum: number; maximum: number; }) {

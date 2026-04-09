@@ -1,0 +1,112 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #1a1a2e;
+  color: #eee;
+  font-family: monospace;
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#canvasWrap {
+  flex: 1;
+  overflow: auto;
+  position: relative;
+}
+
+#methodLabels {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  font: 12px monospace;
+  z-index: 1;
+}
+
+#methodLabels div {
+  cursor: pointer;
+  user-select: none;
+}
+
+canvas {
+  background: #16213e;
+  cursor: crosshair;
+  display: block;
+}
+
+#sidebar {
+  width: 260px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #0f3460;
+  flex-shrink: 0;
+  overflow-y: auto;
+}
+
+h3 {
+  color: #e94560;
+  margin-bottom: 4px;
+}
+
+label {
+  font-size: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+input[type=range] {
+  width: 120px;
+}
+
+button {
+  padding: 6px 10px;
+  background: #e94560;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-family: monospace;
+  font-size: 12px;
+  border-radius: 3px;
+}
+
+button:hover {
+  background: #c73650;
+}
+
+.group {
+  border-top: 1px solid #1a1a4e;
+  padding-top: 8px;
+}
+
+#info {
+  font-size: 11px;
+  color: #aaa;
+  line-height: 1.4;
+}
+
+#stats {
+  font-size: 11px;
+  color: #aaa;
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  margin: 2px 0;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}

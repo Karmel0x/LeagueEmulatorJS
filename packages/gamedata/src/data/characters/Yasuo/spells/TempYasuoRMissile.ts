@@ -2,6 +2,7 @@
 import type AttackableUnit from '@repo/gameserver/src/gameobjects/units/attackable-unit';
 import type { SCastInfoModel } from '@repo/packets/shared/SCastInfo';
 import _Spell, { type CastData } from '@repo/scripting/base/spell';
+import type { CastVars } from '@repo/scripting/load/spell-cast';
 
 
 export default class TempYasuoRMissile extends _Spell {
@@ -17,8 +18,8 @@ export default class TempYasuoRMissile extends _Spell {
 		isOverrideCastPosition: true,
 	};
 
-	onCast(owner: AttackableUnit, castData: CastData, spellVars: any) {
-		const missile = spellVars.missile;
+	onCast(owner: AttackableUnit, castData: CastData, castVars: CastVars) {
+		const missile = castVars.missile;
 		if (!missile) return;
 
 		//console.log(missile);

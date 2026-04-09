@@ -11,6 +11,10 @@
 			color-scheme: dark;
 			scrollbar-color: #454a4d #202324;
 		}
+		
+		body {
+			margin: 0;
+		}
 
 		.canvas-wrap {
 			border: 2px solid gray;
@@ -34,6 +38,9 @@
 				<br>
 				<button onclick="zoom_in()">zoom_in</button>
 				<button onclick="zoom_out()">zoom_out</button>
+				<br>
+				<button onclick="image.style.display = image.style.display == 'none' ? null : 'none'">image</button>
+				<button onclick="image2.style.display = image2.style.display == 'none' ? null : 'none'">image2</button>
 			</div>
 
 			<div id="div_info" style="display: none;">
@@ -58,8 +65,9 @@
 		</div>
 
 		<div oncontextmenu="return false;">
-			<div style="max-width: 1400px;max-height: 900px;overflow: auto;position: relative;">
+			<div style="width: 1400px;height: 900px;overflow: auto;position: relative;resize: both">
 				<img id="image" src="./aimesh.png" style="position: absolute;opacity: 0.6;z-index: -1;">
+				<img id="image2" src="./AIPath.VisionPathing.bmp" style="position: absolute;opacity: 0.6;z-index: -1;transform: scale(1, -1);margin: -10px -32px;display: none">
 				<canvas class="canvas-wrap" id="canvas" width="6000" height="6000" style="opacity: 0.6;"></canvas>
 			</div>
 
@@ -84,6 +92,7 @@
 
 		let canvas = document.getElementById('canvas');
 		let image = document.getElementById('image');
+		let image2 = document.getElementById('image2');
 
 		image.onload = () => {
 			resetScale();

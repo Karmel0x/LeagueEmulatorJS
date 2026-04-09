@@ -1,4 +1,5 @@
 
+import type * as characters from '@repo/gamedata/data/characters/index';
 import PlayerNetwork from '../../gameobjectextensions/traits/player-network';
 import type { TeamId } from '../../gameobjectextensions/traits/team';
 import type { AttackableUnitOptions } from '../units/attackable-unit';
@@ -8,13 +9,13 @@ import { AiSubType } from './types';
 
 export type PlayerOptions = HeroOptions & {
 	runes: number[];
-	masteries: number[];
+	talents: number[];
 };
 
 export type PlayerConfig = Omit<PlayerOptions, 'owner' | 'skin'> & {
 	match: {
 		team: TeamId;
-		champion: string;
+		champion: string & keyof typeof characters;
 		skin: number;
 	};
 };

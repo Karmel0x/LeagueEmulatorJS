@@ -1,5 +1,5 @@
 
-import type { PacketMessage } from '@repo/network/packets/packet';
+import type { PacketMessages } from '@repo/network/network';
 import * as packets from '@repo/packets/list';
 import Server from '../../app/server';
 import loadingStages from '../../constants/game-state';
@@ -7,7 +7,6 @@ import { TeamId } from '../../gameobjectextensions/traits/team';
 import type Player from '../../gameobjects/unit-ai/player';
 import { AiType } from '../../gameobjects/unit-ai/types';
 import type AttackableUnit from '../../gameobjects/units/attackable-unit';
-import type Unit from '../../gameobjects/units/unit';
 
 
 export default class Teams {
@@ -28,22 +27,22 @@ export default class Teams {
 		Teams.createAll();
 	}
 
-	sendPacket_withVision(packet: PacketMessage | undefined, minStage = loadingStages.inGame) {
+	sendPacket_withVision(packet: PacketMessages, minStage = loadingStages.inGame) {
 		//todo
 		this.sendPacket(packet, minStage);
 	}
 
-	sendPacketTo(players: Player[], packet: PacketMessage) {
+	sendPacketTo(players: Player[], packet: PacketMessages) {
 		if (players.length < 1)
 			return;
 
 		let peers = players.map(player => player.network.peerNum);
 		peers = peers.filter(peer => peer >= 0);
 
-		Server.network.sendPacket(peers, packet);
+		Server.network.sendPackets(peers, packet);
 	}
 
-	sendPacket(packet: PacketMessage | undefined, minStage = loadingStages.inGame, maxStage = loadingStages.inGame) {
+	sendPacket(packet: PacketMessages, minStage = loadingStages.inGame, maxStage = loadingStages.inGame) {
 		if (!packet)
 			return;
 
@@ -78,8 +77,25 @@ export default class Teams {
 		this.sendPacketTo(playersToSend, packet);
 	}
 
-	showUnit(unit: Unit) {
+	showUnit(unit: AttackableUnit, minStage = loadingStages.inGame) {
 		// @todo buffs
+
+		if (unit.characterState.noRender || unit.character.neverRender)
+			return;
+
+		const itemData: packets.OnEnterVisibilityClientModel['itemData'] = [];
+		unit.inventory.items.forEach((itemOnSlot, slot) => {
+			if (!itemOnSlot)
+				return;
+
+			itemData.push({
+				slot,
+				itemsInSlot: itemOnSlot!.stacks,
+				spellCharges: 0,
+				itemId: itemOnSlot!.item!.itemId,
+			});
+		});
+
 		const packet1 = packets.OnEnterVisibilityClient.create({
 			netId: unit.netId,
 			shieldValues: {
@@ -92,12 +108,16 @@ export default class Teams {
 				skinName: unit.skin,
 			}],
 			movementData: (unit as AttackableUnit).moving?.movementData,
+			itemData,
 		});
-		this.sendPacket(packet1);
+		this.sendPacket(packet1, minStage);
 		//console.log(packet1);
 	}
 
-	hideUnit(unit: Unit) {
+	hideUnit(unit: AttackableUnit) {
+		//if (unit.characterState.noRender || unit.character.neverRender)
+		//	return;
+
 		const packet1 = packets.OnLeaveVisibilityClient.create({
 			netId: unit.netId,
 		});

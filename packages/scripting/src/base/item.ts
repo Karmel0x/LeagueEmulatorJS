@@ -1,14 +1,18 @@
 
-import { getItem } from "@repo/gamedata/data/items/ItemList";
 import { EventEmitter2 } from "@repo/gameserver/src/core/event-emitter2";
 import type AttackableUnit from "@repo/gameserver/src/gameobjects/units/attackable-unit";
+import type * as packets from '@repo/packets/list';
+import { getItem } from "@repo/scripting/load/item";
+
+export type ItemOnSlot = {
+    item: Item,
+    stacks: number,
+};
 
 export type ItemEvents = {
-    'acquire': (owner: AttackableUnit) => void;
-    'throw': (owner: AttackableUnit) => void;
-    'use': (owner: AttackableUnit, target: AttackableUnit | undefined) => void;
-    'buffAdd': (owner: AttackableUnit, attacker: AttackableUnit, buffVars?: any) => void;
-    'buffRemove': (target: AttackableUnit) => void;
+    'acquire': (owner: AttackableUnit, itemOnSlot: ItemOnSlot) => void;
+    'throw': (owner: AttackableUnit, itemOnSlot: ItemOnSlot) => void;
+    'use': (owner: AttackableUnit, packet: Partial<packets.CastSpellReqModel>, target?: AttackableUnit) => void;
 };
 
 export default class Item {
@@ -20,18 +24,21 @@ export default class Item {
 
     maxStack = 1;
     price = 0;
-    canBeSold = true;
+    inStore = true;
+    usableInStore = false;
     sellMultiplier = 0.7;
-    consumable = false;
     isTrinket = false;
 
-    from: number[] | undefined = undefined;
+    consumed = false;
+    useEffect = false;
+
+    from?: number[] = undefined;
 
     get recipeItems() {
         if (!this.from)
             return;
 
-        return this.from.map(itemId => getItem(itemId)!);
+        return this.from.map(itemId => getItem(`${itemId}`)!);
     }
 
 }

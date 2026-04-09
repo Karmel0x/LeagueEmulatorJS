@@ -1,7 +1,7 @@
 import GameObjectList from "../../app/game-object-list";
 import Server from "../../app/server";
 import UnitAiList from "../../app/unit-ai-list";
-import { runAccurateInterval } from "../../core/timer";
+import { runAccurateInfiniteInterval } from "../../core/timer";
 import { delay } from "../../core/utils";
 import { AiType } from "../../gameobjects/unit-ai/types";
 
@@ -20,14 +20,17 @@ export default class AmbientGain {
 
         const amountPerSec = amount / interval;
         const disableWhileDead = mapConstants.disableAmbientGoldWhileDead;
+        const unitAIs = UnitAiList.heroes;
 
-        runAccurateInterval(async () => {
-            UnitAiList.heroes.forEach(hero => {
-                if (disableWhileDead && hero.owner.combat.died)
+        runAccurateInfiniteInterval(() => {
+            for (let i = 0; i < unitAIs.length; i++) {
+                const unitAI = unitAIs[i]!;
+                const owner = unitAI.owner;
+                if (disableWhileDead && owner.combat.died)
                     return;
 
-                hero.owner.progress.goldUp(amountPerSec, 0, false);
-            });
+                owner.progress.goldUp(amountPerSec, 0, false);
+            }
         }, 1000);
     }
 
@@ -45,14 +48,17 @@ export default class AmbientGain {
 
         const amountPerSec = amount / interval;
         const disableWhileDead = mapConstants.disableAmbientXPWhileDead;
+        const unitAIs = UnitAiList.heroes;
 
-        runAccurateInterval(async () => {
-            UnitAiList.heroes.forEach(hero => {
-                if (disableWhileDead && hero.owner.combat.died)
+        runAccurateInfiniteInterval(() => {
+            for (let i = 0; i < unitAIs.length; i++) {
+                const unitAI = unitAIs[i]!;
+                const owner = unitAI.owner;
+                if (disableWhileDead && owner.combat.died)
                     return;
 
-                hero.owner.progress.expUp(amountPerSec, false);
-            });
+                owner.progress.expUp(amountPerSec, false);
+            }
         }, 1000);
     }
 
@@ -76,10 +82,12 @@ export default class AmbientGain {
 
         const fountains = GameObjectList.fountains;
         const fountainsByTeam = Object.groupBy(fountains, fountain => fountain.team.id);
+        const unitAIs = UnitAiList.heroes;
 
-        runAccurateInterval(async () => {
-            UnitAiList.heroes.forEach(hero => {
-                const owner = hero.owner;
+        runAccurateInfiniteInterval(() => {
+            for (let i = 0; i < unitAIs.length; i++) {
+                const unitAI = unitAIs[i]!;
+                const owner = unitAI.owner;
                 if (owner.combat.died)
                     return;
 
@@ -91,11 +99,13 @@ export default class AmbientGain {
                 if (!inRange)
                     return;
 
+                let notify = false;
+
                 if (owner.stats.health.current < owner.stats.health.total) {
                     const amountPerSec = owner.stats.health.total * percent1PerSec / 100;
                     if (amountPerSec) {
                         owner.stats.health.current += amountPerSec;
-                        owner.packets.OnEnterLocalVisibilityClient();
+                        notify = true;
                     }
                 }
 
@@ -105,11 +115,15 @@ export default class AmbientGain {
                         owner.stats.mana.current += amountPerSec;
 
                         if (owner.ai.type === AiType.Hero) {
-                            owner.packets.OnEnterLocalVisibilityClient();
+                            notify = true;
                         }
                     }
                 }
-            });
+
+                if (notify) {
+                    owner.packets.sendOnEnterLocalVisibilityClient();
+                }
+            }
         }, 1000);
     }
 
@@ -117,17 +131,22 @@ export default class AmbientGain {
         while (!Server.game.loaded)
             await delay(100);
 
-        runAccurateInterval(async () => {
-            UnitAiList.objects.forEach(unit => {
-                const owner = unit.owner;
+        const unitAIs = UnitAiList.objects;
+
+        runAccurateInfiniteInterval(() => {
+            for (let i = 0; i < unitAIs.length; i++) {
+                const unitAI = unitAIs[i]!;
+                const owner = unitAI.owner;
                 if (owner.combat.died)
                     return;
+
+                let notify = false;
 
                 if (owner.stats.health.current < owner.stats.health.total) {
                     const amountPerHalfSec = owner.stats.healthRegen.total / 2;
                     if (amountPerHalfSec) {
                         owner.stats.health.current += amountPerHalfSec;
-                        owner.packets.OnEnterLocalVisibilityClient();
+                        notify = true;
                     }
                 }
 
@@ -137,11 +156,15 @@ export default class AmbientGain {
                         owner.stats.mana.current += amountPerHalfSec;
 
                         if (owner.ai.type === AiType.Hero) {
-                            owner.packets.OnEnterLocalVisibilityClient();
+                            notify = true;
                         }
                     }
                 }
-            });
+
+                if (notify) {
+                    owner.packets.sendOnEnterLocalVisibilityClient();
+                }
+            }
         }, 1000 * 0.5);
     }
 

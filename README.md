@@ -17,6 +17,7 @@ git clone https://github.com/Karmel0x/enetcppjs
 git clone https://github.com/Karmel0x/navmeshcppjs
 cd ..
 npm install
+npm i -g tsx
 ```
 
 # Usage

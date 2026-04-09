@@ -1,6 +1,7 @@
 import Server from '@repo/gameserver/src/app/server';
 import type AttackableUnit from '@repo/gameserver/src/gameobjects/units/attackable-unit';
 import _Spell, { type CastData } from '@repo/scripting/base/spell';
+import type { CastVars } from '@repo/scripting/load/spell-cast';
 
 
 export default class SummonerClairvoyance extends _Spell {
@@ -13,7 +14,7 @@ export default class SummonerClairvoyance extends _Spell {
 	range = Server.map.diagonal;
 
 
-	onCast(owner: AttackableUnit, castData: CastData, spellVars: any) {
+	onCast(owner: AttackableUnit, castData: CastData, castVars: CastVars) {
 
 	}
 

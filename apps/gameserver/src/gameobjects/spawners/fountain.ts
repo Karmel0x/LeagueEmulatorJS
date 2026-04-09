@@ -56,17 +56,17 @@ export default class Fountain extends Spawner {
             const team = playerConfig.match.team;
 
             const unit = Player.initializeUnit({
-                character: playerConfig.match.champion,
+                character: playerConfig.match.champion as string,
                 position: heroes[team]?.[i]?.position,
                 spawner: this,
                 team,
-                name: playerConfig.summoner.name,
+                name: playerConfig.summoner.name.slice(0, 30),
             }, {
                 num: i,
+                skin: playerConfig.match.skin,
                 summoner: playerConfig.summoner,
-                match: playerConfig.match,
                 runes: playerConfig.runes,
-                masteries: playerConfig.masteries,
+                talents: playerConfig.talents,
             });
 
             unit.spawn();
@@ -117,8 +117,9 @@ export default class Fountain extends Spawner {
     }
 
     //onDie(player: Player) {
+    //    const now = Server.gameLoop.timer;
     //    const respawnTime = this.getRespawnTime(player) ?? 0;
-    //    player.scoreboard.respawnAt = Timer.app.now() + respawnTime;
+    //    player.scoreboard.respawnAt = now + respawnTime;
     //    player.scoreboard.totalRespawnTime += respawnTime;
     //    this.respawnWaiter(player, respawnTime);
     //}

@@ -26,6 +26,10 @@ export type StatsUnitOptions = StatsGameObjectOptions & {
 	size?: number;
 	sightRange?: number;
 	critDamage?: number;
+
+	visibilitySize?: number;
+	//collisionRadius?: number;
+	pathfindingRadius?: number;
 };
 
 export default class StatsUnit extends StatsGameObject {
@@ -49,13 +53,14 @@ export default class StatsUnit extends StatsGameObject {
 	moveSpeed!: IStat;
 	acquisitionRange!: IStat;
 	attackRange!: IStat;
-	//collisionRadius!: IStat;
-	//pathfindingRadius!: IStat;
+
 	physicalShield;
 	magicShield;
 	mixedShield;
+
 	armorPenetration;
 	magicPenetration;
+
 	bubbleRadius;
 	critDamage;
 	goldPer10Mod;
@@ -70,6 +75,10 @@ export default class StatsUnit extends StatsGameObject {
 	multiplicativeMovementSpeedMod;
 	respawnTimeMod;
 	spellVamp;
+
+	visibilitySize;
+	//collisionRadius!: IStat;
+	pathfindingRadius!: IStat;
 
 	constructor(owner: AttackableUnit, stats: StatsUnitOptions = {}) {
 		super(owner, stats);
@@ -110,6 +119,17 @@ export default class StatsUnit extends StatsGameObject {
 		this.multiplicativeMovementSpeedMod = new IStat(0);
 		this.respawnTimeMod = new IStat(0);
 		this.spellVamp = new IStat(0);
+
+		this.visibilitySize = new IStat(0);
+		//this.collisionRadius = new IStat(0);
+		this.pathfindingRadius = new IStat(0);
+	}
+
+	pin(stats: Record<string, IStat>) {
+		for (const stat in stats) {
+			// @ts-ignore
+			this[stat] = stats[stat];
+		}
 	}
 
 }

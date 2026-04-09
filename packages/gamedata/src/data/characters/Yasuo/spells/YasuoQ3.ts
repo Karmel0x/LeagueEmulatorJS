@@ -5,7 +5,7 @@ import AttackableUnit from '@repo/gameserver/src/gameobjects/units/attackable-un
 import type { SCastInfoModel } from '@repo/packets/shared/SCastInfo';
 import { DamageSource, DamageType } from '@repo/packets/shared/SDeathData';
 import _Spell, { type CastData } from '@repo/scripting/base/spell';
-import { SpellCast } from '@repo/scripting/load/spell-cast';
+import { SpellCast, type CastVars } from '@repo/scripting/load/spell-cast';
 import package1 from '../package';
 import YasuoQ3Mis from './YasuoQ3Mis';
 
@@ -29,11 +29,11 @@ export default class YasuoQ3 extends _Spell {
 
 	};
 
-	onCast(owner: AttackableUnit, castData: CastData, spellVars: any) {
-		if (!spellVars.anglePosition)
+	onCast(owner: AttackableUnit, castData: CastData, castVars: CastVars) {
+		if (!castVars.anglePosition)
 			return;
 
-		let skillshotTargetPosition = spellVars.anglePosition.add(owner.position);
+		let skillshotTargetPosition = castVars.anglePosition.add(owner.position);
 
 		let skillshot = Missile.initialize({
 			spawner: owner,
@@ -73,10 +73,10 @@ export default class YasuoQ3 extends _Spell {
 		});
 
 		skillshot.fire(skillshotTargetPosition);
-		spellVars.missile = skillshot;
+		castVars.missile = skillshot;
 	}
 
-	async postCast(owner: AttackableUnit, castData: CastData, spellVars: any) {
+	async postCast(owner: AttackableUnit, castData: CastData, castVars: CastVars) {
 		castData = {
 			...castData,
 			packet: {
@@ -85,11 +85,10 @@ export default class YasuoQ3 extends _Spell {
 			},
 		};
 
-		const Spell = YasuoQ3Mis;
-		const spell = new Spell();
-		spell.name = Spell.name;
-		const spellCast = new SpellCast(spell, owner, castData);
-		await spellCast.castSpell(spellVars);
+		const spell1 = new YasuoQ3Mis();
+		const spellCast = new SpellCast(spell1, owner, castData);
+		spellCast.castVars = castVars;
+		await spellCast.castSpell();
 	}
 
 }

@@ -3,6 +3,12 @@
   "private": true,
   "exports": {
     ".": "./src/index.ts",
-    "./*": "./src/*.ts"
+    "./*": "./src/*.ts",
+    "./tests/*": "./tests/*.ts"
+  },
+  "scripts": {
+    "test:perf-path-finding": "npx tsx tests/perf-path-finding.ts",
+    "test:perf-collision": "npx tsx tests/perf-collision.ts",
+    "typecheck": "tsc --noEmit"
   }
 }

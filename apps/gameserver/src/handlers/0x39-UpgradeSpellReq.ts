@@ -8,6 +8,6 @@ export default (player: Player, packet: packets.UpgradeSpellReqModel) => {
 	//console.log(packet);
 
 	const owner = player.owner;
-	owner.progress.skillUpgrade(packet.slot, packet.isEvolve);
+	owner.progress.skillUpgrade(packet.slot, true, packet.isEvolve);
 
 };

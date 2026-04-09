@@ -1,5 +1,8 @@
 
 export { default as KeyCheck } from './0x00-KeyCheck';
+export { default as UnitSendDrawPath } from './0x0106-UnitSendDrawPath';
+export { default as UndoItemReq } from './0x010A-UndoItemReq';
+export { default as CheatLogGoldSources } from './0x011B-CheatLogGoldSources';
 export { default as TutorialAudioEventFinished } from './0x05-TutorialAudioEventFinished';
 export { default as SynchSimTime } from './0x08-SynchSimTime';
 export { default as RemoveItemReq } from './0x09-RemoveItemReq';
@@ -24,6 +27,7 @@ export { default as Chat } from './0x68-Chat';
 export { default as OnTipEvent } from './0x6D-OnTipEvent';
 export { default as IssueOrderReq } from './0x72-IssueOrderReq';
 export { default as Waypoint_Acc } from './0x77-Waypoint_Acc';
+export { default as AI_Command } from './0x7E-AI_Command';
 export { default as World_LockCamera_Server } from './0x81-World_LockCamera_Server';
 export { default as BuyItemReq } from './0x82-BuyItemReq';
 export { default as ClientFinished } from './0x8D-ClientFinished';
@@ -44,6 +48,4 @@ export { default as SpellChargeUpdateReq } from './0xE6-SpellChargeUpdateReq';
 export { default as SpectatorDataReq } from './0xEA-SpectatorDataReq';
 export { default as PlayContextualEmote } from './0xF4-PlayContextualEmote';
 export { default as TeamBalanceVote } from './0xFB-TeamBalanceVote';
-export { default as UnitSendDrawPath } from './0x0106-UnitSendDrawPath';
-export { default as UndoItemReq } from './0x010A-UndoItemReq';
-export { default as CheatLogGoldSources } from './0x011B-CheatLogGoldSources';
+

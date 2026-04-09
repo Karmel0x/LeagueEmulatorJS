@@ -1,6 +1,7 @@
 
 import * as packets from '@repo/packets/list';
 import { OnEvent, OnEventArguments } from '@repo/packets/types/on-event';
+import Server from '../../../app/server';
 import loadingStages from '../../../constants/game-state';
 import { EventEmitter2 } from '../../../core/event-emitter2';
 import { LaneId } from '../../../gameobjectextensions/traits/team';
@@ -56,6 +57,10 @@ export default class Inhibitor extends Structure {
 
 		owner.eventEmitter.on('death', (source, assists) => this.onDie(source, assists));
 		owner.eventEmitter.on('spawn', () => this.onSpawn());
+
+		owner.eventEmitter.on('resurrect', () => {
+			Server.map.eventEmitter.emit('respawnedStructure', this.owner);
+		});
 	}
 
 	announceDie(source: AttackableUnit, assists: AttackableUnit[]) {
@@ -78,10 +83,17 @@ export default class Inhibitor extends Structure {
 			killerNetId: source.netId,
 		});
 		owner.packets.toEveryone(packet2);
+
+		const packet3 = packets.DampenerSwitchStates.create({
+			netId: owner.netId,
+			isAlive: false,
+		});
+		owner.packets.toEveryone(packet3, loadingStages.notConnected);
 	}
 
 	async onDie(source: AttackableUnit, assists: AttackableUnit[]) {
 		this.announceDie(source, assists);
+		super.onDie(source, assists);
 	}
 
 	onSpawn() {
@@ -91,6 +103,8 @@ export default class Inhibitor extends Structure {
 			isTurret: true,
 		});
 		owner.packets.toEveryone(packet1, loadingStages.notConnected);
+
+		super.onSpawn();
 	}
 
 }

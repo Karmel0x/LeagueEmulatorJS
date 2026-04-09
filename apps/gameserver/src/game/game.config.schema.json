@@ -3,12 +3,6 @@
     "definitions": {
         "Omit<PlayerConfig,\"owner\"|\"num\">": {
             "properties": {
-                "masteries": {
-                    "items": {
-                        "type": "number"
-                    },
-                    "type": "array"
-                },
                 "match": {
                     "properties": {
                         "champion": {
@@ -62,25 +56,28 @@
                         }
                     },
                     "type": "object"
+                },
+                "talents": {
+                    "items": {
+                        "type": "number"
+                    },
+                    "type": "array"
                 }
             },
             "type": "object"
         },
-        "TeamId": {
-            "enum": [
-                -100,
-                0,
-                100,
-                200,
-                300
-            ],
-            "type": "number"
-        }
-    },
-    "properties": {
-        "debugging": {
+        "Partial<DebuggingConfig>": {
             "properties": {
+                "chatDebugMessages": {
+                    "type": "boolean"
+                },
                 "enabled": {
+                    "type": "boolean"
+                },
+                "noGrassCheck": {
+                    "type": "boolean"
+                },
+                "noNavmeshVision": {
                     "type": "boolean"
                 },
                 "noPathFinding": {
@@ -95,18 +92,7 @@
             },
             "type": "object"
         },
-        "game": {
-            "properties": {
-                "map": {
-                    "type": "number"
-                },
-                "version": {
-                    "type": "number"
-                }
-            },
-            "type": "object"
-        },
-        "logging": {
+        "Partial<LoggingConfig>": {
             "properties": {
                 "debug": {
                     "enum": [
@@ -129,14 +115,7 @@
             },
             "type": "object"
         },
-        "players": {
-            "items": {
-                "$ref": "#/definitions/Omit%3CPlayerConfig%2C%22owner%22%7C%22num%22%3E"
-            },
-            "type": "array"
-        },
-        "server": {},
-        "testing": {
+        "Partial<TestingConfig>": {
             "properties": {
                 "adminCommands": {
                     "type": "boolean"
@@ -176,6 +155,48 @@
                 }
             },
             "type": "object"
+        },
+        "TeamId": {
+            "enum": [
+                -100,
+                0,
+                100,
+                200,
+                300
+            ],
+            "type": "number"
+        }
+    },
+    "properties": {
+        "debugging": {
+            "$ref": "#/definitions/Partial%3CDebuggingConfig%3E"
+        },
+        "game": {
+            "properties": {
+                "id": {
+                    "type": "number"
+                },
+                "map": {
+                    "type": "number"
+                },
+                "version": {
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "logging": {
+            "$ref": "#/definitions/Partial%3CLoggingConfig%3E"
+        },
+        "players": {
+            "items": {
+                "$ref": "#/definitions/Omit%3CPlayerConfig%2C%22owner%22%7C%22num%22%3E"
+            },
+            "type": "array"
+        },
+        "server": {},
+        "testing": {
+            "$ref": "#/definitions/Partial%3CTestingConfig%3E"
         }
     },
     "type": "object"

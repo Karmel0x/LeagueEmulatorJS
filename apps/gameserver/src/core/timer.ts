@@ -105,102 +105,102 @@ export default class Timer {
 export const TIMER_FPS_DELAY = 33;// ~30hz
 
 export async function accurateDelay(ms: number) {
-    const lastUpdate = Timer.app.now();
+    const firstUpdate = Timer.app.now();
+    let nextUpdate = firstUpdate + ms;
 
     for (; ;) {
-        await delay(1);
-
         const now = Timer.app.now();
-        const diff = now - lastUpdate;
+        let left = nextUpdate - now;
 
-        if (diff >= ms) {
-            return diff;
+        if (left > 0) {
+            await delay(Math.ceil(left / 2));
+            continue;
         }
+
+        const diff = now - firstUpdate;
+        return diff;
     }
 }
 
-export function runAppInterval<T extends number>(callback: (diff: T) => void, ms: T) {
-    let lastUpdate = Timer.app.now();
-    let stop = false;
+export function runAccurateInfiniteInterval(callback: (updateTime: number) => void, ms: number) {
+    let nextUpdate = Timer.app.now() + ms;
 
     (async () => {
         for (; ;) {
-            await delay(ms);
-            if (stop)
-                return;
+            const now = Timer.app.now();
+            const left = nextUpdate - now;
 
-            if (!Timer.app.running())
+            if (left > 0) {
+                await delay(Math.ceil(left / 2));
                 continue;
+            }
 
-            const now = Timer.app.now();
-            let diff = now - lastUpdate;
-
-            callback(diff as T);
-            lastUpdate = now;
+            callback(nextUpdate);
+            nextUpdate += ms;
+            await delay(1);
         }
     })();
-
-    return () => {
-        stop = true;
-    };
 }
 
-export function runAccurateInterval(callback: (updateTime: number) => Promise<void> | void, ms: number) {
-    let lastUpdate = Timer.app.now();
+export function runAccurateInterval(callback: (updateTime: number) => void, ms: number) {
     let stop = false;
+    let forceStop = false;
+    let nextUpdate = Timer.app.now() + ms;
 
     (async () => {
         for (; ;) {
-            await delay(2);
-            if (stop)
-                return;
-
             const now = Timer.app.now();
-            let diff = now - lastUpdate;
+            const left = nextUpdate - now;
 
-            while (diff >= ms) {
-                diff -= ms;
-                lastUpdate = now - diff;
-                await callback(lastUpdate);
+            if (left > 0) {
+                await delay(Math.ceil(left / 2));
+                if (stop) return;
+                continue;
             }
+
+            if (forceStop) return;
+            callback(nextUpdate);
+            nextUpdate += ms;
+            await delay(1);
         }
     })();
 
-    return () => {
+    return (force = false) => {
         stop = true;
+        if (force)
+            forceStop = true;
     };
 }
 
-export function runAccurateTimedInterval<T extends number>(callback: (fixedDiff: T) => void, ms: T, timeout: number) {
-    let startedAt = Timer.app.now();
-    let lastUpdate = startedAt;
-
-    let e = {
-        runUntil: startedAt + timeout,
-        stop: function () {
-            this.runUntil = Timer.app.now();
-        },
-        f: undefined as Promise<void> | undefined,
-    };
-
-    e.f = (async () => {
-        for (; ;) {
-            await delay(2);
-            if (e.runUntil < lastUpdate + ms)
-                return;
-
-            const now = Timer.app.now();
-            let diff = now - lastUpdate;
-
-            while (diff >= ms) {
-                diff -= ms;
-                callback(ms);
-            }
-
-            lastUpdate = now - diff;
-        }
-    })();
-
-    return e;
-}
-
+//export function runAccurateTimedInterval<T extends number>(callback: (fixedDiff: T) => void, ms: T, timeout: number) {
+//    let startedAt = Timer.app.now();
+//    let lastUpdate = startedAt;
+//
+//    let e = {
+//        runUntil: startedAt + timeout,
+//        stop: function () {
+//            this.runUntil = Timer.app.now();
+//        },
+//        f: undefined as Promise<void> | undefined,
+//    };
+//
+//    e.f = (async () => {
+//        for (; ;) {
+//            await delay(2);
+//            if (e.runUntil < lastUpdate + ms)
+//                return;
+//
+//            const now = Timer.app.now();
+//            let diff = now - lastUpdate;
+//
+//            while (diff >= ms) {
+//                diff -= ms;
+//                callback(ms);
+//            }
+//
+//            lastUpdate = now - diff;
+//        }
+//    })();
+//
+//    return e;
+//}

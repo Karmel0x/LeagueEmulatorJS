@@ -37,3 +37,7 @@ export function humanizeWaypoints(waypoints: Vector2Like[]) {
 export function rgbaToInt(red: number, green: number, blue: number, alpha = 0) {
 	return (red << 24) + (green << 16) + (blue << 8) + (alpha);
 }
+
+export function numberBetween(input: number, min: number, max: number) {
+	return Math.max(min, Math.min(input, max));
+}

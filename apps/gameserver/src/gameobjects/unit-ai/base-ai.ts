@@ -23,7 +23,9 @@ export default class BaseAi {
 
         object.owner.eventEmitter.once('destroy', () => {
             UnitAiList.remove(object);
-            object.eventEmitter.removeAllListeners();
+            setTimeout(() => {
+                object.eventEmitter.removeAllListeners();
+            }, 0);
         });
 
         return object;
@@ -58,5 +60,5 @@ export default class BaseAi {
 
     loader(options: BaseAiOptions) { }
 
-    onSpawnPackets(to: (packet: PacketMessage | undefined) => void) { }
+    onSpawnPackets(): (PacketMessage | undefined)[] { return []; }
 }

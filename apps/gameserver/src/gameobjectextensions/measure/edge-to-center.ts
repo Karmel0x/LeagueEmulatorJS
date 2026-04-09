@@ -7,8 +7,15 @@ export default class MeasureEdgeToCenter extends MeasureCenterToCenter {
 	/**
 	 * @override
 	 */
+	static getRange(object: GameObject) {
+		return object.collisionRadius;
+	}
+
+	/**
+	 * @override
+	 */
 	static getRangeSum(source: GameObject, target: GameObject, range = 0) {
-		return range + (source.collisionRadius || 0);
+		return range + source.collisionRadius;
 	}
 
 }

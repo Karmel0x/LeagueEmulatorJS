@@ -1,5 +1,5 @@
 
-import type { PacketMessage } from '@repo/network/packets/packet';
+import type { PacketMessages } from '@repo/network/network';
 import * as packets from '@repo/packets/list';
 import Server from '../../app/server';
 import UnitAiList from '../../app/unit-ai-list';
@@ -19,28 +19,33 @@ export default class PlayerNetwork {
 	peerNum = -1;
 	loadingStage = loadingStages.notConnected;
 
-	sendPacket(packet: PacketMessage | undefined, minStage = loadingStages.inGame) {
+	sendPacket(packet: PacketMessages, minStage = loadingStages.inGame) {
 		if (!packet)
 			return;
 		if (this.loadingStage < minStage)
 			return;
 
-		//if(this.packetBatching)
-		//    this.batchPackets.push(packet);
-		//else
-		Server.network.sendPacket([this.peerNum], packet);
+		//if (this.packetBatching) {
+		//	this.batchPackets.push(packet);
+		//	return;
+		//}
+
+		Server.network.sendPackets([this.peerNum], packet);
 	}
 
-	async sendReconnectPackets() {
-		await Game.resolveOnGameLoaded();
-
+	sendReconnectPackets2() {
 		const packet1 = packets.StartSpawn.create({});
 		this.sendPacket(packet1, loadingStages.notConnected);
 
-		//Game.eventEmitter.emit('playerStartSpawn', this.owner);
-		UnitAiList.objects.forEach(unit => {
-			unit.onSpawnPackets((packet) => this.sendPacket(packet, loadingStages.loading));
-		});
+		//const ai = this.owner;
+		//Game.eventEmitter.emit('playerStartSpawn', ai);
+
+		const objects = UnitAiList.objects;
+		for (let i = 0; i < objects.length; i++) {
+			const object = objects[i]!;
+			const packets2 = object.onSpawnPackets();
+			this.sendPacket(packets2, loadingStages.notConnected);
+		}
 
 		//if (!spawned) {//temporary here
 		//	spawned = true;
@@ -48,13 +53,27 @@ export default class PlayerNetwork {
 		//}
 
 		const players = Server.players.map(player => player.ai as Player);
-		players.forEach(player => {
-			player.packets.CreateHero(this);
-			player.packets.AvatarInfo_Server(this);
-		});
+		for (let i = 0; i < players.length; i++) {
+			const player = players[i]!;
 
-		const packet2 = packets.EndSpawn.create({});
-		this.sendPacket(packet2, loadingStages.notConnected);
+			const packet3 = player.packets.CreateHero();
+			this.sendPacket(packet3, loadingStages.notConnected);
+			const packet4 = player.packets.AvatarInfo_Server();
+			this.sendPacket(packet4, loadingStages.notConnected);
+
+			//const unit = player.owner;
+			//const team = Server.teams[unit.team.id];
+			//if (team)
+			//	team.showUnit(unit, loadingStages.loading);
+		}
+
+		const packet5 = packets.EndSpawn.create({});
+		this.sendPacket(packet5, loadingStages.notConnected);
+	}
+
+	async sendReconnectPackets() {
+		await Game.resolveOnGameLoaded();
+		this.sendReconnectPackets2();
 	}
 
 	//@todo packet batching

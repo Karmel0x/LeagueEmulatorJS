@@ -8,3 +8,7 @@ export { Rectangle } from './rectangle';
 export { Vector2, type Vector2Like } from './vector2';
 export { Vector2WithZ, type Vector2WithZLike } from './vector2-with-z';
 
+export { resolveCollision, type Collidable } from './collision';
+export { moveToward } from './movement';
+export { findPathAroundObstacles } from './path-finding';
+

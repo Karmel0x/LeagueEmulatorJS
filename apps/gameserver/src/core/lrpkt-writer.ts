@@ -64,6 +64,7 @@ export default class LrpktWriter {
 	private filePath: string;
 	private fileStream: fs.WriteStream | null = null;
 	private headerData?: Partial<LrpktHeader>;
+	private emptyAlignBuffer = Buffer.alloc(15);
 
 	constructor(filePath: string, headerData?: Partial<LrpktHeader>) {
 		this.filePath = filePath;
@@ -78,12 +79,15 @@ export default class LrpktWriter {
 	}
 
 	open() {
-		if (this.fileStream) {
+		if (this.fileStream)
 			return;
-		}
 
 		this.ensureDirectory();
 		this.fileStream = fs.createWriteStream(this.filePath, { flags: 'w' });
+
+		process.on('exit', () => {
+			this.close();
+		});
 
 		if (this.headerData) {
 			const headerJson = JSON.stringify(this.headerData);
@@ -92,7 +96,9 @@ export default class LrpktWriter {
 	}
 
 	private writeHeader(headerData: string = '') {
-		const fileStream = this.fileStream!;
+		const fileStream = this.fileStream;
+		if (!fileStream)
+			return;
 
 		// Header structure from lrpkt reader
 		const headerSize = 16; // 4 (marker) + 4 (size) + 8 (pad)
@@ -113,7 +119,7 @@ export default class LrpktWriter {
 		// Header data
 		dvr.writeCharArray(headerData, headerData.length);
 
-		fileStream.write(Buffer.from(dvr.buffer));
+		fileStream.write(dvr.dv);
 
 		// 16-byte alignment padding for header data
 		const remain = headerData.length % 16;
@@ -124,7 +130,9 @@ export default class LrpktWriter {
 	}
 
 	writePacket(packet: LrpktPacket) {
-		const fileStream = this.fileStream!;
+		const fileStream = this.fileStream;
+		if (!fileStream)
+			return;
 
 		const data = new Uint8Array(packet.data);
 		const chunkSize = 12 + data.byteLength; // 4 (size) + 4 (time) + 1 (channel) + 3 (direction + peers) + data
@@ -153,13 +161,13 @@ export default class LrpktWriter {
 		dvr.writeUint16(peersMask); // peers bitmask (2 bytes)
 		dvr.writeByteArray(data); // packet data
 
-		fileStream.write(Buffer.from(dvr.buffer));
+		fileStream.write(dvr.dv);
 
 		// 16-byte alignment padding for packet data
 		const remain = data.byteLength % 16;
 		if (remain !== 0) {
 			const paddingSize = 16 - remain;
-			fileStream.write(Buffer.alloc(paddingSize));
+			fileStream.write(this.emptyAlignBuffer.subarray(0, paddingSize));
 		}
 	}
 

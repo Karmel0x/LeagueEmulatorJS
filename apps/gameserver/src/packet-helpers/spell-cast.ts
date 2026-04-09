@@ -4,6 +4,7 @@ import HashString from '@repo/packets/functions/hash-string';
 import * as packets from '@repo/packets/list';
 import type { SCastInfoModel } from '@repo/packets/shared/SCastInfo';
 import { humanizePosition } from '../core/utils';
+import Pathfinding from '../game/components/pathfinding';
 import type { Player } from '../gameobjects/unit-ai';
 import { AiType } from '../gameobjects/unit-ai/types';
 import type AttackableUnit from '../gameobjects/units/attackable-unit';
@@ -46,7 +47,7 @@ export function makeCastInfo(caster: AttackableUnit, castInfo1: Partial<SCastInf
         spellCastLaunchPosition: {
             x: caster.position.x,
             y: caster.position.y,
-            z: defaultHeight,
+            z: Pathfinding.getHeight(caster.position) || defaultHeight,
         },
         ammoUsed: 0,
         ammoRechargeTime: 0,
@@ -54,9 +55,7 @@ export function makeCastInfo(caster: AttackableUnit, castInfo1: Partial<SCastInf
         spellHash: spellHash || 0,
     };
 
-    if (caster.ai && caster.ai.type === AiType.Hero) {
-        (caster.ai as Player).packets.chatBoxDebugMessage('caster.position', humanizePosition(caster.position));
-    }
+    (caster.ai as Player).packets?.chatBoxDebugMessage('caster.position', humanizePosition(caster.position));
 
     return castInfo;
 }
@@ -68,7 +67,7 @@ export function spellCast(caster: AttackableUnit, castInfo1: Partial<SCastInfoMo
     const packet1 = packets.CastSpellAns.create({
         netId: caster.netId,
         // do not set it unless you can send position in this packet?
-        casterPositionSyncId: 0,//performance.now(),
+        casterPositionSyncId: 0,//++Server.syncId,
         castInfo: castInfo,
     });
 

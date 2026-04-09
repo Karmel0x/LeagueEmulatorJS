@@ -1,3 +1,4 @@
+import GameObjectList from "../app/game-object-list";
 import type { Player } from "../gameobjects/unit-ai";
 import { AiSubType, AiType } from "../gameobjects/unit-ai/types";
 import type AttackableUnit from "../gameobjects/units/attackable-unit";
@@ -18,11 +19,16 @@ export function isAiLiteralAnyType(unit: AttackableUnit, anyType: AiLiteralAnyTy
 }
 
 export function filterUnitsForCommand(player: Player, units: AttackableUnit[], unitType: string | number) {
-    if (unitType === 'all')
+    if (unitType === 'all' || unitType === 'any')
         return units;
 
     if (unitType === 'me')
         return [player.owner];
+
+    if (unitType === 'selected') {
+        const selectedUnit = GameObjectList.unitByNetId(player.lastSelectedNetId);
+        return selectedUnit ? [selectedUnit] : [];
+    }
 
     let unitNetId = Number(unitType);
     if (unitNetId)

@@ -4,11 +4,11 @@
     "pi": "tsx packet-inspector-old"
   },
   "dependencies": {
-    "three": "^0.182.0",
-    "ws": "^8.18.3"
+    "three": "^0.183.2",
+    "ws": "^8.20.0"
   },
   "devDependencies": {
-    "@types/three": "^0.182.0",
+    "@types/three": "^0.183.1",
     "@types/ws": "^8.18.1"
   }
 }

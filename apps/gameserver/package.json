@@ -5,7 +5,8 @@
     "dev": "tsx src/main",
     "watch": "node .esbuild.cjs --watch",
     "build": "node .esbuild.cjs",
-    "dev2": "node .esbuild.cjs && node --enable-source-maps --trace-warnings dist/main"
+    "dev2": "node .esbuild.cjs && node --enable-source-maps --trace-warnings dist/main",
+    "check": "tsc --noEmit"
   },
   "dependencies": {
     "@repo/scripting": "*",
@@ -15,13 +16,13 @@
     "@repo/geometry": "*",
     "enetcppjs": "*",
     "navmeshcppjs": "*",
-    "three": "^0.182.0",
-    "ws": "^8.18.3"
+    "three": "^0.183.2",
+    "ws": "^8.20.0"
   },
   "devDependencies": {
-    "@types/three": "^0.182.0",
+    "@types/three": "^0.183.1",
     "@types/ws": "^8.18.1",
-    "esbuild": "0.27.2",
+    "esbuild": "^0.28.0",
     "typed-emitter": "^2.1.0"
   }
 }

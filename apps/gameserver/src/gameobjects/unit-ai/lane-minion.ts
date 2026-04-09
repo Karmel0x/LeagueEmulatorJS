@@ -1,12 +1,13 @@
 
 import { type Vector2 } from '@repo/geometry';
 import type { PacketMessage } from '@repo/network/packets/packet';
-import type { MinionType } from '@repo/packets/base/s2c/0x03-Barrack_SpawnUnit';
+import { MinionType } from '@repo/packets/base/s2c/0x03-Barrack_SpawnUnit';
 import type Character from '@repo/scripting/base/character';
 import Server from '../../app/server';
 import { EventEmitter2 } from '../../core/event-emitter2';
 import { TeamId, type LaneId } from '../../gameobjectextensions/traits/team';
 import type Barrack from '../spawners/barrack';
+import type AttackableUnit from '../units/attackable-unit';
 import Minion, { type MinionAttackableUnitOptions, type MinionEvents, type MinionOptions } from './minion';
 import { AiSubType, AiType } from './types';
 
@@ -55,22 +56,27 @@ export default class LaneMinion extends Minion {
 			this.stopAttack();
 		});
 
-		owner.eventEmitter.on('noTargetsInRange', () => {
-			this.moveLane();
-		});
-
 		super.pinEvents();
 	}
 
-	onSpawnPackets(to: (packet: PacketMessage | undefined) => void) {
+	onSpawnPackets() {
+		const spawnPackets: (PacketMessage | undefined)[] = [];
 		const owner = this.owner;
 
+		if (owner.characterState.noRender || owner.character.neverRender)
+			return spawnPackets;
+
 		const spawner = owner.spawner as Barrack;
-		spawner.spawnUnitAns(owner.netId, this.options.minionType, to);
+		const packet1 = spawner.spawnUnitAns(owner.netId, this.options.minionType);
+		spawnPackets.push(packet1);
 
 		const health = owner.stats.health;
-		if (health.current < health.total)
-			owner.packets.OnEnterLocalVisibilityClient(to);
+		if (health.current < health.total) {
+			const packet2 = owner.packets.OnEnterLocalVisibilityClient();
+			spawnPackets.push(packet2);
+		}
+
+		return spawnPackets;
 	}
 
 	//callToNextLanePoint() {
@@ -140,33 +146,29 @@ export default class LaneMinion extends Minion {
 		//	clearInterval(interval1);
 		//});
 
+		let lastTarget: AttackableUnit | undefined = undefined;
+
 		const interval2 = setInterval(() => {
-			if (owner.combat.died)
+			if (owner.combat.died) {
+				clearInterval(interval2);
 				return;
+			}
 
-			const lanePath = this.lanePath;
-			if (!lanePath)
-				return;
+			//const currentTarget = owner.combat.attackTarget;
+			//if (currentTarget)
+			//	return;
 
-			const nextLanePoint = lanePath[0];
-			if (!nextLanePoint)
-				return;
-
-			const distanceToNextPoint = owner.position.distanceTo(nextLanePoint);
-			if (distanceToNextPoint >= 300)
-				return;
-
-			lanePath.shift();
-
-			if (lanePath !== owner.moving.waypoints)
-				return;
-
-			owner.moving.moveAns(lanePath.slice(0, 2));
+			const target = owner.combat.findNewTargetInAcR();
+			if (target) {
+				if (lastTarget !== target) {
+					lastTarget = target;
+					owner.combat.startAttackAndFollow(target);
+				}
+			}
+			else {
+				this.moveNextLanePoint();
+			}
 		}, 250);
-
-		owner.eventEmitter.once('death', () => {
-			clearInterval(interval2);
-		});
 
 		super.onSpawn();
 	}
@@ -174,12 +176,11 @@ export default class LaneMinion extends Minion {
 	/**
 	 * Set waypoints for the unit to pathing
 	 */
-	moveLane(teamId: TeamId | undefined = undefined, laneId: LaneId | undefined = undefined) {
+	getLanePath(teamId: TeamId | undefined = undefined, laneId: LaneId | undefined = undefined) {
 		const owner = this.owner;
 
 		if (this.lanePath) {
-			owner.moving.setWaypoints(this.lanePath);
-			return;
+			return this.lanePath;
 		}
 
 		const spawner = owner.spawner as Barrack;
@@ -197,21 +198,36 @@ export default class LaneMinion extends Minion {
 			return;
 
 		let lanePath = minionLanePath.map(a => a.clone());
-		//lanePath = Measure.general.getFromNearestToEnd(owner, lanePath);
-		//
-		////@todo make path more precise
-		//if (lanePath.length > 1)
-		//	lanePath.shift();
+		lanePath.shift();
 
-		owner.moving.setWaypoints(lanePath);
 		this.lanePath = lanePath;
+		return lanePath;
 	}
 
-	/**
-	 * @todo shall return spawner level
-	 */
-	get level() {
-		return 1;
+	moveNextLanePoint() {
+		const owner = this.owner;
+
+		let lanePath = this.getLanePath();
+		if (!lanePath)
+			return;
+
+		let nextLanePoint = lanePath[0];
+		if (nextLanePoint) {
+			const distanceToNextPoint = owner.position.distanceTo(nextLanePoint);
+			if (distanceToNextPoint < 300) {
+				lanePath.shift();
+				nextLanePoint = lanePath[0];
+			}
+		}
+
+		if (!nextLanePoint)
+			return;
+
+		const waypointsOrdered = owner.moving.waypointsOrdered;
+		if (waypointsOrdered[0] === nextLanePoint)
+			return;
+
+		owner.moving.setWaypoints([nextLanePoint]);
 	}
 
 	get characterBase() {

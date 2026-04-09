@@ -9,6 +9,7 @@ export type StatsGameObjectEvents = {
 export type StatsGameObjectOptions = {
 	collisionRadius?: number;
 	pathfindingRadius?: number;
+	selectionRadius?: number;
 };
 
 export default class StatsGameObject {
@@ -17,14 +18,18 @@ export default class StatsGameObject {
 	base: StatsGameObjectOptions;
 
 	collisionRadius: IStat;
-	pathfindingRadius: IStat;
+	//pathfindingRadius: IStat;
+	selectionRadius: IStat;
 
 	constructor(owner: GameObject, stats: StatsGameObjectOptions = {}) {
 		this.owner = owner;
 		this.base = stats;
 
 		this.collisionRadius = new IStat(stats.collisionRadius ?? 1);
-		this.pathfindingRadius = new IStat(stats.pathfindingRadius ?? 1);
+		owner._collisionRadius = undefined;
+		//this.pathfindingRadius = new IStat(stats.pathfindingRadius ?? 1);
+		this.selectionRadius = new IStat(stats.selectionRadius ?? 1);
+		owner._selectionRadius = undefined;
 	}
 
 	//increase(stats: { [s: string]: IStat; }) {

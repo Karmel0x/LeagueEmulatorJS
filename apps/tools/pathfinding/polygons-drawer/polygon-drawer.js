@@ -7,6 +7,9 @@ function scaleFreedraw(scale) {
 function scaleImage(scale) {
 	image.style.height = (image.naturalHeight * scale) + 'px';
 	image.style.width = (image.naturalWidth * scale) + 'px';
+
+	image2.style.height = (image2.naturalHeight * 50 * scale) + 'px';
+	image2.style.width = (image2.naturalWidth * 50 * scale) + 'px';
 }
 function resetScale() {
 	scaleFreedraw(canvas.width < 500 ? 3 : (canvas.width < 2000 ? 1 : 0.1));

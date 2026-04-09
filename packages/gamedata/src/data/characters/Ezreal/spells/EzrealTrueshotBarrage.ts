@@ -4,11 +4,13 @@ import { SlotId } from '@repo/gameserver/src/constants/slot-id';
 import * as Measure from '@repo/gameserver/src/gameobjectextensions/measure';
 import Missile from '@repo/gameserver/src/gameobjects/missiles/missile';
 import type AttackableUnit from '@repo/gameserver/src/gameobjects/units/attackable-unit';
+import { sendUnitParticle } from '@repo/gameserver/src/packet-helpers';
 import { Vector2 } from '@repo/geometry';
 import HashString from '@repo/packets/functions/hash-string';
 import type { SCastInfoModel } from '@repo/packets/shared/SCastInfo';
 import { DamageSource, DamageType } from '@repo/packets/shared/SDeathData';
 import _Spell, { type CastData } from '@repo/scripting/base/spell';
+import type { CastVars } from '@repo/scripting/load/spell-cast';
 import package1 from '../package';
 
 
@@ -24,7 +26,7 @@ export default class EzrealTrueshotBarrage extends _Spell {
 		designerTotalTime: 1,
 	};
 
-	preCast(owner: AttackableUnit, castData: CastData, spellVars: any) {
+	preCast(owner: AttackableUnit, castData: CastData, castVars: CastVars) {
 		const targetPosition = castData.targetPosition;
 		if (!targetPosition)
 			throw new Error('No target position');
@@ -59,14 +61,24 @@ export default class EzrealTrueshotBarrage extends _Spell {
 		});
 
 		skillshot.fire(maxRangePosition);
-		spellVars.missile = skillshot;
+		castVars.missile = skillshot;
 	}
 
-	onCast(owner: AttackableUnit, castData: CastData, spellVars: any) {
-		const missile = spellVars.missile as Missile;
+	onCast(owner: AttackableUnit, castData: CastData, castVars: CastVars) {
+		const missile = castVars.missile as Missile;
 		if (!missile) return;
 
-		owner.packets.AddParticleTarget(this.packageHash, HashString.HashString('Ezreal_bow_huge.troy'), HashString.HashString('L_HAND'));
+		sendUnitParticle(owner, [{
+			packageHash: this.packageHash,
+			effectNameHash: HashString.HashString('Ezreal_bow_huge.troy'),
+			flags: 32,
+			boneNameHash: HashString.HashString('L_HAND'),
+			createData: [{
+				positionNCC: owner.position,
+				ownerPositionNCC: owner.position,
+				targetPositionNCC: owner.position,
+			}],
+		}]);
 
 		const targetPosition = castData.targetPosition;
 		if (!targetPosition)

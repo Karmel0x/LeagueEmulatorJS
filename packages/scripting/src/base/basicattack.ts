@@ -3,13 +3,14 @@ import Missile from "@repo/gameserver/src/gameobjects/missiles/missile";
 import type AttackableUnit from "@repo/gameserver/src/gameobjects/units/attackable-unit";
 import { Vector2 } from "@repo/geometry";
 import { DamageSource, DamageType } from "@repo/packets/shared/SDeathData";
+import type { CastVars } from "../load/spell-cast";
 import Spell, { type CastData } from "./spell";
 
 export default class BasicAttack extends Spell {
 
 	canCancel = true;
 
-	onCast(owner: AttackableUnit, castData: CastData, spellVars: any) {
+	onCast(owner: AttackableUnit, castData: CastData, castVars: CastVars) {
 		const target = castData.target;
 		if (!target)
 			throw new Error('No target for basic attack');
@@ -50,7 +51,7 @@ export default class BasicAttack extends Spell {
 
 		const targetPosition2 = new Vector2(targetPosition.x, targetPosition.y);
 		skillshot.fire(targetPosition2);
-		spellVars.missile = skillshot;
+		castVars.missile = skillshot;
 	}
 
 }

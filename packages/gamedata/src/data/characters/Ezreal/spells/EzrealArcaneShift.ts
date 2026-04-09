@@ -5,7 +5,7 @@ import type AttackableUnit from '@repo/gameserver/src/gameobjects/units/attackab
 import { Vector2 } from '@repo/geometry';
 import { BuffType } from '@repo/packets/base/s2c/0x68-BuffAddGroup';
 import _Spell, { type CastData } from '@repo/scripting/base/spell';
-import { SpellCast } from '@repo/scripting/load/spell-cast';
+import { SpellCast, type CastVars } from '@repo/scripting/load/spell-cast';
 import package1 from '../package';
 import EzrealArcaneShiftMissile from './EzrealArcaneShiftMissile';
 import EzrealRisingSpellForce from './EzrealRisingSpellForce';
@@ -17,7 +17,7 @@ export default class EzrealArcaneShift extends _Spell {
 	spellSlot = SlotId.e;
 	canMoveWhenCast = true;
 
-	onCast(owner: AttackableUnit, castData: CastData, spellVars: any) {
+	onCast(owner: AttackableUnit, castData: CastData, castVars: CastVars) {
 		const { packet } = castData;
 		if (!packet)
 			return;
@@ -30,17 +30,13 @@ export default class EzrealArcaneShift extends _Spell {
 		owner.moving.dashTo(destPos, { speed: 1800, range: 400 });
 	}
 
-	async postCast(owner: AttackableUnit, castData: CastData, spellVars: any) {
-		const Spell = EzrealArcaneShiftMissile;
-		const spell = new Spell();
-		spell.name = Spell.name;
-		const spellCast = new SpellCast(spell, owner, castData);
-		await spellCast.castSpell(spellVars);
+	async postCast(owner: AttackableUnit, castData: CastData, castVars: CastVars) {
+		const spell1 = new EzrealArcaneShiftMissile();
+		const spellCast = new SpellCast(spell1, owner, castData);
+		spellCast.castVars = castVars;
+		await spellCast.castSpell();
 
-		const Spell2 = EzrealRisingSpellForce;
-		const spell2 = new Spell2();
-		spell2.name = Spell2.name;
-
+		const spell2 = new EzrealRisingSpellForce();
 		owner.buffManager.addBuff(spell2, owner, {
 			addType: BuffAddType.stacksAndRenews,
 			buffType: BuffType.combatEnchancer,

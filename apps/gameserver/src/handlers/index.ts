@@ -41,6 +41,7 @@ export function registerHandlers() {
 		[packetIdent(packets.OnTipEvent)]: handlers.OnTipEvent,
 		[packetIdent(packets.IssueOrderReq)]: handlers.IssueOrderReq,
 		[packetIdent(packets.Waypoint_Acc)]: handlers.Waypoint_Acc,
+		[packetIdent(packets.AI_Command)]: handlers.AI_Command,
 		[packetIdent(packets.World_LockCamera_Server)]: handlers.World_LockCamera_Server,
 		[packetIdent(packets.BuyItemReq)]: handlers.BuyItemReq,
 		[packetIdent(packets.ClientFinished)]: handlers.ClientFinished,

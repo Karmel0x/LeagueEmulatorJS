@@ -3,10 +3,10 @@ import type RelativeDataView from '@repo/network/relative-data-view';
 import type { NetId } from '../../types/player';
 
 export enum MinionType {
-	melee = 0,
-	caster = 1,
-	cannon = 2,
-	super = 3,
+	melee = 0, // basic
+	archer = 1, // wizard
+	cannon = 2, // caster
+	super = 3, // mechMelee
 };
 
 export type Barrack_SpawnUnitModel = BasePacketModel & {

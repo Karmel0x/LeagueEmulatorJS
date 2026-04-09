@@ -22,13 +22,13 @@ export class IStat {
 	}
 
 	get total(): number {
-		const baseTotalValue = this.baseTotalValue;
-		let total = baseTotalValue + this.flatBonusValue + (baseTotalValue * this.percentBonusValue);
+		const { baseTotalValue, flatBonusValue, percentBonusValue, minTotal, maxTotal } = this;
+		let total = baseTotalValue + flatBonusValue + (baseTotalValue * percentBonusValue);
 
-		if (this.minTotal !== undefined)
-			total = Math.max(total, this.minTotal);
-		if (this.maxTotal !== undefined)
-			total = Math.min(total, this.maxTotal);
+		if (minTotal !== undefined && total < minTotal)
+			total = minTotal;
+		if (maxTotal !== undefined && total > maxTotal)
+			total = maxTotal;
 
 		return total;
 	}
@@ -80,7 +80,12 @@ export class IStatStateable extends IStatLevelable {
 		if (value > this.total)
 			value = this.total;
 
+		if (this._current === value)
+			return;
+
 		this._current = value;
+		const owner = this.owner;
+		owner.markReplicateStats();
 	}
 }
 

@@ -2,6 +2,7 @@
 import * as packets from '@repo/packets/list';
 import loadingStages from '../../../constants/game-state';
 import { EventEmitter2 } from '../../../core/event-emitter2';
+import EndGame from '../../../game/components/end-game';
 import type AttackableUnit from '../../units/attackable-unit';
 import { AiSubType } from '../types';
 import Structure, { type StructureEvents, type StructureOptions } from './structure';
@@ -58,7 +59,10 @@ export default class Nexus extends Structure {
 	 */
 	async onDie(source: AttackableUnit, assists: AttackableUnit[]) {
 		this.accounceDie(source, assists);
-		//    //end game?
+		super.onDie(source, assists);
+
+		const owner = this.owner;
+		EndGame.process(owner);
 	}
 
 	onSpawn() {
@@ -68,6 +72,8 @@ export default class Nexus extends Structure {
 			isTurret: true,
 		});
 		owner.packets.toEveryone(packet1, loadingStages.notConnected);
+
+		super.onSpawn();
 	}
 
 }

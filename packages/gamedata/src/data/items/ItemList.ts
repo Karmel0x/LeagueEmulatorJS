@@ -2800,14 +2800,10 @@ const ItemList1 = [
 	},
 ];
 
-const ItemList: Record<number, _Item> = {};
+const ItemList: Record<string, _Item> = {};
 ItemList1.forEach(Item => {
 	const item = new Item();
-	ItemList[item.itemId] = item;
+	ItemList[`${item.itemId}`] = item;
 });
 
 export default ItemList;
-
-export function getItem(itemId: number) {
-	return ItemList[itemId];
-}

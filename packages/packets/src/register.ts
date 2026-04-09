@@ -131,7 +131,7 @@ export default function registerPackets() {
 	Registry.base.register(packets.AnimatedBuildingSetCurrentSkin, packetIds.AnimatedBuildingSetCurrentSkin, channels.s2c);
 	Registry.base.register(packets.Connected, packetIds.Connected, channels.s2c);
 	Registry.base.register(packets.SyncSimTimeFinal, packetIds.SyncSimTimeFinal, channels.synchClock);
-	Registry.base.register(packets.Waypoint_Acc, packetIds.Waypoint_Acc, channels.s2cUnreliable);
+	Registry.base.register(packets.Waypoint_Acc, packetIds.Waypoint_Acc, channels.c2s);
 	Registry.base.register(packets.LockCamera, packetIds.LockCamera, channels.s2c);
 	Registry.base.register(packets.PlayVOAudioEvent, packetIds.PlayVOAudioEvent, channels.s2c);
 	Registry.base.register(packets.AI_Command, packetIds.AI_Command, channels.c2s);

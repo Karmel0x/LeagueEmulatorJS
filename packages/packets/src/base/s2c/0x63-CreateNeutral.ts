@@ -30,7 +30,7 @@ export type CreateNeutralModel = BasePacketModel & {
 	initialLevel: number,
 	spawnDuration: number,
 	spawnTime: number,
-	behaviorTree: number,
+	behaviorTree: boolean,
 	aiScript: string,
 };
 
@@ -61,7 +61,7 @@ export default class CreateNeutral extends BasePacket {
 		payload.initialLevel = dvr.readInt32();
 		payload.spawnDuration = dvr.readFloat();
 		payload.spawnTime = dvr.readFloat();
-		payload.behaviorTree = dvr.readUint8();
+		payload.behaviorTree = dvr.readBool();
 		payload.aiScript = dvr.readStringNullTerminated(32);
 	}
 
@@ -87,7 +87,7 @@ export default class CreateNeutral extends BasePacket {
 		dvr.writeInt32(payload.initialLevel);
 		dvr.writeFloat(payload.spawnDuration);
 		dvr.writeFloat(payload.spawnTime);
-		dvr.writeUint8(payload.behaviorTree);
+		dvr.writeBool(payload.behaviorTree);
 		dvr.writeStringNullTerminated(payload.aiScript, 32);
 	}
 }

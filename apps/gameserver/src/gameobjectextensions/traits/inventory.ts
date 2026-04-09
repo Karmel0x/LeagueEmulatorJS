@@ -1,21 +1,27 @@
 
-import { getItem } from '@repo/gamedata/data/items/ItemList';
 import * as packets from '@repo/packets/list';
 import type Item from '@repo/scripting/base/item';
+import type { ItemOnSlot } from '@repo/scripting/base/item';
+import { getItem } from '@repo/scripting/load/item';
+import GameObjectList from '../../app/game-object-list';
+import Server from '../../app/server';
+import { type SlotId, SpellConstants } from '../../constants/slot-id';
+import type { Hero, Player } from '../../gameobjects/unit-ai';
+import { AiSubType, AiType } from '../../gameobjects/unit-ai/types';
 import type AttackableUnit from '../../gameobjects/units/attackable-unit';
-import { sendUnitStats } from '../../packet-helpers/on-replication';
+import { getSlotData } from '../combat/spellable';
 
 
-const ItemSlots = 6;// 0-5
+//const ItemSlots = 6;// 0-5
 const TrinketSlot = 6;
 //const ExtraItemSlots = 6;// 7-12
 //const ExtraTrinketSlot = 13;
 //const RuneSlots = 30;// 14-44
 
-type ItemOnSlot = {
-	item: Item,
-	stacks: number,
-};
+const ItemSlots = SpellConstants.numInventorySlots;
+const BluePillSlot = SpellConstants.bluePillSlot;
+const TempItemSlot = SpellConstants.temporaryItemSlotStart;
+const RuneSlot = SpellConstants.avatarItemSlotStart;
 
 //export class UndoHistory {
 //	static ACTION_LIST = {
@@ -120,6 +126,36 @@ export default class Inventory {
 
 	constructor(owner: AttackableUnit) {
 		this.owner = owner;
+
+		owner.eventEmitter.on('spawn', () => {
+			const ai = owner.ai as Hero;
+			if (ai.type !== AiType.Hero)
+				return;
+
+			const itemId = 2001;// Blue Pill (Recall)
+			const item = getItem(`${itemId}`);
+			if (item) {
+				this.putItemOnSlot(BluePillSlot, item);
+			}
+
+			const ai2 = owner.ai as Player;
+			if (ai2.subType !== AiSubType.Player)
+				return;
+
+			const runes = ai2.options.runes;
+			//if (runes.length > 30) {
+			//	console.error('incorrect runes quantity');
+			//	return;
+			//}
+
+			runes.forEach((itemId, i) => {
+				const item = getItem(`${itemId}`);
+				if (item) {
+					this.putItemOnSlot(RuneSlot + i, item);
+				}
+			});
+
+		});
 	}
 
 	items: (ItemOnSlot | undefined)[] = [];
@@ -188,7 +224,7 @@ export default class Inventory {
 		return this.getSlotForRecipeItem(item);
 	}
 
-	buyItemAns(slot: number) {
+	buyItemAns(slot: number, useOnBought = false) {
 		const itemOnSlot = this.items[slot]!;
 		const item = itemOnSlot.item;
 		const owner = this.owner;
@@ -198,33 +234,36 @@ export default class Inventory {
 			item: {
 				itemId: item.itemId,
 				slot,
-				itemsInSlot: itemOnSlot?.stacks || 1,
+				itemsInSlot: itemOnSlot.stacks || 1,
 				spellCharges: 0,
 			},
+			useOnBought,
 		});
 		owner.packets.toVision(packet1);
 	}
 
 	getEffectiveGoldCost(item: Item, itemsToRemove: Item[] | null) {
 		const price = item.price || 0;
-		//if (!price)
-		//	throw new Error(`Item ${item.name} has no price`);
+		if (!price)
+			throw new Error(`item ${item.name} has no price`);
 
 		let goldCost = price;
 
-		const recipeItems = item.recipeItems || [];
-		recipeItems.forEach(item2 => {
-			if (itemsToRemove) {
-				const ownedItems = this.items.filter(Boolean).map(v => v!.item);
-				if (ownedItems.includes(item2)) {
-					itemsToRemove.push(item2);
-					return;
+		const recipeItems = item.recipeItems;
+		if (recipeItems) {
+			recipeItems.forEach(item2 => {
+				if (itemsToRemove) {
+					const ownedItems = this.items.filter(Boolean).map(v => v!.item);
+					if (ownedItems.includes(item2)) {
+						itemsToRemove.push(item2);
+						return;
+					}
 				}
-			}
 
-			const goldCost2 = this.getEffectiveGoldCost(item2, itemsToRemove);
-			goldCost += goldCost2;
-		});
+				const goldCost2 = this.getEffectiveGoldCost(item2, itemsToRemove);
+				goldCost += goldCost2;
+			});
+		}
 
 		return goldCost;
 	}
@@ -245,64 +284,87 @@ export default class Inventory {
 		}
 	}
 
+	putItemOnSlot(slot: number, item: Item, stacks = 1) {
+		let itemOnSlot = this.items[slot];
+		if (itemOnSlot) {
+			itemOnSlot.stacks += stacks;
+		}
+		else {
+			itemOnSlot = {
+				item,
+				stacks,
+			};
+			this.items[slot] = itemOnSlot;
+
+			const owner = this.owner;
+			item.eventEmitter.emit('acquire', owner, itemOnSlot);
+		}
+	}
+
 	buyItem(itemId: number) {
+		(this.owner.ai as Player).packets?.chatBoxDebugMessage('inventory.buyItem', itemId);
 		if (!itemId)
 			throw new Error('itemId is undefined');
 
-		const item = getItem(itemId);
+		if (Server.map.items.unpurchasableList.includes(itemId))
+			throw new Error('item is unpurchasable on this map');
+
+		const item = getItem(`${itemId}`);
 		if (!item)
-			throw new Error(`Item ${itemId} not found`);
+			throw new Error(`item ${itemId} not found`);
+
+		if (!item.inStore)
+			throw new Error(`item ${itemId} not in store`);
 
 		if (!item.itemId)
-			throw new Error(`Item ${itemId} has no itemId`);
+			throw new Error(`item ${itemId} has no itemId`);
 
 		const itemsToRemove: Item[] = [];
 		const goldCost = this.getEffectiveGoldCost(item, itemsToRemove);
 
 		const owner = this.owner;
 		if (owner.progress.gold < goldCost)
-			throw new Error(`Not enough gold to buy item ${itemId}`);
+			throw new Error(`not enough gold to buy item ${itemId}`);
 
-		const slot = this.getSlotForAcquiredItem(item);
-		if (slot === undefined)
-			throw new Error(`No slot available for new item ${itemId}`);
+		let useOnBought = false;
+		let slot = this.getSlotForAcquiredItem(item);
+		if (slot === undefined) {
+			if (!item.usableInStore)
+				throw new Error(`no slot available for new item ${itemId}`);
+
+			useOnBought = true;
+			slot = TempItemSlot;
+		}
 
 		if (itemsToRemove.length > 0)
 			this.removeBuildItems(itemsToRemove);
 
 		owner.progress.gold -= goldCost;
-		sendUnitStats(owner);
+		owner.markReplicateStats();
 
-		this.items[slot] = this.items[slot] || {
-			item,
-			stacks: 0,
-		};
-
-		const itemOnSlot = this.items[slot];
-		itemOnSlot.stacks++;
-
-		this.buyItemAns(slot);
-		item.eventEmitter.emit('acquire', owner);
+		this.putItemOnSlot(slot, item);
+		this.buyItemAns(slot, useOnBought);
 	}
 
 	swapItemsAns(source: number, destination: number) {
+		const owner = this.owner;
 		const packet1 = packets.SwapItemAns.create({
-			netId: this.owner.netId,
+			netId: owner.netId,
 			source,
 			destination,
 		});
-		this.owner.packets.toVision(packet1);
+		owner.packets.toVision(packet1);
 	}
 
 	swapItems(source: number, destination: number) {
 		if (source < 0 || source >= ItemSlots)
-			throw new Error(`Invalid slot ${source}`);
+			throw new Error(`invalid slot ${source}`);
 		if (destination < 0 || destination >= ItemSlots)
-			throw new Error(`Invalid slot ${destination}`);
+			throw new Error(`invalid slot ${destination}`);
 
 		const swap1 = this.items[source];
 		if (!swap1) {
-			//throw new Error(`Source slot is empty`);
+			//throw new Error(`source slot is empty`);
 			return;
 		}
 
@@ -326,7 +388,7 @@ export default class Inventory {
 	removeItem(slot: number) {
 		const itemOnSlot = this.items[slot];
 		if (!itemOnSlot)
-			throw new Error(`Item not found in slot ${slot}`);
+			throw new Error(`item not found in slot ${slot}`);
 
 		itemOnSlot.stacks--;
 		this.removeItemAns(slot);
@@ -336,43 +398,74 @@ export default class Inventory {
 
 		this.items[slot] = undefined;
 		const item = itemOnSlot.item!;
-		item.eventEmitter.emit('throw', this.owner);
+		item.eventEmitter.emit('throw', this.owner, itemOnSlot);
 	}
 
 	sellItem(slot: number) {
 		const itemOnSlot = this.items[slot];
 		if (!itemOnSlot)
-			throw new Error(`Item not found in slot ${slot}`);
+			throw new Error(`item not found in slot ${slot}`);
 
 		const item = itemOnSlot.item!;
-		if (!item.canBeSold)
-			throw new Error(`Item ${item.name} cannot be sold`);
+		const sellMultiplier = item.sellMultiplier;
+		if (sellMultiplier === undefined)
+			throw new Error(`item ${item.name} cannot be sold`);
 
 		const goldCost = this.getEffectiveGoldCost(item, null);
-		const sellMultiplier = item.sellMultiplier;
 
 		const owner = this.owner;
 		owner.progress.gold += goldCost * sellMultiplier;
-		sendUnitStats(owner);
+		owner.markReplicateStats();
 
 		this.removeItem(slot);
 	}
 
-	useItem(slot: number, target: AttackableUnit | undefined = undefined) {
+	useItemAns(slot: number, itemOnSlot: ItemOnSlot) {
+		//const itemOnSlot = this.items[slot]!;
+		//const item = itemOnSlot.item;
+		const owner = this.owner;
+
+		const packet1 = packets.UseItemAns.create({
+			netId: owner.netId,
+			slot: slot,
+			itemsInSlot: itemOnSlot.stacks,
+			spellCharges: 0,
+		});
+		owner.packets.toVision(packet1);
+	}
+
+	useItem(slot: number, packet: Partial<packets.CastSpellReqModel>, target: AttackableUnit | undefined = undefined) {
 		const itemOnSlot = this.items[slot];
-		console.log('inventory.useItem', itemOnSlot);
+		console.log('inventory.useItem', slot, itemOnSlot?.item?.name);
 		if (!itemOnSlot)
-			throw new Error(`Item not found in slot ${slot}`);
+			throw new Error(`item not found in slot ${slot}`);
 
 		const item = itemOnSlot.item!;
-		item.eventEmitter.emit('use', this.owner, target);
+		if (!item.useEffect)
+			throw new Error(`item is not usable ${item}`);
 
-		if (item.consumable)
+		item.eventEmitter.emit('use', this.owner, packet, target);
+
+		if (item.consumed) {
 			this.removeItem(slot);
+			this.useItemAns(slot, itemOnSlot);
+		}
 	}
 
 	castItem(packet: packets.CastSpellReqModel) {
-		this.useItem(packet.slot - 6);
+		let target = GameObjectList.objectByNetId[packet.targetNetId] as AttackableUnit | undefined;
+		if (!target || !target.ai)
+			target = undefined;
+
+		const owner = this.owner;
+		const slot = packet.slot as SlotId;
+		const slotData = getSlotData(owner, slot);
+
+		if (slotData.sealed)
+			throw new Error('slot is sealed');
+
+		const itemSlot = slot - SpellConstants.spellsItemsSlot;
+		this.useItem(itemSlot, packet, target);
 	}
 
 }

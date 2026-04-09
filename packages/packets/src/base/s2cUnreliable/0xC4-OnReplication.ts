@@ -173,16 +173,19 @@ class ReplicantTurret extends ReplicantBase {
 	};
 }
 
-class ReplicantMonster extends ReplicantBase {//(minionFlags & 8) !== 0
+class ReplicantMinion extends ReplicantBase {
 
 	static zero = {};
 
-	static one = {//22
+	static one = {//24
 		health_current: ReplicantBase.types.float,
 		health_total: ReplicantBase.types.float,
 		lifetime: ReplicantBase.types.float,
 		maxLifetime: ReplicantBase.types.float,
 		lifetimeTicks: ReplicantBase.types.float,
+
+		mana_total: ReplicantBase.types.float,
+		mana_current: ReplicantBase.types.float,
 
 		...characterStateLocalRepData,//5
 		...basicLocalRepData,//12
@@ -200,19 +203,16 @@ class ReplicantMonster extends ReplicantBase {//(minionFlags & 8) !== 0
 	static five = {};
 }
 
-class ReplicantMinion extends ReplicantBase {
+class ReplicantMonster extends ReplicantBase {//(minionFlags & 8) !== 0
 
 	static zero = {};
 
-	static one = {//24
+	static one = {//22
 		health_current: ReplicantBase.types.float,
 		health_total: ReplicantBase.types.float,
 		lifetime: ReplicantBase.types.float,
 		maxLifetime: ReplicantBase.types.float,
 		lifetimeTicks: ReplicantBase.types.float,
-
-		mana_total: ReplicantBase.types.float,
-		mana_current: ReplicantBase.types.float,
 
 		...characterStateLocalRepData,//5
 		...basicLocalRepData,//12
@@ -270,9 +270,9 @@ class ReplicantHero extends ReplicantBase {
 		attackDamage_baseValue: ReplicantBase.types.float,
 		abilityPower_baseValue: ReplicantBase.types.float,
 		dodge: ReplicantBase.types.float,
-		crit: ReplicantBase.types.float,
+		critChance: ReplicantBase.types.float,
 		armor: ReplicantBase.types.float,
-		resist: ReplicantBase.types.float,//spellBlock
+		magicResist: ReplicantBase.types.float,//spellBlock
 		healthRegen: ReplicantBase.types.float,
 		manaRegen: ReplicantBase.types.float,//parRegenRate
 		attackRange: ReplicantBase.types.float,
@@ -311,7 +311,7 @@ class ReplicantHero extends ReplicantBase {
 		mana_current: ReplicantBase.types.float,
 		health_total: ReplicantBase.types.float,
 		mana_total: ReplicantBase.types.float,
-		experience: ReplicantBase.types.float,
+		exp: ReplicantBase.types.float,
 		lifetime: ReplicantBase.types.float,
 		maxLifetime: ReplicantBase.types.float,
 		lifetimeTicks: ReplicantBase.types.float,
@@ -360,28 +360,40 @@ const replicantListTypes = {
 };
 
 export type OnReplicationBaseModel = typeof ReplicantBase.zero & typeof ReplicantBase.one & typeof ReplicantBase.two & typeof ReplicantBase.three & typeof ReplicantBase.four & typeof ReplicantBase.five & {
+	unit: {
+		replicant: {
+			[forTeam: number]: {
+				[seconadaryId: number]: number,
+			}[],
+		},
+	},
 	netId: number,
 	type: ReplicantUnitType | undefined,
 	primaryIdArray: number,
 	seconadaryIdArray: number[],
-	replicant: {
-		[seconadaryId: number]: number,
-	}[],
 };
 
 export type ReplicantValTypes = typeof ReplicantBase.types[keyof typeof ReplicantBase.types];
 
-export type OnReplicationBuildingModel = OnReplicationBaseModel & typeof ReplicantBuilding.zero & typeof ReplicantBuilding.one & typeof ReplicantBuilding.two & typeof ReplicantBuilding.three & typeof ReplicantBuilding.four & typeof ReplicantBuilding.five;
-export type OnReplicationTurretModel = OnReplicationBaseModel & typeof ReplicantTurret.zero & typeof ReplicantTurret.one & typeof ReplicantTurret.two & typeof ReplicantTurret.three & typeof ReplicantTurret.four & typeof ReplicantTurret.five;
-export type OnReplicationMonsterModel = OnReplicationBaseModel & typeof ReplicantMonster.zero & typeof ReplicantMonster.one & typeof ReplicantMonster.two & typeof ReplicantMonster.three & typeof ReplicantMonster.four & typeof ReplicantMonster.five;
-export type OnReplicationMinionModel = OnReplicationBaseModel & typeof ReplicantMinion.zero & typeof ReplicantMinion.one & typeof ReplicantMinion.two & typeof ReplicantMinion.three & typeof ReplicantMinion.four & typeof ReplicantMinion.five;
-export type OnReplicationHeroModel = OnReplicationBaseModel & typeof ReplicantHero.zero & typeof ReplicantHero.one & typeof ReplicantHero.two & typeof ReplicantHero.three & typeof ReplicantHero.four & typeof ReplicantHero.five;
+export type OnReplicationBuildingModel = typeof ReplicantBuilding.zero & typeof ReplicantBuilding.one & typeof ReplicantBuilding.two & typeof ReplicantBuilding.three & typeof ReplicantBuilding.four & typeof ReplicantBuilding.five;
+export type OnReplicationTurretModel = typeof ReplicantTurret.zero & typeof ReplicantTurret.one & typeof ReplicantTurret.two & typeof ReplicantTurret.three & typeof ReplicantTurret.four & typeof ReplicantTurret.five;
+export type OnReplicationMinionModel = typeof ReplicantMinion.zero & typeof ReplicantMinion.one & typeof ReplicantMinion.two & typeof ReplicantMinion.three & typeof ReplicantMinion.four & typeof ReplicantMinion.five;
+export type OnReplicationMonsterModel = typeof ReplicantMonster.zero & typeof ReplicantMonster.one & typeof ReplicantMonster.two & typeof ReplicantMonster.three & typeof ReplicantMonster.four & typeof ReplicantMonster.five;
+export type OnReplicationHeroModel = typeof ReplicantHero.zero & typeof ReplicantHero.one & typeof ReplicantHero.two & typeof ReplicantHero.three & typeof ReplicantHero.four & typeof ReplicantHero.five;
 
-export type OnReplicationUnitModel = OnReplicationBaseModel | OnReplicationHeroModel | OnReplicationTurretModel | OnReplicationBuildingModel | OnReplicationMinionModel;
+export type OnReplicationUnitModel = OnReplicationBaseModel & (
+	{ type: ReplicantUnitType.Base }
+	| { type: ReplicantUnitType.Building } & Partial<OnReplicationBuildingModel>
+	| { type: ReplicantUnitType.Turret } & Partial<OnReplicationTurretModel>
+	| { type: ReplicantUnitType.Monster } & Partial<OnReplicationMonsterModel>
+	| { type: ReplicantUnitType.Minion } & Partial<OnReplicationMinionModel>
+	| { type: ReplicantUnitType.Hero } & Partial<OnReplicationHeroModel>
+);
 
 export type OnReplicationModel = BasePacketModel & {
 	syncId: number,
 	replicationUnits: OnReplicationUnitModel[],
+	forTeam: number,
 };
 
 export default class OnReplication extends BasePacket {
@@ -389,26 +401,32 @@ export default class OnReplication extends BasePacket {
 		return super.create(payload);
 	}
 
-	static fillReplicant(unit: OnReplicationUnitModel) {
-		let nameList = replicantListNames[unit.type!];
+	static fillReplicant(repUnit: OnReplicationUnitModel, forTeam: number) {
+		let nameList = replicantListNames[repUnit.type!];
 		for (let i = 0; i < nameList.length; i++) {
 			let namesArray = nameList[i]!;
 			for (let j = 0; j < namesArray.length; j++) {
 				let name = namesArray[j]!;
-				let value = unit[name];
-				this.updateReplicant(unit, value, i, j);
+				let value = repUnit[name];
+				this.updateReplicant(repUnit, value, i, j, forTeam);
 			}
 		}
 	}
 
-	static updateReplicant(unit: OnReplicationUnitModel, value: ReplicantValTypes | undefined, primaryId: number, secondaryId: number) {
-		if (typeof value === 'undefined' || unit.replicant[primaryId]![secondaryId] === value)
+	static updateReplicant(repUnit: OnReplicationUnitModel, value: ReplicantValTypes | undefined, primaryId: number, secondaryId: number, forTeam: number) {
+		if (typeof value === 'undefined')
 			return;
 
-		unit.primaryIdArray |= 1 << primaryId;
-		unit.seconadaryIdArray[primaryId]! |= 1 << secondaryId;
+		const unit = repUnit.unit;
+		const replicant = unit.replicant[forTeam]!;
 
-		unit.replicant[primaryId]![secondaryId] = value as number;
+		if (forTeam && replicant[primaryId]![secondaryId] === value)
+			return;
+
+		repUnit.primaryIdArray |= 1 << primaryId;
+		repUnit.seconadaryIdArray[primaryId]! |= 1 << secondaryId;
+
+		replicant[primaryId]![secondaryId] = value as number;
 	}
 
 	static recognizeReplicationUnitType(unit: OnReplicationUnitModel) {
@@ -428,16 +446,16 @@ export default class OnReplication extends BasePacket {
 		}
 
 		if (primaryId === 1) {
-			if (secondaryIdBit > (1 << 24))
+			if (secondaryIdBit > (1 << Object.keys(ReplicantMinion.one).length))
 				return ReplicantUnitType.Hero;
 
-			if (secondaryIdBit > (1 << 22))
+			if (secondaryIdBit > (1 << Object.keys(ReplicantMonster.one).length))
 				return ReplicantUnitType.Minion;
 
-			if (secondaryIdBit > (1 << 16))
+			if (secondaryIdBit > (1 << Object.keys(ReplicantTurret.one).length))
 				return ReplicantUnitType.Monster;
 
-			if (secondaryIdBit > (1 << 2))
+			if (secondaryIdBit > (1 << Object.keys(ReplicantBuilding.one).length))
 				return ReplicantUnitType.Turret;
 
 			if (secondaryIdBit >= (1 << 0))
@@ -454,7 +472,7 @@ export default class OnReplication extends BasePacket {
 		}
 
 		if (primaryId === 3) {
-			if (secondaryIdBit > (1 << 6))
+			if (secondaryIdBit > (1 << Object.keys(ReplicantMinion.three).length))
 				return ReplicantUnitType.Hero;
 
 			if (secondaryIdBit >= (1 << 0))
@@ -519,46 +537,50 @@ export default class OnReplication extends BasePacket {
 		payload.replicationUnits = [];
 		for (let i = 0; i < count; i++) {
 			payload.replicationUnits[i] = payload.replicationUnits[i] || {} as OnReplicationUnitModel;
-			let unit = payload.replicationUnits[i]!;
+			let repUnit = payload.replicationUnits[i]!;
+			const unit = repUnit.unit;
 
-			unit.primaryIdArray = dvr.readUint8();
-			unit.netId = dvr.readUint32();
+			repUnit.primaryIdArray = dvr.readUint8();
+			repUnit.netId = dvr.readUint32();
 
 			//if (i > 0) {
 			//	let v = this.readReplicantValue(dvr, ReplicantBase.types.int);
 			//	console.log('v', v);
 			//}
 
-			unit.type = this.recognizeReplicationUnitType(unit);
+			repUnit.type = this.recognizeReplicationUnitType(repUnit);
 			//console.log(
 			//	'unit.primaryIdArray', unit.primaryIdArray,
 			//	'unit.netId', unit.netId,
 			//	'unit.type', unit.type,
 			//);
 
-			unit.seconadaryIdArray = [];
-			unit.replicant = [];
+			repUnit.seconadaryIdArray = [];
+			unit.replicant = {
+				0: [],
+			};
 
 			for (let primaryId = 0; primaryId < 6; primaryId++) {
-				if ((unit.primaryIdArray & (1 << primaryId)) === 0)
+				if ((repUnit.primaryIdArray & (1 << primaryId)) === 0)
 					continue;
 
-				unit.replicant[primaryId] = {};
-				let replicantPrimary = unit.replicant[primaryId]!;
-				let secondaryIdBit = unit.seconadaryIdArray[primaryId] = dvr.readUint32();
+				unit.replicant[0]![primaryId] = {};
+				let replicantPrimary = unit.replicant[0]![primaryId]!;
+				let secondaryIdBit = dvr.readUint32();
+				repUnit.seconadaryIdArray[primaryId] = secondaryIdBit;
 				let dataCount = dvr.readUint8();
 				let sizeOffset = dvr.offset;
 
-				unit.type = this.recognizeReplicationUnitType2(unit, primaryId, secondaryIdBit);
+				repUnit.type = this.recognizeReplicationUnitType2(repUnit, primaryId, secondaryIdBit);
 				//console.log(
 				//	'primaryId', primaryId,
 				//	'secondaryIdBit', secondaryIdBit,
 				//	'dataCount', dataCount,
-				//	'unit.type', unit.type,
+				//	'repUnit.type', repUnit.type,
 				//);
-				//console.log('unit.type', unit.type, primaryId, secondaryIdBit);
+				//console.log('repUnit.type', repUnit.type, primaryId, secondaryIdBit);
 
-				let ReplicantValTypesPrimary = replicantListTypes[unit.type][primaryId]!;
+				let ReplicantValTypesPrimary = replicantListTypes[repUnit.type][primaryId]!;
 
 				for (let secondaryId = 0; secondaryId < 32; secondaryId++) {
 					if ((secondaryIdBit & (1 << secondaryId >>> 0)) === 0)
@@ -573,7 +595,7 @@ export default class OnReplication extends BasePacket {
 
 					let val = this.readReplicantValue(dvr, replicantType);
 					if (typeof val === 'undefined') {
-						console.log('unknown replicantType', replicantType, primaryId, secondaryId, unit);
+						console.log('unknown replicantType', replicantType, primaryId, secondaryId, repUnit);
 					}
 					else {
 						//console.log('val', val);
@@ -586,7 +608,7 @@ export default class OnReplication extends BasePacket {
 				}
 
 				dvr.offset = sizeOffset + dataCount;
-				//console.log(primaryId, unit.replicant[primaryId]);
+				//console.log(primaryId, unit.replicant[0]![primaryId]);
 			}
 		}
 	}
@@ -635,26 +657,28 @@ export default class OnReplication extends BasePacket {
 		dvr.writeUint8(count);
 
 		for (let i = 0; i < count; i++) {
-			let unit = payload.replicationUnits[i]!;
+			let repUnit = payload.replicationUnits[i]!;
+			const unit = repUnit.unit;
 
-			unit.replicant = unit.replicant || [{}, {}, {}, {}, {}, {}];
-			unit.primaryIdArray = 0;
-			unit.seconadaryIdArray = [0, 0, 0, 0, 0, 0];
+			unit.replicant = unit.replicant || {};
+			unit.replicant[payload.forTeam] = unit.replicant[payload.forTeam] || [{}, {}, {}, {}, {}, {}];
+			repUnit.primaryIdArray = 0;
+			repUnit.seconadaryIdArray = [0, 0, 0, 0, 0, 0];
 
-			this.fillReplicant(unit);
+			this.fillReplicant(repUnit, payload.forTeam);
 
-			if (!unit.primaryIdArray) {
+			if (!repUnit.primaryIdArray) {
 				resultCount--;
 				continue;
 			}
 
-			dvr.writeUint8(unit.primaryIdArray);
-			dvr.writeUint32(unit.netId);
+			dvr.writeUint8(repUnit.primaryIdArray);
+			dvr.writeUint32(repUnit.netId);
 
-			let unitType = unit.type || ReplicantUnitType.Base;
+			let unitType = repUnit.type || ReplicantUnitType.Base;
 
 			for (let primaryId = 0; primaryId < 6; primaryId++) {
-				if ((unit.primaryIdArray & (1 << primaryId)) === 0)
+				if ((repUnit.primaryIdArray & (1 << primaryId)) === 0)
 					continue;
 
 				let ReplicantValTypesUnit = replicantListTypes[unitType];
@@ -665,7 +689,7 @@ export default class OnReplication extends BasePacket {
 				if (!ReplicantValTypesPrimary)
 					continue;
 
-				let seconadaryIdVal = unit.seconadaryIdArray[primaryId]!;
+				let seconadaryIdVal = repUnit.seconadaryIdArray[primaryId]!;
 				dvr.writeUint32(seconadaryIdVal);
 				let sizeOffset = dvr.offset++;
 
@@ -674,7 +698,7 @@ export default class OnReplication extends BasePacket {
 						continue;
 
 					let replicantType = ReplicantValTypesPrimary[secondaryId]!;
-					let val = unit.replicant[primaryId]![secondaryId]!;
+					let val = unit.replicant[payload.forTeam]![primaryId]![secondaryId]!;
 					this.writeReplicantValue(dvr, replicantType, val);
 				}
 

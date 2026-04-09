@@ -7,12 +7,21 @@ import * as packets from '@repo/packets/list';
 import Server from './app/server';
 import UnitAiList from './app/unit-ai-list';
 import Logging from './core/logging';
-import config from './game/game.config.json';
+import config from './game/game.config';
 import Game from './game/initializers/game';
 import Teams from './game/initializers/teams';
 import handlers, { packetIdent, registerHandlers } from './handlers';
 
 function main() {
+
+	if (Server.debug) {
+		// make Math.random predictable
+		let mathSeed = 165314;
+		Math.random = function () {
+			const x = Math.sin(mathSeed++) * 10000;
+			return x - Math.floor(x);
+		};
+	}
 
 	registerPackets();
 	registerHandlers();
@@ -80,6 +89,15 @@ function main() {
 	//process.on('uncaughtException', (err) => {
 	//	console.log(err);
 	//});
+
+	//setTimeout(() => {
+	//	console.log('exiting app after 3 hours');
+	//	process.exit(0);
+	//}, 1000 * 60 * 60 * 3);
 }
 
 main();
+
+//setTimeout(() => {
+//	process.exit(0);
+//}, 1000 * 60 * 2);

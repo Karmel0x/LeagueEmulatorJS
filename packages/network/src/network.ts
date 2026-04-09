@@ -16,6 +16,8 @@ export interface NetworkApiEvents {
 	'parse-received': (peerNum: number, channel: number, packet: PrimaryPacketModel) => void;
 }
 
+export type PacketMessages = PacketMessage | (PacketMessage | undefined)[] | undefined;
+
 export default class Network {
 
 	static instance: Network;
@@ -103,6 +105,24 @@ export default class Network {
 
 	sendPacket(peers: number[], packet: PacketMessage) {
 		this.sendData(peers, packet.data, packet.channel, packet.flags);
+	}
+
+	sendPackets(peers: number[], packets: PacketMessages) {
+		if (!packets)
+			return;
+
+		if (Array.isArray(packets)) {
+			for (let i = 0; i < packets.length; i++) {
+				const packet = packets[i];
+				if (!packet) continue;
+
+				this.sendData(peers, packet.data, packet.channel, packet.flags);
+			}
+		}
+		else {
+			const packet = packets;
+			this.sendData(peers, packet.data, packet.channel, packet.flags);
+		}
 	}
 
 }

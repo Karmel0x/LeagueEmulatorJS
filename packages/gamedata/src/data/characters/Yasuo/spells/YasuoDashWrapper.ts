@@ -3,6 +3,7 @@ import type AttackableUnit from '@repo/gameserver/src/gameobjects/units/attackab
 import { Vector2 } from '@repo/geometry';
 import { DamageSource, DamageType } from '@repo/packets/shared/SDeathData';
 import _Spell, { type CastData } from '@repo/scripting/base/spell';
+import type { CastVars } from '@repo/scripting/load/spell-cast';
 
 
 export default class YasuoDashWrapper extends _Spell {
@@ -12,7 +13,7 @@ export default class YasuoDashWrapper extends _Spell {
 	/**
 	 * @todo probably need to create missile cause missileNetId differs from spellNetId
 	 */
-	onCast(owner: AttackableUnit, castData: CastData, spellVars: any) {
+	onCast(owner: AttackableUnit, castData: CastData, castVars: CastVars) {
 		if (!castData.targetPosition)
 			return;
 

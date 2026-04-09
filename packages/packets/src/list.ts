@@ -22,6 +22,7 @@ export { default as MapPingC2S, type MapPingC2SModel } from './base/c2s/0x57-Map
 export { default as OnShopOpened, type OnShopOpenedModel } from './base/c2s/0x5D-OnShopOpened';
 export { default as OnTipEvent, type OnTipEventModel } from './base/c2s/0x6D-OnTipEvent';
 export { default as IssueOrderReq, type IssueOrderReqModel } from './base/c2s/0x72-IssueOrderReq';
+export { default as Waypoint_Acc, type Waypoint_AccModel } from './base/c2s/0x77-Waypoint_Acc';
 export { default as AI_Command, type AI_CommandModel } from './base/c2s/0x7A-AI_Command';
 export { default as ClientCheatDetectionSignal, type ClientCheatDetectionSignalModel } from './base/c2s/0x7D-ClientCheatDetectionSignal';
 export { default as World_LockCamera_Server, type World_LockCamera_ServerModel } from './base/c2s/0x81-World_LockCamera_Server';
@@ -296,7 +297,6 @@ export { default as TeamBalanceVote, type TeamBalanceVoteModel } from './base/s2
 export { default as TeamBalanceStatus, type TeamBalanceStatusModel } from './base/s2c/0xFC-TeamBalanceStatus';
 export { default as SetItemCharges, type SetItemChargesModel } from './base/s2c/0xFD-SetItemCharges';
 export { default as WaypointGroup, type WaypointGroupModel } from './base/s2cUnreliable/0x61-WaypointGroup';
-export { default as Waypoint_Acc, type Waypoint_AccModel } from './base/s2cUnreliable/0x77-Waypoint_Acc';
 export { default as Ping_Load_InfoS2C, type Ping_Load_InfoS2CModel } from './base/s2cUnreliable/0x95-Ping_Load_Info';
 export { default as OnReplication, type OnReplicationModel } from './base/s2cUnreliable/0xC4-OnReplication';
 export { default as SynchSimTime, type SynchSimTimeModel } from './base/synchClock/0x08-SynchSimTime';

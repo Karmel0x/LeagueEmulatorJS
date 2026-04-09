@@ -1,18 +1,20 @@
 
 import { Vector2, type Vector2Like } from '@repo/geometry';
+import type { ExportedCase } from '@repo/geometry/tests/export-cases';
 import { MinionType } from '@repo/packets/base/s2c/0x03-Barrack_SpawnUnit';
 import * as packets from '@repo/packets/list';
+import { writeFileSync } from 'fs';
 import * as packetHelpers from '../../src/packet-helpers';
 import GameObjectList from '../app/game-object-list';
 import Server from '../app/server';
 import { SlotId } from '../constants/slot-id';
 import Logging, { type LoggingOutput, type LoggingType } from '../core/logging';
 import Timer from '../core/timer';
-import { humanizePosition } from '../core/utils';
-import config from '../game/game.config.json';
+import { humanizeDecimal, humanizePosition } from '../core/utils';
+import config from '../game/game.config';
 import MeasureGeneral from '../gameobjectextensions/measure/general';
 import { IStat } from '../gameobjectextensions/stats/istat';
-import { TeamId } from '../gameobjectextensions/traits/team';
+import { LaneId, TeamId } from '../gameobjectextensions/traits/team';
 import LaneMinion from '../gameobjects/unit-ai/lane-minion';
 import type Player from '../gameobjects/unit-ai/player';
 import type AttackableUnit from '../gameobjects/units/attackable-unit';
@@ -30,7 +32,7 @@ const commandList: { [s: string]: Command; } = {
 		description: 'test command',
 		arguments: [],
 		handler: function (player, args) {
-			player.packets.chatBoxDebugMessage(...args);
+			player.packets.chatBoxMessage2(...args);
 
 		}
 	},
@@ -64,7 +66,7 @@ const commandList: { [s: string]: Command; } = {
 			//	player.network.sendPacket(packet1);
 			//});
 
-			player.packets.chatBoxDebugMessage(messages.join('\n'));
+			player.packets.chatBoxMessage2(messages.join('\n'));
 		}
 	},
 	'': {
@@ -84,7 +86,7 @@ const commandList: { [s: string]: Command; } = {
 				//});
 				//player.owner.packets.toEveryone(packet1);
 
-				player.packets.chatBoxDebugMessage('unpausing timers');
+				player.packets.chatBoxMessage2('unpausing timers');
 				Timer.app.resume();
 				Server.game.timer.resume();
 			}
@@ -95,7 +97,7 @@ const commandList: { [s: string]: Command; } = {
 				//});
 				//player.owner.packets.toEveryone(packet1);
 
-				player.packets.chatBoxDebugMessage('pausing timers');
+				player.packets.chatBoxMessage2('pausing timers');
 				Timer.app.pause();
 				Server.game.timer.pause();
 			}
@@ -114,13 +116,13 @@ const commandList: { [s: string]: Command; } = {
 			});
 			player.owner.packets.toEveryone(packet1);
 
-			player.packets.chatBoxDebugMessage('speeding up timer', speed);
+			player.packets.chatBoxMessage2('speeding up timer', speed);
 			Timer.app.speedUp(speed);
 		},
 	},
 	'moveSpeed': {
 		description: 'set move speed',
-		arguments: ['moveSpeed', 'all/me/unitType/netId'],
+		arguments: ['moveSpeed', 'all/me/selected/unitType/netId'],
 		handler: function (player, args) {
 			let moveSpeed = parseInt(args[1] || '325');
 			let unitType = args[2] || 'me';
@@ -131,13 +133,13 @@ const commandList: { [s: string]: Command; } = {
 				unit.stats.moveSpeed.baseValue = moveSpeed;
 				unit.stats.moveSpeed.flatBonus = 0;
 				unit.stats.moveSpeed.percentBonus = 0;
-				packetHelpers.sendUnitStats(unit);
+				unit.markReplicateStats();
 			});
 		},
 	},
 	'attackSpeed': {
 		description: 'set attack speed',
-		arguments: ['attackSpeed', 'all/me/unitType/netId'],
+		arguments: ['attackSpeed', 'all/me/selected/unitType/netId'],
 		handler: function (player, args) {
 			let attackSpeed = parseFloat(args[1] || '0.625');
 			let unitType = args[2] || 'me';
@@ -148,13 +150,13 @@ const commandList: { [s: string]: Command; } = {
 				unit.stats.attackSpeed.baseValue = attackSpeed;
 				unit.stats.attackSpeed.flatBonus = 0;
 				unit.stats.attackSpeed.percentBonus = 0;
-				packetHelpers.sendUnitStats(unit);
+				unit.markReplicateStats();
 			});
 		},
 	},
 	'attackDamage': {
 		description: 'set attack damage',
-		arguments: ['attackDamage', 'all/me/unitType/netId'],
+		arguments: ['attackDamage', 'all/me/selected/unitType/netId'],
 		handler: function (player, args) {
 			let attackDamage = parseFloat(args[1] || '100');
 			let unitType = args[2] || 'me';
@@ -162,16 +164,16 @@ const commandList: { [s: string]: Command; } = {
 			let units = filterUnitsForCommand(player, GameObjectList.aliveUnits, unitType);
 
 			units.forEach(unit => {
-				unit.stats.attackDamage.baseValue = attackDamage;
-				unit.stats.attackDamage.flatBonus = 0;
+				unit.stats.attackDamage.baseValue = 0;
+				unit.stats.attackDamage.flatBonus = attackDamage;
 				unit.stats.attackDamage.percentBonus = 0;
-				packetHelpers.sendUnitStats(unit);
+				unit.markReplicateStats();
 			});
 		},
 	},
 	'armor': {
 		description: 'set armor',
-		arguments: ['armor', 'all/me/unitType/netId'],
+		arguments: ['armor', 'all/me/selected/unitType/netId'],
 		handler: function (player, args) {
 			let armor = parseFloat(args[1] || '100');
 			let unitType = args[2] || 'me';
@@ -182,13 +184,13 @@ const commandList: { [s: string]: Command; } = {
 				unit.stats.armor.baseValue = armor;
 				unit.stats.armor.flatBonus = 0;
 				unit.stats.armor.percentBonus = 0;
-				packetHelpers.sendUnitStats(unit);
+				unit.markReplicateStats();
 			});
 		},
 	},
 	'god': {
 		description: 'set god stats',
-		arguments: ['all/me/unitType/netId'],
+		arguments: ['all/me/selected/unitType/netId'],
 		handler: function (player, args) {
 			let unitType = args[1] || 'me';
 
@@ -201,19 +203,29 @@ const commandList: { [s: string]: Command; } = {
 				unit.stats.attackSpeed.baseValue = 2;
 				unit.stats.attackDamage.baseValue = 600;
 				unit.stats.armor.baseValue = 900;
-				packetHelpers.sendUnitStats(unit);
+				unit.markReplicateStats();
 			});
 		},
 	},
 	'kill': {
 		description: 'kill unit',
-		arguments: ['all/me/unitType/netId'],
+		arguments: ['all/me/selected/unitType/netId', 'all/order/chaos/neutral'],
 		handler: function (player, args) {
 			let unitType = args[1];
 			if (!unitType)
 				throw new Error('no unitType');
 
-			let units = filterUnitsForCommand(player, GameObjectList.aliveUnits, unitType);
+			let unitTeam = args[2];
+			let units1 = GameObjectList.aliveUnits;
+
+			if (unitTeam === 'order')
+				units1 = units1.filter(u => u.team.id === TeamId.order);
+			else if (unitTeam === 'chaos')
+				units1 = units1.filter(u => u.team.id === TeamId.chaos);
+			else if (unitTeam === 'neutral')
+				units1 = units1.filter(u => u.team.id === TeamId.neutral);
+
+			let units = filterUnitsForCommand(player, units1, unitType);
 
 			units.forEach(unit => {
 				unit.combat.die(player.owner);
@@ -222,7 +234,7 @@ const commandList: { [s: string]: Command; } = {
 	},
 	'unkillable': {
 		description: 'make unit unkillable',
-		arguments: ['all/me/unitType/netId', 'unkillable(1/0)'],
+		arguments: ['all/me/selected/unitType/netId', 'unkillable(1/0)'],
 		handler: function (player, args) {
 			let unitType = args[1] || 'me';
 			let unkillable = args[2] === '1' ? true : (args[2] === '0' ? false : undefined);
@@ -242,7 +254,7 @@ const commandList: { [s: string]: Command; } = {
 		arguments: [],
 		handler: function (player, args) {
 			Server.commandStartGame = true;
-			player.packets.chatBoxDebugMessage('starting game');
+			player.packets.chatBoxMessage2('starting game');
 		},
 	},
 	'packetInspector': {
@@ -253,12 +265,12 @@ const commandList: { [s: string]: Command; } = {
 			Logging.changeOptions({
 				packet: Logging.output[dest],
 			});
-			player.packets.chatBoxDebugMessage(`packet logging: ${(Logging.options as { [key in LoggingType]?: LoggingOutput }).packet?.name}`);
+			player.packets.chatBoxMessage2(`packet logging: ${(Logging.options as { [key in LoggingType]?: LoggingOutput }).packet?.name}`);
 		},
 	},
 	'levelup': {
 		description: 'levelup unit',
-		arguments: ['levelCount', 'all/me/unitType/netId'],
+		arguments: ['levelCount', 'all/me/selected/unitType/netId'],
 		handler: function (player, args) {
 			let amount = parseInt(args[1] || '1');
 			let unitType = args[2] || 'me';
@@ -273,7 +285,7 @@ const commandList: { [s: string]: Command; } = {
 	},
 	'expup': {
 		description: 'add experience for unit',
-		arguments: ['expAmount', 'all/me/unitType/netId'],
+		arguments: ['expAmount', 'all/me/selected/unitType/netId'],
 		handler: function (player, args) {
 			let amount = parseInt(args[1] || '50');
 			let unitType = args[2] || 'me';
@@ -287,7 +299,7 @@ const commandList: { [s: string]: Command; } = {
 	},
 	'gold': {
 		description: 'set unit gold',
-		arguments: ['amount', 'all/me/unitType/netId'],
+		arguments: ['amount', 'all/me/selected/unitType/netId'],
 		handler: function (player, args) {
 			let amount = parseInt(args[1] || '10000');
 			let unitType = args[2] || 'me';
@@ -296,12 +308,13 @@ const commandList: { [s: string]: Command; } = {
 
 			units.forEach(unit => {
 				unit.progress.gold = amount;
+				unit.markReplicateStats();
 			});
 		},
 	},
 	'hp': {
 		description: 'set unit health',
-		arguments: ['amount/value%', 'all/me/unitType/netId'],
+		arguments: ['amount/value%', 'all/me/selected/unitType/netId'],
 		handler: function (player, args) {
 			let amountArg = args[1] || '100%';
 			let amountIsPercent = amountArg.endsWith('%');
@@ -317,13 +330,13 @@ const commandList: { [s: string]: Command; } = {
 				else
 					unit.stats.health.current = amount;
 
-				unit.packets.OnEnterLocalVisibilityClient();
+				unit.packets.sendOnEnterLocalVisibilityClient();
 			});
 		},
 	},
 	'mp': {
 		description: 'set unit mana',
-		arguments: ['amount/value%', 'all/me/unitType/netId'],
+		arguments: ['amount/value%', 'all/me/selected/unitType/netId'],
 		handler: function (player, args) {
 			let amountArg = args[1] || '100%';
 			let amountIsPercent = amountArg.endsWith('%');
@@ -339,63 +352,78 @@ const commandList: { [s: string]: Command; } = {
 				else
 					unit.stats.mana.current = amount;
 
-				unit.packets.OnEnterLocalVisibilityClient();
+				unit.packets.sendOnEnterLocalVisibilityClient();
 			});
 		},
 	},
 	'info': {
 		description: 'print in chat some informations you may need',
-		arguments: ['type'],
+		arguments: ['type', 'any/me/selected/unitType/netId'],
 		handler: function (player, args) {
-			const owner = player.owner;
 			const type = args[1];
+			if (!type)
+				throw new Error('possible info types: position, stats, buffs');
 
-			if (!type) {
-				player.packets.chatBoxDebugMessage('possible info types: position, stats, buffs');
-				return;
-			}
+			let unitType = args[2] || 'me';
+			let units = filterUnitsForCommand(player, GameObjectList.aliveUnits, unitType);
+			const unit = units[0];
+			if (!unit)
+				throw new Error('unit not found');
 
-			if (type === 'position') {
-				player.packets.chatBoxDebugMessage(...args, humanizePosition(owner.position));
+			if (type === 'position' || type === 'pos') {
+				player.packets.chatBoxMessage2(
+					...args,
+					humanizePosition(unit.position),
+					'distance:', humanizeDecimal(player.owner.distanceTo(unit))
+				);
 				return;
 			}
 
 			if (type === 'base-stats') {
 				let message = '';
-				const stats = owner.stats;
-				const base = owner.stats.base;
+				const stats = unit.stats;
+				const base = unit.stats.base;
 				for (let i in base) {
 					let playerStat = stats[i as keyof typeof stats] as IStat;
 					if (playerStat)
 						message += ` | ${i}: ${playerStat.total}`;
 				}
 
-				player.packets.chatBoxDebugMessage(message);
+				player.packets.chatBoxMessage2(message);
 				return;
 			}
 
 			if (type === 'stats') {
 				let message = '';
-				const stats = owner.stats;
+				const stats = unit.stats;
 				for (let i in stats) {
 					let playerStat = stats[i as keyof typeof stats] as IStat;
 					if (playerStat && playerStat instanceof IStat)
 						message += ` | ${i}: ${playerStat.total}`;
 				}
 
-				player.packets.chatBoxDebugMessage(message);
+				player.packets.chatBoxMessage2(message);
 				return;
 			}
 
 			if (type === 'buffs') {
 				let message = '';
-				const buffs = owner.buffManager.buffs;
-				for (let i in buffs) {
-					let buff = buffs[i as keyof typeof buffs]!;
+				const buffs = unit.buffManager.buffs;
+				for (let i = 0; i < buffs.length; i++) {
+					let buff = buffs[i]!;
 					message += ` | ${buff.spell.name}: ${buff.stacks}`;
 				}
 
-				player.packets.chatBoxDebugMessage(message);
+				player.packets.chatBoxMessage2(message);
+				return;
+			}
+
+			if (type === 'character') {
+				let message = '';
+				const character = unit.character;
+				message += `${character.name}`;
+
+				player.packets.chatBoxMessage2(message);
 				return;
 			}
 		},
@@ -412,7 +440,7 @@ const commandList: { [s: string]: Command; } = {
 
 			const owner = player.owner;
 			owner.moving.teleport(unit.position);
-			player.packets.chatBoxDebugMessage('teleporting player to ', unit.constructor.name, netId, '-', unit.position.x, unit.position.y);
+			player.packets.chatBoxMessage2('teleporting player to ', unit.constructor.name, netId, '-', unit.position.x, unit.position.y);
 		},
 	},
 	'gopos': {
@@ -424,7 +452,7 @@ const commandList: { [s: string]: Command; } = {
 
 			const owner = player.owner;
 			owner.moving.teleport(new Vector2(x, y));
-			player.packets.chatBoxDebugMessage('teleporting player to ', x, y);
+			player.packets.chatBoxMessage2('teleporting player to ', x, y);
 		},
 	},
 	'pathfinding': {
@@ -433,7 +461,7 @@ const commandList: { [s: string]: Command; } = {
 		handler: function (player, args) {
 			let firstArg = args[1];
 			if (!firstArg) {
-				player.packets.chatBoxDebugMessage({
+				player.packets.chatBoxMessage2({
 					pathFinding: !config.debugging.noPathFinding,
 					terrainEscape: !config.debugging.noTerrainEscape,
 				});
@@ -445,30 +473,110 @@ const commandList: { [s: string]: Command; } = {
 			config.debugging.noTerrainEscape = bits[1] === '0';
 		},
 	},
+	'exportPathfinding': {
+		description: 'export pathfinding case to JSON file',
+		arguments: [],
+		handler: function (player, args) {
+			const owner = player.owner;
+
+			const allUnits = GameObjectList.aliveUnits;
+			const unitToObstacle = (u: typeof allUnits[0]) => {
+				const wp = u.moving.waypointsOrdered;
+				const ms = u.stats.moveSpeed.total;
+				return {
+					name: u.name,
+					position: { x: u.position.x, y: u.position.y },
+					collisionRadius: u.collisionRadius,
+					ignoreCollision: u.ignoreCollision,
+					collisionGroup: u.team.id,
+					...(ms > 0 && { moveSpeed: ms }),
+					...(wp.length > 0 && { waypoints: wp.map(w => ({ x: w.x, y: w.y })) }),
+				};
+			};
+
+			// First obstacle is the player unit, rest are other units
+			const exported: ExportedCase[] = [{
+				obstacles: [
+					unitToObstacle(owner),
+					...allUnits.filter(u => u !== owner).map(unitToObstacle),
+				],
+				methods: [],
+			}];
+
+			const outPath = 'pathfinding-export.json';
+			writeFileSync(outPath, JSON.stringify(exported, null, 2));
+			player.packets.chatBoxDebugMessage(`exported ${allUnits.length} units to ${outPath}`);
+		},
+	},
 	'character': {
 		description: '',
 		arguments: ['name'],
 		handler: function (player, args) {
 			const owner = player.owner;
 			owner.switchCharacter(args[1] || 'Ezreal');
+
+			const character = owner.character;
+			const characterId = owner.characterId;
+
+			const packet1 = packets.ChangeCharacterData.create({
+				netId: owner.netId,
+				id: characterId,
+				overrideSpells: true,
+				skinName: character.name,
+			});
+			owner.packets.toVision(packet1);
 		},
 	},
 	'wave': {
 		description: '',
-		arguments: ['team'],
+		arguments: ['lane', 'team'],
 		handler: function (player, args) {
-			let teams = args[1];
+			let lanes = args[1];
+			if (!lanes)
+				lanes = 'top,mid,bot';
+
+			let teams = args[2];
 			if (!teams)
 				teams = 'order,chaos';
 
-			if (teams.includes('order')) {
-				const barrack = GameObjectList.barracks.find(barrack => barrack.team.id === TeamId.order);
-				barrack?.spawnWave();
-			}
+			const lanes1 = lanes.split(',').map(v => LaneId[v as keyof typeof LaneId]);
+			const teams1 = teams.split(',').map(v => TeamId[v as keyof typeof TeamId]);
 
-			if (teams.includes('chaos')) {
-				const barrack = GameObjectList.barracks.find(barrack => barrack.team.id === TeamId.chaos);
-				barrack?.spawnWave();
+			const barracks = GameObjectList.barracks;
+			const barracks1 = barracks.filter(barrack => teams1.includes(barrack.team.id) && lanes1.includes(barrack.lane));
+
+			for (let i = 0; i < barracks1.length; i++) {
+				const barrack = barracks1[i]!;
+				barrack.spawnWave();
+			}
+		}
+	},
+	'minionSpam': {
+		description: '',
+		arguments: ['lane', 'team'],
+		handler: function (player, args) {
+			let lanes = args[1];
+			if (!lanes)
+				lanes = 'top,mid,bot';
+
+			let teams = args[2];
+			if (!teams)
+				teams = 'order,chaos';
+
+			const lanes1 = lanes.split(',').map(v => LaneId[v as keyof typeof LaneId]);
+			const teams1 = teams.split(',').map(v => TeamId[v as keyof typeof TeamId]);
+
+			const barracks = GameObjectList.barracks;
+			const barracks1 = barracks.filter(barrack => teams1.includes(barrack.team.id) && lanes1.includes(barrack.lane));
+
+			for (let i = 0; i < barracks1.length; i++) {
+				const barrack = barracks1[i]!;
+
+				(async () => {
+					for (let j = 0; j < 10; j++) {
+						await barrack.spawnWave();
+					}
+				})();
 			}
 		}
 	},
@@ -515,7 +623,7 @@ const commandList: { [s: string]: Command; } = {
 				if (!barrack) continue;
 
 				const unit = barrack.spawnUnit(MinionType.melee);
-				(unit.ai as LaneMinion).moveLane = () => { };
+				(unit.ai as LaneMinion).moveNextLanePoint = () => { };
 				unit.combat.autoAttackToggle = false;
 				unit.moving.teleport(new Vector2(1000 + (i * 150), 600));
 			}
@@ -531,14 +639,14 @@ const commandList: { [s: string]: Command; } = {
 		handler: function (player, args) {
 			const owner = player.owner;
 			let team = (args[1] || owner.team.getEnemyTeamId());
-			player.packets.chatBoxDebugMessage('spawnMinion', team);
+			player.packets.chatBoxMessage2('spawnMinion', team);
 			const barrack = GameObjectList.barracks.find(barrack => barrack.team.id === team);
 			if (!barrack) return;
 
 			const unit = barrack.spawnUnit(MinionType.melee, {
 				spawnPosition: owner.position,
 			});
-			(unit.ai as LaneMinion).moveLane = () => { };
+			(unit.ai as LaneMinion).moveNextLanePoint = () => { };
 			unit.combat.autoAttackToggle = false;
 		},
 	},
@@ -548,7 +656,7 @@ const commandList: { [s: string]: Command; } = {
 		handler: function (player, args) {
 			const owner = player.owner;
 			let team = (args[1] || owner.team.getEnemyTeamId());
-			player.packets.chatBoxDebugMessage('spawnMinion', team);
+			player.packets.chatBoxMessage2('spawnMinion', team);
 			const barrack = GameObjectList.barracks.find(barrack => barrack.team.id === team);
 			if (!barrack) return;
 
@@ -559,7 +667,7 @@ const commandList: { [s: string]: Command; } = {
 				const unit = barrack.spawnUnit(MinionType.melee, {
 					spawnPosition: point,
 				});
-				(unit.ai as LaneMinion).moveLane = () => { };
+				(unit.ai as LaneMinion).moveNextLanePoint = () => { };
 				unit.combat.autoAttackToggle = false;
 			});
 		},
@@ -597,7 +705,7 @@ const commandList: { [s: string]: Command; } = {
 				if (!barrack) continue;
 
 				const unit = barrack.spawnUnit(MinionType.melee);
-				//(unit.ai as LaneMinion).moveLane = () => { };
+				//(unit.ai as LaneMinion).moveNextLanePoint = () => { };
 				unit.combat.autoAttackToggle = false;
 			}
 
@@ -606,7 +714,7 @@ const commandList: { [s: string]: Command; } = {
 				if (!barrack) continue;
 
 				const unit = barrack.spawnUnit(MinionType.melee);
-				//(unit.ai as LaneMinion).moveLane = () => { };
+				//(unit.ai as LaneMinion).moveNextLanePoint = () => { };
 				unit.combat.autoAttackToggle = false;
 			}
 		},
@@ -620,7 +728,7 @@ const commandList: { [s: string]: Command; } = {
 				if (!barrack) continue;
 
 				const unit = barrack.spawnUnit(MinionType.melee);
-				(unit.ai as LaneMinion).moveLane = () => { };
+				(unit.ai as LaneMinion).moveNextLanePoint = () => { };
 				unit.combat.autoAttackToggle = false;
 				unit.moving.teleport(new Vector2(1000 + (i * 150), 600));
 			}
@@ -640,7 +748,7 @@ const commandList: { [s: string]: Command; } = {
 				if (!barrack) continue;
 
 				const unit = barrack.spawnUnit(j % 4);
-				(unit.ai as LaneMinion).moveLane = () => { };
+				(unit.ai as LaneMinion).moveNextLanePoint = () => { };
 				unit.combat.autoAttackToggle = false;
 				unit.moving.teleport(new Vector2(1000 + (i * 150), 600));
 			}
@@ -666,7 +774,7 @@ const commandList: { [s: string]: Command; } = {
 				if (!barrack) continue;
 
 				const unit = barrack.spawnUnit(MinionType.melee);
-				(unit.ai as LaneMinion).moveLane = () => { };
+				(unit.ai as LaneMinion).moveNextLanePoint = () => { };
 				unit.moving.teleport(new Vector2(1000 + (i * 150), 600));
 			}
 
@@ -682,7 +790,7 @@ const commandList: { [s: string]: Command; } = {
 			const owner = player.owner;
 			const packet1 = packetHelpers.OnReplication([
 				owner,
-			]);
+			], owner.team.id);
 			player.network.sendPacket(packet1);
 			//console.log(packet1);
 		},
@@ -728,7 +836,7 @@ const commandList: { [s: string]: Command; } = {
 	//		//const Champion_ = require('@repo/gamedata/data/characters/' + character);
 	//		//player.character = new Champion_(player);
 	//		//player.packets.ChangeCharacterData(character);
-	//		//player.packets.chatBoxDebugMessage('switching champion to:', character);
+	//		//player.packets.chatBoxMessage2('switching champion to:', character);
 	//	},
 	//},
 	'SystemMessage': {
@@ -768,7 +876,7 @@ const commandList: { [s: string]: Command; } = {
 				throw new Error('no target');
 
 			owner.combat.basicAttacks.attackAns(target, SlotId.a, extraTimeS);
-		}
+		},
 	},
 };
 
@@ -776,8 +884,10 @@ const aliasList: { [s: string]: string; } = {
 	'gs': 'gameSpeed',
 	'ms': 'moveSpeed',
 	'as': 'attackSpeed',
+	'ad': 'attackDamage',
 	'pi': 'packetInspector',
 	'sma': 'spawnMinionAround',
+	'ep': 'exportPathfinding',
 	'tp': 'teleport',
 };
 
@@ -789,7 +899,7 @@ export default (player: Player, packet: packets.ChatModel) => {
 		return;
 
 	let command = packet.message.slice(1);
-	command = command || player.lastChatCommand;
+	command = (command === '.' ? '' : command) || player.lastChatCommand;
 	player.lastChatCommand = command;
 
 	if (!command)
@@ -811,18 +921,18 @@ export default (player: Player, packet: packets.ChatModel) => {
 	}
 
 	if (!commandObject) {
-		player.packets.chatBoxDebugMessage('command does not exist');
+		player.packets.chatBoxMessage('command does not exist');
 		return;
 	}
 
 	try {
 		commandObject.handler(player, commandArgs);
-		//player.packets.chatBoxDebugMessage(commandArgs);
+		player.packets.chatBoxMessage2(commandArgs);
 	}
 	catch (e) {
 		console.warn(e);
 		if (e instanceof Error) {
-			player.packets.chatBoxDebugMessage('error:', e.message);
+			player.packets.chatBoxMessage('error: ' + e.message);
 		}
 	}
 };

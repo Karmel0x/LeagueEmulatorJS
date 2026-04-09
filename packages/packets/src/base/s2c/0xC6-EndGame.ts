@@ -3,6 +3,7 @@ import type RelativeDataView from '@repo/network/relative-data-view';
 
 export type EndGameModel = BasePacketModel & {
 	isTeamOrderWin: boolean,
+	surrender: boolean,
 };
 
 export default class EndGame extends BasePacket {
@@ -12,6 +13,7 @@ export default class EndGame extends BasePacket {
 
 	static bitfield1 = {
 		isTeamOrderWin: 1,
+		surrender: 2,
 	};
 
 	static reader(dvr: RelativeDataView, payload: EndGameModel) {
@@ -19,6 +21,7 @@ export default class EndGame extends BasePacket {
 
 		let bitfield1 = dvr.readBitfield(this.bitfield1);
 		payload.isTeamOrderWin = bitfield1.isTeamOrderWin;
+		payload.surrender = bitfield1.surrender;
 	}
 
 	static writer(dvr: RelativeDataView, payload: EndGameModel) {
@@ -26,6 +29,7 @@ export default class EndGame extends BasePacket {
 
 		dvr.writeBitfield(this.bitfield1, {
 			isTeamOrderWin: payload.isTeamOrderWin,
+			surrender: payload.surrender,
 		});
 	}
 }

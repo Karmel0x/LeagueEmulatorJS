@@ -1,6 +1,6 @@
 
 import type { Vector2Like } from '@repo/geometry';
-import type { Vector2WithZLike } from '@repo/geometry/vector2-with-z';
+import { defaultHeight, type Vector2WithZLike } from '@repo/geometry/vector2-with-z';
 
 
 export default class TranslateCenteredCoordinates {
@@ -48,7 +48,7 @@ export class TranslateCenteredCoordinatesV3 {
 		return compressedWaypoints.map(waypoint => ({
 			x: 2 * waypoint.x + this.middleOfMap.x,
 			y: 2 * waypoint.y + this.middleOfMap.y,
-			z: (waypoint as Vector2WithZLike).z ?? 60,
+			z: (waypoint as Vector2WithZLike).z ?? defaultHeight,
 		}));
 	}
 
@@ -60,7 +60,7 @@ export class TranslateCenteredCoordinatesV3 {
 		return waypoints.map(waypoint => ({
 			x: (waypoint.x - this.middleOfMap.x) / 2,
 			y: (waypoint.y - this.middleOfMap.y) / 2,
-			z: (waypoint as Vector2WithZLike).z ?? 60,
+			z: (waypoint as Vector2WithZLike).z ?? defaultHeight,
 		}));
 	}
 }

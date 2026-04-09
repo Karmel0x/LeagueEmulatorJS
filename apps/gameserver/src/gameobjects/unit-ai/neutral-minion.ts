@@ -2,9 +2,7 @@
 import type { PacketMessage } from '@repo/network/packets/packet';
 import * as packets from '@repo/packets/list';
 import type Character from '@repo/scripting/base/character';
-import Server from '../../app/server';
 import { EventEmitter2 } from '../../core/event-emitter2';
-import { TeamId } from '../../gameobjectextensions/traits/team';
 import type JungleCamp from '../spawners/jungle-camp';
 import Minion, { type MinionAttackableUnitOptions, type MinionEvents, type MinionOptions } from './minion';
 import { AiSubType, AiType } from './types';
@@ -49,29 +47,18 @@ export default class NeutralMinion extends Minion {
 		super.pinEvents();
 	}
 
-	//setCooldown({slot, cooldown}){
-	//	const packet1 = packets.SetCooldown.create({
-	//		netId: this.netId,
-	//		slot: slot,
-	//		playVOWhenCooldownReady: false,
-	//		isSummonerSpell: false,
-	//		cooldown: cooldown,
-	//		maxCooldownForDisplay: cooldown || -1,
-	//	});
-	//	this.packets.toEveryone(packet1);
-	//}
-
 	/**
 	 * @todo send this packet on first visibility ?
 	 */
-	onSpawnPackets(to: (packet: PacketMessage | undefined) => void = (packet) => Server.teams[TeamId.all]?.sendPacket(packet)) {
+	onSpawnPackets() {
+		const spawnPackets: (PacketMessage | undefined)[] = [];
 		const owner = this.owner;
 		if (!owner.character)
-			return;
+			return spawnPackets;
 
-		const spawner = owner.spawner as JungleCamp | undefined;
+		const spawner = owner.spawner as JungleCamp;
 
-		const groupPosition = spawner?.position || owner.position;
+		const groupPosition = spawner.position;
 		const packet1 = packets.CreateNeutral.create({
 			netId: owner.netId,
 			objectNetId: owner.netId,
@@ -99,20 +86,20 @@ export default class NeutralMinion extends Minion {
 			damageBonus: 0,
 			healthBonus: 0,
 			roamState: 0,
-			groupNumber: spawner?.num,
+			groupNumber: spawner.num,
 			//buffSideTeamId: 0,
 			//revealEvent: 0,
 			//initialLevel: 1,
 			//spawnDuration: 0,
 			//spawnTime: 0,
-			behaviorTree: 0,//false,
+			behaviorTree: false,
 			//aiScript: '',
 		});
-		to(packet1);
 		//console.log('CreateNeutral', packet1);
-	}
+		spawnPackets.push(packet1);
 
-	// on die / death functions ===========================================================
+		return spawnPackets;
+	}
 
 	/**
 	 * @todo shall return spawner level

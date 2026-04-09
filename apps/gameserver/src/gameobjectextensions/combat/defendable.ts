@@ -4,13 +4,16 @@ import { IssueOrderType } from '@repo/packets/base/c2s/0x72-IssueOrderReq';
 import { DamageResultType } from '@repo/packets/base/s2c/0x65-UnitApplyDamage';
 import * as packets from '@repo/packets/list';
 import { DamageSource, DamageType } from '@repo/packets/shared/SDeathData';
+import type { CastData } from '@repo/scripting/base/spell';
 import GameObjectList from '../../app/game-object-list';
-import Timer from '../../core/timer';
+import Server from '../../app/server';
+import { ChannelingStopSource } from '../../constants/enums';
 import type Missile from '../../gameobjects/missiles/missile';
 import type { Hero, Player } from '../../gameobjects/unit-ai';
 import { AiType } from '../../gameobjects/unit-ai/types';
 import type AttackableUnit from '../../gameobjects/units/attackable-unit';
 import * as Measure from '../measure';
+import type { BuffAddOptions } from '../traits/buff-manager';
 import Targetable from './targetable';
 
 
@@ -26,15 +29,19 @@ export type DamageData = {
 	damageSource: DamageSource,
 };
 
+export type AllowAddBuff = {
+	allowAddBuff: boolean,
+};
+
 export type DefendableEvents = {
 	'dealDamage': (target: AttackableUnit, e: DamageData) => void;
-	'hitUnit': (target: AttackableUnit, e: DamageData) => void;
-	'beingHit': (source: AttackableUnit, e: DamageData) => void;
-	'beingSpellHit': (source: AttackableUnit, e: DamageData) => void;
+	'hitUnit': (target: AttackableUnit, e: DamageData, castData: Pick<CastData, 'spell'> | undefined) => void;
+	'beingHit': (source: AttackableUnit, e: DamageData, castData: Pick<CastData, 'spell'> | undefined) => void;
+	'beingSpellHit': (castData: CastData, source: AttackableUnit) => void;
 	'preDamage': (source: AttackableUnit, e: DamageData) => void;
 	'preDealDamage': (source: AttackableUnit, e: DamageData) => void;
 	'preMitigationDamage': (source: AttackableUnit, e: DamageData) => void;
-	'spellHit': (target: AttackableUnit, e: DamageData) => void;
+	'spellHit': (castData: CastData, target: AttackableUnit) => void;
 	'takeDamage': (source: AttackableUnit, e: DamageData) => void;
 	'kill': (target: AttackableUnit) => void;
 	'nearbyDeath': (unit: AttackableUnit) => void;
@@ -44,10 +51,11 @@ export type DefendableEvents = {
 	'launchAttack': (target: AttackableUnit) => void;
 	'launchMissile': (missile: Missile, destination: Vector2) => void;
 	'missileEnd': (missile: Missile) => void;
-	'preAttack': (target: AttackableUnit) => void;
+	'preAttack': (target: AttackableUnit, e: { skipNextAutoAttack: boolean }) => void;
 	'miss': (target: AttackableUnit) => void;
 	'dodge': (source: AttackableUnit) => void;
 	'resurrect': () => void;
+	'checkAllowAddBuff': (attacker: AttackableUnit, options: BuffAddOptions, e: AllowAddBuff) => void;
 };
 
 /**
@@ -59,21 +67,35 @@ export default class Defendable extends Targetable {
 	assistMarkers: AssistMarker[] = [];
 	died = 0;
 
+	targetableToAlly = true;
+	targetableToEnemy = true;
+
 	constructor(owner: AttackableUnit, respawnable = false) {
 		super(owner);
 		this.respawnable = respawnable;
 
 		owner.eventEmitter.on('death', (attacker, assists) => {
+			const owner = this.owner;
+
+			try {
+				owner.combat.cancelChanneling(ChannelingStopSource.die);
+			} catch (e) {
+				console.error(e);
+			}
+
 			owner.issueOrder(IssueOrderType.orderNone);
 			owner.onDie(attacker, assists);
 
-			if (!this.respawnable)
-				owner.eventEmitter.emit('destroy');
+			if (!this.respawnable) {
+				owner.destroy();
+			}
 		});
 	}
 
 	sendUnitApplyDamage(source: AttackableUnit, damage: { resultType?: number; type?: number; amount?: number; }) {
 		const target = this.owner;
+		if (target.characterState.noRender || target.character.neverRender)
+			return;
 
 		const packet1 = packets.UnitApplyDamage.create({
 			netId: target.netId,
@@ -137,7 +159,7 @@ export default class Defendable extends Targetable {
 			amount: e.damageAmount,
 		});
 
-		target.packets.OnEnterLocalVisibilityClient();
+		target.packets.sendOnEnterLocalVisibilityClient();
 
 		source.eventEmitter.emit('dealDamage', target, e);
 		target.eventEmitter.emit('takeDamage', source, e);
@@ -150,14 +172,40 @@ export default class Defendable extends Targetable {
 		if (!source.ai || !target.ai)
 			return 1;
 
+		const mapConstants = Server.map.constants;
+
+		const sourceIsHero = source.ai.type === AiType.Hero;
 		const targetIsHero = target.ai.type === AiType.Hero;
+		if (sourceIsHero && targetIsHero)
+			return mapConstants.dr_HeroToHero;
+
+		const sourceIsBuilding = source.ai.type === AiType.Building;
+		if (sourceIsBuilding && targetIsHero)
+			return mapConstants.dr_BuildingToHero;
+
 		const sourceIsUnit = source.ai.type === AiType.Minion;
 		if (sourceIsUnit && targetIsHero)
-			return 0.7;
+			return mapConstants.dr_UnitToHero;
+
+		const targetIsUnit = target.ai.type === AiType.Minion;
+		if (sourceIsHero && targetIsUnit)
+			return mapConstants.dr_HeroToUnit;
+
+		if (sourceIsBuilding && targetIsUnit)
+			return mapConstants.dr_BuildingToUnit;
+
+		if (sourceIsUnit && targetIsUnit)
+			return mapConstants.dr_UnitToUnit;
 
 		const targetIsBuilding = target.ai.type === AiType.Building;
+		if (sourceIsHero && targetIsBuilding)
+			return mapConstants.dr_HeroToBuilding;
+
+		if (sourceIsBuilding && targetIsBuilding)
+			return mapConstants.dr_BuildingToBuilding;
+
 		if (sourceIsUnit && targetIsBuilding)
-			return 0.5;
+			return mapConstants.dr_UnitToBuilding;
 
 		return 1;
 	}
@@ -171,30 +219,28 @@ export default class Defendable extends Targetable {
 		if (missed)
 			return true;
 
-		const target = this.owner;
-		const dodge = target.stats.dodge.total;
-		const dodged = Math.random() < dodge;
-		if (dodged)
-			return true;
+		if (!source.characterState.dodgePiercing) {
+			const target = this.owner;
+			const dodge = target.stats.dodge.total;
+			const dodged = Math.random() < dodge;
+			if (dodged)
+				return true;
+		}
 
 		return false;
 	}
 
-	damage(source: AttackableUnit, e: DamageData) {
+	damage(source: AttackableUnit, e: DamageData, castData: Pick<CastData, 'spell'> | undefined = undefined) {
 		const target = this.owner;
 
-		//if (source.team.id === target.team.id)
-		//	return;
-
-		const blinded = false;
-		if (blinded) {
-			// TODO: move it to basic attack only
-			source.eventEmitter.emit('miss', target);
-			target.eventEmitter.emit('dodge', source);
-			return;
+		if (e.damageSource !== DamageSource.raw && e.damageSource !== DamageSource.internalRaw) {
+			if (source.team.id === target.team.id)
+				return;
 		}
 
-		source.eventEmitter.emit('preDamage', source, e);
+		const characterState = target.characterState;
+		if (characterState.invulnerable)
+			return;
 
 		if (e.damageSource === DamageSource.attack) {
 			// TODO: move it to basic attack only
@@ -205,20 +251,19 @@ export default class Defendable extends Targetable {
 				return;
 			}
 
-			source.eventEmitter.emit('hitUnit', target, e);
-			target.eventEmitter.emit('beingHit', source, e);
+			source.eventEmitter.emit('hitUnit', target, e, castData);
+			target.eventEmitter.emit('beingHit', source, e, castData);
 		}
-		else if (e.damageSource === DamageSource.spell) {
-			source.eventEmitter.emit('spellHit', target, e);
-			target.eventEmitter.emit('beingSpellHit', source, e);
-		}
+
+		target.eventEmitter.emit('preDamage', source, e);
 
 		//console.log('damage', dmg, this.health.current, this.health.total);
 		let damage = this.mitigateDamage(source, e);
 		damage *= this.getDamageRatio(source, target);
+		e.damageAmount = damage;
 
 		if (damage <= 0) {
-			(source.ai as Player)?.packets?.chatBoxDebugMessage('damaged with 0 damage');
+			(source.ai as Player).packets?.chatBoxDebugMessage('damaged with 0 damage');
 			return;
 		}
 
@@ -227,7 +272,7 @@ export default class Defendable extends Targetable {
 
 	private getKillers(clean = false) {
 		const target = this.owner;
-		const appTime = Timer.app.now();
+		const appTime = Server.gameLoop.timer;
 
 		const killers = this.assistMarkers.filter(assist => {
 			if (assist.unit === target)
@@ -251,7 +296,7 @@ export default class Defendable extends Targetable {
 
 	private getKillerAssistants(killers: AssistMarker[]) {
 		let killerAssistants: AssistMarker[] = [];
-		const appTime = Timer.app.now();
+		const appTime = Server.gameLoop.timer;
 
 		killers.forEach(killer => {
 			const killerAssistants1 = killer.unit.combat.assistMarkers.filter(assist => {
@@ -292,6 +337,8 @@ export default class Defendable extends Targetable {
 	sendDie(source: AttackableUnit) {
 		// @todo
 		const target = this.owner;
+		//if (target.characterState.noRender || target.character.neverRender)
+		//	return;
 
 		const heroPackets = (target.ai as Hero).packets;
 		if (heroPackets) {
@@ -306,7 +353,8 @@ export default class Defendable extends Targetable {
 		if (this.died)
 			return;
 
-		this.died = Timer.app.now();
+		const now = Server.gameLoop.timer;
+		this.died = now;
 
 		const assists = this.getAssists(true).filter(k => k.unit !== source);
 
@@ -340,7 +388,7 @@ export default class Defendable extends Targetable {
 	}
 
 	canBeAttacked() {
-		return !this.died;
+		return !this.died && !this.owner.characterState.invulnerable;
 	}
 
 	heal(source: AttackableUnit, healAmount: number) {
@@ -353,7 +401,7 @@ export default class Defendable extends Targetable {
 		target.stats.health.current += healAmount;
 		this.addAssistMarker(source);
 
-		target.packets.OnEnterLocalVisibilityClient();
+		target.packets.sendOnEnterLocalVisibilityClient();
 	}
 
 	healPercent(source: AttackableUnit, hpPercent: number) {
@@ -362,9 +410,10 @@ export default class Defendable extends Targetable {
 	}
 
 	addAssistMarker(unit: AttackableUnit, duration = 10) {
+		const now = Server.gameLoop.timer;
 		this.assistMarkers.push({
 			unit,
-			time: Timer.app.now(),
+			time: now,
 			duration,
 		});
 	}

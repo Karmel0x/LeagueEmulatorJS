@@ -10,7 +10,9 @@ import Structure, { type StructureEvents, type StructureOptions } from './struct
 
 
 export type TurretOptions = StructureOptions & {
-
+	lane: number,
+	depth: number,
+	num: number,
 };
 
 export type TurretEvents = StructureEvents & {
@@ -64,36 +66,43 @@ export default class Turret extends Structure {
 
 	async onDie(source: AttackableUnit, assists: AttackableUnit[]) {
 		this.announceDie(source, assists);
+		super.onDie(source, assists);
 	}
 
-	onSpawnPackets(to: (packet: PacketMessage | undefined) => void) {
+	onSpawnPackets() {
+		const spawnPackets: (PacketMessage | undefined)[] = [];
 		const owner = this.owner;
 		if (owner.combat.died)
-			return;
+			return spawnPackets;
 
 		const packet1 = packets.CreateTurret.create({
 			netId: owner.netId,
 			objectNetId: owner.netId,
 			netNodeId: 0x40,
 			name: owner.name,
-			isTargetable: true,
-			isTargetableToTeam: 0x01800000,
 		});
-		to(packet1);
+		spawnPackets.push(packet1);
 
-		if (owner.stats.health.current < owner.stats.health.total)
-			owner.packets.OnEnterLocalVisibilityClient(to);
+		if (owner.stats.health.current < owner.stats.health.total) {
+			const packet2 = owner.packets.OnEnterLocalVisibilityClient();
+			spawnPackets.push(packet2);
+		}
 
-		//const packet2 = packets.OnEnterVisibilityClient.create({
+		//const packet3 = packets.OnEnterVisibilityClient.create({
 		//	netId: owner.netId,
 		//	isTurret: true,
 		//});
-		//to(packet2);
+		//spawnPackets.push(packet3);
+
+		return spawnPackets;
 	}
 
 	onSpawn() {
 		const owner = this.owner;
-		this.onSpawnPackets((packet) => owner.packets.toEveryone(packet, loadingStages.inGame));
+		const packets = this.onSpawnPackets();
+		owner.packets.toEveryone(packets, loadingStages.inGame);
+
+		super.onSpawn();
 	}
 
 	///**

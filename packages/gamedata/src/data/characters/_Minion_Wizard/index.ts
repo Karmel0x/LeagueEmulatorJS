@@ -13,7 +13,7 @@ import package1 from './package';
 export default class _Minion_Wizard extends Character {
 	static package = package1;
 
-	id = MinionType.caster;
+	id = MinionType.archer;
 
 	static reward = {
 		gold: 14,

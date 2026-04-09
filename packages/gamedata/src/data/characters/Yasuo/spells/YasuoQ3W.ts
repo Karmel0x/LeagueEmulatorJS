@@ -5,7 +5,7 @@ import type AttackableUnit from '@repo/gameserver/src/gameobjects/units/attackab
 import { Vector2 } from '@repo/geometry';
 import type { SCastInfoModel } from '@repo/packets/shared/SCastInfo';
 import _Spell, { type CastData } from '@repo/scripting/base/spell';
-import { SpellCast } from '@repo/scripting/load/spell-cast';
+import { SpellCast, type CastVars } from '@repo/scripting/load/spell-cast';
 import package1 from '../package';
 import YasuoQ3 from './YasuoQ3';
 
@@ -26,7 +26,7 @@ export default class YasuoQ3W extends _Spell {
 
 	castRange = 1150;
 
-	preCast(owner: AttackableUnit, castData: CastData, spellVars: any) {
+	preCast(owner: AttackableUnit, castData: CastData, castVars: CastVars) {
 		//if (owner.combat.castingSpell)
 		//	throw new Error('No combat casting spell');
 
@@ -34,19 +34,19 @@ export default class YasuoQ3W extends _Spell {
 			throw new Error('Has upgrade spell buff');
 	}
 
-	onCast(owner: AttackableUnit, castData: CastData, spellVars: any) {
+	onCast(owner: AttackableUnit, castData: CastData, castVars: CastVars) {
 		const targetPosition = castData.targetPosition;
 		if (!targetPosition)
 			return;
 
 		const targetPosition2 = new Vector2(targetPosition.x, targetPosition.y);
 		//this.position = Measure.centerToCenter.getPositionBetweenRange(owner, castData.targetPosition, this.castRange);
-		spellVars.anglePosition = Measure.general.anglePosition(targetPosition2, owner);
+		castVars.anglePosition = Measure.general.anglePosition(targetPosition2, owner);
 		//castData.target = Dummytarget({position: castData.targetPosition});
 
 	}
 
-	async postCast(owner: AttackableUnit, castData: CastData, spellVars: any) {
+	async postCast(owner: AttackableUnit, castData: CastData, castVars: CastVars) {
 		castData = {
 			...castData,
 			packet: {
@@ -55,11 +55,10 @@ export default class YasuoQ3W extends _Spell {
 			},
 		};
 
-		const Spell = YasuoQ3;
-		const spell = new Spell();
-		spell.name = Spell.name;
-		const spellCast = new SpellCast(spell, owner, castData);
-		await spellCast.castSpell(spellVars);
+		const spell1 = new YasuoQ3();
+		const spellCast = new SpellCast(spell1, owner, castData);
+		spellCast.castVars = castVars;
+		await spellCast.castSpell();
 	}
 
 }

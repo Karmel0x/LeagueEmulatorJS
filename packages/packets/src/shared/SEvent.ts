@@ -6,6 +6,7 @@ import type { NetId } from '../types/player';
 
 export type SEventModelBase = {
 	eventId: OnEvent,
+	sourceNetId: NetId,
 	onEventParam: OnEventParam,
 	otherNetId: NetId,
 };

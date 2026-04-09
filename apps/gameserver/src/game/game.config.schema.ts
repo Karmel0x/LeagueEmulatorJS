@@ -7,6 +7,7 @@ import type { PlayerList } from '../gameobjects/spawners/fountain';
 export type GameConfig = {
     version: number;
     map: number;
+    id: number;
 };
 
 export type TestingConfig = {
@@ -28,7 +29,10 @@ export type DebuggingConfig = {
     "enabled": boolean;
     "noTerrainEscape": boolean;
     "noPathFinding": boolean;
+    "noNavmeshVision": boolean;
+    "noGrassCheck": boolean;
     "noSpawners": boolean;
+    "chatDebugMessages": boolean;
 };
 
 export type LoggingConfig = {
@@ -39,8 +43,8 @@ export type LoggingConfig = {
 export type ConfigSchema = {
     server: NetworkConfig;
     game: GameConfig;
-    testing: TestingConfig;
-    debugging: DebuggingConfig;
-    logging: LoggingConfig;
+    testing: Partial<TestingConfig>;
+    debugging: Partial<DebuggingConfig>;
+    logging: Partial<LoggingConfig>;
     players: PlayerList;
 };

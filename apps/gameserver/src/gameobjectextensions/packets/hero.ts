@@ -1,12 +1,11 @@
 
 import * as packets from '@repo/packets/list';
 import { DamageSource, DamageType } from '@repo/packets/shared/SDeathData';
-import loadingStages from '../../constants/game-state';
 import { humanizeMS } from '../../core/utils';
+import config from '../../game/game.config';
 import type Fountain from '../../gameobjects/spawners/fountain';
 import type Hero from '../../gameobjects/unit-ai/hero';
 import type AttackableUnit from '../../gameobjects/units/attackable-unit';
-import { sendUnitStats } from '../../packet-helpers/on-replication';
 import { TeamId } from '../traits/team';
 
 
@@ -18,23 +17,25 @@ export default class PHero {
 		this.owner = owner;
 	}
 
-	//toSelf(packet: PacketMessage | undefined, minStage = loadingStages.inGame) {
+	//toSelf(packet: PacketMessages, minStage = loadingStages.inGame) {
 	//	this.owner.network.sendPacket(packet, minStage);
 	//}
 
-	OnEnterLocalVisibilityClient() {
+	OnEnterLocalVisibilityClient() { }
+
+	sendOnEnterLocalVisibilityClient() {
 		const ai = this.owner;
 		const unit = ai.owner;
-		sendUnitStats(unit);
+		unit.markReplicateStats();
 	}
 
-	CreateHero(dest: { sendPacket: Function }) {
+	CreateHero() {
 		const ai = this.owner;
 		const unit = ai.owner;
 
 		//todo
 		const packet1 = packets.CreateHero.create({
-			//netId : this.netId,
+			//netId: this.netId,
 			objectNetId: unit.netId,
 			clientId: ai.clientId,
 			netNodeId: 0x40,
@@ -44,7 +45,7 @@ export default class PHero {
 			botRank: 0,
 			spawnPosIndex: ai.num,
 			skinId: 0,
-			name: ai.summoner?.name,
+			name: unit.name,
 			skinName: unit.skin,
 			//deathDurationRemaining: 0,
 			//timeSinceDeath: 0,
@@ -53,10 +54,10 @@ export default class PHero {
 			//unknown2: false,
 		});
 
-		dest.sendPacket(packet1, loadingStages.notConnected);
+		return packet1;
 	}
 
-	AvatarInfo_Server(dest: { sendPacket: Function }) {
+	AvatarInfo_Server() {
 		const ai = this.owner;
 		const unit = ai.owner;
 
@@ -72,7 +73,7 @@ export default class PHero {
 			level: 1,
 		});
 
-		dest.sendPacket(packet1, loadingStages.notConnected);
+		return packet1;
 	}
 
 	chatBoxMessage(message: string) {
@@ -87,7 +88,17 @@ export default class PHero {
 		unit.packets.toSelf(packet1);
 	}
 
+	chatBoxMessage2(...args: any[]) {
+		const argsStr = args.map((a) => typeof a === 'string' ? a : JSON.stringify(a));
+
+		let message = argsStr.join(' ');
+		this.chatBoxMessage(message);
+	}
+
 	chatBoxDebugMessage(...args: any[]) {
+		if (!config.debugging.enabled || !config.debugging.chatDebugMessages)
+			return;
+
 		const argsStr = args.map((a) => typeof a === 'string' ? a : JSON.stringify(a));
 
 		let message = argsStr.join(' ');

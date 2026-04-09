@@ -11,14 +11,16 @@ import Builder from '../../gameobjects/spawners/builder';
 import Fountain, { type PlayerList } from '../../gameobjects/spawners/fountain';
 import JungleCamp from '../../gameobjects/spawners/jungle-camp';
 import type Player from '../../gameobjects/unit-ai/player';
+import { forceUpdateAllUnitsStats } from '../../packet-helpers/on-replication';
 import AmbientGain from '../components/ambient-gain';
 import MovementSimulation from '../components/movement-simulation';
-import config from '../game.config.json';
-import '../game.config.schema.json';
+import ReplicateStats from '../components/replicate-stats';
+import config from '../game.config';
 
 const GameComponents = {
 	MovementSimulation,
 	AmbientGain,
+	ReplicateStats,
 };
 
 export type GameEvents = {
@@ -75,7 +77,7 @@ export default class Game {
 		const packet1 = packets.RequestRename.create({
 			playerId: player.summoner.id,
 			skinId: player.skin,
-			playerName: player.summoner.name,
+			playerName: player.owner.name,
 		});
 
 		Server.teams[TeamId.all]?.sendPacket(packet1, loadingStages.notConnected);
@@ -142,7 +144,7 @@ export default class Game {
 
 			// @todo remove this
 			if (!time)
-				time = Timer.app.now();
+				time = Server.gameLoop.timer;
 
 			Game.SynchSimTime(player, time);
 			await delay(10 * 1000);
@@ -173,6 +175,8 @@ export default class Game {
 		Game.StartGame(player);
 		Game.GameTimeHeartBeat(player);
 		Game.SyncMissionStartTime(player);
+
+		forceUpdateAllUnitsStats(player.owner);
 	}
 
 	// STAGE start game flow ==========================================================
@@ -183,19 +187,26 @@ export default class Game {
 		Fountain.spawnAll(config.players as PlayerList);
 	}
 
+	static ambientGain: AmbientGain;
+	static replicateStats: ReplicateStats;
 
 	static async run() {
 
 		const ambientGain = new GameComponents.AmbientGain();
+		this.ambientGain = ambientGain;
 		ambientGain.start();
 
+		const replicateStats = new GameComponents.ReplicateStats();
+		this.replicateStats = replicateStats;
+		replicateStats.start();
 	}
 
 	static loaded() {
 		if (Server.game.loaded)
 			return;
 
-		Server.game.loaded = Timer.app.now();
+		const now = Server.gameLoop.timer;
+		Server.game.loaded = now;
 
 		if (!config.debugging.enabled || !config.debugging.noSpawners) {
 			Builder.spawnAll();
@@ -203,6 +214,7 @@ export default class Game {
 			JungleCamp.spawnAll();
 		}
 
+		console.log('Game.loaded');
 		this.run();
 	}
 
@@ -210,6 +222,7 @@ export default class Game {
 		if (Server.game.started)
 			return;
 
+		console.log('Game.started');
 		Server.game.start();
 	}
 
@@ -217,9 +230,9 @@ export default class Game {
 		if (Server.game.loaded)
 			return true;
 
-		// start game if 5 minutes passed
-		const passed = Timer.app.now() - Server.game.initialized;
-		if (passed > 300 * 1000)
+		const now = Server.gameLoop.timer;
+		const passed = now - Server.game.initialized;
+		if (passed > 120 * 1000)
 			return true;
 
 		// or all players which connected has loaded
@@ -254,10 +267,10 @@ export default class Game {
 				continue;
 			}
 
-			//if (this.checkPlayersLoaded()) {
-			this.loaded();
-			break;
-			//}
+			if (config.testing.enabled || this.checkPlayersLoaded()) {
+				this.loaded();
+				break;
+			}
 		}
 
 		while (!Server.game.started) {
@@ -279,12 +292,14 @@ export default class Game {
 	timer = new Timer().notYet();
 
 	initialize() {
-		this.initialized = Timer.app.now();
+		const now = Server.gameLoop.timer;
+		this.initialized = now;
 		Game.startWhenReady();
 	}
 
 	start() {
-		this.started = Timer.app.now();
+		const now = Server.gameLoop.timer;
+		this.started = now;
 		this.timer.start();
 
 		// @todo remove this

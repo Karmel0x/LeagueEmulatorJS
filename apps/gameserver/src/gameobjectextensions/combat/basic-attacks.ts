@@ -11,7 +11,7 @@ export default class BasicAttacks {
 	constructor(owner: AttackableUnit) {
 		this.owner = owner;
 
-		owner.eventEmitter.on('preCastSpell', (spell, targets, e) => {
+		owner.eventEmitter.on('preCastSpell', (castData, targets, e) => {
 			if (!targets)
 				return;
 
@@ -19,6 +19,10 @@ export default class BasicAttacks {
 			if (!target)
 				return;
 
+			if (!castData.isAutoAttack)
+				return;
+
+			const { spell } = castData;
 			if (!spell)
 				return;
 
@@ -27,8 +31,6 @@ export default class BasicAttacks {
 			if (!spellName.includes('basicattack') && !spellName.includes('critattack'))
 				return;
 
-			e.sendSpellCast = false;
-			e.sendMissileReplication = false;
 
 			// TODO
 			const attackTotalTime = 0.2;//1.6;
@@ -41,20 +43,24 @@ export default class BasicAttacks {
 			e.totalTime = attackTotalTime;
 			e.castTime = attackCastTime;
 
+			owner.facePosition = target.position;
+
+			e.sendSpellCast = false;
+			e.sendMissileReplication = false;
+
 			// TODO: extraTime [-0.14, 0]
 			const extraTime = 0;
 
 			const attackSlot = SlotId.a;
 			this.attackAns(target, attackSlot, extraTime);
-			//(owner.ai as Player)?.packets?.chatBoxDebugMessage('aa extraTime', extraTime);
+			//(owner.ai as Player).packets?.chatBoxDebugMessage('aa extraTime', extraTime);
 		});
 
-		owner.eventEmitter.on('cancelSpellCast', (spell) => {
-			if (!spell)
+		owner.eventEmitter.on('cancelSpellCast', (castData) => {
+			if (!castData.isAutoAttack)
 				return;
 
-			const spellName = spell.name.toLowerCase();
-			if (!spellName.includes('basicattack') && !spellName.includes('critattack'))
+			if (castData.spellSlot !== SlotId.a)
 				return;
 
 			sendStopAttack(owner, {});

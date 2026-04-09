@@ -1,5 +1,6 @@
 import type AttackableUnit from '@repo/gameserver/src/gameobjects/units/attackable-unit';
 import _Spell, { type CastData } from '@repo/scripting/base/spell';
+import type { CastVars } from '@repo/scripting/load/spell-cast';
 
 
 export default class SummonerBoost extends _Spell {
@@ -11,7 +12,7 @@ export default class SummonerBoost extends _Spell {
 	cost = 0;
 
 
-	onCast(owner: AttackableUnit, castData: CastData, spellVars: any) {
+	onCast(owner: AttackableUnit, castData: CastData, castVars: CastVars) {
 
 	}
 

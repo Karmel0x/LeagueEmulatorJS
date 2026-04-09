@@ -4,12 +4,13 @@ import * as packets from '@repo/packets/list';
 import type Character from '@repo/scripting/base/character';
 import GameObjectList from '../../app/game-object-list';
 import Server from '../../app/server';
+import UnitAiList from '../../app/unit-ai-list';
 import { EventEmitter2 } from '../../core/event-emitter2';
+import { numberBetween } from '../../core/utils';
 import { TeamId } from '../../gameobjectextensions/traits/team';
 import type AttackableUnit from '../units/attackable-unit';
 import type { AttackableUnitOptions } from '../units/attackable-unit';
 import BaseAi, { type BaseAiEvents, type BaseAiOptions } from './base-ai';
-import Hero from './hero';
 import { AiSubType, AiType } from './types';
 
 export type MinionAttackableUnitOptions = AttackableUnitOptions & {
@@ -53,16 +54,23 @@ export default class Minion extends BaseAi {
 	pinEvents() {
 		const owner = this.owner;
 
+		// TODO: destroy object on death
 		owner.eventEmitter.on('death', (source, assists) => this.onDie(source, assists));
 		owner.eventEmitter.on('spawn', () => this.onSpawn());
 
-		owner.eventEmitter.on('noTargetsInRange', () => {
+		owner.eventEmitter.on('attackTargetChange', (target) => {
+			if (target)
+				return;
+
 			this.stopAttack();
 		});
 	}
 
 	stopAttack() {
 		const owner = this.owner;
+		if (owner.characterState.noRender || owner.character.neverRender)
+			return;
+
 		const packet1 = packets.InstantStop_Attack.create({
 			netId: owner.netId,
 			keepAnimating: true,
@@ -71,8 +79,13 @@ export default class Minion extends BaseAi {
 		owner.packets.toEveryone(packet1);
 	}
 
-	onSpawnPackets(to: (packet: PacketMessage | undefined) => void) {
+	onSpawnPackets() {
+		const spawnPackets: (PacketMessage | undefined)[] = [];
 		const owner = this.owner;
+
+		// it has to be on neverRender but TODO: check if it should be on noRender here
+		if (owner.characterState.noRender || owner.character.neverRender)
+			return spawnPackets;
 
 		const packet1 = packets.SpawnMinion.create({
 			netId: 0,
@@ -82,21 +95,27 @@ export default class Minion extends BaseAi {
 			skinId: 0,
 			cloneNetId: 0,
 			team: owner.team.id,
-			visibilitySize: owner.stats.collisionRadius.total,
+			visibilitySize: owner.stats.visibilitySize.total,
 			ignoreCollision: owner.ignoreCollision,
 			isWard: false,
+			//isLaneMinion: true,
 			name: owner.name,
 			skinName: owner.character.name,
 		});
-		to(packet1);
+		spawnPackets.push(packet1);
 
 		const health = owner.stats.health;
-		if (health.current < health.total)
-			owner.packets.OnEnterLocalVisibilityClient(to);
+		if (health.current < health.total) {
+			const packet2 = owner.packets.OnEnterLocalVisibilityClient();
+			spawnPackets.push(packet2);
+		}
+
+		return spawnPackets;
 	}
 
 	onSpawn() {
-		this.onSpawnPackets((packet) => Server.teams[TeamId.all]?.sendPacket(packet));
+		const packets = this.onSpawnPackets();
+		Server.teams[TeamId.all]?.sendPacket(packets);
 	}
 
 	/**
@@ -113,12 +132,27 @@ export default class Minion extends BaseAi {
 
 	get rewardExp() {
 		const character = this.owner.character;
-		return 0;
+		return character?.expGivenOnDeath || 0;
 	}
 
 	get rewardGold() {
 		const character = this.owner.character;
-		return 0;
+		return character?.goldGivenOnDeath || 0;
+	}
+
+	get rewardGlobalExp() {
+		const character = this.owner.character;
+		return character?.globalExpGivenOnDeath || 0;
+	}
+
+	get rewardGlobalGold() {
+		const character = this.owner.character;
+		return character?.globalGoldGivenOnDeath || 0;
+	}
+
+	get expRadius() {
+		const range = Server.map.constants.dieExpRadius;
+		return range as number;
 	}
 
 	onDieRewards(source: AttackableUnit, assists: AttackableUnit[]) {
@@ -129,32 +163,47 @@ export default class Minion extends BaseAi {
 		if (source.team.id === thisUnitTeamId)
 			return;
 
-		const range = Server.map.constants.dieExpRadius;
-		const enemyUnitsInRange = GameObjectList.aliveUnits.filter(unit => unit.team.id !== thisUnitTeamId && unit.position.distanceTo(owner.position) <= range);
-		const enemyPlayersInRange = enemyUnitsInRange.filter(v => v.ai instanceof Hero && v !== source);
-
-		let numberOfPlayersToSplitExp = enemyPlayersInRange.length;
-		if (source.ai instanceof Hero)
-			numberOfPlayersToSplitExp += 1;
-
 		let rewardExp = this.rewardExp;
-		if (numberOfPlayersToSplitExp <= 1)
-			rewardExp *= 0.92;//PlayerMinionSplitXP1
-		else
-			rewardExp *= 1.1;//PlayerMinionSplitXP2 * 2
+		let rewardGold = this.rewardGold;
+		if (rewardExp || rewardGold) {
+			const range = this.expRadius;
+			const enemyUnitsInRange = GameObjectList.aliveUnits.filter(unit => unit.team.id !== thisUnitTeamId && unit.team.id !== TeamId.neutral && unit.position.distanceTo(owner.position) <= range);
+			const enemyPlayersInRange = enemyUnitsInRange.filter(v => v.ai.type === AiType.Hero && v !== source);
 
-		rewardExp /= numberOfPlayersToSplitExp;
+			let numberOfPlayersToSplitExp = enemyPlayersInRange.length;
+			if (source.ai.type === AiType.Hero)
+				numberOfPlayersToSplitExp += 1;
 
-		// give gold and exp to killer no matter if in range
-		if (source.ai instanceof Hero) {
-			source.progress.expUp(rewardExp);
-			source.progress.goldUp(this.rewardGold, owner);
+			if (numberOfPlayersToSplitExp > 0) {
+				const experienceSplit = Server.map.mission.experienceSplit;
+				const rewardExpSplitted = rewardExp * experienceSplit[numberBetween(numberOfPlayersToSplitExp - 1, 0, experienceSplit.length)]!;
+
+				// give gold and exp to killer no matter if in range
+				if (source.ai.type === AiType.Hero) {
+					source.progress.expUp(rewardExpSplitted);
+					source.progress.goldUp(rewardGold, owner);
+				}
+
+				// give exp to nearby enemies
+				enemyPlayersInRange.forEach(enemyUnit => {
+					enemyUnit.progress.expUp(rewardExpSplitted);
+				});
+			}
 		}
 
-		// give exp to nearby enemies
-		enemyPlayersInRange.forEach(enemyUnit => {
-			enemyUnit.progress.expUp(rewardExp);
-		});
+		let rewardGlobalExp = this.rewardGlobalExp;
+		let rewardGlobalGold = this.rewardGlobalGold;
+		if (rewardGlobalExp || rewardGlobalGold) {
+			const heroes = UnitAiList.heroes;
+			const teamHeroes = heroes.filter(ai => ai.owner.team.id !== thisUnitTeamId);
+			const teamHeroUnits = teamHeroes.map(ai => ai.owner);
+
+			for (let i = 0; i < teamHeroUnits.length; i++) {
+				const unit = teamHeroUnits[i]!;
+				unit.progress.expUp(rewardGlobalExp);
+				unit.progress.goldUp(rewardGlobalGold);
+			}
+		}
 	}
 
 	onDie(source: AttackableUnit, assists: AttackableUnit[]) {

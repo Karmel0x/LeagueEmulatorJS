@@ -15,11 +15,18 @@ export default (player: Player, packet: packets.CastSpellReqModel) => {
 
 	const slot = packet.slot;
 
-	if (slot >= SlotId.q && slot <= SlotId.f)
+	if (slot >= SlotId.q && slot <= SlotId.f) {
 		owner.combat.castSpell(packet);
-	//else if (slot >= SlotId.a && slot <= SlotId.a9)
-	//	owner.combat.startAttack(packet);
-	else if (slot >= SlotId.i && slot <= SlotId.i7)
-		owner.inventory.castItem(packet);
+		return;
+	}
 
+	//if (slot >= SlotId.a && slot <= SlotId.a9) {
+	//	owner.combat.startAttack(packet);
+	//	return;
+	//}
+
+	if (slot >= SlotId.i && slot <= SlotId.i7) {
+		owner.inventory.castItem(packet);
+		return;
+	}
 };

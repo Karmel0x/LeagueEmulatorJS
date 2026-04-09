@@ -1,7 +1,5 @@
 import GameObjectList from "@repo/gameserver/src/app/game-object-list";
 import { delay } from "@repo/gameserver/src/core/utils";
-import type { Player } from "@repo/gameserver/src/gameobjects/unit-ai";
-import { AiSubType } from "@repo/gameserver/src/gameobjects/unit-ai/types";
 import type AttackableUnit from "@repo/gameserver/src/gameobjects/units/attackable-unit";
 import { sendMissileReplication, sendSpellCast } from "@repo/gameserver/src/packet-helpers/spell-cast";
 import { Vector2WithZ } from "@repo/geometry";
@@ -11,40 +9,14 @@ import type Spell from "../base/spell";
 import type { CastData } from "../base/spell";
 
 
-export function pinCastEvents(spell: Spell) {
-	spell.eventEmitter.on('cast', async (owner, castData, onSuccessCast) => {
-		const haltedMovement = owner.moving.haltMovement();
-		(owner.ai as Player)?.packets?.chatBoxDebugMessage(`waypointsHalt`, owner.moving.waypointsHalt);
-		owner.moving.sendWaypoints();
-
-		try {
-			//console.log('spell cast', spell.name, '(', HashString.HashString(spell.name), ')', 'at', Math.round(performance.now()));
-			const spellCast = new SpellCast(spell, owner, castData);
-			const spellVars = {};
-			await spellCast.castSpell(spellVars, onSuccessCast);
-		}
-		catch (e) {
-			if (e instanceof Error) {
-				console.error('spell.cast.error', e);
-				const ai = owner.ai;
-				if (ai && ai.subType === AiSubType.Player) {
-					const stackMsg = e.stack?.split('\n')[1];
-					(owner.ai as Player)?.packets?.chatBoxDebugMessage(`cast error: ${e.message} ${stackMsg}`);
-				}
-			}
-		}
-		finally {
-			owner.moving.unhaltMovement(haltedMovement);
-			(owner.ai as Player)?.packets?.chatBoxDebugMessage(`waypointsHalt`, owner.moving.waypointsHalt);
-		}
-	});
-}
+export type CastVars = any;
 
 export class SpellCast {
 
 	spell: Spell;
 	owner: AttackableUnit;
 	castData: CastData;
+	castVars: CastVars = {};
 
 	constructor(spell: Spell, owner: AttackableUnit, castData: CastData) {
 		this.spell = spell;
@@ -59,8 +31,8 @@ export class SpellCast {
 		}));
 	}
 
-	async castSpell(spellVars: any = {}, onSuccessCast = () => { }) {
-		const { spell, owner, castData } = this;
+	async castSpell(onSuccessCast = () => { }) {
+		const { spell, owner, castData, castVars } = this;
 		const { packet } = castData;
 
 		/**
@@ -97,8 +69,8 @@ export class SpellCast {
 			totalTime,
 		};
 
-		owner.eventEmitter.emit('preCastSpell', spell, targets, e);
-		spell.preCast(owner, castData, spellVars);
+		owner.eventEmitter.emit('preCastSpell', castData, targets, e);
+		spell.preCast(owner, castData, castVars);
 
 		castTime = e.castTime;
 		totalTime = e.totalTime;
@@ -110,7 +82,7 @@ export class SpellCast {
 
 		if (spell.canCancel) {
 			if (lastOrderId !== owner.lastOrderId) {
-				owner.eventEmitter.emit('cancelSpellCast', spell);
+				owner.eventEmitter.emit('cancelSpellCast', castData);
 				return;
 			}
 		}
@@ -143,10 +115,10 @@ export class SpellCast {
 			});
 		}
 
-		spell.onCast(owner, castData, spellVars);
+		spell.onCast(owner, castData, castVars);
 
-		if (e.sendMissileReplication && spellVars.missile) {
-			const missile = spellVars.missile;
+		if (e.sendMissileReplication && castVars.missile) {
+			const missile = castVars.missile;
 
 			const startPoint = {
 				x: missile.position.x,
@@ -179,7 +151,7 @@ export class SpellCast {
 			});
 		}
 
-		await spell.postCast(owner, castData, spellVars);
+		await spell.postCast(owner, castData, castVars);
 	}
 
 }

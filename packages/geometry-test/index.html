@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Collision Avoidance Test</title>
+</head>
+
+<body>
+  <div id="canvasWrap">
+    <canvas id="canvas"></canvas>
+    <div id="methodLabels"></div>
+  </div>
+  <div id="sidebar">
+    <h3>Collision Avoidance Test</h3>
+
+    <div id="info">
+      Click on empty space to add a unit.<br>
+      Click on a unit to select it, then right-click to set its destination.<br>
+      Drag a unit to reposition it.
+    </div>
+
+    <div class="group">
+      <div class="legend">
+        <div class="legend-dot" style="background:#4fc3f7"></div> Team 1 (idle)
+      </div>
+      <div class="legend">
+        <div class="legend-dot" style="background:#2196f3"></div> Team 1 (moving)
+      </div>
+      <div class="legend">
+        <div class="legend-dot" style="background:#f47a7a"></div> Team 2 (idle)
+      </div>
+      <div class="legend">
+        <div class="legend-dot" style="background:#e94560"></div> Team 2 (moving)
+      </div>
+      <div class="legend">
+        <div class="legend-dot" style="background:#aaa"></div> Neutral (no collision)
+      </div>
+      <div class="legend" style="margin-top:4px">
+        <div class="legend-dot" style="background:#fff;border-radius:50%"></div> Circle = melee
+      </div>
+      <div class="legend">
+        <div class="legend-dot" style="background:#fff;border-radius:0;transform:rotate(45deg);width:8px;height:8px">
+        </div> Diamond = range
+      </div>
+    </div>
+
+    <div class="group">
+      <label>Unit radius <span id="valRadius">30</span></label>
+      <input type="range" id="sliderRadius" min="10" max="80" value="30">
+    </div>
+    <div class="group">
+      <label>Move speed <span id="valSpeed">200</span></label>
+      <input type="range" id="sliderSpeed" min="50" max="600" value="200">
+    </div>
+    <div class="group">
+      <label>Spawn team</label>
+      <div style="display:flex;gap:4px;margin-top:4px;">
+        <button id="btnTeam1" style="background:#2196f3">Team 1</button>
+        <button id="btnTeam2" style="background:#e94560">Team 2</button>
+        <button id="btnNeutral" style="background:#666">Neutral</button>
+      </div>
+    </div>
+
+    <div class="group">
+      <button id="btnPreset1">Preset: Head-on (2 groups)</button>
+      <button id="btnPreset2" style="margin-top:4px">Preset: Funnel (narrow path)</button>
+      <button id="btnPreset3" style="margin-top:4px">Preset: Cluster (tight group)</button>
+      <button id="btnPreset4" style="margin-top:4px">Preset: Minions path</button>
+      <button id="btnPreset5" style="margin-top:4px">Preset: Minions path + fight</button>
+      <button id="btnPreset6" style="margin-top:4px">Preset: Static obstacles</button>
+      <button id="btnPreset7" style="margin-top:4px">Preset: 50 random obstacles</button>
+      <div style="display:flex;gap:4px;align-items:center;margin-top:4px">
+        <button id="btnLoadPathfindingJson" style="background:#ff9800;flex:1">Load pathfinding.json</button>
+        <span style="font-size:11px">Scale</span>
+        <input type="number" id="inputImportScale" value="0.1" step="0.01" min="0.01" style="width:60px">
+      </div>
+      <input type="file" id="fileLoadPathfindingJson" accept=".json" style="display:none">
+      <div id="pathfindingJsonNav" style="display:none;margin-top:4px;font-size:11px">
+        <div style="display:flex;align-items:center;gap:6px">
+          <span id="pathfindingJsonInfo" style="flex-shrink:0"></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:4px">
+          <button id="btnPathfindingJsonPrev" style="background:#555;padding:4px 8px">Prev</button>
+          <input type="range" id="sliderCase" min="0" max="0" value="0" style="flex:1;width:auto">
+          <button id="btnPathfindingJsonNext" style="background:#555;padding:4px 8px">Next</button>
+        </div>
+      </div>
+      <button id="btnExport" style="margin-top:4px;background:#4caf50">Export pathfinding.json</button>
+      <button id="btnClear" style="margin-top:4px;background:#555">Clear all</button>
+    </div>
+
+    <div class="group" id="selectedGroup" style="display:none">
+      <label style="font-weight:bold">Selected unit</label>
+      <div style="display:flex;gap:4px;align-items:center;margin-top:4px">
+        <span style="width:18px">X</span>
+        <input type="number" id="selX" style="width:80px">
+        <span style="width:18px">Y</span>
+        <input type="number" id="selY" style="width:80px">
+      </div>
+      <div style="display:flex;gap:4px;align-items:center;margin-top:4px">
+        <span style="width:18px">R</span>
+        <input type="number" id="selR" min="1" style="width:80px">
+      </div>
+    </div>
+
+    <div class="group">
+      <label><input type="checkbox" id="chkShowRadius" checked> Show collision radii</label>
+      <label><input type="checkbox" id="chkShowVelocity" checked> Show velocity arrows</label>
+      <label><input type="checkbox" id="chkShowTrails"> Show trails</label>
+      <label><input type="checkbox" id="chkPaused"> Paused</label>
+    </div>
+
+    <div class="group" style="margin-top:auto">
+      <div id="stats"></div>
+    </div>
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
+</html>

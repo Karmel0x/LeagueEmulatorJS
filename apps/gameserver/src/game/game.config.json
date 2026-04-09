@@ -21,13 +21,16 @@
 		"levelUpPlayers": 6,
 		"noAutoGameStart": true,
 		"wavesInitialTimeToSpawn": 1,
-		"startingGold": 14750
+		"startingGold": 47500
 	},
 	"debugging": {
 		"enabled": true,
 		"noTerrainEscape": false,
 		"noPathFinding": true,
-		"noSpawners": false
+		"noNavmeshVision": false,
+		"noGrassCheck": false,
+		"noSpawners": false,
+		"chatDebugMessages": true
 	},
 	"logging": {
 		"debug": "console",
@@ -49,11 +52,11 @@
 			},
 			"match": {
 				"team": 100,
-				"champion": "Ezreal",
+				"champion": "Ahri",
 				"skin": 0
 			},
 			"runes": [],
-			"masteries": []
+			"talents": []
 		},
 		{
 			"summoner": {
@@ -74,7 +77,7 @@
 				"skin": 0
 			},
 			"runes": [],
-			"masteries": []
+			"talents": []
 		},
 		{
 			"summoner": {
@@ -95,7 +98,7 @@
 				"skin": 0
 			},
 			"runes": [],
-			"masteries": []
+			"talents": []
 		}
 	]
 }

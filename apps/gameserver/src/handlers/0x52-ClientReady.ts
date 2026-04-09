@@ -5,8 +5,7 @@ import * as packets from '@repo/packets/list';
 import GameObjectList from '../app/game-object-list';
 import Server from '../app/server';
 import loadingStages from '../constants/game-state';
-import Timer from '../core/timer';
-import config from '../game/game.config.json';
+import config from '../game/game.config';
 import Game from '../game/initializers/game';
 import { TeamId } from '../gameobjectextensions/traits/team';
 import type { LaneMinion } from '../gameobjects/unit-ai';
@@ -26,7 +25,7 @@ function debugPerform() {
 			if (!barrack) continue;
 
 			const unit = barrack.spawnUnit(MinionType.melee);
-			(unit.ai as LaneMinion).moveLane = () => { };
+			(unit.ai as LaneMinion).moveNextLanePoint = () => { };
 			unit.combat.autoAttackToggle = false;
 			unit.moving.teleport(new Vector2(500, 1300 + (olpi * 150)));
 			olpi++;
@@ -37,7 +36,7 @@ function debugPerform() {
 			if (!barrack) continue;
 
 			const unit = barrack.spawnUnit(MinionType.melee);
-			(unit.ai as LaneMinion).moveLane = () => { };
+			(unit.ai as LaneMinion).moveNextLanePoint = () => { };
 			unit.combat.autoAttackToggle = false;
 			unit.moving.teleport(new Vector2(1200 + (clpi * 150), 600));
 			clpi++;
@@ -57,7 +56,7 @@ function debugPerform() {
 
 		const chaosPlayers = playersWoFirst.filter(unit => unit.team.id === TeamId.chaos);
 		chaosPlayers.forEach(unit => {
-			unit.moving.teleport(new Vector2(1200 + (clpi * 150), 600));
+			unit.moving.teleport(new Vector2(1200 + (clpi * 150), 550));
 			clpi++;
 		});
 	}
@@ -137,6 +136,7 @@ export default (player: Player, packet: packets.ClientReadyModel) => {
 	if (Server.game.admitted)
 		return;
 
-	Server.game.admitted = Timer.app.now();
+	const now = Server.gameLoop.timer;
+	Server.game.admitted = now;
 	debugPerform();
 };

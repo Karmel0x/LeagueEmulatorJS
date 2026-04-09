@@ -1,6 +1,7 @@
 
 import type { Vector2, Vector2Like } from '@repo/geometry';
 import * as packets from '@repo/packets/list';
+import type Spell from '@repo/scripting/base/spell';
 import Server from '../../app/server';
 import { EventEmitter2 } from '../../core/event-emitter2';
 import * as Measure from '../../gameobjectextensions/measure';
@@ -17,6 +18,7 @@ export type MissileOptions = MovableGameObjectOptions & {
 	stats: StatsMissileOptions;
 	spawner: AttackableUnit;
 	target?: AttackableUnit;
+	spell?: Spell;
 };
 
 export default class Missile extends MovableGameObject {
@@ -37,6 +39,7 @@ export default class Missile extends MovableGameObject {
 
 	declare stats: StatsMissile;
 	target;
+	spell;
 
 	get owner() {
 		return this.spawner;
@@ -49,19 +52,23 @@ export default class Missile extends MovableGameObject {
 		this.options = options || {};
 		this.spawner = options.spawner;
 		this.target = options.target;
+		this.spell = options.spell;
 	}
 
 	loader(options: MissileOptions) {
+		const owner = this.owner;
 		options.stats.attackRange = options.stats.attackRange || options.stats.range || 1;
 		options.stats.collisionRadius = options.stats.collisionRadius || options.stats.radius || 1;
+		owner._collisionRadius = undefined;
 		options.stats.moveSpeed = options.stats.moveSpeed || options.stats.speed || 1;
 
 		this.stats = new StatsMissile(this, options.stats || {});
 
+		// TODO: probably should not destroy on reachDestination because of chain missiles
 		this.eventEmitter.on('reachDestination', () => {
-			this.owner.eventEmitter.emit('missileEnd', this);
+			owner.eventEmitter.emit('missileEnd', this);
 			setTimeout(() => {
-				this.eventEmitter.emit('destroy');
+				this.destroy();
 			}, 0);
 		});
 
@@ -83,5 +90,8 @@ export default class Missile extends MovableGameObject {
 			netId: this.netId,
 		});
 		Server.teams[TeamId.all]!.sendPacket_withVision(packet1);
+
+		this.moving.setWaypoints([]);
+		super.destroy();
 	}
 }

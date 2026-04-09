@@ -37,28 +37,40 @@ export default class CCompressedWaypoint extends PartialPacket {
 
 	static writer(dvr: RelativeDataView, payload: CCompressedWaypointModel) {
 
-		let waypoints = payload || [];
+		let waypoints = payload;
 		if (waypoints.length < 1)
 			return;
 
 		let relativeWaypoints = [];
-		let flagsBinary = '';
 
 		if (waypoints.length > 1) {
+			let s = 0;
+			let bitfield1 = 0;
 			for (let i = 1; i < waypoints.length; i++) {
+				let cur = waypoints[i]!;
+				let prev = waypoints[i - 1]!;
+
 				let relativeWaypoint = {
-					x: waypoints[i]!.x - waypoints[i - 1]!.x,
-					y: waypoints[i]!.y - waypoints[i - 1]!.y,
+					x: cur.x - prev.x,
+					y: cur.y - prev.y,
 				};
 				relativeWaypoints.push(relativeWaypoint);
 
-				flagsBinary += +(relativeWaypoint.x >= -128 && relativeWaypoint.x <= 127);
-				flagsBinary += +(relativeWaypoint.y >= -128 && relativeWaypoint.y <= 127);
+				const xFits = relativeWaypoint.x >= -128 && relativeWaypoint.x <= 127;
+				bitfield1 |= +xFits << s++;
+				const yFits = relativeWaypoint.y >= -128 && relativeWaypoint.y <= 127;
+				bitfield1 |= +yFits << s++;
+
+				if (s % 8 === 0) {
+					dvr.writeUint8(bitfield1);
+					s = 0;
+					bitfield1 = 0;
+				}
 			}
 
-			let flagsBuffer = BinaryHelper.binaryStringToNumberByteArray(flagsBinary, 8);
-			let flagsCount = Math.floor((waypoints.length - 2) / 4 + 1);
-			dvr.writeByteArray(flagsBuffer.slice(0, flagsCount));
+			if (s % 8 !== 0) {
+				dvr.writeUint8(bitfield1);
+			}
 		}
 
 		dvr.writeInt16(waypoints[0]!.x);

@@ -1,9 +1,10 @@
 
-import Summoners from '@repo/gamedata/data/summoners/index';
+import type * as summonerSpells from '@repo/gamedata/data/summoners/index';
 import type { SPlayerInfoModel } from '@repo/packets/base/s2c/0x54-SynchVersion';
 import * as packets from '@repo/packets/list';
 import { OnEvent, OnEventArguments } from '@repo/packets/types/on-event';
 import type Spell from '@repo/scripting/base/spell';
+import { getSummonerSpells } from '@repo/scripting/load/summoner-spells';
 import { EventEmitter2 } from '../../core/event-emitter2';
 import PHero from '../../gameobjectextensions/packets/hero';
 import Scoreboard from '../../gameobjectextensions/traits/scoreboard';
@@ -17,8 +18,8 @@ export type SummonerConfig = {
 	name: string;
 	level: number;
 	spells: {
-		d: string;
-		f: string;
+		d: string & keyof typeof summonerSpells;
+		f: string & keyof typeof summonerSpells;
 	};
 	iconId: number;
 	rankId: number;
@@ -28,6 +29,7 @@ export type SummonerConfig = {
 export type HeroOptions = BaseAiOptions & {
 	summoner: SummonerConfig;
 	num: number;
+	skin: number;
 };
 
 export type HeroEvents = BaseAiEvents & {
@@ -64,6 +66,7 @@ export default class Hero extends BaseAi {
 		super(options);
 
 		this.num = options.num;
+		this.skin = options.skin;
 	}
 
 	loader(options: HeroOptions) {
@@ -73,7 +76,7 @@ export default class Hero extends BaseAi {
 		this.packets = new PHero(this);
 		this.scoreboard = new Scoreboard(this);
 
-		this.summonerSpells = Summoners.getSummonerSpells([
+		this.summonerSpells = getSummonerSpells([
 			options.summoner.spells.d,
 			options.summoner.spells.f,
 		]);

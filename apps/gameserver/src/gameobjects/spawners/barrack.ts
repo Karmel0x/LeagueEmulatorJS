@@ -5,9 +5,9 @@ import * as packets from '@repo/packets/list';
 import type { NetId } from '@repo/packets/types/player';
 import Server from '../../app/server';
 import UnitAiList from '../../app/unit-ai-list';
-import { accurateDelay, runAccurateInterval } from '../../core/timer';
+import { accurateDelay, runAccurateInfiniteInterval } from '../../core/timer';
 import { delay } from '../../core/utils';
-import config from '../../game/game.config.json';
+import config from '../../game/game.config';
 import { TeamId, type LaneId } from '../../gameobjectextensions/traits/team';
 import LaneMinion, { type LaneMinionOptions } from '../unit-ai/lane-minion';
 import AttackableUnit, { type AttackableUnitOptions } from '../units/attackable-unit';
@@ -20,7 +20,7 @@ export type BarrackOptions = SpawnerOptions & {
 
 const minionNames = {
 	[MinionType.melee]: 'Basic',
-	[MinionType.caster]: 'Wizard',
+	[MinionType.archer]: 'Wizard',
 	[MinionType.cannon]: 'MechCannon',
 	[MinionType.super]: 'MechMelee',
 } as const;
@@ -39,7 +39,7 @@ export default class Barrack extends Spawner {
 	healthBonus = 0;
 	minionLevel = 1;
 	unitNamePrefix = '';
-	spawnUnitsEnabled = true;
+	spawnUnitsEnabled = Server.map.constants.wavesSpawnEnabled;
 
 	constructor(options: BarrackOptions) {
 		super(options);
@@ -51,7 +51,7 @@ export default class Barrack extends Spawner {
 	/**
 	 * Send packet to client to spawn unit
 	 */
-	spawnUnitAns(unitNetId: NetId, minionType: number, to: (packet: PacketMessage | undefined) => void) {
+	spawnUnitAns(unitNetId: NetId, minionType: number) {
 		const packet1 = packets.Barrack_SpawnUnit.create({
 			//netId: unitNetId,
 			netId: this.netId,
@@ -64,8 +64,8 @@ export default class Barrack extends Spawner {
 			healthBonus: this.healthBonus,
 			//minionLevel: this.minionLevel,
 		});
-		to(packet1);
 		//console.debug(packet1);
+		return packet1;
 	}
 
 	spawnUnit2(spawn: AttackableUnitOptions, aiOptions: Omit<LaneMinionOptions, 'spawner' | 'owner'>) {
@@ -74,10 +74,11 @@ export default class Barrack extends Spawner {
 			spawner: this,
 			team: this.team.id,
 		});
-		unit.ai = LaneMinion.initialize({
+		const ai = LaneMinion.initialize({
 			...aiOptions,
 			owner: unit,
 		});
+		unit.ai = ai;
 
 		unit.spawn();
 		return unit;
@@ -90,13 +91,14 @@ export default class Barrack extends Spawner {
 
 		const character = this.unitNamePrefix + minionCharacter;
 
-		return this.spawnUnit2({
+		const unit = this.spawnUnit2({
 			...options,
 			character,
 			name: character,
 		}, {
 			minionType,
 		});
+		return unit;
 	}
 
 	aliveInhibitors(teamId: TeamId) {
@@ -180,7 +182,7 @@ export default class Barrack extends Spawner {
 
 		// 4. Caster minions
 		for (let i = 0; i < archerCount; i++) {
-			this.spawnUnit(MinionType.caster);
+			this.spawnUnit(MinionType.archer);
 			await accurateDelay(spawnDelay);
 		}
 	}
@@ -206,7 +208,7 @@ export default class Barrack extends Spawner {
 
 		const interval = mapConstants.waveSpawnRate * 1000;
 
-		runAccurateInterval(async () => {
+		runAccurateInfiniteInterval(() => {
 			this.spawnWave(list);
 		}, interval);
 
