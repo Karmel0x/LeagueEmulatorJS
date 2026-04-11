@@ -95,7 +95,7 @@ export default class StatsUnit extends StatsGameObject {
 		this.critChance = new IStatLevelable(owner, 0);
 		this.dodge = new IStatLevelable(owner, 0);
 		this.moveSpeed = new IStat(stats.moveSpeed || 325);
-		this.acquisitionRange = new IStat(175);
+		this.acquisitionRange = new IStat(750);
 		this.attackRange = new IStat(stats.attackRange || 175);
 
 		this.physicalShield = new IStatShield();

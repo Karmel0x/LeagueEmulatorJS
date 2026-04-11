@@ -1,11 +1,17 @@
+import { SlotId } from '@repo/gameserver/src/constants/slot-id';
 import Character from '@repo/scripting/base/character';
 import package1 from './package';
+import _Turret_NexusBasicAttack from './spells/_Turret_NexusBasicAttack';
 
 /**
  * @abstract
  */
 export default class _Turret_Nexus extends Character {
 	static package = package1;
+
+	static spells = {
+		[SlotId.a]: _Turret_NexusBasicAttack,
+	};
 
 	static reward = {
 		globalGold: 150,

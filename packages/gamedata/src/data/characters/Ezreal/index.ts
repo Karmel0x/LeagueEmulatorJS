@@ -34,6 +34,8 @@ export default class Ezreal extends Character {
 		armorPerLevel: 3.5,
 		resist: 30,
 		moveSpeed: 325,
+
+		collisionRadius: 50,
 	};
 
 	static spells = {

@@ -55,6 +55,7 @@ export default class Character {
             critChance: new IStatLevelable(owner, config.crit ?? 0, config.critPerLevel ?? 0),
             attackRange: new IStat(config.attackRange ?? 175),
             moveSpeed: new IStat(config.moveSpeed ?? 325),
+            collisionRadius: new IStat(config.collisionRadius ?? 1),
         };
 
         return stats;

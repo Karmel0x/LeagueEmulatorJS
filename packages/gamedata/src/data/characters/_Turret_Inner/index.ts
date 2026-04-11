@@ -1,11 +1,17 @@
+import { SlotId } from '@repo/gameserver/src/constants/slot-id';
 import Character from '@repo/scripting/base/character';
 import package1 from './package';
+import _Turret_InnerBasicAttack from './spells/_Turret_InnerBasicAttack';
 
 /**
  * @abstract
  */
 export default class _Turret_Inner extends Character {
 	static package = package1;
+
+	static spells = {
+		[SlotId.a]: _Turret_InnerBasicAttack,
+	};
 
 	static reward = {
 		splittedGold: 100,

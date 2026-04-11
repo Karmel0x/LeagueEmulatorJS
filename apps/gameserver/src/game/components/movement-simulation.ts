@@ -176,7 +176,7 @@ export default class MovementSimulation {
 		}
 
 		if (facing) {
-			const direction = prevPosition.sub(objectPosition).normalize();
+			const direction = objectPosition.clone().sub(prevPosition).normalize();
 			object.direction.copy(direction);
 		}
 
@@ -400,7 +400,7 @@ export default class MovementSimulation {
 
 		const pathfindingTime = object.pathfindingTime;
 		const now = performance.now();
-		if (!pathfindingTime && pathfindingTime > now - 1000)
+		if (pathfindingTime && pathfindingTime > now - 1000)
 			return;
 		object.pathfindingTime = now;
 

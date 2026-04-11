@@ -27,6 +27,7 @@ function debugPerform() {
 			const unit = barrack.spawnUnit(MinionType.melee);
 			(unit.ai as LaneMinion).moveNextLanePoint = () => { };
 			unit.combat.autoAttackToggle = false;
+			unit.stats.acquisitionRange.baseValue = 175;
 			unit.moving.teleport(new Vector2(500, 1300 + (olpi * 150)));
 			olpi++;
 		}
@@ -38,6 +39,7 @@ function debugPerform() {
 			const unit = barrack.spawnUnit(MinionType.melee);
 			(unit.ai as LaneMinion).moveNextLanePoint = () => { };
 			unit.combat.autoAttackToggle = false;
+			unit.stats.acquisitionRange.baseValue = 175;
 			unit.moving.teleport(new Vector2(1200 + (clpi * 150), 600));
 			clpi++;
 		}

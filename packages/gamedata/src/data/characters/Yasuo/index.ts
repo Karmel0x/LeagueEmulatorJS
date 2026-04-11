@@ -32,6 +32,8 @@ export default class Yasuo extends Character {
 		armorPerLevel: 3.4,
 		resist: 30,
 		moveSpeed: 340,
+
+		collisionRadius: 50,
 	};
 
 	static spells = {

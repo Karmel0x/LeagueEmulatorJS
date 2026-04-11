@@ -102,6 +102,27 @@ export default class Turret extends Structure {
 		const packets = this.onSpawnPackets();
 		owner.packets.toEveryone(packets, loadingStages.inGame);
 
+		let lastTarget: AttackableUnit | undefined = undefined;
+
+		const interval1 = setInterval(() => {
+			if (owner.combat.died) {
+				clearInterval(interval1);
+				return;
+			}
+
+			const target = owner.combat.findNewTargetInAcR();
+			if (target) {
+				if (lastTarget !== target) {
+					lastTarget = target;
+					owner.combat.setOrderAndTarget(target);
+				}
+			}
+			else {
+				lastTarget = undefined;
+				owner.combat.attackTarget = undefined;
+			}
+		}, 250);
+
 		super.onSpawn();
 	}
 

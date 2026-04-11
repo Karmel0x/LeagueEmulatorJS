@@ -56,6 +56,7 @@ export class SpellCast {
 			if (target) {
 				targets.push(target);
 				castData.targetPosition = target.position;
+				castData.target = target;
 			}
 		}
 

@@ -1,11 +1,17 @@
+import { SlotId } from '@repo/gameserver/src/constants/slot-id';
 import Character from '@repo/scripting/base/character';
 import package1 from './package';
+import _Turret_InhibitorBasicAttack from './spells/_Turret_InhibitorBasicAttack';
 
 /**
  * @abstract
  */
 export default class _Turret_Inhibitor extends Character {
 	static package = package1;
+
+	static spells = {
+		[SlotId.a]: _Turret_InhibitorBasicAttack,
+	};
 
 	static reward = {
 		globalGold: 175,

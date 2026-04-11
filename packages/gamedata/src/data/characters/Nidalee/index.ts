@@ -23,11 +23,13 @@ export default class Nidalee extends Character {
 		attackSpeedPerLevel: 0,//3.2%
 		attackSpeedOffset: 0,
 		crit: 0,
-		attackRange: 175,
+		attackRange: 600,
 		armor: 19,
 		armorPerLevel: 3.4,
 		resist: 30,
 		moveSpeed: 340,
+
+		collisionRadius: 50,
 	};
 
 	static spells = {
